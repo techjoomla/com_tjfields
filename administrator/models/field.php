@@ -161,12 +161,15 @@ class TjfieldsModelField extends JModelAdmin
 	 *
 	 * @param   Array  $post  Post
 	 *
-	 * @return  flag
+	 * @return  int|boolean A int on success, false on failuer
 	 *
 	 * @since  1.6
 	 */
 	public function save_option($post)
 	{
+		$id = '';
+		$fields_in_DB = array();
+		$options_filled = array();
 		$table = $this->getTable();
 		$data  = $post->get('jform', '', 'ARRAY');
 		$input = JFactory::getApplication()->input;
@@ -251,7 +254,6 @@ class TjfieldsModelField extends JModelAdmin
 			$options = $post->get('tjfields', '', 'ARRAY');
 
 			$jformData = $post->get('jform', '', 'ARRAY');
-			$optionsData = json_decode($jformData['params']['options']);
 
 			if ($data['saveOption'] == 1)
 			{
@@ -395,7 +397,7 @@ class TjfieldsModelField extends JModelAdmin
 	 * @param   Array    $jsarray  JSArray
 	 * @param   Integer  $fieldid  Field Id
 	 *
-	 * @return  flag
+	 * @return  boolean A false if failure
 	 *
 	 * @since  1.6
 	 */
@@ -428,9 +430,9 @@ class TjfieldsModelField extends JModelAdmin
 	/**
 	 * Method To Delete Option
 	 *
-	 * @param   Integer  $delete_ids  Id for delete record
+	 * @param   array  $delete_ids  Id for delete record
 	 *
-	 * @return  flag
+	 * @return  boolean A false on failure
 	 *
 	 * @since  1.6
 	 */
@@ -456,8 +458,8 @@ class TjfieldsModelField extends JModelAdmin
 	/**
 	 * Method for Delete Field Categories Mapping
 	 *
-	 * @param   Integer  $field_id  Id
-	 * @param   String   $cats      Category
+	 * @param   array  $field_id  Id
+	 * @param   array  $cats      Category
 	 *
 	 * @return  Boolean
 	 *
@@ -486,14 +488,14 @@ class TjfieldsModelField extends JModelAdmin
 				$query->where($conditions);
 				$db->setQuery($query);
 
-				$result = $db->execute();
+				$db->execute();
 			}
 		}
 		catch (RuntimeException $e)
 		{
 			$this->setError($e->getMessage());
 
-			return 0;
+			return false;
 		}
 	}
 
