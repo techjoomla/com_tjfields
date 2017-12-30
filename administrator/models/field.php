@@ -47,15 +47,12 @@ class TjfieldsModelField extends JModelAdmin
 	 * @param   Array    $data      An optional array of data for the form to interogate.
 	 * @param   Boolean  $loadData  True if the form is to load its own data (default case), false if not.
 	 *
-	 * @return  JForm  A JForm object on success, false on failure
+	 * @return  JForm|boolean  A JForm object on success, false on failure
 	 *
 	 * @since  1.6
 	 */
 	public function getForm($data = array(), $loadData = true)
 	{
-		// Initialise variables.
-		$app = JFactory::getApplication();
-
 		// Get the form.
 		$form = $this->loadForm('com_tjfields.field', 'field', array(
 			'control' => 'jform',
