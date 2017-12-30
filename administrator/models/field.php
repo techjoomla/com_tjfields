@@ -167,7 +167,6 @@ class TjfieldsModelField extends JModelAdmin
 	 */
 	public function save_option($post)
 	{
-		$id = '';
 		$fields_in_DB = array();
 		$options_filled = array();
 		$table = $this->getTable();
@@ -252,8 +251,6 @@ class TjfieldsModelField extends JModelAdmin
 		if ($id)
 		{
 			$options = $post->get('tjfields', '', 'ARRAY');
-
-			$jformData = $post->get('jform', '', 'ARRAY');
 
 			if ($data['saveOption'] == 1)
 			{
