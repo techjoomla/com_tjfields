@@ -138,6 +138,7 @@ class TjfieldsModelRegions extends JModelList
 		$db = $this->getDbo();
 		$query = $db->getQuery(true);
 		$client = JFactory::getApplication()->input->get('client', '', 'STRING');
+		$clientArray = array('com_jgive', 'com_jticketing', 'com_quick2cart', 'com_socialads', 'com_tjlms');
 
 		// Select the required fields from the table.
 		$query->select(
@@ -147,10 +148,25 @@ class TjfieldsModelRegions extends JModelList
 		);
 
 		$query->from('`#__tj_region` AS a');
-		$query->select('a.' . $client .' AS state');
+
+		if (!empty($client))
+		{
+			if (in_array($client, $clientArray))
+			{
+				$query->select('a.' . $client . ' AS state');
+			}
+		}
+
 		$query->select('c.country');
 		$query->join('LEFT', '`#__tj_country` AS c ON c.id=a.country_id');
-		$query->where('c.' . $client .' = 1');
+
+		if (!empty($client))
+		{
+			if (in_array($client, $clientArray))
+			{
+				$query->where('c.' . $client . ' = 1');
+			}
+		}
 
 		// Filter by search in title
 		$search = $this->getState('filter.search');
@@ -177,11 +193,23 @@ class TjfieldsModelRegions extends JModelList
 
 		if (is_numeric($published))
 		{
-			$query->where('a.' . $client .' = ' . (int) $published);
+			if (!empty($client))
+			{
+				if (in_array($client, $clientArray))
+				{
+					$query->where('a.' . $client . ' = ' . (int) $published);
+				}
+			}
 		}
 		elseif ($published === '')
 		{
-			$query->where('(a.' . $client .' IN (0, 1))');
+			if (!empty($client))
+			{
+				if (in_array($client, $clientArray))
+				{
+					$query->where('(a.' . $client . ' IN (0, 1))');
+				}
+			}
 		}
 
 		// Filter by country

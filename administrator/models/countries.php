@@ -115,6 +115,7 @@ class TjfieldsModelCountries extends JModelList
 		$db = $this->getDbo();
 		$query = $db->getQuery(true);
 		$client = JFactory::getApplication()->input->get('client', '', 'STRING');
+		$clientArray = array('com_jgive', 'com_jticketing', 'com_quick2cart', 'com_socialads', 'com_tjlms');
 
 		// Select the required fields from the table.
 		$query->select(
@@ -124,18 +125,36 @@ class TjfieldsModelCountries extends JModelList
 		);
 		$query->from('`#__tj_country` AS a');
 
-		$query->select('a.' . $client .' AS state');
+		if (!empty($client))
+		{
+			if (in_array($client, $clientArray))
+			{
+				$query->select('a.' . $client . ' AS state');
+			}
+		}
 
 		// Filter by published state.
 		$published = $this->getState('filter.state');
 
 		if (is_numeric($published))
 		{
-			$query->where('a.' . $client .' = '.(int) $published);
+			if (!empty($client))
+			{
+				if (in_array($client, $clientArray))
+				{
+					$query->where('a.' . $client . ' = ' . (int) $published);
+				}
+			}
 		}
-		else if ($published === '')
+		elseif ($published === '')
 		{
-			$query->where('(a.' . $client .' IN (0, 1))');
+			if (!empty($client))
+			{
+				if (in_array($client, $clientArray))
+				{
+					$query->where('(a.' . $client . ' IN (0, 1))');
+				}
+			}
 		}
 
 		// Filter by search in title
