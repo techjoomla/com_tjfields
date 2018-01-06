@@ -30,6 +30,18 @@ class TjfieldsControllerCity extends JControllerForm
 	protected $client;
 
 	/**
+	 * @var    string
+	 * @since  1.6
+	 */
+	protected $view_list;
+
+	/**
+	 * @var    string
+	 * @since  1.6
+	 */
+	protected $input;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param   array  $config  An optional associative array of configuration settings.
@@ -111,6 +123,6 @@ class TjfieldsControllerCity extends JControllerForm
 	public function fixDB()
 	{
 		$model = $this->getModel();
-		$states = $model->fixDB();
+		$model->fixDB();
 	}
 }
