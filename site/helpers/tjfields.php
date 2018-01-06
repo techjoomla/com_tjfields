@@ -1611,10 +1611,12 @@ class TjfieldsHelper
 				$extraUrlPrams = '&' . $extraUrlPrams;
 			}
 
-			$b_lk = 'index.php?option=com_tjfields&task=getMedia&fid=';
-			$link = JUri::root() . substr(JRoute::_($b_lk . $fileId . $extraUrlPrams), strlen(JUri::base(true)) + 1);
+			// Here, fpht means file encoded path
+			$encodedPath = base64_encode($filePath);
+			$buttonUrl = JUri::root() . 'index.php?option=com_tjfields&task=getMedia&fpht=';
+			$mediaUrl = JRoute::_($buttonUrl . $encodedPath . $extraUrlPrams);
 
-			return $link;
+			return $mediaUrl;
 		}
 		else
 		{
