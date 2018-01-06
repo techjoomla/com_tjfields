@@ -68,7 +68,7 @@ class TjfieldsController extends JControllerLegacy
 			$filepath      = $tjfieldsHelper->getMediaPathFromId($file_id);
 
 			// Download will start
-			$down_status = $tjfieldsHelper->downloadMedia($filepath, '', '', 0);
+			$down_status = $tjfieldsHelper->downloadMedia($filepath, '', 0);
 
 			if ($down_status === 2)
 			{

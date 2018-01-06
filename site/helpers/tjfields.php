@@ -350,8 +350,8 @@ class TjfieldsHelper
 	 * Function to upload file
 	 *
 	 * @param   string  $singleFile       name of field
-	 * @param   string  $insert_obj_file  file object
-	 * @param   string  $file_field_data  data
+	 * @param   array   $insert_obj_file  file object
+	 * @param   array   $file_field_data  data
 	 *
 	 * @return  string|boolean
 	 */
@@ -397,6 +397,8 @@ class TjfieldsHelper
 			if (isset($singleFile['name']))
 			{
 				$filename = $singleFile['name'];
+
+				return $filename;
 			}
 		}
 		else
@@ -457,12 +459,12 @@ class TjfieldsHelper
 	/**
 	 * check if the fields values are already store. so it means we need to edit the entry
 	 *
-	 * @param   array  $postFieldData  Post array which content (client, content_id, Fname, Fvalue, u_id)
-	 * @param   array  $fieldName      Current multiselect field name
-	 * @param   array  $field_data     field data
-	 * @param   array  $updateId       Previous record id
+	 * @param   array    $postFieldData  Post array which content (client, content_id, Fname, Fvalue, u_id)
+	 * @param   string   $fieldName      Current multiselect field name
+	 * @param   array    $field_data     field data
+	 * @param   integer  $updateId       Previous record id
 	 *
-	 * @return  array
+	 * @return  void
 	 */
 	public function saveSingleSelectFieldValue($postFieldData, $fieldName, $field_data, $updateId = 0)
 	{
@@ -504,9 +506,9 @@ class TjfieldsHelper
 	/**
 	 * check if the fields values are already store. so it means we need to edit the entry
 	 *
-	 * @param   array  $postFieldData  Post array which content (client, content_id, Fname, Fvalue, u_id)
-	 * @param   array  $subformFname   Current subform field name
-	 * @param   array  $field_data     field data
+	 * @param   array   $postFieldData  Post array which content (client, content_id, Fname, Fvalue, u_id)
+	 * @param   string  $subformFname   Current subform field name
+	 * @param   array   $field_data     field data
 	 *
 	 * @return  true
 	 */
@@ -560,9 +562,9 @@ class TjfieldsHelper
 	/**
 	 * check if the fields values are already store. so it means we need to edit the entry
 	 *
-	 * @param   array  $postFieldData     Post array which content (client, content_id, Fname, Fvalue, u_id)
-	 * @param   array  $multiselectFname  Current multiselect field name
-	 * @param   array  $field_data        field data
+	 * @param   array   $postFieldData     Post array which content (client, content_id, Fname, Fvalue, u_id)
+	 * @param   string  $multiselectFname  Current multiselect field name
+	 * @param   array   $field_data        field data
 	 *
 	 * @return  true
 	 */
@@ -674,7 +676,7 @@ class TjfieldsHelper
 	 *
 	 * @param   array  $fieldValueEntryId  Ids to delete the entries from table #__tjfields_fields_value
 	 *
-	 * @return  array
+	 * @return  void
 	 */
 	public function deleteFieldValueEntry($fieldValueEntryId)
 	{
@@ -699,8 +701,8 @@ class TjfieldsHelper
 	/**
 	 * check if the fields values are already store. so it means we need to edit the entry
 	 *
-	 * @param   array  $data      Post array which content (client, content_id, Fname, Fvalue, u_id)
-	 * @param   array  $field_id  id of field
+	 * @param   array    $data      Post array which content (client, content_id, Fname, Fvalue, u_id)
+	 * @param   integer  $field_id  id of field
 	 *
 	 * @return  array
 	 */
@@ -714,7 +716,7 @@ class TjfieldsHelper
 		$query->select('id FROM #__tjfields_fields_value');
 		$query->where('content_id=' . $content_id . ' AND client="' . $client . '"');
 
-		if ($field_id)
+		if (!empty($field_id))
 		{
 			$query->where('field_id=' . $field_id);
 		}
@@ -834,12 +836,10 @@ class TjfieldsHelper
 	 * @param   string  $client       Get all fields based on client
 	 * @param   string  $category_id  Get all fields for selected category
 	 *
-	 * @return object
+	 * @return  array|boolean
 	 */
 	public function getFilterableFields($client, $category_id = '')
 	{
-		$coreFields = '';
-
 		if (!empty($client))
 		{
 			$db    = JFactory::getDbo();
@@ -902,9 +902,11 @@ class TjfieldsHelper
 					}
 				}
 			}
+
+			return $allFields;
 		}
 
-		return $allFields;
+		return false;
 	}
 
 	/**
@@ -1015,7 +1017,7 @@ class TjfieldsHelper
 	 *
 	 * @param   STRING  $options  Field's Option id's string
 	 *
-	 * @return object
+	 * @return  array
 	 */
 	public function getFieldAndFieldOptionsList($options)
 	{
@@ -1156,15 +1158,13 @@ class TjfieldsHelper
 	/**
 	 * download the file
 	 *
-	 * @param   STRING  $file             - file path eg /var/www/j30/media/com_quick2cart/qtc_pack.zip
-	 * @param   STRING  $filename_direct  - for direct download it will be file path like http://
-	 * localhost/j30/media/com_quick2cart/qtc_pack.zip  -- for FUTURE SCOPE
-	 * @param   STRING  $extern           - for direct download it will be file path like http://
-	 * @param   STRING  $exitHere         - for direct download it will be file path like http://
+	 * @param   STRING  $file      - file path eg /var/www/j30/media/com_quick2cart/qtc_pack.zip
+	 * @param   STRING  $extern    - for direct download it will be file path like http://
+	 * @param   STRING  $exitHere  - for direct download it will be file path like http://
 	 *
 	 * @return  integer
 	 */
-	public function downloadMedia($file, $filename_direct = '', $extern = '', $exitHere = 1)
+	public function downloadMedia($file, $extern = '', $exitHere = 1)
 	{
 		jimport('joomla.filesystem.file');
 		$file = substr($file, 1);

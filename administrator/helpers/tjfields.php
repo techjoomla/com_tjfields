@@ -88,7 +88,7 @@ class TjfieldsHelper extends JHelperContent
 	 *
 	 * @param   STRING  $data_unique_name  field name
 	 *
-	 * @return true or false
+	 * @return integer
 	 */
 	public function checkIfUniqueName($data_unique_name)
 	{
@@ -108,9 +108,9 @@ class TjfieldsHelper extends JHelperContent
 	 * @param   STRING  $data_same_name  field name
 	 * @param   INT     $id              field id
 	 *
-	 * @return true or false
+	 * @return boolean
 	 */
-	public function changeNameIfNotUnique($data_same_name,$id)
+	public function changeNameIfNotUnique($data_same_name, $id)
 	{
 		$app = JFactory::getApplication();
 		$db = JFactory::getDbo();
@@ -419,7 +419,7 @@ class TjfieldsHelper extends JHelperContent
 	 *
 	 * @param   INT  $field_id  field id
 	 *
-	 * @return array of option for the particular field
+	 * @return  array  of option for the particular field
 	 */
 	public function getFieldCategoryMapping($field_id)
 	{
