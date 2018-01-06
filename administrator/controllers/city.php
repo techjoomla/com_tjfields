@@ -83,7 +83,7 @@ class TjfieldsControllerCity extends JControllerForm
 	/**
 	 * Gets the URL arguments to append to a list redirect.
 	 *
-	 * @return  string  The arguments to append to the redirect URL.
+	 * @return  string  The arguments to append to the redirect URL
 	 *
 	 * @since   1.6
 	 */
@@ -98,7 +98,7 @@ class TjfieldsControllerCity extends JControllerForm
 	/**
 	 * Loads regions according to selected country.
 	 *
-	 * @return  void.
+	 * @return  void
 	 *
 	 * @since   1.6
 	 */
@@ -116,7 +116,7 @@ class TjfieldsControllerCity extends JControllerForm
 	/**
 	 * fix database.
 	 *
-	 * @return  void.
+	 * @return  void
 	 *
 	 * @since   1.6
 	 */
