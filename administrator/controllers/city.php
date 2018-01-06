@@ -32,7 +32,7 @@ class TjfieldsControllerCity extends JControllerForm
 	/**
 	 * Constructor.
 	 *
-	 * @param  array   $config  An optional associative array of configuration settings.
+	 * @param   array  $config  An optional associative array of configuration settings.
 	 *
 	 * @since  1.6
 	 * @see    JController
@@ -84,8 +84,11 @@ class TjfieldsControllerCity extends JControllerForm
 	}
 
 	/**
-	 * Loads regions according to selected country
+	 * Loads regions according to selected country.
 	 *
+	 * @return  void.
+	 *
+	 * @since   1.6
 	 */
 	public function getRegionsList()
 	{
@@ -98,6 +101,13 @@ class TjfieldsControllerCity extends JControllerForm
 		JFactory::getApplication()->close();
 	}
 
+	/**
+	 * fix database.
+	 *
+	 * @return  void.
+	 *
+	 * @since   1.6
+	 */
 	public function fixDB()
 	{
 		$model = $this->getModel();

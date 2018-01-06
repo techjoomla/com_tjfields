@@ -76,6 +76,8 @@ class TjfieldsControllerCities extends JControllerAdmin
 			{
 				$model->publish($cid, $value);
 
+				$ntext = '';
+
 				if ($value === 1)
 				{
 					$ntext = 'COM_TJFIELDS_N_CITIES_PUBLISHED';
