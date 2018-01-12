@@ -135,10 +135,16 @@ class TjfieldsModelRegions extends JModelList
 	protected function getListQuery()
 	{
 		// Create a new query object.
+		$app = JFactory::getApplication();
 		$db = $this->getDbo();
 		$query = $db->getQuery(true);
 		$client = JFactory::getApplication()->input->get('client', '', 'STRING');
-		$clientArray = array('com_jgive', 'com_jticketing', 'com_quick2cart', 'com_socialads', 'com_tjlms');
+		$dbprefix = $app->get('dbprefix');
+		$query = "SHOW COLUMNS FROM " . $dbprefix . "tj_region";
+		$db->setQuery($query);
+		$clientArray = $db->loadAssocList();
+
+		$query = $db->getQuery(true);
 
 		// Select the required fields from the table.
 		$query->select(
