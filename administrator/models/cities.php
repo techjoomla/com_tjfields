@@ -152,31 +152,20 @@ class TjfieldsModelCities extends JModelList
 		$query = $db->getQuery(true);
 
 		// Select the required fields from the table.
-		$query->select(
-			$this->getState(
-				'list.select', 'a.*'
-			)
-		);
-
+		$query->select($this->getState('list.select', 'a.*'));
 		$query->from('`#__tj_city` AS a');
 
-		if (!empty($client))
+		if (!empty($client) && in_array($client, $clientArray))
 		{
-			if (in_array($client, $clientArray))
-			{
-				$query->select('a.' . $client . ' AS state');
-			}
+			$query->select('a.' . $db->quoteName($client) . ' AS state');
 		}
 
 		$query->select('c.country');
 		$query->join('LEFT', '`#__tj_country` AS c ON c.id=a.country_id');
 
-		if (!empty($client))
+		if (!empty($client) && in_array($client, $clientArray))
 		{
-			if (in_array($client, $clientArray))
-			{
-				$query->where('c.' . $client . ' = 1');
-			}
+			$query->where('c.' . $db->quoteName($client) . ' = 1');
 		}
 
 		$query->select('r.region');
@@ -194,33 +183,22 @@ class TjfieldsModelCities extends JModelList
 			else
 			{
 				$search = $db->Quote('%' . $db->escape($search, true) . '%');
-				$query->where('( a.city LIKE ' . $search .
-					'  OR  a.city_jtext LIKE ' . $search . ' )'
-				);
+				$query->where('( a.city LIKE ' . $search . ' OR  a.city_jtext LIKE ' . $search . ' )');
 			}
 		}
 
 		// Filter by published state.
 		$published = $this->getState('filter.state');
 
-		if (is_numeric($published))
+		if (!empty($client) && in_array($client, $clientArray))
 		{
-			if (!empty($client))
+			if (is_numeric($published))
 			{
-				if (in_array($client, $clientArray))
-				{
-					$query->where('a.' . $client . ' = ' . (int) $published);
-				}
+				$query->where('a.' . $db->quoteName($client) . ' = ' . (int) $published);
 			}
-		}
-		elseif ($published === '')
-		{
-			if (!empty($client))
+			elseif ($published === '')
 			{
-				if (in_array($client, $clientArray))
-				{
-					$query->where('(a.' . $client . ' IN (0, 1))');
-				}
+				$query->where('(a.' . $db->quoteName($client) . ' IN (0, 1))');
 			}
 		}
 

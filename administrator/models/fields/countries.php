@@ -59,12 +59,9 @@ class JFormFieldCountries extends JFormFieldList
 		$query->select('c.id, c.country, c.country_jtext');
 		$query->from('`#__tj_country` AS c');
 
-		if ($client)
+		if ($client && in_array($client, $clientArray))
 		{
-			if (in_array($client, $clientArray))
-			{
-				$query->where('c.' . $client . ' = 1');
-			}
+			$query->where('c.' . $db->quoteName($client) . ' = 1');
 		}
 
 		$query->order($db->escape('c.ordering ASC'));

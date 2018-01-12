@@ -105,7 +105,7 @@ class TjfieldsModelCountries extends JModelList
 	/**
 	 * Build an SQL query to load the list data.
 	 *
-	 * @return  JDatabase Query
+	 * @return  JDatabaseQuery
 	 *
 	 * @since   1.6
 	 */
@@ -125,42 +125,26 @@ class TjfieldsModelCountries extends JModelList
 		$query = $db->getQuery(true);
 
 		// Select the required fields from the table.
-		$query->select(
-			$this->getState(
-				'list.select', 'a.*'
-			)
-		);
+		$query->select($this->getState('list.select', 'a.*'));
 		$query->from('`#__tj_country` AS a');
 
-		if (!empty($client))
+		if (!empty($client) && in_array($client, $clientArray))
 		{
-			if (in_array($client, $clientArray))
-			{
-				$query->select('a.' . $client . ' AS state');
-			}
+			$query->select('a.' . $db->quoteName($client) . ' AS state');
 		}
 
 		// Filter by published state.
 		$published = $this->getState('filter.state');
 
-		if (is_numeric($published))
+		if (!empty($client) && in_array($client, $clientArray))
 		{
-			if (!empty($client))
+			if (is_numeric($published))
 			{
-				if (in_array($client, $clientArray))
-				{
-					$query->where('a.' . $client . ' = ' . (int) $published);
-				}
+				$query->where('a.' . $db->quoteName($client) . ' = ' . (int) $published);
 			}
-		}
-		elseif ($published === '')
-		{
-			if (!empty($client))
+			elseif ($published === '')
 			{
-				if (in_array($client, $clientArray))
-				{
-					$query->where('(a.' . $client . ' IN (0, 1))');
-				}
+				$query->where('(a.' . $db->quoteName($client) . ' IN (0, 1))');
 			}
 		}
 
