@@ -44,6 +44,9 @@ class TjfieldsModelCountries extends JModelList
 			);
 		}
 
+		$app = JFactory::getApplication();
+		$this->dbprefix = $app->get('dbprefix');
+
 		parent::__construct($config);
 	}
 
@@ -114,13 +117,11 @@ class TjfieldsModelCountries extends JModelList
 	protected function getListQuery()
 	{
 		// Create a new query object.
-		$app = JFactory::getApplication();
 		$db = $this->getDbo();
 		$query = $db->getQuery(true);
 		$client = $this->getState('client');
-		$dbprefix = $app->get('dbprefix');
 
-		$query = "SHOW COLUMNS FROM " . $dbprefix . "tj_country";
+		$query = "SHOW COLUMNS FROM " . $db->escape($this->dbprefix) . "tj_country";
 		$db->setQuery($query);
 		$clientArray = $db->loadAssocList();
 
