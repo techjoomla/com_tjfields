@@ -194,6 +194,21 @@ class TjfieldsModelField extends JModelAdmin
 			$data['created_by'] = JFactory::getUser()->id;
 		}
 
+		$fields = $this->getForm()->getField('type')->__get('options');
+
+		foreach ($fields as $key)
+		{
+			$defaultFields[] = $key->value;
+		}
+
+		if (!in_array($data['type'], $defaultFields))
+		{
+			$msg = JText::_('TJFIELDS_ERROR_INVALID_FIELD_TYPE');
+			$this->setError($msg);
+
+			return false;
+		}
+
 		// Add clint type in data as it is not present in jform
 		$data['client_type'] = $post->get('client_type', '', 'STRING');
 
@@ -202,6 +217,14 @@ class TjfieldsModelField extends JModelAdmin
 		if ($data['type'] == "radio" || $data['type'] == "single_select" || $data['type'] == "multi_select")
 		{
 			$data['saveOption'] = 1;
+		}
+
+		if (!is_numeric($data['id']))
+		{
+			$msg = JText::_('TJFIELDS_ERROR_INVALID_ID');
+			$this->setError($msg);
+
+			return false;
 		}
 
 		// Change the name only if the field is newly created....don't do on edit fields

@@ -223,7 +223,7 @@ if (!empty($this->extra_sidebar)) {
 						<?php endif; ?>
 						</td>
 					<td>
-						<?php echo $item->type; ?>
+						<?php echo $this->escape($item->type);?>
 					</td>
 					<td>
 						<?php echo $item->client; ?>

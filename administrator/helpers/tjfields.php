@@ -102,8 +102,9 @@ class TjfieldsHelper
 		$db = JFactory::getDbo();
 		$query	= $db->getQuery(true);
 		$query->select('count(name) FROM #__tjfields_fields');
-		$query->where('name="' . $data_unique_name . '"');
+		$query->where($db->quoteName('name') . '=' . $db->quote($data_unique_name));
 		$db->setQuery($query);
+
 		$is_unique = $db->loadResult();
 
 		return $is_unique;
@@ -123,9 +124,9 @@ class TjfieldsHelper
 		$db = JFactory::getDbo();
 		$query	= $db->getQuery(true);
 		$query->update('#__tjfields_fields');
-		$query->set('name="' . $data_same_name . '_' . $id . '"');
+		$query->set($db->quoteName('name') . '=' . $db->quote($data_same_name . '_' . (int) $id));
 
-		$query->where('id=' . $id);
+		$query->where($db->quoteName('id') . '=' . (int) $id);
 		$db->setQuery($query);
 
 		if (!$db->execute())

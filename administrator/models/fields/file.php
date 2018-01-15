@@ -53,6 +53,8 @@ class JFormFieldFile extends JFormField
 	 */
 	public function __get($name)
 	{
+		require_once JPATH_SITE . '/components/com_tjfields/helpers/tjfields.php';
+
 		switch ($name)
 		{
 			case 'accept':

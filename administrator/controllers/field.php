@@ -41,22 +41,22 @@ class TjfieldsControllerField extends JControllerForm
 		$model = $this->getModel('field');
 		$save_option = $model->save_option($post);
 
-		if ($save_option)
+		if (!$save_option)
 		{
-			$msg = JText::_('COMTJFILEDS_FIELD_CREATED_SUCCESSFULLY');
+			$msg = JText::_($model->getError());
+			$this->setMessage($msg, 'error');
 			$link = JRoute::_(
-			'index.php?option=com_tjfields&view=field&layout=edit&client=' . $input->get('client', '', 'STRING')
-			. '&extension=' . $input->get('extension', '', 'STRING'), false
-			);
+					'index.php?option=com_tjfields&view=field&layout=edit&client=' . $input->get('client', '', 'STRING')
+					. '&extension=' . $input->get('extension', '', 'STRING'), false
+					);
 		}
 		else
 		{
-			$msg = JText::_('TJFIELDS_ERROR_MSG');
-			$this->setMessage(JText::plural($msg, 1));
-			$link = JRoute::_(
-			'index.php?option=com_tjfields&view=field&layout=edit&client=' . $input->get('client', '', 'STRING')
-			. '&extension=' . $input->get('extension', '', 'STRING'), false
-			);
+				$msg = JText::_('COMTJFILEDS_FIELD_CREATED_SUCCESSFULLY');
+				$link = JRoute::_(
+				'index.php?option=com_tjfields&view=field&layout=edit&client=' . $input->get('client', '', 'STRING')
+				. '&extension=' . $input->get('extension', '', 'STRING'), false
+				);
 		}
 
 		$this->setRedirect($link, $msg);
@@ -93,20 +93,21 @@ class TjfieldsControllerField extends JControllerForm
 		$model = $this->getModel('field');
 		$save_option = $model->save_option($post);
 
-		if ($save_option)
+		if (!$save_option)
 		{
-			$msg = JText::_('COMTJFILEDS_FIELD_CREATED_SUCCESSFULLY');
-			$link = JRoute::_('index.php?option=com_tjfields&view=fields&client=' . $input->get('client', '', 'STRING')
-			. '&extension=' . $input->get('extension', '', 'STRING'), false
-			);
+			$msg = JText::_($model->getError());
+			$this->setMessage($msg, 'error');
+			$link = JRoute::_(
+					'index.php?option=com_tjfields&view=field&layout=edit&client=' . $input->get('client', '', 'STRING')
+					. '&extension=' . $input->get('extension', '', 'STRING'), false
+					);
 		}
 		else
 		{
-			$msg = JText::_('TJFIELDS_ERROR_MSG');
-			$this->setMessage(JText::plural($msg, 1));
-			$link = JRoute::_('index.php?option=com_tjfields&view=fields&client=' . $input->get('client', '', 'STRING')
-			. '&extension=' . $input->get('extension', '', 'STRING'), false
-			);
+				$msg = JText::_('COMTJFILEDS_FIELD_CREATED_SUCCESSFULLY');
+				$link = JRoute::_('index.php?option=com_tjfields&view=fields&client=' . $input->get('client', '', 'STRING')
+				. '&extension=' . $input->get('extension', '', 'STRING'), false
+				);
 		}
 
 		$this->setRedirect($link, $msg);
@@ -124,21 +125,23 @@ class TjfieldsControllerField extends JControllerForm
 		$model = $this->getModel('field');
 		$field_id = $model->save_option($data);
 
-		if ($field_id)
+		if (!$field_id)
 		{
-			$msg = JText::_('COMTJFILEDS_FIELD_CREATED_SUCCESSFULLY');
+			$id = $input->get('id');
+			$msg = JText::_($model->getError());
+			$this->setMessage($msg, 'error');
 			$link = JRoute::_(
-			'index.php?option=com_tjfields&view=field&layout=edit&id=' . $field_id . '&client='
-			. $input->get('client', '', 'STRING') . '&extension=' . $input->get('extension', '', 'STRING'), false
-			);
+					'index.php?option=com_tjfields&view=field&layout=edit&id=' . $id . '&client='
+					. $input->get('client', '', 'STRING') . '&extension=' . $input->get('extension', '', 'STRING'), false
+					);
 		}
 		else
 		{
-			$msg = JText::_('TJFIELDS_ERROR_MSG');
-			$link = JRoute::_(
-			'index.php?option=com_tjfields&view=field&layout=edit&id=' . $field_id . '&client='
-			. $input->get('client', '', 'STRING') . '&extension=' . $input->get('extension', '', 'STRING'), false
-			);
+				$msg = JText::_('COMTJFILEDS_FIELD_CREATED_SUCCESSFULLY');
+				$link = JRoute::_(
+				'index.php?option=com_tjfields&view=field&layout=edit&id=' . $field_id . '&client='
+				. $input->get('client', '', 'STRING') . '&extension=' . $input->get('extension', '', 'STRING'), false
+				);
 		}
 
 		$this->setRedirect($link, $msg);

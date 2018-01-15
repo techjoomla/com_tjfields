@@ -407,9 +407,25 @@ class TjfieldsHelper
 				return false;
 			}
 
-			$okMIMETypes    = 'pdf,PDF,doc,DOC,docx,DOCX,xls,XLS,xlsx,XLSX,jpeg,JPEG,png,PNG,jpg,JPG';
-			$validMIMEArray = explode(',', $okMIMETypes);
+			JTable::addIncludePath(JPATH_ADMINISTRATOR . "/components/com_tjfields/tables");
+			JModelLegacy::addIncludePath(JPATH_ADMINISTRATOR . "/components/com_tjfields/models");
+			$fieldModel = JModelLegacy::getInstance('Field', 'TjfieldsModel', array("ignore_request" => 1));
 
+			$fieldId = (int) $file_field_data->id;
+			$fieldItems = $fieldModel->getItem($fieldId);
+			$acceptType = $fieldItems->params['accept'];
+
+			if (empty($acceptType))
+			{
+				$okMIMETypes    = 'pdf,PDF,doc,DOC,docx,DOCX,xls,XLS,xlsx,XLSX,jpeg,JPEG,png,PNG,jpg,JPG';
+			}
+			else
+			{
+				$okMIMETypes = $acceptType;
+				$okMIMETypes = str_ireplace('.', '', $okMIMETypes);
+			}
+
+			$validMIMEArray = explode(',', $okMIMETypes);
 			$client = explode('.', $insert_obj_file->client);
 
 			$filename  = JFile::stripExt($singleFile['name']);
