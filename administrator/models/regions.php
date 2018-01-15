@@ -65,6 +65,9 @@ class TjfieldsModelRegions extends JModelList
 		// Initialise variables.
 		$app = JFactory::getApplication('administrator');
 
+		$client = $app->input->get('client', '', 'STRING');
+		$this->setState('client', $client);
+
 		// Set ordering.
 		$orderCol = $app->getUserStateFromRequest($this->context . '.filter_order', 'filter_order');
 
@@ -138,7 +141,7 @@ class TjfieldsModelRegions extends JModelList
 		$app = JFactory::getApplication();
 		$db = $this->getDbo();
 		$query = $db->getQuery(true);
-		$client = JFactory::getApplication()->input->get('client', '', 'STRING');
+		$client = $this->getState('client');
 		$dbprefix = $app->get('dbprefix');
 		$query = "SHOW COLUMNS FROM " . $dbprefix . "tj_region";
 		$db->setQuery($query);

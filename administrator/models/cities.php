@@ -66,6 +66,9 @@ class TjfieldsModelCities extends JModelList
 		// Initialise variables.
 		$app = JFactory::getApplication('administrator');
 
+		$client = $app->input->get('client', '', 'STRING');
+		$this->setState('client', $client);
+
 		// Set ordering.
 		$orderCol = $app->getUserStateFromRequest($this->context . '.filter_order', 'filter_order');
 
@@ -143,7 +146,7 @@ class TjfieldsModelCities extends JModelList
 		$app = JFactory::getApplication();
 		$db = $this->getDbo();
 		$query = $db->getQuery(true);
-		$client = $app->input->get('client', '', 'STRING');
+		$client = $this->getState('client');
 		$dbprefix = $app->get('dbprefix');
 		$query = "SHOW COLUMNS FROM " . $dbprefix . "tj_city";
 		$db->setQuery($query);

@@ -63,6 +63,8 @@ class TjfieldsModelCountries extends JModelList
 	{
 		// Initialise variables.
 		$app = JFactory::getApplication('administrator');
+		$client = $app->input->get('client', '', 'STRING');
+		$this->setState('client', $client);
 
 		// Load the filter search
 		$search = $app->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
@@ -115,7 +117,7 @@ class TjfieldsModelCountries extends JModelList
 		$app = JFactory::getApplication();
 		$db = $this->getDbo();
 		$query = $db->getQuery(true);
-		$client = $app->input->get('client', '', 'STRING');
+		$client = $this->getState('client');
 		$dbprefix = $app->get('dbprefix');
 
 		$query = "SHOW COLUMNS FROM " . $dbprefix . "tj_country";
