@@ -164,7 +164,7 @@ class TjfieldsModelField extends JModelAdmin
 	 *
 	 * @param   Array  $post  Post
 	 *
-	 * @return  flag
+	 * @return  mixed
 	 *
 	 * @since  1.6
 	 */
