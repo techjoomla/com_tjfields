@@ -348,7 +348,7 @@ class TjfieldsHelper
 	 * @param   string  $insert_obj_file  file object
 	 * @param   object  $file_field_data  data
 	 *
-	 * @return  object|boolean
+	 * @return  mixed
 	 */
 	public function uploadFile($singleFile, $insert_obj_file, $file_field_data)
 	{

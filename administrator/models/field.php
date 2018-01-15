@@ -413,7 +413,7 @@ class TjfieldsModelField extends JModelAdmin
 	 * @param   Array    $jsarray  JSArray
 	 * @param   Integer  $fieldid  Field Id
 	 *
-	 * @return  flag
+	 * @return  boolean
 	 *
 	 * @since  1.6
 	 */
