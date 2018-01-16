@@ -21,6 +21,7 @@ jimport('joomla.application.component.modellist');
  */
 class TjfieldsModelCountries extends JModelList
 {
+	protected $dbprefix;
 	/**
 	 * Constructor.
 	 *
