@@ -201,12 +201,15 @@ class TjfieldsModelField extends JModelAdmin
 			$defaultFields[] = $key->value;
 		}
 
-		if (!in_array($data['type'], $defaultFields))
+		if (!empty($defaultFields))
 		{
-			$msg = JText::_('TJFIELDS_ERROR_INVALID_FIELD_TYPE');
-			$this->setError($msg);
+			if (!in_array($data['type'], $defaultFields))
+			{
+				$msg = JText::_('TJFIELDS_ERROR_INVALID_FIELD_TYPE');
+				$this->setError($msg);
 
-			return false;
+				return false;
+			}
 		}
 
 		// Add clint type in data as it is not present in jform
