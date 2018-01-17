@@ -190,7 +190,7 @@ class TjfieldsHelper
 					{
 						$filename = $this->uploadFile($singleFile, $insert_obj_file, $file_field_data);
 
-						if ($filename)
+						if ($filename !== false)
 						{
 							$if_edit_file_id        = $this->checkForAlreadyexitsDetails($data, $file_field_data->id);
 

@@ -448,7 +448,7 @@ class TjfieldsModelField extends JModelAdmin
 	 *
 	 * @param   Integer  $delete_ids  Id for delete record
 	 *
-	 * @return  flag
+	 * @return  mixed  A database cursor resource on success, boolean false on failure.
 	 *
 	 * @since  1.6
 	 */
