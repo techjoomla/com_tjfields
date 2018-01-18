@@ -14,6 +14,8 @@ JFormHelper::loadFieldClass('list');
 
 /**
  * Supports an HTML select list of categories
+ *
+ * @since  2.2
  */
 class JFormFieldCountries extends JFormFieldList
 {
@@ -42,17 +44,24 @@ class JFormFieldCountries extends JFormFieldList
 	 */
 	protected function getOptions()
 	{
+		$app = JFactory::getApplication();
 		$db = JFactory::getDbo();
 		$query = $db->getQuery(true);
-		$client = JFactory::getApplication()->input->get('client', '', 'STRING');
+		$client = $app->input->get('client', '', 'STRING');
+		$dbprefix = $app->get('dbprefix');
+		$query = "SHOW COLUMNS FROM " . $db->escape($dbprefix) . "tj_country";
+		$db->setQuery($query);
+		$clientArray = $db->loadAssocList();
+
+		$query = $db->getQuery(true);
 
 		// Select the required fields from the table.
 		$query->select('c.id, c.country, c.country_jtext');
 		$query->from('`#__tj_country` AS c');
 
-		if ($client)
+		if ($client && in_array($client, $clientArray))
 		{
-			$query->where('c.' . $client .' = 1');
+			$query->where('c.' . $db->quoteName($client) . ' = 1');
 		}
 
 		$query->order($db->escape('c.ordering ASC'));

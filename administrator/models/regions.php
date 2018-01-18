@@ -21,6 +21,7 @@ jimport('joomla.application.component.modellist');
  */
 class TjfieldsModelRegions extends JModelList
 {
+	protected $dbprefix;
 	/**
 	 * Constructor.
 	 *
@@ -45,6 +46,9 @@ class TjfieldsModelRegions extends JModelList
 			);
 		}
 
+		$app = JFactory::getApplication();
+		$this->dbprefix = $app->get('dbprefix');
+
 		parent::__construct($config);
 	}
 
@@ -64,6 +68,9 @@ class TjfieldsModelRegions extends JModelList
 	{
 		// Initialise variables.
 		$app = JFactory::getApplication('administrator');
+
+		$client = $app->input->get('client', '', 'STRING');
+		$this->setState('client', $client);
 
 		// Set ordering.
 		$orderCol = $app->getUserStateFromRequest($this->context . '.filter_order', 'filter_order');
@@ -137,20 +144,30 @@ class TjfieldsModelRegions extends JModelList
 		// Create a new query object.
 		$db = $this->getDbo();
 		$query = $db->getQuery(true);
-		$client = JFactory::getApplication()->input->get('client', '', 'STRING');
+		$client = $this->getState('client');
+		$query = "SHOW COLUMNS FROM " . $db->escape($this->dbprefix) . "tj_region";
+		$db->setQuery($query);
+		$clientArray = $db->loadAssocList();
+
+		$query = $db->getQuery(true);
 
 		// Select the required fields from the table.
-		$query->select(
-			$this->getState(
-				'list.select', 'a.*'
-			)
-		);
+		$query->select($this->getState('list.select', 'a.*'));
 
 		$query->from('`#__tj_region` AS a');
-		$query->select('a.' . $client .' AS state');
+
+		if (!empty($client) && in_array($client, $clientArray))
+		{
+			$query->select('a.' . $db->quoteName($client) . ' AS state');
+		}
+
 		$query->select('c.country');
 		$query->join('LEFT', '`#__tj_country` AS c ON c.id=a.country_id');
-		$query->where('c.' . $client .' = 1');
+
+		if (!empty($client) && in_array($client, $clientArray))
+		{
+			$query->where('c.' . $db->quoteName($client) . ' = 1');
+		}
 
 		// Filter by search in title
 		$search = $this->getState('filter.search');
@@ -175,13 +192,16 @@ class TjfieldsModelRegions extends JModelList
 		// Filter by published state.
 		$published = $this->getState('filter.state');
 
-		if (is_numeric($published))
+		if (!empty($client) && in_array($client, $clientArray))
 		{
-			$query->where('a.' . $client .' = ' . (int) $published);
-		}
-		elseif ($published === '')
-		{
-			$query->where('(a.' . $client .' IN (0, 1))');
+			if (is_numeric($published))
+			{
+				$query->where('a.' . $db->quoteName($client) . ' = ' . (int) $published);
+			}
+			elseif ($published === '')
+			{
+				$query->where('(a.' . $db->quoteName($client) . ' IN (0, 1))');
+			}
 		}
 
 		// Filter by country

@@ -21,6 +21,7 @@ jimport('joomla.application.component.modellist');
  */
 class TjfieldsModelCountries extends JModelList
 {
+	protected $dbprefix;
 	/**
 	 * Constructor.
 	 *
@@ -44,6 +45,9 @@ class TjfieldsModelCountries extends JModelList
 			);
 		}
 
+		$app = JFactory::getApplication();
+		$this->dbprefix = $app->get('dbprefix');
+
 		parent::__construct($config);
 	}
 
@@ -63,6 +67,8 @@ class TjfieldsModelCountries extends JModelList
 	{
 		// Initialise variables.
 		$app = JFactory::getApplication('administrator');
+		$client = $app->input->get('client', '', 'STRING');
+		$this->setState('client', $client);
 
 		// Load the filter search
 		$search = $app->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
@@ -114,28 +120,36 @@ class TjfieldsModelCountries extends JModelList
 		// Create a new query object.
 		$db = $this->getDbo();
 		$query = $db->getQuery(true);
-		$client = JFactory::getApplication()->input->get('client', '', 'STRING');
+		$client = $this->getState('client');
+
+		$query = "SHOW COLUMNS FROM " . $db->escape($this->dbprefix) . "tj_country";
+		$db->setQuery($query);
+		$clientArray = $db->loadAssocList();
+
+		$query = $db->getQuery(true);
 
 		// Select the required fields from the table.
-		$query->select(
-			$this->getState(
-				'list.select', 'a.*'
-			)
-		);
+		$query->select($this->getState('list.select', 'a.*'));
 		$query->from('`#__tj_country` AS a');
 
-		$query->select('a.' . $client .' AS state');
+		if (!empty($client) && in_array($client, $clientArray))
+		{
+			$query->select('a.' . $db->quoteName($client) . ' AS state');
+		}
 
 		// Filter by published state.
 		$published = $this->getState('filter.state');
 
-		if (is_numeric($published))
+		if (!empty($client) && in_array($client, $clientArray))
 		{
-			$query->where('a.' . $client .' = '.(int) $published);
-		}
-		else if ($published === '')
-		{
-			$query->where('(a.' . $client .' IN (0, 1))');
+			if (is_numeric($published))
+			{
+				$query->where('a.' . $db->quoteName($client) . ' = ' . (int) $published);
+			}
+			elseif ($published === '')
+			{
+				$query->where('(a.' . $db->quoteName($client) . ' IN (0, 1))');
+			}
 		}
 
 		// Filter by search in title
