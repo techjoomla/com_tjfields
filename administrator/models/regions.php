@@ -69,7 +69,7 @@ class TjfieldsModelRegions extends JModelList
 		// Initialise variables.
 		$app = JFactory::getApplication('administrator');
 
-		$client = $app->input->get('client', '', 'STRING');
+		$client = $app->input->get('client', '', 'cmd');
 		$this->setState('client', $client);
 
 		// Set ordering.
