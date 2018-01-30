@@ -152,7 +152,13 @@ class TjfieldsModelCities extends JModelList
 		$client = $this->getState('client');
 		$query = "SHOW COLUMNS FROM " . $db->escape($this->dbprefix) . "tj_city";
 		$db->setQuery($query);
-		$clientArray = $db->loadAssocList();
+		$clientRowData = $db->loadAssocList();
+		$clientArray = array();
+
+		foreach ($clientRowData as $clientData)
+		{
+			$clientArray[] = $clientData['Field'];
+		}
 
 		$query = $db->getQuery(true);
 

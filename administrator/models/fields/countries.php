@@ -51,7 +51,13 @@ class JFormFieldCountries extends JFormFieldList
 		$dbprefix = $app->get('dbprefix');
 		$query = "SHOW COLUMNS FROM " . $db->escape($dbprefix) . "tj_country";
 		$db->setQuery($query);
-		$clientArray = $db->loadAssocList();
+		$clientRowData = $db->loadAssocList();
+		$clientArray = array();
+
+		foreach ($clientRowData as $clientData)
+		{
+			$clientArray[] = $clientData['Field'];
+		}
 
 		$query = $db->getQuery(true);
 

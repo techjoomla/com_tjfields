@@ -124,7 +124,13 @@ class TjfieldsModelCountries extends JModelList
 
 		$query = "SHOW COLUMNS FROM " . $db->escape($this->dbprefix) . "tj_country";
 		$db->setQuery($query);
-		$clientArray = $db->loadAssocList();
+		$clientRowData = $db->loadAssocList();
+		$clientArray = array();
+
+		foreach ($clientRowData as $clientData)
+		{
+			$clientArray[] = $clientData['Field'];
+		}
 
 		$query = $db->getQuery(true);
 
