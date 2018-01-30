@@ -47,11 +47,17 @@ class JFormFieldCountries extends JFormFieldList
 		$app = JFactory::getApplication();
 		$db = JFactory::getDbo();
 		$query = $db->getQuery(true);
-		$client = $app->input->get('client', '', 'STRING');
+		$client = $app->input->get('client', '', 'cmd');
 		$dbprefix = $app->get('dbprefix');
 		$query = "SHOW COLUMNS FROM " . $db->escape($dbprefix) . "tj_country";
 		$db->setQuery($query);
-		$clientArray = $db->loadAssocList();
+		$clientRowData = $db->loadAssocList();
+		$clientArray = array();
+
+		foreach ($clientRowData as $clientData)
+		{
+			$clientArray[] = $clientData['Field'];
+		}
 
 		$query = $db->getQuery(true);
 

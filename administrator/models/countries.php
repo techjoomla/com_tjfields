@@ -3,7 +3,7 @@
  * @version    SVN: <svn_id>
  * @package    Tjfields
  * @author     Techjoomla <extensions@techjoomla.com>
- * @copyright  Copyright (c) 2009-2015 TechJoomla. All rights reserved.
+ * @copyright  Copyright (c) 2009-2018 TechJoomla. All rights reserved.
  * @license    GNU General Public License version 2 or later.
  */
 
@@ -67,7 +67,7 @@ class TjfieldsModelCountries extends JModelList
 	{
 		// Initialise variables.
 		$app = JFactory::getApplication('administrator');
-		$client = $app->input->get('client', '', 'STRING');
+		$client = $app->input->get('client', '', 'cmd');
 		$this->setState('client', $client);
 
 		// Load the filter search
@@ -124,7 +124,13 @@ class TjfieldsModelCountries extends JModelList
 
 		$query = "SHOW COLUMNS FROM " . $db->escape($this->dbprefix) . "tj_country";
 		$db->setQuery($query);
-		$clientArray = $db->loadAssocList();
+		$clientRowData = $db->loadAssocList();
+		$clientArray = array();
+
+		foreach ($clientRowData as $clientData)
+		{
+			$clientArray[] = $clientData['Field'];
+		}
 
 		$query = $db->getQuery(true);
 

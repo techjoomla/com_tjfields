@@ -69,7 +69,7 @@ class TjfieldsModelRegions extends JModelList
 		// Initialise variables.
 		$app = JFactory::getApplication('administrator');
 
-		$client = $app->input->get('client', '', 'STRING');
+		$client = $app->input->get('client', '', 'cmd');
 		$this->setState('client', $client);
 
 		// Set ordering.
@@ -83,12 +83,13 @@ class TjfieldsModelRegions extends JModelList
 		$this->setState('list.ordering', $orderCol);
 
 		// Set ordering direction.
+		/* Unused Code
 		$listOrder = $app->getUserStateFromRequest($this->context . 'filter_order_Dir', 'filter_order_Dir');
 
 		if (!in_array(strtoupper($listOrder), array('ASC', 'DESC', '')))
 		{
 			$listOrder = 'ASC';
-		}
+		}*/
 
 		// Load the filter search
 		$search = $app->getUserStateFromRequest($this->context . 'filter.search', 'filter_search');
@@ -147,7 +148,13 @@ class TjfieldsModelRegions extends JModelList
 		$client = $this->getState('client');
 		$query = "SHOW COLUMNS FROM " . $db->escape($this->dbprefix) . "tj_region";
 		$db->setQuery($query);
-		$clientArray = $db->loadAssocList();
+		$clientRowData = $db->loadAssocList();
+		$clientArray = array();
+
+		foreach ($clientRowData as $clientData)
+		{
+			$clientArray[] = $clientData['Field'];
+		}
 
 		$query = $db->getQuery(true);
 
