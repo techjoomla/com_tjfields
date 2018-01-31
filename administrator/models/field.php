@@ -530,12 +530,7 @@ class TjfieldsModelField extends JModelAdmin
 	 */
 	protected function preprocessForm(JForm $form, $data, $group = 'content')
 	{
-		$dataObject = $data;
-
-		if (is_array($dataObject))
-		{
-			$dataObject = (object) $dataObject;
-		}
+		$dataObject = (object) $data;
 
 		if (empty($dataObject->type))
 		{
