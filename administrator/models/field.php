@@ -521,7 +521,7 @@ class TjfieldsModelField extends JModelAdmin
 	 * Method to inject field attributes in jform object
 	 *
 	 * @param   Integer  $form   form
-	 * @param   String   $data   form
+	 * @param   array    $data   form
 	 * @param   String   $group  group
 	 *
 	 * @return  Boolean
