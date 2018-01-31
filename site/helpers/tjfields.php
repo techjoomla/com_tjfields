@@ -200,7 +200,7 @@ class TjfieldsHelper
 
 							if ($insert_obj_file->value)
 							{
-								if ($if_edit_file_id)
+								if (! empty($if_edit_file_id))
 								{
 									$insert_obj_file->id = $if_edit_file_id;
 									$result = $db->updateObject('#__tjfields_fields_value', $insert_obj_file, 'id');
@@ -242,7 +242,7 @@ class TjfieldsHelper
 						{
 							$insert_obj->value = $fvalue;
 
-							if ($if_edit_id)
+							if (!empty($if_edit_id))
 							{
 								$insert_obj->id = $if_edit_id;
 								$db->updateObject('#__tjfields_fields_value', $insert_obj, 'id');
@@ -714,7 +714,7 @@ class TjfieldsHelper
 	 * check if the fields values are already store. so it means we need to edit the entry
 	 *
 	 * @param   array  $data      Post array which content (client, content_id, Fname, Fvalue, u_id)
-	 * @param   array  $field_id  id of field
+	 * @param   int    $field_id  id of field
 	 *
 	 * @return  array
 	 */
@@ -977,7 +977,7 @@ class TjfieldsHelper
 
 				foreach ($fieldAndFieldOptionsList as $fieldId => $fFieldAndFieldOptions)
 				{
-					if (empty($fromFlag))
+					if (!$fromFlag)
 					{
 						$query->from('#__tjfields_fields_value AS fv' . $i);
 						$query->where("fv" . $i . ".option_id IN (" . $fFieldAndFieldOptions->optionsStr . ")");
