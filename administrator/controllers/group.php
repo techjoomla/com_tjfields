@@ -19,10 +19,13 @@ jimport('joomla.application.component.controllerform');
  */
 class TjfieldsControllerGroup extends JControllerForm
 {
+	protected $view_list;
+
 	/**
 	 * Constructor
 	 *
 	 */
+
 	public function __construct()
 	{
 		$this->view_list = 'groups';
@@ -45,13 +48,12 @@ class TjfieldsControllerGroup extends JControllerForm
 		{
 			$msg = JText::_('COMTJFILEDS_GROUP_CREATED_SUCCESSFULLY');
 			$link = JRoute::_('index.php?option=com_tjfields&view=group&layout=edit', false);
-
 			$link .= '&client=' . $input->get('client', '', 'STRING') . '&id=' . $if_saved;
 		}
 		else
 		{
 			$msg = JText::_('TJFIELDS_ERROR_MSG');
-			$this->setMessage(JText::plural($msg, 1));
+			$this->setMessage(JText::/** @scrutinizer ignore-call */plural($msg, 1));
 			$link = JRoute::_('index.php?option=com_tjfields&view=group&layout=edit', false);
 			$link .= '&client=' . $input->get('client', '', 'STRING') . '&id=' . $input->get('id');
 		}
@@ -156,7 +158,7 @@ class TjfieldsControllerGroup extends JControllerForm
 
 		$link .= '&client=' . $input->get('client', '', 'STRING');
 
-		$this->setRedirect($link, $msg);
+		$this->setRedirect($link, $msg = null);
 	}
 
 	/**
@@ -169,6 +171,6 @@ class TjfieldsControllerGroup extends JControllerForm
 		$input = JFactory::getApplication()->input;
 		$link = JRoute::_('index.php?option=com_tjfields&view=groups&client=' . $input->get('client', '', 'STRING'), false);
 
-		$this->setRedirect($link, $msg);
+		$this->setRedirect($link, $msg = null);
 	}
 }
