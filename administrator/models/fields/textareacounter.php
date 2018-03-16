@@ -107,11 +107,18 @@ class JFormFieldTextareacounter extends JFormFieldTextarea
 		$html = parent::getInput();
 		$html .= $this->getCounterMask();
 
-		// @TODO : Convert this into a snippet that loads only once
 		// using the .charcounter selector
 		$doc = JFactory::getDocument();
 		$doc->addScriptDeclaration('
 			jQuery(document).ready(function() {
+
+				jQuery(".charcounter").each(function() {
+					let usedcharlength = parseInt(jQuery(this).val().length);
+					let maxlength = parseInt(jQuery(this).siblings("span").find(".charscontainer_maxlength").text());
+					let availablecharlength = maxlength - usedcharlength;
+					jQuery(this).siblings("span").find(".charscontainer_remaining").text(availablecharlength);
+				})
+
 				jQuery("#' . $this->id . '").on("keyup", function() {
 					jQuery("#usedchars_' . $this->id . '").text(jQuery("#' . $this->id . '").val().length);
 					jQuery("#remainingchars_' . $this->id . '").text((' . $this->maxlength . ' - jQuery("#' . $this->id . '").val().length));
