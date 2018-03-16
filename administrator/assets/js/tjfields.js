@@ -1,23 +1,22 @@
-jQuery(document).ready(function(){
-	Joomla.submitbutton = function(task)
-	{
-		if (task == 'fields.delete')
-		{
-			if (confirm(Joomla.JText._('COM_TJFIELD_CONFIRM_DELETE_FIELD')) == false)
-			{
-				return false;
-			}
+jQuery(document).ready(function() {
+    Joomla.submitbutton = function(task) {
+        if (task == 'fields.delete') {
+            if (confirm(Joomla.JText._('COM_TJFIELD_CONFIRM_DELETE_FIELD')) == false) {
+                return false;
+            }
 
-			if (confirm(Joomla.JText._('COM_TJFIELD_CONFIRM_DELETE_REFRENCE_DATA')) == false)
-			{
-				return false;
-			}
-		}
-		Joomla.submitform(task);
-	}
+            if (confirm(Joomla.JText._('COM_TJFIELD_CONFIRM_DELETE_REFRENCE_DATA')) == false) {
+                return false;
+            }
+        }
 
-	/*Required fields valiadtion*/
-    document.formvalidator.setHandler('min100', function(value, element) {
+        Joomla.submitform(task);
+
+        return false;
+    }
+
+    /*Required fields valiadtion*/
+    document.formvalidator.setHandler('min100', function(value) {
         value = value.trim();
         if (value.trim().length < 100) {
             return false;
@@ -25,7 +24,7 @@ jQuery(document).ready(function(){
         return true;
     });
 
-    document.formvalidator.setHandler('min200', function(value, element) {
+    document.formvalidator.setHandler('min200', function(value) {
         value = value.trim();
         if (value.trim().length < 200) {
             return false;
@@ -33,7 +32,7 @@ jQuery(document).ready(function(){
         return true;
     });
 
-    document.formvalidator.setHandler('min250', function(value, element) {
+    document.formvalidator.setHandler('min250', function(value) {
         value = value.trim();
         if (value.trim().length < 250) {
             return false;
@@ -41,7 +40,7 @@ jQuery(document).ready(function(){
         return true;
     });
 
-    document.formvalidator.setHandler('min300', function(value, element) {
+    document.formvalidator.setHandler('min300', function(value) {
         value = value.trim();
         if (value.trim().length < 300) {
             return false;
@@ -49,13 +48,13 @@ jQuery(document).ready(function(){
         return true;
     });
 
-    document.formvalidator.setHandler('blank-space', function(value, element) {
+    document.formvalidator.setHandler('blank-space', function(value) {
         if (value.trim() == '') {
             return false;
         }
         return true;
     });
-    document.formvalidator.setHandler('numeric', function(value, element) {
+    document.formvalidator.setHandler('numeric', function(value) {
         if (Number(value) <= 0) {
             return false;
         }
@@ -76,12 +75,12 @@ jQuery(document).ready(function(){
         }
         return true;
     });
-    document.formvalidator.setHandler('url', function(value, element) {
-        regex = /\b(?:(?:https?|ftp):\/\/|www\.)[-a-z0-9+&#\/%?=~_|!:,.;]*[-a-z0-9+&#\/%=~_|]/i;
+    document.formvalidator.setHandler('url', function(value) {
+        let regex = /\b(?:(?:https?|ftp):\/\/|www\.)[-a-z0-9+&#\/%?=~_|!:,.;]*[-a-z0-9+&#\/%=~_|]/i;
         return regex.test(value);
     });
 
-	/* It restrict the user for manual input in datepicker field */
+    /* It restrict the user for manual input in datepicker field */
     jQuery('.calendar-textfield-class').focusin(function(event) {
         event.preventDefault();
         jQuery(this).next('button').focus().click();
