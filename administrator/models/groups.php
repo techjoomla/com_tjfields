@@ -216,7 +216,7 @@ class TjfieldsModelGroups extends JModelList
 	 * @param   array  $items  id.
 	 * @param   INT    $state  id.
 	 *
-	 * @return	JDatabaseQuery
+	 * @return	mixed
 	 *
 	 * @since	1.6
 	 */
