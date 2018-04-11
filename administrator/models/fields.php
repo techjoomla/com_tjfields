@@ -219,18 +219,18 @@ class TjfieldsModelFields extends JModelList
 	/**
 	 * Method To plublish and unpublish groups..
 	 *
-	 * @param   Integer  $items  Id
+	 * @param   array  $items  Id
 	 * @param   Integer  $state  State
 	 *
 	 * @return  Boolean
 	 *
 	 * @since  1.6
 	 */
-	public function setItemState($items, $state)
+	public function setItemState($items = array(), $state)
 	{
 		$db = JFactory::getDBO();
 
-		if (is_array($items))
+		if (!empty($items))
 		{
 			foreach ($items as $id)
 			{
