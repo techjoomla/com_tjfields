@@ -575,12 +575,7 @@ class TjfieldsHelper
 			$query->where($conditions);
 			$db->setQuery($query);
 
-			if (!$db->execute())
-			{
-				$this->setError($this->_db->getErrorMsg());
-
-				return false;
-			}
+			$db->execute();
 		}
 	}
 }
