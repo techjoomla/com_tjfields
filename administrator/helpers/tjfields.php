@@ -498,4 +498,89 @@ class TjfieldsHelper
 	{
 		JText::script('COM_TJFIELDS_LABEL_WHITESPACES_NOT_ALLOWED');
 	}
+
+	/**
+	 * Get fields by groups 
+	 *
+	 * @param   array  $groupIds  group id
+	 *
+	 * @return array of option for the particular field
+	 */
+	public function getFieldsByGroups($groupIds = array())
+	{
+		if (!empty($groupIds))
+		{
+			$db = JFactory::getDbo();
+			$query	= $db->getQuery(true);
+			$query->select('id');
+			$query->from($db->quoteName('#__tjfields_fields'));
+			$query->where($db->quoteName('group_id') . 'in(' . implode(',', $groupIds) . ')');
+			$db->setQuery($query);
+
+			$fields = $db->loadColumn();
+
+			if (!empty($fields))
+			{
+				return $fields;
+			}
+		}
+	}
+
+	/**
+	 * Get field values which are stored in field value table using userid table.
+	 *
+	 * @param   int  $userId  user id
+	 *
+	 * @return array
+	 */
+	public function getFieldValueByUserId($userId)
+	{
+		if ($userId)
+		{
+			$db = JFactory::getDbo();
+			$query	= $db->getQuery(true);
+			$query->select('id');
+			$query->from($db->quoteName('#__tjfields_fields_value'));
+			$query->where($db->quoteName('user_id') . '=' . (int) $userId);
+			$db->setQuery($query);
+
+			$fields = $db->loadColumn();
+
+			if (!empty($fields))
+			{
+				return $fields;
+			}
+		}
+	}
+
+	/**
+	 * check if the fields values are already store. so it means we need to edit the entry
+	 *
+	 * @param   array  $fieldValueEntryId  Ids to delete the entries from table #__tjfields_fields_value
+	 *
+	 * @return  boolean
+	 */
+	public function deleteFieldValueEntry($fieldValueEntryId)
+	{
+		if (!empty($fieldValueEntryId))
+		{
+			$db = JFactory::getDbo();
+
+			$query = $db->getQuery(true);
+
+			// Delete all custom keys for user 1001.
+			$conditions = array($db->quoteName('id') . ' IN (' . implode(',', $fieldValueEntryId) . ') ');
+
+			$query->delete($db->quoteName('#__tjfields_fields_value'));
+			$query->where($conditions);
+			$db->setQuery($query);
+
+			if (!$db->execute())
+			{
+				$this->setError($this->_db->getErrorMsg());
+
+				return false;
+			}
+		}
+	}
 }

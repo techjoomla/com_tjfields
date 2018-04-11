@@ -70,6 +70,9 @@ class TjfieldsModelFields extends JModelList
 		$published = $app->getUserStateFromRequest($this->context . '.filter.state', 'filter_published', '', 'string');
 		$this->setState('filter.state', $published);
 
+		$createdBy = $app->getUserStateFromRequest($this->context . '.filter.created_by', 'filter_created_by');
+		$this->setState('filter.created_by', $createdBy);
+
 		// Filtering field_type
 		$this->setState('filter.type', $app->getUserStateFromRequest($this->context . '.filter.type', 'filter_field_type', '', 'string'));
 
@@ -120,7 +123,13 @@ class TjfieldsModelFields extends JModelList
 		// Join over the user field 'created_by'
 		$query->select('created_by.name AS created_by');
 		$query->join('LEFT', '#__users AS created_by ON created_by.id = a.created_by');
-		$query->where('a.client="' . $input->get('client', '', 'STRING') . '"');
+
+		$created_by = $this->getState('filter.created_by');
+
+		if ($created_by)
+		{
+			$query->where($db->quoteName('a.created_by') . ' = ' . (int) $created_by);
+		}
 
 		// Filter by published state
 		$published = $this->getState('filter.state');
@@ -151,7 +160,10 @@ class TjfieldsModelFields extends JModelList
 		}
 		else
 		{
-			$query->where('a.client= ' . $db->quote($input->get('client', '', 'STRING')));
+			if ($input->get('client', '', 'STRING'))
+			{
+				$query->where('a.client= ' . $db->quote($input->get('client', '', 'STRING')));
+			}
 		}
 
 		// Filter by search in title

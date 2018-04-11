@@ -38,6 +38,8 @@ class TjfieldsModelGroup extends JModelAdmin
 	 */
 	public function getTable($type = 'Group', $prefix = 'TjfieldsTable', $config = array())
 	{
+		JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_tjfields/tables');
+
 		return JTable::getInstance($type, $prefix, $config);
 	}
 

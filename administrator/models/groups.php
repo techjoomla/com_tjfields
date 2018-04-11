@@ -71,6 +71,9 @@ class TjfieldsModelGroups extends JModelList
 		$search = $app->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
 		$this->setState('filter.search', $search);
 
+		$createdBy = $app->getUserStateFromRequest($this->context . '.filter.created_by', 'filter_created_by');
+		$this->setState('filter.created_by', $createdBy);
+
 		$published = $app->getUserStateFromRequest($this->context . '.filter.state', 'filter_published', '', 'string');
 		$this->setState('filter.state', $published);
 
@@ -134,13 +137,23 @@ class TjfieldsModelGroups extends JModelList
 		// Filter by client
 		$client = $this->getState('filter.client');
 
+		$created_by = $this->getState('filter.created_by');
+
+		if ($created_by)
+		{
+			$query->where($db->quoteName('a.created_by') . ' = ' . (int) $created_by);
+		}
+
 		if ($client)
 		{
 			$query->where('a.client = ' . $db->quote($client));
 		}
 		else
 		{
+			if ($input->get('client', '', 'STRING'))
+			{
 			$query->where('a.client= ' . $db->quote($input->get('client', '', 'STRING')));
+			}
 		}
 
 		// Filter by published state
@@ -186,7 +199,7 @@ class TjfieldsModelGroups extends JModelList
 	/**
 	 * Build an SQL query to load the list data.
 	 *
-	 * @return	JDatabaseQuery
+	 * @return  mixed  An array of data items on success, false on failure.
 	 *
 	 * @since	1.6
 	 */
