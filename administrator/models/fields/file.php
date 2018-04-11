@@ -53,6 +53,8 @@ class JFormFieldFile extends JFormField
 	 */
 	public function __get($name)
 	{
+		require_once JPATH_SITE . '/components/com_tjfields/helpers/tjfields.php';
+
 		switch ($name)
 		{
 			case 'accept':
@@ -126,6 +128,11 @@ class JFormFieldFile extends JFormField
 	{
 		$layoutData = $this->getLayoutData();
 		$html = $this->getRenderer($this->layout)->render($layoutData);
+		$tjFieldHelper = new TjfieldsHelper;
+
+		// Load backend language file
+		$lang = JFactory::getLanguage();
+		$lang->load('com_tjfields', JPATH_SITE);
 
 		if (!empty($layoutData["value"]))
 		{
@@ -135,19 +142,12 @@ class JFormFieldFile extends JFormField
 			$fileInfo = new SplFileInfo($layoutData["value"]);
 			$extension = $fileInfo->getExtension();
 
-			$arr_image_type = array('jpeg', 'JPEG', 'png', 'PNG', 'jpg','JPG');
+			$mediaLink = $tjFieldHelper->getMediaUrl($layoutData["value"]);
 
-			if (!empty($layoutData["value"]))
+			if (!empty($mediaLink))
 			{
-				if ((in_array($extension, $arr_image_type)))
-				{
-					$html .= '<div><img height="80" width="100" src="' . JUri::root(true) . $layoutData["value"] . '"></div>';
-				}
-				else
-				{
-					$html .= '<div><a href="' . JUri::root(true) . $layoutData["value"]
-					. '" target="_blank" src="' . JUri::root() . $layoutData["value"] . '">' . JText::_("JGLOBAL_PREVIEW") . '</a></div>';
-				}
+				$html .= '<div><a href="' . $mediaLink
+				. '">' . JText::_("COM_TJFIELDS_FILE_DOWNLOAD") . '</a></div>';
 			}
 
 			$html .= '</div>';
