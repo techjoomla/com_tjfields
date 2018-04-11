@@ -213,18 +213,18 @@ class TjfieldsModelGroups extends JModelList
 	/**
 	 * Build an SQL query to load the list data.
 	 *
-	 * @param   INT  $items  id.
-	 * @param   INT  $state  id.
+	 * @param   array  $items  id.
+	 * @param   INT    $state  id.
 	 *
 	 * @return	JDatabaseQuery
 	 *
 	 * @since	1.6
 	 */
-	public function setItemState($items, $state)
+	public function setItemState($items = array(), $state)
 	{
 		$db = JFactory::getDBO();
 
-		if (is_array($items))
+		if (!empty($items))
 		{
 			foreach ($items as $id)
 			{
