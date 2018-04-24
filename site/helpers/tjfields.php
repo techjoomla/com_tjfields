@@ -196,6 +196,12 @@ class TjfieldsHelper
 
 						if ($filename)
 						{
+							// Delete old file if exist
+							if (array_key_exists($fieldName, $data['fieldsvalue']) && !empty($data['fieldsvalue'][$fieldName]))
+							{
+								$this->tjFileDelete($data['fieldsvalue'][$fieldName]);
+							}
+
 							$if_edit_file_id        = $this->checkForAlreadyexitsDetails($data, $file_field_data->id);
 
 							$client = explode('.', $insert_obj_file->client);
@@ -1665,5 +1671,84 @@ class TjfieldsHelper
 		{
 			return false;
 		}
+	}
+
+	/**
+	 * tjFileDelete .
+	 *
+	 * @param   string  $filePath  file path.
+	 *
+	 * @return boolean|string
+	 *
+	 * @since	1.6
+	 */
+	public function tjFileDelete($filePath)
+	{
+		$user = JFactory::getUser();
+
+		if (!$user->id)
+		{
+			return false;
+		}
+
+		$db = JFactory::getDbo();
+		$query = $db->getQuery(true);
+		$query->select('*');
+		$query->from('#__tjfields_fields_value');
+		$query->where($db->quoteName('value') . " = " . $db->quote($filePath));
+		$db->setQuery($query);
+		$data = $db->loadObject();
+
+		if (!empty($data))
+		{
+			$canEdit = $user->authorise('core.field.editfieldvalue', 'com_tjfields.field.' . $data->field_id);
+
+			$canEditOwn = $user->authorise('core.field.editownfieldvalue', 'com_tjfields.field.' . $data->field_id);
+
+			$isOwner = false;
+
+			// Check if owner
+			if ($data->user_id != null && ($user->id == $data->user_id))
+			{
+				$isOwner = true;
+			}
+
+			if ($isOwner && ($canEdit || $canEditOwn))
+			{
+				$fileToDelete = JPATH_ROOT . $filePath;
+
+				if (JFile::exists($fileToDelete))
+				{
+					if (JFile::delete($fileToDelete))
+					{
+						$query = $db->getQuery(true);
+
+						// Fields to update.
+						$fields = array(
+							$db->quoteName('value') . " = " . $db->quote('')
+						);
+
+						// Conditions for which records should be updated.
+						$conditions = array(
+							$db->quoteName('id') . ' = ' . $db->quote($data->id)
+						);
+
+						$query->update($db->quoteName('#__tjfields_fields_value'))->set($fields)->where($conditions);
+
+						$db->setQuery($query);
+
+						$db->execute();
+
+						return true;
+					}
+				}
+
+				return false;
+			}
+
+			return false;
+		}
+
+		return false;
 	}
 }
