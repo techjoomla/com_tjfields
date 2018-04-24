@@ -163,7 +163,7 @@ class JFormFieldFile extends JFormField
 			// Download file
 			if (!empty($mediaLink) && $canView)
 			{
-				$html .= '<div id=\'' . base64_encode($layoutData["value"]) . '\'><a href="' . $mediaLink
+				$html .= '<div><a href="' . $mediaLink
 				. '">' . JText::_("COM_TJFIELDS_FILE_DOWNLOAD") . '</a>';
 			}
 
