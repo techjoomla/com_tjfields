@@ -361,8 +361,9 @@ class TjfieldsHelper
 		$app      = JFactory::getApplication();
 		$user     = JFactory::getUser();
 		$username = preg_replace('/\s+/', '', $user->name);
+		$filter = JFilterInput::getInstance();
 
-		$title = $singleFile['name'];
+		$title = $filter->clean($singleFile['name']);
 		$title = preg_replace('/\s+/', '', $title);
 
 		jimport('joomla.filesystem.file');
@@ -370,6 +371,7 @@ class TjfieldsHelper
 		// Check if the server found any error.
 		$fileError = $singleFile['error'];
 		$message   = '';
+		$cleanFileName = $filter->clean($singleFile['name']);
 
 		if ($fileError > 0 && $fileError != 4)
 		{
@@ -395,9 +397,9 @@ class TjfieldsHelper
 		}
 		elseif ($fileError == 4)
 		{
-			if (isset($singleFile['name']))
+			if (isset($cleanFileName))
 			{
-				$filename = $singleFile['name'];
+				$filename = $cleanFileName;
 			}
 		}
 		else
@@ -441,11 +443,11 @@ class TjfieldsHelper
 			$validMIMEArray = explode(',', $okMIMETypes);
 			$client = explode('.', $insert_obj_file->client);
 
-			$filename  = JFile::stripExt($singleFile['name']);
-			$extension = JFile::getExt($singleFile['name']);
+			$filename  = JFile::stripExt($cleanFileName);
+			$extension = JFile::getExt($cleanFileName);
 
 			jimport('joomla.filesystem.file');
-			$fileMime = JFile::getExt($singleFile['name']);
+			$fileMime = JFile::getExt($cleanFileName);
 
 			if (!in_array($fileMime, $validMIMEArray))
 			{
