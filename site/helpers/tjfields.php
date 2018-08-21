@@ -44,29 +44,15 @@ class TjfieldsHelper
 		$client            = $data['client'];
 		$query_user_string = '';
 
-		/*if (isset($data['user_id']))
-		{
-			$user_id           = $data['user_id'];
-			$query_user_string = " AND user_id=" . $user_id;
-		}*/
-
 		$db    = JFactory::getDbo();
 		$query = $db->getQuery(true);
-		$query->select('#__tjfields_fields_value.field_id,value FROM #__tjfields_fields_value ');
-		$query->join('INNER', $db->qn('#__tjfields_fields') . ' ON (' .
-		$db->qn('#__tjfields_fields.id') . ' = ' . $db->qn('#__tjfields_fields_value.field_id') . ')');
-
-		/*if (!empty($data['category_id']))
-		{
-			$query->join('Left', $db->qn('#__tjfields_category_mapping') . 'ON (' .
-			$db->qn('#__tjfields_category_mapping.field_id') . ' = ' . $db->qn('#__tjfields_fields.id') . ')');
-			$query->where('#__tjfields_category_mapping.category_id = ' . $data['category_id']);
-		}
-		*/
-
-		$query->where('#__tjfields_fields_value.content_id=' . $content_id);
-		$query->where('#__tjfields_fields_value.client="' . $client . '" ' . $query_user_string);
-		$query->where('#__tjfields_fields.state=' . $db->quote("1"));
+		$query->select($db->quoteName(array('fv.field_id', 'value')));
+		$query->from($db->quoteName('#__tjfields_fields_value', 'fv'));
+		$query->join('INNER', $db->quoteName('#__tjfields_fields', 'ff') . ' ON (' .
+			$db->quoteName('ff.id') . ' = ' . $db->quoteName('fv.field_id') . ')');
+		$query->where($db->quoteName('fv.content_id') . ' = ' . $db->quote($content_id));
+		$query->where($db->quoteName('fv.client') . ' = ' . $db->quote($client . $query_user_string));
+		$query->where($db->quoteName('ff.state') . ' = ' . $db->quote('1'));
 		$db->setQuery($query);
 
 		$field_data_value = $db->loadObjectlist();
@@ -125,15 +111,16 @@ class TjfieldsHelper
 	{
 		$db    = JFactory::getDbo();
 		$query = $db->getQuery(true);
-		$query->select('id,type,name,label,format FROM #__tjfields_fields');
+		$query->select($db->quoteName(array('id', 'type', 'name', 'label', 'format')));
+		$query->from($db->quoteName('#__tjfields_fields'));
 
 		if ($fname)
 		{
-			$query->where('name="' . $fname . '"');
+			$query->where($db->quoteName('name') . ' = ' . $db->quote($fname));
 		}
 		else
 		{
-			$query->where('id=' . $fid);
+			$query->where($db->quoteName('id') . ' = ' . $db->quote($fid));
 		}
 
 		$db->setQuery($query);
@@ -208,8 +195,8 @@ class TjfieldsHelper
 				{
 					// Delete entry is field is deselected
 					$conditions = array(
-						$db->quoteName('field_id') . ' = ' . $field_data->id,
-						$db->quoteName('content_id') . ' = ' . $data['content_id']
+						$db->quoteName('field_id') . ' = ' . (int) $field_data->id,
+						$db->quoteName('content_id') . ' = ' . (int) $data['content_id']
 					);
 
 					$query = $db->getQuery(true);
@@ -244,10 +231,11 @@ class TjfieldsHelper
 		$query = $db->getQuery(true);
 		$conditions = array($db->quoteName('id') . ' IN (' . $fieldValueEntryId . ') ');
 
-		$query->select("id")
-		->from("#__tjfields_options")
-		->where("field_id = " . $field_data->id)
-		->where("value = '" . $currentFieldValue . "'");
+		$query->select($db->quoteName('id'))
+			->from($db->quoteName('#__tjfields_options'))
+			->where($db->quoteName('field_id') . ' = ' . (int) $field_data->id)
+			->where($db->quoteName('value') . ' = ' . $db->quote($currentFieldValue));
+
 		$db->setQuery($query);
 
 		$option_id = $db->loadResult();
@@ -289,11 +277,11 @@ class TjfieldsHelper
 		// Select all entries for __tjfields_fields_value
 		$db    = JFactory::getDbo();
 		$query = $db->getQuery(true);
-		$query->select('*');
-		$query->from('#__tjfields_fields_value');
-		$query->where('content_id=' . $postFieldData['content_id']);
-		$query->where('field_id=' . $field_data->id);
-		$query->where('client="' . $postFieldData['client'] . '"');
+		$query->select($db->quoteName('*'));
+		$query->from($db->quoteName('#__tjfields_fields_value'));
+		$query->where($db->quoteName('content_id') . ' = ' . (int) $postFieldData['content_id']);
+		$query->where($db->quoteName('field_id') . ' = ' . (int) $field_data->id);
+		$query->where($db->quoteName('client') . ' = ' . $db->quote($postFieldData['client']));
 		$db->setQuery($query);
 		$dbFieldValue = $db->loadObjectList("id");
 
@@ -371,10 +359,10 @@ class TjfieldsHelper
 			$query = $db->getQuery(true);
 			$conditions = array($db->quoteName('id') . ' IN (' . $fieldValueEntryId . ') ');
 
-			$query->select("id")
-			->from("#__tjfields_options")
-			->where("field_id = " . $insert_obj->field_id)
-			->where("value = '" . $insert_obj->value . "'");
+			$query->select($db->quoteName('id'))
+			->from($db->quoteName('#__tjfields_options'))
+			->where($db->quoteName('field_id') . ' = ' . $db->quote($insert_obj->field_id))
+			->where($db->quoteName('value') . ' = ' . $db->quote($insert_obj->value));
 			$db->setQuery($query);
 
 			$insert_obj->option_id = $db->loadResult();
@@ -430,14 +418,16 @@ class TjfieldsHelper
 		$user_id    = $data['user_id'];
 		$db    = JFactory::getDbo();
 		$query = $db->getQuery(true);
-		$query->select('id FROM #__tjfields_fields_value');
-		$query->where('content_id=' . $content_id . ' AND client="' . $client . '"');
+		$query->select($db->quoteName('id'));
+		$query->from($db->quoteName('#__tjfields_fields_value'));
+		$query->where($db->quoteName('content_id') . ' = ' . (int) $content_id);
+		$query->where($db->quoteName('client') . ' = ' . $db->quote($client));
 
 		// $query->where('content_id=' . $content_id . ' AND client="' . $client . '" AND user_id=' . $user_id);
 
 		if ($field_id)
 		{
-			$query->where('field_id=' . $field_id);
+			$query->where($db->quoteName('field_id') . ' = ' . (int) $field_id);
 		}
 
 		$db->setQuery($query);
@@ -458,8 +448,9 @@ class TjfieldsHelper
 	{
 		$db    = JFactory::getDbo();
 		$query = $db->getQuery(true);
-		$query->select('id,options,default_option,value FROM #__tjfields_options');
-		$query->where('field_id=' . $field_id);
+		$query->select($db->quoteName(array('id', 'options', 'default_option', 'value')));
+		$query->from($db->quoteName('#__tjfields_options'));
+		$query->where($db->quoteName('field_id') . ' = ' . (int) $field_id);
 
 		if ($option_value != '')
 		{
@@ -470,17 +461,17 @@ class TjfieldsHelper
 				if (is_array($new_option_value))
 				{
 					$option_value_string = "'" . implode("','", $new_option_value) . "'";
-					$query->where('value IN (' . $option_value_string . ')');
+					$query->where($db->quoteName('value') . 'IN (' . $option_value_string . ')');
 				}
 				else
 				{
-					$query->where('value=' . $new_option_value);
+					$query->where($db->quoteName('value') . ' = ' . $db->quote($new_option_value));
 				}
 			}
 			else
 			{
 				// Radio.
-				$query->where('value=' . $db->quote($option_value));
+				$query->where($db->quoteName('value') . ' = ' . $db->quote($option_value));
 			}
 		}
 
@@ -505,10 +496,18 @@ class TjfieldsHelper
 		{
 			$db    = JFactory::getDbo();
 			$query = $db->getQuery(true);
-			$query->select('DISTINCT * FROM #__tjfields_fields AS f');
-			$query->where('NOT EXISTS (select * FROM #__tjfields_category_mapping AS cm where f.id=cm.field_id)');
-			$query->where('f.client="' . $client . '"');
-			$query->where('f.state=1');
+			$query->select($db->quoteName('DISTINCT *'));
+			$query->from($db->quoteName('#__tjfields_fields AS f'));
+			$query->where(
+				'NOT EXISTS (select * FROM '
+				. $db->quoteName('#__tjfields_category_mapping', 'cm')
+				. ' where '
+				. $db->quoteName('f.id')
+				. ' = '
+				. $db->quoteName('cm.field_id)')
+			);
+			$query->where($db->quoteName('f.client') . ' = ' . $db->quote($client));
+			$query->where($db->quoteName('f.state') . 'k=1');
 			$db->setQuery($query);
 			$universalFields = $db->loadObjectlist();
 		}
@@ -529,9 +528,10 @@ class TjfieldsHelper
 	{
 		$db    = JFactory::getDbo();
 		$query = $db->getQuery(true);
-		$query->select('* FROM #__categories');
-		$query->where('extension="' . $client . '"');
-		$query->where('published=1');
+		$query->select($db->quoteName('*'));
+		$query->from($db->quoteName('#__categories'));
+		$query->where($db->quoteName('extension') . ' = ' . $db->quote($client));
+		$query->where($db->quoteName('published') . ' = 1');
 		$db->setQuery($query);
 		$categorysList = $db->loadObjectlist();
 
@@ -554,30 +554,37 @@ class TjfieldsHelper
 		{
 			$db    = JFactory::getDbo();
 			$query = $db->getQuery(true);
-			$query->select('DISTINCT fv.option_id, f.id,f.name, f.label,fv.value,fo.options');
-			$query->FROM("#__tjfields_fields AS f");
-			$query->JOIN('INNER', '#__tjfields_fields_value AS fv ON fv.field_id = f.id');
-			$query->JOIN('INNER', '#__tjfields_options AS fo ON fo.id = fv.option_id');
+			$query->select($db->quoteName(array('DISTINCT fv.option_id', 'f.id', 'f.name', 'f.label', 'fv.value', 'fo.options')));
+			$query->FROM($db->quoteName('#__tjfields_fields', 'f'));
+			$query->JOIN('INNER', $db->quoteName('#__tjfields_fields_value', 'fv') . 'ON' . $db->quoteName('fv.field_id') . ' = ' . $db->quoteName('f.id'));
+			$query->JOIN('INNER', $db->quoteName('#__tjfields_options', 'fo') . 'ON' . $db->quoteName('fo.id') . ' = ' . $db->quoteName('fv.option_id'));
+			$query->where($db->quoteName('f.client') . ' = ' . $db->quote($client));
+			$query->where($db->quoteName('f.filterable') . ' = 1');
+			$query->where($db->quoteName('f.state') . '=1');
+			$query->where($db->quoteName('fv.option_id') . ' IS NOT NULL');
+			$query->where($db->quoteName('f.type') . 'IN ("single_select", "multi_select", "radio")');
 
-			$query->where('f.client="' . $client . '"');
-			$query->where('f.filterable=1');
-			$query->where('f.state=1');
-			$query->where('fv.option_id IS NOT NULL');
-			$query->where("f.type IN ('single_select','multi_select', 'radio')");
+			// Doesn't have mapped any category
+			$query->where(
+				'NOT EXISTS (select * FROM' . $db->quoteName('#__tjfields_category_mapping', 'cm')
+				. ' where ' . $db->quoteName('f.id')
+				. ' = '
+				. $db->quoteName('cm.field_id')
+			);
 
 			/*if (!empty($category_id))
 			{
 				$query->JOIN('INNER', '#__tjfields_category_mapping AS fcm ON fcm.field_id = f.id');
 				$query->where('fcm.category_id=' . $category_id);
 			}
-			else*/
+			else
 
-			{
+			{*/
 				// Doesn't have mapped any category
 				$query->where('NOT EXISTS (select * FROM #__tjfields_category_mapping AS cm where f.id=cm.field_id)');
-			}
+			// }
 
-			$query->order('f.ordering');
+			$query->order($db->quoteName('f.ordering'));
 			$db->setQuery($query);
 			$coreFields = $db->loadObjectlist("option_id");
 			$allFields = $coreFields;
@@ -588,23 +595,32 @@ class TjfieldsHelper
 			// If category related field present
 			if (!empty($category_id) && is_int($category_id))
 			{
-				$db    = JFactory::getDbo();
+				$db       = JFactory::getDbo();
 				$queryCat = $db->getQuery(true);
-				$queryCat->select('DISTINCT fv.option_id, f.id,f.name, f.label,fv.value,fo.options');
-				$queryCat->FROM("#__tjfields_fields AS f");
-				$queryCat->JOIN('INNER', '#__tjfields_fields_value AS fv ON fv.field_id = f.id');
-				$queryCat->JOIN('INNER', '#__tjfields_options AS fo ON fo.id = fv.option_id');
-
-				$queryCat->where('f.client="' . $client . '"');
-				$queryCat->where('f.filterable=1');
-				$queryCat->where('f.state=1');
-				$queryCat->where('fv.option_id IS NOT NULL');
-				$queryCat->where("f.type IN ('single_select','multi_select', 'radio')");
-
-				$queryCat->JOIN('INNER', '#__tjfields_category_mapping AS fcm ON fcm.field_id = f.id');
-				$queryCat->where('fcm.category_id=' . $category_id);
-
-				$queryCat->order('f.ordering');
+				$queryCat->select($db->quoteName(array('DISTINCT fv.option_id', 'f.id', 'f.name', 'f.label', 'fv.value', 'fo.options')));
+				$queryCat->FROM($db->quoteName('#__tjfields_fields', 'f'));
+				$queryCat->JOIN(
+					'INNER',
+					$db->quoteName('#__tjfields_fields_value', 'fv')
+					. ' ON ' . $db->quoteName('fv.field_id')
+					. ' = ' . $db->quoteName('f.id')
+				);
+				$queryCat->JOIN('INNER', $db->quoteName('#__tjfields_options', 'fo') . 'ON' . $db->quoteName('fo.id') . ' = ' . $db->quoteName('fv.option_id'));
+				$queryCat->where($db->quoteName('f.client') . ' = ' . $db->quote($client));
+				$queryCat->where($db->quoteName('f.filterable') . '=1');
+				$queryCat->where($db->quoteName('f.state') . '=1');
+				$queryCat->where($db->quoteName('fv.option_id') . 'IS NOT NULL');
+				$queryCat->where($db->quoteName('f.type') . 'IN ("single_select", "multi_select", "radio")');
+				$queryCat->join(
+					'INNER',
+					$db->quoteName('#__tjfields_category_mapping', 'fcm')
+					. ' ON '
+					. $db->quoteName('fcm.field_id')
+					. ' = '
+					. $db->quoteName('f.id')
+				);
+				$queryCat->where($db->quoteName('fcm.category_id') . ' = ' . (int) $category_id);
+				$queryCat->order($db->quoteName('f.ordering'));
 				$db->setQuery($queryCat);
 				$catFields = $db->loadObjectlist("option_id");
 
@@ -693,9 +709,9 @@ class TjfieldsHelper
 				{
 					if (!empty($fFieldAndFieldOptions))
 					{
-						$query->select('DISTINCT fv1.content_id');
-						$query->from('#__tjfields_fields_value AS fv1');
-						$query->where("fv1.option_id IN (" . $fFieldAndFieldOptions->optionsStr . ")");
+						$query->select($db->quoteName('DISTINCT fv1.content_id'));
+						$query->from($db->quoteName('#__tjfields_fields_value', 'fv1'));
+						$query->where($db->quoteName('fv1.option_id' . 'IN (' . $db->quote($fFieldAndFieldOptions->optionsStr) . ')'));
 
 						return $query;
 					}
@@ -703,16 +719,7 @@ class TjfieldsHelper
 			}
 			else
 			{
-				/*
-				 * SELECT fv1. *
-					FROM  `xcqpa_tjfields_fields_value` AS fv1
-					INNER JOIN  `xcqpa_tjfields_fields_value` AS fv2 ON fv2.`content_id` = fv1.content_id
-					WHERE fv1.option_id
-					IN ( 18 ) AND
-					WHERE fv2.option_id
-					IN ( 13,14 )
-				 * */
-				$query->select('DISTINCT fv1.content_id');
+				$query->select($db->quoteName('DISTINCT fv1.content_id'));
 				$fromFlag = 0;
 				$i = 1;
 
@@ -720,23 +727,23 @@ class TjfieldsHelper
 				{
 					if (empty($fromFlag))
 					{
-						$query->from('#__tjfields_fields_value AS fv' . $i);
-						$query->where("fv" . $i . ".option_id IN (" . $fFieldAndFieldOptions->optionsStr . ")");
+						$query->from($db->quoteName('#__tjfields_fields_value', 'fv' . $i));
+						$query->where($db->quoteName('fv' . $i . '.option_id IN (' . $db->quote($fFieldAndFieldOptions->optionsStr) . ')'));
 
 						$fromFlag = 1;
 					}
 					else
 					{
-						$query->join('INNER', $db->qn('#__tjfields_fields_value') . ' AS fv' . $i . ' ON (' .
-						$db->qn('fv' . $i . '.content_id') . ' = ' . $db->qn('fv' . ($i - 1 ) . '.content_id') . ')');
-						$query->where("fv" . $i . ".option_id IN (" . $fFieldAndFieldOptions->optionsStr . ")");
+						$query->join('INNER', $db->quoteName('#__tjfields_fields_value') . ' AS fv' . $i . ' ON (' .
+						$db->quoteName('fv' . $i . '.content_id') . ' = ' . $db->quoteName('fv' . ($i - 1 ) . '.content_id') . ')');
+						$query->where($db->quoteName('fv' . $i . '.option_id IN (' . $db->quote($fFieldAndFieldOptions->optionsStr) . ")"));
 					}
 
 					$i++;
 				}
 			}
 
-			$query->where('fv1.client="' . $client . '" ');
+			$query->where($db->quoteName('fv1.client') . ' = ' . $db->quote($client));
 
 			return $query;
 		}
@@ -787,8 +794,6 @@ class TjfieldsHelper
 		else
 		{
 			throw new RuntimeException(sprintf('Unable to load class: %s', $className));
-
-			// JFactory::getApplication()->enqueueMessage(sprintf('Unable to load class: %s, $className), 'error');
 		}
 	}
 
@@ -807,10 +812,10 @@ class TjfieldsHelper
 		{
 			$db    = JFactory::getDbo();
 			$query = $db->getQuery(true);
-			$query->select('field_id, GROUP_CONCAT( id ) AS optionsStr ');
-			$query->FROM('#__tjfields_options as fo');
-			$query->where('fo.id  IN  (' . $options . ')');
-			$query->group('fo.field_id');
+			$query->select($db->quoteName(array('field_id', 'GROUP_CONCAT( id )'), array(null, 'optionsStr')));
+			$query->FROM($db->quoteName('#__tjfields_options', 'fo'));
+			$query->where($db->quoteName('fo.id') . 'IN  (' . $db->quote($options) . ')');
+			$query->group($db->quoteName('fo.field_id'));
 
 			$db->setQuery($query);
 			$fieldAndFieldOptionsList = $db->loadObjectlist('field_id');
