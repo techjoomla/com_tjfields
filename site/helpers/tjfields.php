@@ -242,12 +242,13 @@ class TjfieldsHelper
 		$currentFieldValue = $postFieldData['fieldsvalue'][$fieldName];
 		$db = JFactory::getDbo();
 		$query = $db->getQuery(true);
-		$conditions = array($db->quoteName('id') . ' IN (' . $fieldValueEntryId . ') ');
 
-		$query->select("id")
-		->from("#__tjfields_options")
-		->where("field_id = " . $field_data->id)
-		->where("value = '" . $currentFieldValue . "'");
+		// $conditions = array($db->quoteName('id') . ' IN (' . $fieldValueEntryId . ') ');
+
+		$query->select($db->quoteName('id'))
+		->from($db->quoteName('#__tjfields_options'))
+		->where($db->quoteName('field_id') . ' = ' . (int) $field_data->id)
+		->where($db->quoteName('value') . ' = ' . $db->quote($currentFieldValue));
 		$db->setQuery($query);
 
 		$option_id = $db->loadResult();
