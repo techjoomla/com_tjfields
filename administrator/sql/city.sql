@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS `#__tj_city` (
   `com_socialads` tinyint(1) NOT NULL DEFAULT '1',
   `com_tjlms` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=22620 ;
+)DEFAULT CHARSET=utf8 AUTO_INCREMENT=22620 ;
 
 -- TRUNCATE TABLE `#__tj_city`;
 
