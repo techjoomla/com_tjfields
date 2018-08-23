@@ -240,10 +240,8 @@ class TjfieldsHelper
 	public function saveSingleSelectFieldValue($postFieldData, $fieldName, $field_data, $updateId = 0)
 	{
 		$currentFieldValue = $postFieldData['fieldsvalue'][$fieldName];
-		$db = JFactory::getDbo();
-		$query = $db->getQuery(true);
-
-		// $conditions = array($db->quoteName('id') . ' IN (' . $fieldValueEntryId . ') ');
+		$db                = JFactory::getDbo();
+		$query             = $db->getQuery(true);
 
 		$query->select($db->quoteName('id'))
 		->from($db->quoteName('#__tjfields_options'))
@@ -261,8 +259,8 @@ class TjfieldsHelper
 		$insert_obj->user_id    = $postFieldData['user_id'];
 		$insert_obj->email_id   = '';
 		$insert_obj->client     = $postFieldData['client'];
-		$insert_obj->value = $currentFieldValue;
-		$insert_obj->option_id = $option_id;
+		$insert_obj->value      = $currentFieldValue;
+		$insert_obj->option_id  = $option_id;
 
 		if ($updateId)
 		{
