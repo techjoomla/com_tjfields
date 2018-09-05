@@ -83,25 +83,30 @@ class TjGeoHelper
 	 */
 	public function getCountryNameFromId($countryId)
 	{
-		$query = $this->_db->getQuery(true);
-		$query->select('country, country_jtext');
-		$query->from('#__tj_country');
+		$db    = JFactory::getDbo();
+		$query = $db->getQuery(true);
+		$query->select($db->quoteName(array('country','country_jtext')));
+		$query->from($db->quoteName('#__tj_country'));
 
 		if (!empty($countryId))
 		{
-			$query->where('id = ' . $countryId);
+			$query->where($db->quoteName('id') . '=' . (int) $countryId);
 		}
 
-		$this->_db->setQuery($query);
-		$country = $this->_db->loadObject();
+		$db->setQuery($query);
+		$country = $db->loadObject();
 
-		$countryName = $this->getCountryJText($country->country_jtext);
-
-		if ($countryName)
+		if (!empty($country->country_jtext))
 		{
-			return $countryName;
+			$countryName = $this->getCountryJText($country->country_jtext);
+
+			if ($countryName)
+			{
+				return $countryName;
+			}
 		}
-		else
+
+		if (!empty($country->country))
 		{
 			return $country->country;
 		}
@@ -289,26 +294,32 @@ class TjGeoHelper
 	 */
 	public function getRegionNameFromId($regionId)
 	{
-		$query = $this->_db->getQuery(true);
-		$query->select('region, region_jtext');
-		$query->from('#__tj_region');
+		$db    = JFactory::getDbo();
+		$query = $db->getQuery(true);
+		$query->select($db->quoteName(array('region','region_jtext')));
+		$query->from($db->quoteName('#__tj_region'));
 
 		if ($regionId)
 		{
-			$query->where('id = ' . $regionId);
+			$query->where($db->quoteName('id') . '=' . (int) $regionId);
 		}
 
-		$this->_db->setQuery($query);
-		$res = $this->_db->loadObject();
+		$db->setQuery($query);
+		$res = $db->loadObject();
 
 		// Get jtext value.
-		$jtext = $this->getRegionJText($res->region_jtext);
 
-		if ($jtext)
+		if (!empty($res->region_jtext))
 		{
-			return $jtext;
+			$jtext = $this->getRegionJText($res->region_jtext);
+
+			if ($jtext)
+			{
+				return $jtext;
+			}
 		}
-		else
+
+		if (!empty($res->region))
 		{
 			return $res->region;
 		}
