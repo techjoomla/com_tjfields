@@ -58,7 +58,7 @@ if (!empty($this->extra_sidebar)) {
     $this->sidebar .= $this->extra_sidebar;
 }
 ?>
-
+<form action="<?php echo JRoute::_('index.php?option=com_tjfields&view=groups&client='.$input->get('client','','STRING')); ?>" method="post" name="adminForm" id="adminForm">
 <div class="techjoomla-bootstrap">
 		<?php if(!empty($this->sidebar)): ?>
 		<div id="j-sidebar-container" class="span2">
@@ -68,7 +68,6 @@ if (!empty($this->extra_sidebar)) {
 	<?php else : ?>
 		<div id="j-main-container">
 	<?php endif;?>
-	<form action="<?php echo JRoute::_('index.php?option=com_tjfields&view=groups&client='.$input->get('client','','STRING')); ?>" method="post" name="adminForm" id="adminForm">
 		<div id="filter-bar" class="btn-toolbar">
 			<div class="filter-search btn-group pull-left">
 				<label for="filter_search" class="element-invisible"><?php echo JText::_('JSEARCH_FILTER');?></label>
