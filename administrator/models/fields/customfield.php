@@ -53,7 +53,7 @@ class JFormFieldCustomfield extends JFormField
 	 * @return	list	The list of frequencies
 	 */
 
-	function fetchGroupid($name, $value, &$node, $control_name)
+	protected function fetchGroupid($name, $value, &$node, $control_name)
 	{
 		$input = JFactory::getApplication()->input;
 		$db=JFactory::getDbo();
