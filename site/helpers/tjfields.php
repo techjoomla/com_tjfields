@@ -548,6 +548,22 @@ class TjfieldsHelper
 		$newFields = $postFieldData['fieldsvalue'];
 		$subformField = $newFields[$subformFname];
 
+		// Params from getting subform max size
+		JTable::addIncludePath(JPATH_ADMINISTRATOR . "/components/com_tjfields/tables");
+		JModelLegacy::addIncludePath(JPATH_ADMINISTRATOR . "/components/com_tjfields/models");
+		$fieldModel = JModelLegacy::getInstance('Field', 'TjfieldsModel', array("ignore_request" => 1));
+
+		$fieldId = (int) $field_data->id;
+		$fieldItems = $fieldModel->getItem($fieldId);
+
+		// Code for subform max size validation
+		$acceptmaxSize = $fieldItems->params['max'];
+
+		if (count($subformField) > $acceptmaxSize)
+		{
+			return false;
+		}
+
 		if (!empty($dbFieldValue))
 		{
 			if (!empty($subformField))
