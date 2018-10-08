@@ -1732,4 +1732,45 @@ class TjfieldsHelper
 	{
 		JText::script('COM_TJFIELDS_FILE_DELETE_CONFIRM');
 	}
+
+	/**
+	 * Method to validate Youtube url.
+	 *
+	 * @param   String  $url  Video url
+	 *
+	 * @return  string  Youtube video id.
+	 *
+	 * @since   1.0
+	 */
+	public function isValidYoutubeUrl($url)
+	{
+		$rx = '~
+		^(?:https?://)?                          # Optional protocol
+		(?:www[.])?                              # Optional sub-domain
+		(?:youtube[.]com/watch[?]v=|youtu[.]be/) # Mandatory domain name (w/ query string in .com)
+		([^&]{11})                               # Video id of 11 characters as capture group 1
+		~x';
+
+		$has_match = preg_match($rx, $url, $matches);
+
+		return $matches[1];
+	}
+
+	/**
+	 * Method to validate Vimeo url.
+	 *
+	 * @param   String  $url  Video url
+	 *
+	 * @return  string  Vimeo video id.
+	 *
+	 * @since   1.0
+	 */
+	public function isValidVimeoUrl($url)
+	{
+		$rx = '#(https://vimeo.com)/([0-9]+)#i';
+
+		$has_match = preg_match($rx, $url, $matches);
+
+		return $matches[2];
+	}
 }

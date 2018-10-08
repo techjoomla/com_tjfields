@@ -35,6 +35,14 @@ class JFormFieldFile extends JFormField
 	protected $accept;
 
 	/**
+	 * The SimpleXMLElement object representing the `<field>` tag for the form field object.
+	 *
+	 * @var    mixed
+	 * @since  3.2
+	 */
+	protected $element;
+
+	/**
 	 * Name of the layout being used to render the field
 	 *
 	 * @var    string
@@ -58,7 +66,14 @@ class JFormFieldFile extends JFormField
 		switch ($name)
 		{
 			case 'accept':
+
 				return $this->accept;
+				break;
+
+			case 'element';
+
+				return $this->element;
+				break;
 		}
 
 		return parent::__get($name);
@@ -167,8 +182,14 @@ class JFormFieldFile extends JFormField
 			// Download file
 			if (!empty($mediaLink) && $canView)
 			{
-				$html .= '<div><a href="' . $mediaLink
-				. '">' . JText::_("COM_TJFIELDS_FILE_DOWNLOAD") . '</a>';
+				$renderImageHtml = '';
+
+				if ($layoutData['field']->element->attributes()->renderimage)
+				{
+					$renderImageHtml = '<img src="' . $mediaLink . '" height="125" width="125" />';
+				}
+
+				$html .= '<div> ' . $renderImageHtml . ' <a href="' . $mediaLink . '">' . JText::_("COM_TJFIELDS_FILE_DOWNLOAD") . '</a>';
 			}
 
 			$canEdit = 0;
