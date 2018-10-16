@@ -7,8 +7,6 @@
  * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
-JLoader::import("/techjoomla/media/storage/local", JPATH_LIBRARIES);
-
 defined('JPATH_PLATFORM') or die;
 
 /**
@@ -37,6 +35,14 @@ class JFormFieldFile extends JFormField
 	protected $accept;
 
 	/**
+	 * The SimpleXMLElement object representing the `<field>` tag for the form field object.
+	 *
+	 * @var    mixed
+	 * @since  3.2
+	 */
+	protected $element;
+
+	/**
 	 * Name of the layout being used to render the field
 	 *
 	 * @var    string
@@ -60,7 +66,14 @@ class JFormFieldFile extends JFormField
 		switch ($name)
 		{
 			case 'accept':
+
 				return $this->accept;
+				break;
+
+			case 'element';
+
+				return $this->element;
+				break;
 		}
 
 		return parent::__get($name);
@@ -130,10 +143,6 @@ class JFormFieldFile extends JFormField
 	{
 		$layoutData = $this->getLayoutData();
 		$html = $this->getRenderer($this->layout)->render($layoutData);
-		$tjFieldHelper = new TjfieldsHelper;
-
-		$app = JFactory::getApplication();
-		$clientForm = $app->input->get('client', '', 'string');
 
 		// Load backend language file
 		$lang = JFactory::getLanguage();
@@ -141,117 +150,13 @@ class JFormFieldFile extends JFormField
 
 		if (!empty($layoutData["value"]))
 		{
-			// Checking the field is from subfrom or not
-			$formName = explode('.', $this->form->getName());
-			$formValueId = $app->input->get('id', '', 'INT');
+			$data = $this->buildData($layoutData);
 
-			$subFormFileFieldId = 0;
-			$isSubformField = 0;
-			$subformId = 0;
-
-			if ($formName[0] === 'subform')
+			if (!empty($data->mediaLink))
 			{
-				$isSubformField = 1;
-
-				$formData = $tjFieldHelper->getFieldData(substr($formName[1], 0, -1));
-
-				// Subform Id
-				$subformId = $formData->id;
-
-				$fileFieldData = $tjFieldHelper->getFieldData($layoutData['field']->fieldname);
-
-				// File Field Id under subform
-				$subFormFileFieldId = $fileFieldData->id;
+				$html .= $this->canDownloadFile($data, $layoutData);
+				$html .= $this->canDeleteFile($data, $layoutData);
 			}
-
-			$html .= '<input fileFieldId="' . $layoutData["id"] . '" type="hidden" name="' . $layoutData["name"]
-			. '"' . 'id="' . $layoutData["id"] . '"' . 'value="' . $layoutData["value"] . '" />';
-			$html .= '<div class="control-group">';
-			$fileInfo = new SplFileInfo($layoutData["value"]);
-			$extension = $fileInfo->getExtension();
-
-			// Access based actions
-			$user = JFactory::getUser();
-
-			$db = JFactory::getDbo();
-			JTable::addIncludePath(JPATH_ROOT . '/administrator/components/com_tjfields/tables');
-			$tjFieldFieldTable = JTable::getInstance('field', 'TjfieldsTable', array('dbo', $db));
-			$tjFieldFieldTable->load(array('name' => $layoutData['field']->fieldname));
-
-			// Get Field value details
-			JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_tjfields/tables');
-			$fields_value_table = JTable::getInstance('Fieldsvalue', 'TjfieldsTable');
-
-			if ($isSubformField)
-			{
-				// Getting field value of subform file field using the content_id from url and subform_id which will be the field id
-				$fields_value_table->load(array('content_id' => $formValueId, 'field_id' => $subformId));
-			}
-			else
-			{
-				$fields_value_table->load(array('value' => $layoutData['value']));
-			}
-
-			// Creating media link by check subform or not
-			if ($isSubformField)
-			{
-				$mediaLink = $tjFieldHelper->getMediaUrl(
-				$layoutData["value"], '&id=' . $fields_value_table->id . '&client=' . $clientForm . '&subFormFileFieldId=' . $subFormFileFieldId
-				);
-			}
-			else
-			{
-				$mediaLink = $tjFieldHelper->getMediaUrl($layoutData["value"], '&id=' . $fields_value_table->id . '&client=' . $clientForm);
-			}
-
-			$canView = 0;
-
-			if ($user->authorise('core.field.viewfieldvalue', 'com_tjfields.group.' . $tjFieldFieldTable->group_id))
-			{
-				$canView = $user->authorise('core.field.viewfieldvalue', 'com_tjfields.field.' . $tjFieldFieldTable->id);
-			}
-
-			$html .= '<div>';
-
-			// Download file
-			if (!empty($mediaLink) && $canView && $fields_value_table->id)
-			{
-				$html .= '<a href="' . $mediaLink
-				. '">' . JText::_("COM_TJFIELDS_FILE_DOWNLOAD") . '</a>';
-			}
-
-			$canEdit = 0;
-
-			if ($user->authorise('core.field.editfieldvalue', 'com_tjfields.group.' . $tjFieldFieldTable->group_id))
-			{
-				$canEdit = $user->authorise('core.field.editfieldvalue', 'com_tjfields.field.' . $tjFieldFieldTable->id);
-			}
-
-			$canEditOwn = 0;
-
-			if ($user->authorise('core.field.editownfieldvalue', 'com_tjfields.group.' . $tjFieldFieldTable->group_id))
-			{
-				$canEditOwn = $user->authorise('core.field.editownfieldvalue', 'com_tjfields.field.' . $tjFieldFieldTable->id);
-
-				if ($canEditOwn && ($user->id != $fields_value_table->user_id))
-				{
-					$canEditOwn = 0;
-				}
-			}
-
-			// Delete file
-			if (!empty($mediaLink) && ($canEdit || $canEditOwn) && $layoutData['required'] == '' && $fields_value_table->id)
-			{
-				$html .= ' <span class="btn btn-remove"> <a id="remove_' . $layoutData["id"] . '" href="javascript:void(0);"
-					onclick="deleteFile(\'' . base64_encode($layoutData["value"]) . '\',
-					 \'' . $layoutData["id"] . '\', \'' . base64_encode($fields_value_table->id) . '\',
-					  \'' . $subFormFileFieldId . '\',\'' . $isSubformField . '\',\'' . $clientForm . '\');">'
-					. JText::_("COM_TJFIELDS_FILE_DELETE") . '</a> </span>';
-			}
-
-			$html .= '</div>';
-
-			$html .= '</div>';
 		}
 
 		return $html;
@@ -274,5 +179,122 @@ class JFormFieldFile extends JFormField
 		);
 
 		return array_merge($data, $extraData);
+	}
+
+	/**
+	 * Method to required data for file.
+	 *
+	 * @param   object  $layoutData  layoutData
+	 *
+	 * @return  object
+	 *
+	 * @since    1.5
+	 */
+	protected function buildData($layoutData)
+	{
+			$tjFieldHelper = new TjfieldsHelper;
+
+			$data = new stdClass;
+
+			$data->inputData = '<input fileFieldId="' . $layoutData["id"] . '" type="hidden" name="'
+			. $layoutData["name"] . '"' . 'id="' . $layoutData["id"] . '"' . 'value="' . $layoutData[	"value"] . '" />';
+
+			$data->inputData = '<div class="control-group">';
+
+			$fileInfo = new SplFileInfo($layoutData["value"]);
+			$data->extension = $fileInfo->getExtension();
+
+			$data->mediaLink = $tjFieldHelper->getMediaUrl($layoutData["value"]);
+
+			// Access based actions
+			$data->user = JFactory::getUser();
+
+			$db = JFactory::getDbo();
+			JTable::addIncludePath(JPATH_ROOT . '/administrator/components/com_tjfields/tables');
+			$data->tjFieldFieldTable = JTable::getInstance('field', 'TjfieldsTable', array('dbo', $db));
+			$data->tjFieldFieldTable->load(array('name' => $layoutData['field']->fieldname));
+
+			// Get Field value details
+			JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_tjfields/tables');
+			$data->fields_value_table = JTable::getInstance('Fieldsvalue', 'TjfieldsTable');
+			$data->fields_value_table->load(array('value' => $layoutData['value']));
+
+			$data->inputData = '</div>';
+
+			$data->inputData = '</div>';
+
+			return $data;
+	}
+
+	/**
+	 * Method to download file.
+	 *
+	 * @param   object  $data        file data.
+	 * @param   object  $layoutData  layoutData
+	 *
+	 * @return  string
+	 *
+	 * @since    1.5
+	 */
+	protected function canDownloadFile($data,$layoutData)
+	{
+			$canView = 0;
+
+			if ($data->user->authorise('core.field.viewfieldvalue', 'com_tjfields.group.' . $data->tjFieldFieldTable->group_id))
+			{
+				$canView = $data->user->authorise('core.field.viewfieldvalue', 'com_tjfields.field.' . $data->tjFieldFieldTable->id);
+			}
+
+			$downloadFile = '';
+
+			if ($canView)
+			{
+				$downloadFile .= '<div> <a href="' . $data->mediaLink . '">' . JText::_("COM_TJFIELDS_FILE_DOWNLOAD") . '</a>';
+			}
+
+			return $downloadFile;
+	}
+
+	/**
+	 * Method to delete file.
+	 *
+	 * @param   object  $data        file data.
+	 * @param   object  $layoutData  layoutData
+	 *
+	 * @return  string
+	 *
+	 * @since    1.5
+	 */
+	protected function canDeleteFile($data,$layoutData)
+	{
+			$canEdit = 0;
+
+			if ($data->user->authorise('core.field.editfieldvalue', 'com_tjfields.group.' . $data->tjFieldFieldTable->group_id))
+			{
+				$canEdit = $data->user->authorise('core.field.editfieldvalue', 'com_tjfields.field.' . $data->tjFieldFieldTable->id);
+			}
+
+			$canEditOwn = 0;
+
+			if ($data->user->authorise('core.field.editownfieldvalue', 'com_tjfields.group.' . $data->tjFieldFieldTable->group_id))
+			{
+				$canEditOwn = $data->user->authorise('core.field.editownfieldvalue', 'com_tjfields.field.' . $data->tjFieldFieldTable->id);
+
+				if ($canEditOwn && ($data->user->id != $data->fields_value_table->user_id))
+				{
+					$canEditOwn = 0;
+				}
+			}
+
+			$deleteFile = '';
+
+			if (($canEdit || $canEditOwn) && $layoutData['required'] == '')
+			{
+				$deleteFile .= ' <span class="btn btn-remove"> <a id="remove_' . $layoutData["id"] . '" href="javascript:void(0);"
+					onclick="deleteFile(\'' . base64_encode($layoutData["value"]) . '\', \'' . $layoutData["id"] . '\');">'
+					. JText::_("COM_TJFIELDS_FILE_DELETE") . '</a> </span>';
+			}
+
+			return $deleteFile;
 	}
 }
