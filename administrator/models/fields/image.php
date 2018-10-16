@@ -1,23 +1,23 @@
-	<?php
-	/**
-	* @package     Joomla.Platform
-	* @subpackage  Form
-	*
-	* @copyright   Copyright (C) 2005 - 2016 Open Source Matters, Inc. All rights reserved.
-	* @license     GNU General Public License version 2 or later; see LICENSE
-	*/
+<?php
+/**
+* @package     Joomla.Platform
+* @subpackage  Form
+*
+* @copyright   Copyright (C) 2005 - 2016 Open Source Matters, Inc. All rights reserved.
+* @license     GNU General Public License version 2 or later; see LICENSE
+*/
 
-	defined('JPATH_PLATFORM') or die;
+defined('JPATH_PLATFORM') or die;
 
-	/**
-	* Form Field class for the Joomla Platform.
-	* Provides an input field for files
-	*
-	* @link   http://www.w3.org/TR/html-markup/input.file.html#input.file
-	* @since  11.1
-	*/
-	class JFormFieldImage extends JFormFieldFile
-	{
+/**
+* Form Field class for the Joomla Platform.
+* Provides an input field for files
+*
+* @link   http://www.w3.org/TR/html-markup/input.file.html#input.file
+* @since  11.1
+*/
+class JFormFieldImage extends JFormFieldFile
+{
 	/**
 	 * The form field type.
 	 *
@@ -196,6 +196,6 @@
 			$html .= '<img src="' . $data->mediaLink . '" height="125" width="125" />';
 		}
 
-			return $html;
+		return $html;
 	}
-	}
+}
