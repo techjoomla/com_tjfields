@@ -147,6 +147,7 @@ class JFormFieldImage extends JFormFieldFile
 		// Load backend language file
 		$lang = JFactory::getLanguage();
 		$lang->load('com_tjfields', JPATH_SITE);
+		$html .= '<div class="control-group">';
 
 		if (!empty($layoutData["value"]))
 		{
