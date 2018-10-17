@@ -144,6 +144,7 @@ class JFormFieldFile extends JFormField
 				$html .= $this->canDownloadFile($data, $layoutData);
 				$html .= $this->canDeleteFile($data, $layoutData);
 			}
+
 		}
 
 		return $html;
@@ -181,32 +182,32 @@ class JFormFieldFile extends JFormField
 	{
 		$tjFieldHelper = new TjfieldsHelper;
 
-		$app = JFactory::getApplication();
-		$clientForm = $app->input->get('client', '', 'string');
-
 		$data = new stdClass;
+
+		$app = JFactory::getApplication();
+		$data->clientForm = $app->input->get('client', '', 'string');
 
 		// Checking the field is from subfrom or not
 		$formName = explode('.', $this->form->getName());
 		$formValueId = $app->input->get('id', '', 'INT');
 
-		$subFormFileFieldId = 0;
-		$isSubformField = 0;
-		$subformId = 0;
+		$data->subFormFileFieldId = 0;
+		$data->isSubformField = 0;
+		$data->subformId = 0;
 
 		if ($formName[0] === 'subform')
 		{
-			$isSubformField = 1;
+			$data->isSubformField = 1;
 
 			$formData = $tjFieldHelper->getFieldData(substr($formName[1], 0, -1));
 
 			// Subform Id
-			$subformId = $formData->id;
+			$data->subformId = $formData->id;
 
 			$fileFieldData = $tjFieldHelper->getFieldData($layoutData['field']->fieldname);
 
 			// File Field Id under subform
-			$subFormFileFieldId = $fileFieldData->id;
+			$data->subFormFileFieldId = $fileFieldData->id;
 		}
 
 		$data->inputData = '<input fileFieldId="' . $layoutData["id"] . '" type="hidden" name="'
@@ -232,10 +233,10 @@ class JFormFieldFile extends JFormField
 		$data->fields_value_table = JTable::getInstance('Fieldsvalue', 'TjfieldsTable');
 		$data->fields_value_table->load(array('value' => $layoutData['value']));
 
-		if ($isSubformField)
+		if ($data->isSubformField)
 		{
 			// Getting field value of subform file field using the content_id from url and subform_id which will be the field id
-			$data->fields_value_table->load(array('content_id' => $formValueId, 'field_id' => $subformId));
+			$data->fields_value_table->load(array('content_id' => $formValueId, 'field_id' => $data->subformId));
 		}
 		else
 		{
@@ -243,15 +244,15 @@ class JFormFieldFile extends JFormField
 		}
 
 		// Creating media link by check subform or not
-		if ($isSubformField)
+		if ($data->isSubformField)
 		{
 			$data->mediaLink = $tjFieldHelper->getMediaUrl(
-			$layoutData["value"], '&id=' . $data->fields_value_table->id . '&client=' . $clientForm . '&subFormFileFieldId=' . $subFormFileFieldId
+			$layoutData["value"], '&id=' . $data->fields_value_table->id . '&client=' . $data->clientForm . '&subFormFileFieldId=' . $data->subFormFileFieldId
 			);
 		}
 		else
 		{
-			$data->mediaLink = $tjFieldHelper->getMediaUrl($layoutData["value"], '&id=' . $data->fields_value_table->id . '&client=' . $clientForm);
+			$data->mediaLink = $tjFieldHelper->getMediaUrl($layoutData["value"], '&id=' . $data->fields_value_table->id . '&client=' . $data->clientForm);
 		}
 
 		$data->inputData = '</div>';
@@ -293,7 +294,7 @@ class JFormFieldFile extends JFormField
 	/**
 	 * Method to delete file.
 	 *
-	 * @param   object  $data        file data
+	 * @param   object  $data        file data.
 	 * @param   object  $layoutData  layoutData
 	 *
 	 * @return  string
@@ -321,15 +322,17 @@ class JFormFieldFile extends JFormField
 				}
 			}
 
-			$deleteFile = '';
+			$deleteFiledata = '';
 
-			if (($canEdit || $canEditOwn) && $layoutData['required'] == '')
+			if (!empty($mediaLink) && ($canEdit || $canEditOwn) && $layoutData['required'] == '' && $data->fields_value_table->id)
 			{
-				$deleteFile .= ' <span class="btn btn-remove"> <a id="remove_' . $layoutData["id"] . '" href="javascript:void(0);"
-					onclick="deleteFile(\'' . base64_encode($layoutData["value"]) . '\', \'' . $layoutData["id"] . '\');">'
+				$deleteFiledata .= ' <span class="btn btn-remove"> <a id="remove_' . $layoutData["id"] . '" href="javascript:void(0);"
+					onclick="deleteFile(\'' . base64_encode($layoutData["value"]) . '\',
+					 \'' . $layoutData["id"] . '\', \'' . base64_encode($data->fields_value_table->id) . '\',
+					  \'' . $data->subFormFileFieldId . '\',\'' . $data->isSubformField . '\',\'' . $data->clientForm . '\');">'
 					. JText::_("COM_TJFIELDS_FILE_DELETE") . '</a> </span>';
 			}
 
-			return $deleteFile;
+			return $deleteFiledata;
 	}
 }
