@@ -7,6 +7,8 @@
  * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
+JLoader::import("/techjoomla/media/storage/local", JPATH_LIBRARIES);
+
 defined('JPATH_PLATFORM') or die;
 
 /**
@@ -35,14 +37,6 @@ class JFormFieldFile extends JFormField
 	protected $accept;
 
 	/**
-	 * The SimpleXMLElement object representing the `<field>` tag for the form field object.
-	 *
-	 * @var    mixed
-	 * @since  3.2
-	 */
-	protected $element;
-
-	/**
 	 * Name of the layout being used to render the field
 	 *
 	 * @var    string
@@ -66,14 +60,7 @@ class JFormFieldFile extends JFormField
 		switch ($name)
 		{
 			case 'accept':
-
 				return $this->accept;
-				break;
-
-			case 'element';
-
-				return $this->element;
-				break;
 		}
 
 		return parent::__get($name);
@@ -192,38 +179,86 @@ class JFormFieldFile extends JFormField
 	 */
 	protected function buildData($layoutData)
 	{
-			$tjFieldHelper = new TjfieldsHelper;
+		$tjFieldHelper = new TjfieldsHelper;
 
-			$data = new stdClass;
+		$app = JFactory::getApplication();
+		$clientForm = $app->input->get('client', '', 'string');
 
-			$data->inputData = '<input fileFieldId="' . $layoutData["id"] . '" type="hidden" name="'
-			. $layoutData["name"] . '"' . 'id="' . $layoutData["id"] . '"' . 'value="' . $layoutData[	"value"] . '" />';
+		$data = new stdClass;
 
-			$data->inputData = '<div class="control-group">';
+		// Checking the field is from subfrom or not
+		$formName = explode('.', $this->form->getName());
+		$formValueId = $app->input->get('id', '', 'INT');
 
-			$fileInfo = new SplFileInfo($layoutData["value"]);
-			$data->extension = $fileInfo->getExtension();
+		$subFormFileFieldId = 0;
+		$isSubformField = 0;
+		$subformId = 0;
 
-			$data->mediaLink = $tjFieldHelper->getMediaUrl($layoutData["value"]);
+		if ($formName[0] === 'subform')
+		{
+			$isSubformField = 1;
 
-			// Access based actions
-			$data->user = JFactory::getUser();
+			$formData = $tjFieldHelper->getFieldData(substr($formName[1], 0, -1));
 
-			$db = JFactory::getDbo();
-			JTable::addIncludePath(JPATH_ROOT . '/administrator/components/com_tjfields/tables');
-			$data->tjFieldFieldTable = JTable::getInstance('field', 'TjfieldsTable', array('dbo', $db));
-			$data->tjFieldFieldTable->load(array('name' => $layoutData['field']->fieldname));
+			// Subform Id
+			$subformId = $formData->id;
 
-			// Get Field value details
-			JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_tjfields/tables');
-			$data->fields_value_table = JTable::getInstance('Fieldsvalue', 'TjfieldsTable');
+			$fileFieldData = $tjFieldHelper->getFieldData($layoutData['field']->fieldname);
+
+			// File Field Id under subform
+			$subFormFileFieldId = $fileFieldData->id;
+		}
+
+		$data->inputData = '<input fileFieldId="' . $layoutData["id"] . '" type="hidden" name="'
+		. $layoutData["name"] . '"' . 'id="' . $layoutData["id"] . '"' . 'value="' . $layoutData[	"value"] . '" />';
+
+		$data->inputData = '<div class="control-group">';
+
+		$fileInfo = new SplFileInfo($layoutData["value"]);
+		$data->extension = $fileInfo->getExtension();
+
+		$data->mediaLink = $tjFieldHelper->getMediaUrl($layoutData["value"]);
+
+		// Access based actions
+		$data->user = JFactory::getUser();
+
+		$db = JFactory::getDbo();
+		JTable::addIncludePath(JPATH_ROOT . '/administrator/components/com_tjfields/tables');
+		$data->tjFieldFieldTable = JTable::getInstance('field', 'TjfieldsTable', array('dbo', $db));
+		$data->tjFieldFieldTable->load(array('name' => $layoutData['field']->fieldname));
+
+		// Get Field value details
+		JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_tjfields/tables');
+		$data->fields_value_table = JTable::getInstance('Fieldsvalue', 'TjfieldsTable');
+		$data->fields_value_table->load(array('value' => $layoutData['value']));
+
+		if ($isSubformField)
+		{
+			// Getting field value of subform file field using the content_id from url and subform_id which will be the field id
+			$data->fields_value_table->load(array('content_id' => $formValueId, 'field_id' => $subformId));
+		}
+		else
+		{
 			$data->fields_value_table->load(array('value' => $layoutData['value']));
+		}
 
-			$data->inputData = '</div>';
+		// Creating media link by check subform or not
+		if ($isSubformField)
+		{
+			$data->mediaLink = $tjFieldHelper->getMediaUrl(
+			$layoutData["value"], '&id=' . $data->fields_value_table->id . '&client=' . $clientForm . '&subFormFileFieldId=' . $subFormFileFieldId
+			);
+		}
+		else
+		{
+			$data->mediaLink = $tjFieldHelper->getMediaUrl($layoutData["value"], '&id=' . $data->fields_value_table->id . '&client=' . $clientForm);
+		}
 
-			$data->inputData = '</div>';
+		$data->inputData = '</div>';
 
-			return $data;
+		$data->inputData = '</div>';
+
+		return $data;
 	}
 
 	/**
@@ -258,7 +293,7 @@ class JFormFieldFile extends JFormField
 	/**
 	 * Method to delete file.
 	 *
-	 * @param   object  $data        file data.
+	 * @param   object  $data        file data
 	 * @param   object  $layoutData  layoutData
 	 *
 	 * @return  string
