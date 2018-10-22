@@ -324,7 +324,7 @@ class JFormFieldFile extends JFormField
 
 			$deleteFiledata = '';
 
-			if (!empty($mediaLink) && ($canEdit || $canEditOwn) && $layoutData['required'] == '' && $data->fields_value_table->id)
+			if (!empty($data->mediaLink) && ($canEdit || $canEditOwn) && $layoutData['required'] == '' && $data->fields_value_table->id)
 			{
 				$deleteFiledata .= ' <span class="btn btn-remove"> <a id="remove_' . $layoutData["id"] . '" href="javascript:void(0);"
 					onclick="deleteFile(\'' . base64_encode($layoutData["value"]) . '\',
