@@ -199,6 +199,6 @@ protected $layout = 'joomla.form.field.file';
 	{
 		$html .= '<img src="' . $data->mediaLink . '" height="' . $layoutData['field']->element->attributes()->height . '" width="' .   $layoutData['field']->element->attributes()->width .'" />';
 
-			return $html;
+		return $html;
 	}
 }
