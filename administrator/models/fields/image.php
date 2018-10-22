@@ -18,37 +18,37 @@ defined('JPATH_PLATFORM') or die;
 */
 class JFormFieldImage extends JFormFieldFile
 {
-	/**
-	 * The form field type.
-	 *
-	 * @var    string
-	 * @since  11.1
-	 */
-	protected $type = 'File';
+/**
+ * The form field type.
+ *
+ * @var    string
+ * @since  11.1
+ */
+protected $type = 'File';
 
-	/**
-	 * The accepted file type list.
-	 *
-	 * @var    mixed
-	 * @since  3.2
-	 */
-	protected $accept;
+/**
+ * The accepted file type list.
+ *
+ * @var    mixed
+ * @since  3.2
+ */
+protected $accept;
 
-	/**
-	 * The SimpleXMLElement object representing the `<field>` tag for the form field object.
-	 *
-	 * @var    mixed
-	 * @since  3.2
-	 */
-	protected $element;
+/**
+ * The SimpleXMLElement object representing the `<field>` tag for the form field object.
+ *
+ * @var    mixed
+ * @since  3.2
+ */
+protected $element;
 
-	/**
-	 * Name of the layout being used to render the field
-	 *
-	 * @var    string
-	 * @since  3.6
-	 */
-	protected $layout = 'joomla.form.field.file';
+/**
+ * Name of the layout being used to render the field
+ *
+ * @var    string
+ * @since  3.6
+ */
+protected $layout = 'joomla.form.field.file';
 
 	/**
 	 * Method to get certain otherwise inaccessible properties from the form field object.
@@ -77,7 +77,7 @@ class JFormFieldImage extends JFormFieldFile
 		}
 
 		return parent::__get($name);
-	}
+}
 
 	/**
 	 * Method to set certain otherwise inaccessible properties of the form field object.
@@ -160,6 +160,8 @@ class JFormFieldImage extends JFormFieldFile
 				$html .= parent::canDeleteFile($data,$layoutData);
 			}
 		}
+			$html .= '</div>';
+			$html .= '</div>';
 
 		return $html;
 	}
@@ -192,11 +194,8 @@ class JFormFieldImage extends JFormFieldFile
 	 */
 	protected function renderImage($data,$layoutData)
 	{
-		if ($layoutData['field']->element->attributes()->renderimage)
-		{
-			$html .= '<img src="' . $data->mediaLink . '" height="125" width="125" />';
-		}
+			$html .= '<img src="' . $data->mediaLink . '" height="' . $layoutData["height"] . '" width="' .    $layoutData["width"] .'" />';
 
-		return $html;
+			return $html;
 	}
 }
