@@ -197,7 +197,7 @@ protected $layout = 'joomla.form.field.file';
 	 */
 	protected function renderImage($data,$layoutData)
 	{
-			$html .= '<img src="' . $data->mediaLink . '" height="' . $layoutData["height"] . '" width="' .    $layoutData["width"] .'" />';
+		$html .= '<img src="' . $data->mediaLink . '" height="' . $layoutData['field']->element->attributes()->height . '" width="' .   $layoutData['field']->element->attributes()->width .'" />';
 
 			return $html;
 	}
