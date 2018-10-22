@@ -186,9 +186,12 @@ protected $layout = 'joomla.form.field.file';
 	}
 
 	/**
-	 * Method to get the data to be passed to the layout for rendering.
+	 * Method to render image file.
 	 *
-	 * @return  array
+	 * @param   object  $data        file data.
+	 * @param   object  $layoutData  layoutData
+	 *
+	 * @return  string
 	 *
 	 * @since 3.6
 	 */
