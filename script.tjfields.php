@@ -195,45 +195,57 @@ class com_tjfieldsInstallerScript
 		}
 
 		// Plugins installation
-		if (count($this->installation_queue['plugins'])) {
-			foreach ($this->installation_queue['plugins'] as $folder => $plugins) {
+		if (count($this->installation_queue['plugins']))
+		{
+			foreach ($this->installation_queue['plugins'] as $folder => $plugins)
+			{
 				if (count($plugins))
-				foreach ($plugins as $plugin => $published) {
-					$path = "$src/plugins/$folder/$plugin";
-					if (!is_dir($path)) {
-						$path = "$src/plugins/$folder/plg_$plugin";
-					}
-					if (!is_dir($path)) {
-						$path = "$src/plugins/$plugin";
-					}
-					if (!is_dir($path)) {
-						$path = "$src/plugins/plg_$plugin";
-					}
-					if (!is_dir($path)) continue;
+				{
+					foreach ($plugins as $plugin => $published)
+					{
+						$path = "$src/plugins/$folder/$plugin";
 
-					// Was the plugin already installed?
-					$query = $db->getQuery(true)
-						->select('COUNT(*)')
-						->from($db->qn('#__extensions'))
-						->where('( '.($db->qn('name').' = '.$db->q($plugin)) .' OR '. ($db->qn('element').' = '.$db->q($plugin)) .' )')
-						->where($db->qn('folder').' = '.$db->q($folder));
-					$db->setQuery($query);
-					$count = $db->loadResult();
+						if (!is_dir($path))
+						{
+							$path = "$src/plugins/$folder/plg_$plugin";
+						}
 
-					$installer = new JInstaller;
-					$result = $installer->install($path);
+						if (!is_dir($path))
+						{
+							$path = "$src/plugins/$plugin";
+						}
 
-					$status->plugins[] = array('name'=>$plugin,'group'=>$folder, 'result'=>$result,'status'=>$published);
+						if (!is_dir($path))
+						{
+							$path = "$src/plugins/plg_$plugin";
+						}
 
+						if (!is_dir($path)) continue;
 
-					if ($published && !$count) {
+						// Was the plugin already installed?
 						$query = $db->getQuery(true)
-							->update($db->qn('#__extensions'))
-							->set($db->qn('enabled').' = '.$db->q('1'))
-							->where('( '.($db->qn('name').' = '.$db->q($plugin)) .' OR '. ($db->qn('element').' = '.$db->q($plugin)) .' )')
-							->where($db->qn('folder').' = '.$db->q($folder));
+							->select('COUNT(*)')
+							->from($db->qn('#__extensions'))
+							->where('( ' . ($db->qn('name') . ' = ' . $db->q($plugin)) . ' OR ' . ($db->qn('element') . ' = ' . $db->q($plugin)) . ' )')
+							->where($db->qn('folder') . ' = ' . $db->q($folder));
 						$db->setQuery($query);
-						$db->execute();
+						$count = $db->loadResult();
+
+						$installer = new JInstaller;
+						$result = $installer->install($path);
+
+						$status->plugins[] = array('name'=>$plugin, 'group'=>$folder, 'result'=>$result, 'status'=>$published);
+
+						if ($published && !$count)
+						{
+							$query = $db->getQuery(true)
+								->update($db->qn('#__extensions'))
+								->set($db->qn('enabled') . ' = ' . $db->q('1'))
+								->where('( ' . ($db->qn('name') . ' = ' . $db->q($plugin)) . ' OR ' . ($db->qn('element') . ' = ' . $db->q($plugin)) . ' )')
+								->where($db->qn('folder') . ' = ' . $db->q($folder));
+							$db->setQuery($query);
+							$db->execute();
+						}
 					}
 				}
 			}
