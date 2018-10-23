@@ -387,7 +387,7 @@ trait TjfieldsFilterField
 	 *
 	 * @since  1.4.1
 	 */
-	public function deleteUsersExtraFieldsData($userId)
+	public function deleteExtraFieldsDataByUser($userId)
 	{
 		$user = JFactory::getUser($userId);
 
