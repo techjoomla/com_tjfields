@@ -47,7 +47,7 @@ class com_tjfieldsInstallerScript
 		'modules'=>array(
 			'admin'=>array(),
 			'site'=>array(
-					'mod_tjfields_search' => array('position-7', 1)
+					'tjfields_search' => array('position-7', 1)
 			)
 		),
 		'plugins'=>array(
