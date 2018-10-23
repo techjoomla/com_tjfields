@@ -31,7 +31,6 @@ class com_tjfieldsInstallerScript
 	private $componentStatus = "install";
 
 	private $installation_queue = array(
-
 		'modules'=>array(
 			'site'=>array(
 					'mod_tjfields_search' => array('position-7', 0)
@@ -40,6 +39,20 @@ class com_tjfieldsInstallerScript
 		'plugins'=>array(
 			'privacy'=>array(
 				'tjfields'=>1,
+			)
+		)
+	);
+
+	private $uninstall_queue = array(
+		'modules'=>array(
+			'admin'=>array(),
+			'site'=>array(
+					'mod_tjfields_search' => array('position-7', 1)
+			)
+		),
+		'plugins'=>array(
+			'privacy'=>array(
+				'tjfields'=>1
 			)
 		)
 	);
@@ -293,6 +306,9 @@ class com_tjfieldsInstallerScript
 	 */
 	function uninstall($parent)
 	{
+		// Uninstall subextensions
+		$status = $this->_uninstallSubextensions($parent);
+
 		// Show the post-uninstallation page
 		$this->_renderPostUninstallation($status, $parent);
 	}
@@ -312,7 +328,7 @@ class com_tjfieldsInstallerScript
 	//since version 2.0
 	function fix_db_on_update()
 	{
-		$db =  JFactory::getDBO();
+		$db =  JFactory::getDbo();
 
 		$field_array = array();
 		$query = "SHOW COLUMNS FROM `#__tjfields_fields`";
@@ -358,7 +374,7 @@ class com_tjfieldsInstallerScript
 		$db->execute();
 
 		// Check for table//////////////////////////////////////////////////////////////////////////////
-		$db =  JFactory::getDBO();
+		$db =  JFactory::getDbo();
 
 		$field_array = array();
 		$query = "SHOW COLUMNS FROM `#__tjfields_fields_value`";
@@ -383,7 +399,7 @@ class com_tjfieldsInstallerScript
 	}
 	function installSqlFiles($parent)
 	{
-		$db = JFactory::getDBO();
+		$db = JFactory::getDbo();
 
 		// Install country table(#__tj_country) if it does not exists
 		$check = $this->checkTableExists('tj_country');
@@ -499,7 +515,7 @@ class com_tjfieldsInstallerScript
 
 	function checkTableExists($table)
 	{
-		$db = JFactory::getDBO();
+		$db = JFactory::getDbo();
 		$config = JFactory::getConfig();
 
 		if (JVERSION >= '3.0')
@@ -533,7 +549,7 @@ class com_tjfieldsInstallerScript
 
 	function getColumns($table)
 	{
-		$db = JFactory::getDBO();
+		$db = JFactory::getDbo();
 
 		$field_array = array();
 		$query = "SHOW COLUMNS FROM " . $table;
@@ -550,7 +566,7 @@ class com_tjfieldsInstallerScript
 
 	function renameTable($table, $newTable)
 	{
-		$db = JFactory::getDBO();
+		$db = JFactory::getDbo();
 		$query = "RENAME TABLE `" . $table . "` TO `" . $newTable . '_' . date('d-m-Y_H:m:s') . "`";
 		$db->setQuery($query);
 
@@ -564,7 +580,7 @@ class com_tjfieldsInstallerScript
 
 	function runSQL($parent,$sqlfile)
 	{
-		$db = JFactory::getDBO();
+		$db = JFactory::getDbo();
 
 		// Obviously you may have to change the path and name if your installation SQL file ;)
 		if (method_exists($parent, 'extension_root'))
@@ -604,5 +620,93 @@ class com_tjfieldsInstallerScript
 				}
 			}
 		}
+	}
+
+	/**
+	 * Uninstalls subextensions (modules, plugins) bundled with the main extension
+	 *
+	 * @param JInstaller $parent
+	 * @return JObject The subextension uninstallation status
+	 */
+	private function _uninstallSubextensions($parent)
+	{
+		jimport('joomla.installer.installer');
+
+		$db =  JFactory::getDbo();
+
+		$status = new JObject();
+		$status->modules = array();
+		$status->plugins = array();
+
+		$src = $parent->getParent()->getPath('source');
+
+		// Modules uninstallation
+		if (count($this->uninstall_queue['modules']))
+		{
+			foreach ($this->uninstall_queue['modules'] as $folder => $modules)
+			{
+				if (count($modules))
+				{
+					foreach ($modules as $module => $modulePreferences)
+					{
+						// Find the module ID
+						$sql = $db->getQuery(true)
+							->select($db->qn('extension_id'))
+							->from($db->qn('#__extensions'))
+							->where($db->qn('element') . ' = ' . $db->q('mod_' . $module))
+							->where($db->qn('type') . ' = ' . $db->q('module'));
+						$db->setQuery($sql);
+						$id = $db->loadResult();
+
+						// Uninstall the module
+						if ($id)
+						{
+							$installer = new JInstaller;
+							$result = $installer->uninstall('module', $id, 1);
+							$status->modules[] = array(
+								'name'=>'mod_' . $module,
+								'client'=>$folder,
+								'result'=>$result
+							);
+						}
+					}
+				}
+			}
+		}
+
+		// Plugins uninstallation
+		if (count($this->uninstall_queue['plugins']))
+		{
+			foreach ($this->uninstall_queue['plugins'] as $folder => $plugins)
+			{
+				if (count($plugins))
+				{
+					foreach ($plugins as $plugin => $published)
+					{
+						$sql = $db->getQuery(true)
+							->select($db->qn('extension_id'))
+							->from($db->qn('#__extensions'))
+							->where($db->qn('type') . ' = ' . $db->q('plugin'))
+							->where($db->qn('element') . ' = ' . $db->q($plugin))
+							->where($db->qn('folder') . ' = ' . $db->q($folder));
+						$db->setQuery($sql);
+						$id = $db->loadResult();
+
+						if ($id)
+						{
+							$installer = new JInstaller;
+							$result = $installer->uninstall('plugin', $id);
+							$status->plugins[] = array(
+								'name'=>'plg_' . $plugin,
+								'group'=>$folder,
+								'result'=>$result
+							);
+						}
+					}
+				}
+			}
+		}
+
+		return $status;
 	}
 }
