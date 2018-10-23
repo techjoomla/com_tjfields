@@ -45,14 +45,9 @@ class PlgPrivacyTjFields extends PrivacyPlugin
 	 *
 	 * This event will collect data for the following tables:
 	 *
-	 * - #__kart_role
-	 * - #__kart_cart
-	 * - #__kart_orders
-	 * - #__kart_payouts
-	 * - #__kart_store
-	 * - #__kart_users
-	 * - #__kart_users_backup
-	 * - #__kart_customer_address
+	 * - #__tjfields_fields
+	 * - #__tjfields_groups
+	 * - #__tjfields_fields_value
 	 *
 	 * @param   PrivacyTableRequest  $request  The request record being processed
 	 * @param   JUser                $user     The user account associated with this request if available
