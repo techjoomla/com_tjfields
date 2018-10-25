@@ -138,6 +138,7 @@ class JFormFieldFile extends JFormField
 		if (!empty($layoutData["value"]))
 		{
 			$data = $this->buildData($layoutData);
+			$html .= $data->html;
 
 			if (!empty($data->mediaLink))
 			{
@@ -147,7 +148,7 @@ class JFormFieldFile extends JFormField
 
 		}
 
-		return $html;
+			return $html;
 	}
 
 	/**
@@ -210,10 +211,9 @@ class JFormFieldFile extends JFormField
 			$data->subFormFileFieldId = $fileFieldData->id;
 		}
 
-		$data->inputData = '<input fileFieldId="' . $layoutData["id"] . '" type="hidden" name="'
-		. $layoutData["name"] . '"' . 'id="' . $layoutData["id"] . '"' . 'value="' . $layoutData[	"value"] . '" />';
-
-		$data->inputData = '<div class="control-group">';
+			$data->html .= '<input fileFieldId="' . $layoutData["id"] . '" type="hidden" name="'
+			. $layoutData["name"] . '"' . 'id="' . $layoutData["id"] . '"' . 'value="' . $layoutData["value"] . '" />';
+			$data->html .= '<div class="control-group">';
 
 		$fileInfo = new SplFileInfo($layoutData["value"]);
 		$data->extension = $fileInfo->getExtension();
@@ -255,10 +255,9 @@ class JFormFieldFile extends JFormField
 			$data->mediaLink = $tjFieldHelper->getMediaUrl($layoutData["value"], '&id=' . $data->fields_value_table->id . '&client=' . $data->clientForm);
 		}
 
-		$data->inputData = '</div>';
+			$data->html .= '</div>';
 
-		$data->inputData = '</div>';
-
+			$data->html .= '</div>';
 		return $data;
 	}
 
