@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="component" version="3.0" method="upgrade">
 	<name>com_tjfields</name>
-	<author>TechJoomla</author>
+	<author>Techjoomla</author>
 	<authorEmail>extensions@techjoomla.com</authorEmail>
-	<authorUrl>www.techjoomla.com</authorUrl>
-	<copyright>Copyright(C)2012-17 TechJoomla</copyright>
+	<authorUrl>https://techjoomla.com</authorUrl>
+	<copyright>Copyright (C) 2010 - 2018 Techjoomla. All rights reserved.</copyright>
 	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
-	<creationDate>12th Apr 2017</creationDate>
-	<version>1.4</version>
+	<creationDate>2nd Nov 2018</creationDate>
+	<version>1.4.1</version>
 	<description>TJFields - Common code for TJ Fields Manager and TJ Geo Manager!</description>
 	<install>
 		<sql>

@@ -377,4 +377,25 @@ trait TjfieldsFilterField
 
 		return $result;
 	}
+
+	/**
+	 * Method to delete users extra fields data.
+	 *
+	 * @param   INT  $userId  user id
+	 *
+	 * @return  boolean
+	 *
+	 * @since  1.4.1
+	 */
+	public function deleteExtraFieldsDataByUser($userId)
+	{
+		$user = JFactory::getUser($userId);
+
+		$query = $db->getQuery(true);
+		$query->delete($db->quoteName('#__tjfields_fields_value'));
+		$query->where('(' . $db->quoteName('user_id') . '=' . $user->id . ' OR ' . $db->quoteName('email_id') . '=' . $db->quote($user->email) . ')');
+
+		$db->setQuery($query);
+		$db->execute();
+	}
 }
