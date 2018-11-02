@@ -19,7 +19,7 @@ use Joomla\CMS\User\User;
 /**
  * TjFields Privacy Plugin.
  *
- * @since  __DEPLOY_VERSION__
+ * @since  1.4.1
  */
 class PlgPrivacyTjFields extends PrivacyPlugin
 {
@@ -28,7 +28,7 @@ class PlgPrivacyTjFields extends PrivacyPlugin
 	 *
 	 * @var    boolean
 	 *
-	 * @since  __DEPLOY_VERSION__
+	 * @since  1.4.1
 	 */
 	protected $autoloadLanguage = true;
 
@@ -36,7 +36,7 @@ class PlgPrivacyTjFields extends PrivacyPlugin
 	 * Database object
 	 *
 	 * @var    JDatabaseDriver
-	 * @since  __DEPLOY_VERSION__
+	 * @since  1.4.1
 	 */
 	protected $db;
 
@@ -54,7 +54,7 @@ class PlgPrivacyTjFields extends PrivacyPlugin
 	 *
 	 * @return  PrivacyExportDomain[]
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   1.4.1
 	 */
 	public function onPrivacyExportRequest(PrivacyTableRequest $request, JUser $user = null)
 	{
@@ -82,7 +82,7 @@ class PlgPrivacyTjFields extends PrivacyPlugin
 	 *
 	 * @return  PrivacyExportDomain
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   1.4.1
 	 */
 	private function createTjFieldsFields(JTableUser $user)
 	{
@@ -113,7 +113,7 @@ class PlgPrivacyTjFields extends PrivacyPlugin
 	 *
 	 * @return  PrivacyExportDomain
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   1.4.1
 	 */
 	private function createTjFieldsFieldGroups(JTableUser $user)
 	{
@@ -144,7 +144,7 @@ class PlgPrivacyTjFields extends PrivacyPlugin
 	 *
 	 * @return  PrivacyExportDomain
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   1.4.1
 	 */
 	private function createTjFieldsFieldValues(JTableUser $user)
 	{

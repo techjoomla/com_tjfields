@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension version="3.0" type="module" client ="site" method="upgrade">
 	<name>mod_tjfields_search_name</name>
-	<author>TechJoomla</author>
+	<author>Techjoomla</author>
 	<authorEmail>extensions@techjoomla.com</authorEmail>
-	<authorUrl>www.techjoomla.com</authorUrl>
-	<copyright>Copyright(C)2012-17 TechJoomla</copyright>
+	<authorUrl>https://techjoomla.com</authorUrl>
+	<copyright>Copyright (C) 2010 - 2018 Techjoomla. All rights reserved.</copyright>
 	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
-	<creationDate>12th Apr 2017</creationDate>
-	<version>1.4</version>
+	<creationDate>2nd Nov 2018</creationDate>
+	<version>1.4.1</version>
 	<description>MOD_TJFIELDS_SEARCH_XML_DESCRIPTION</description>
 	<files>
 		<filename module="mod_tjfields_search">mod_tjfields_search.php</filename>
