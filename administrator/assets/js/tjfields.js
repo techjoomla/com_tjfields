@@ -150,6 +150,10 @@ jQuery(document).ready(function(){
 			jQuery(this).closest('div').find('.control-group').hide();
     });
 
+    jQuery(document).delegate('.videopopup', 'click', function(event) {
+        jQuery("#myModal").modal();
+    });
+
     /* Code for number field validation */
     document.formvalidator.setHandler('check_number_field', function(value, element) {
         let enteredValue = parseFloat(value);
