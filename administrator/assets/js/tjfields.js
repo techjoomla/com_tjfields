@@ -151,7 +151,7 @@ jQuery(document).ready(function(){
     });
 
     jQuery(document).delegate('.videopopup', 'click', function(event) {
-        jQuery("#myModal").modal();
+        jQuery("#videoModal").modal();
     });
 
     /* Code for number field validation */

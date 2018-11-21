@@ -134,7 +134,7 @@ class JFormFieldVideo extends JFormFieldUrl
 		{
 				$html .= '<div class="control-group">';
 				$html .= '<a href="#" class="videopopup"/>Click to watch video</a>';
-				$html .= '<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				$html .= '<div class="modal fade" id="videoModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
