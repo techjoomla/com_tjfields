@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form>
 	<fields name="params" label="COM_TJFIELDS_FIELD_BASIC_LABEL">
-<<<<<<< HEAD
-		<fieldset name="params">
+		<fieldset name="params" class ="abcd">
 			<field name="size" type="text" label="COM_TJFIELDS_FORM_LBL_FIELD_SIZE" description="COM_TJFIELDS_FORM_DESC_FIELD_SIZE" required="true" default="32"/>
 			<field name="height" type="text" label="COM_TJFIELDS_FORM_LBL_IMAGE_HEIGHT" description="COM_TJFIELDS_FORM_DESC_IMAGE_FIELD_HEIGHT" required="true" default="125"/>
 			<field name="width" type="text" label="COM_TJFIELDS_FORM_LBL_FIELD_WIDTH" description="COM_TJFIELDS_FORM_DESC_IMAGE_FIELD_WIDTH" required="true" default="120"/>
