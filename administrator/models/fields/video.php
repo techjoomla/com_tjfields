@@ -6,7 +6,9 @@
  * @copyright  Copyright (c) 2009-2018 TechJoomla. All rights reserved
  * @license    GNU General Public License version 2, or later
  */
+
 defined('JPATH_PLATFORM') or die;
+
 JLoader::register('JFormFieldUrl', JPATH_BASE . '/libraries/joomla/form/fields/url.php');
 
 /**
@@ -117,6 +119,7 @@ class JFormFieldVideo extends JFormFieldUrl
 		require_once JPATH_SITE . '/components/com_tjfields/helpers/tjfields.php';
 
 		$tjFieldHelper = new TjfieldsHelper;
+
 		$layoutData = $this->getLayoutData();
 
 		// Trim the trailing line in the layout file
@@ -130,24 +133,31 @@ class JFormFieldVideo extends JFormFieldUrl
 		if (isset($layoutData['field']->element->attributes()->display_video))
 		{
 				$html .= '<div class="control-group">';
-				$html .= '<a href="#" class="videopopup"/>Click to watch video</a>';
-				$html .= '<div class="modal fade" id="videoModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-						<h4 class="modal-title" id="myModalLabel">Video</h4>
-					</div>
-					<div class="modal-body">';
-					$html .= $this->rendervideo($layoutData, $layoutData['value']);
-				$html .= '
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-					</div>
-				</div>
-			</div>
-		</div>';
+
+				$html .= '<div class="container">
+							<!-- Trigger the modal with a button -->
+								<button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal_'.$layoutData['field']->id .'">click to show video</button>
+
+								<div class="modal fade" id="myModal_'.$layoutData['field']->id .'" role="dialog">
+									<div class="modal-dialog">
+										<!-- Modal content-->
+											<div class="modal-content">
+												<div class="modal-header">
+											<button type="button" class="close" data-dismiss="modal">&times;</button>
+											<h4 class="modal-title">Modal Header</h4>
+								</div>
+
+								<div class="modal-body">';
+									$html .= $this->rendervideo($layoutData, $layoutData['value']);
+									$html .='
+								</div>
+									<div class="modal-footer">
+									<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+								</div>
+							</div>
+						</div>
+						</div>
+					</div>';
 		}
 		else
 		{
@@ -159,27 +169,7 @@ class JFormFieldVideo extends JFormFieldUrl
 			$html .= '<br><a target="_blank" href=' . $layoutData['value'] . '> ' . $layoutData['value'] . '</a>';
 		}
 
-		// Renderer
-		$doc = JFactory::getDocument();
-		$doc->addScript(JUri::root() . 'administrator/components/com_tjfields/assets/js/mediaplayer/mediaelement-and-player.min.js');
-		$doc->addStyleSheet(JUri::root() . 'administrator/components/com_tjfields/assets/css/mediaplayer/mediaelementplayer.min.css');
-		$doc->addScript(JUri::root() . 'administrator/components/com_tjfields/assets/js/mediaplayer/vimeo.min.js');
-		$doc->addScript(JUri::root() . 'administrator/components/com_tjfields/assets/js/mediaplayer/facebook.min.js');
-		$doc->addScript(JUri::root() . 'administrator/components/com_tjfields/assets/js/mediaplayer/facebook.min.js');
-		$doc->addScript(JUri::root() . 'administrator/components/com_tjfields/assets/js/mediaplayer/twitch.min.js');
-		$doc->addScript(JUri::root() . 'administrator/components/com_tjfields/assets/js/mediaplayer/dailymotion.min.js');
-		$doc->addScript(JUri::root() . 'administrator/components/com_tjfields/assets/js/mediaplayer/soundcloud.min.js');
-
-		$doc->addScriptDeclaration('
-			jQuery(document).ready(function() {
-				jQuery("#player_' . $layoutData['field']->id . '").mediaelementplayer({
-					pluginPath: "/path/to/shims/",
-					success: function(mediaElement, originalNode, instance) {
-				}
-				});
-			});
-		');
-
+		$html .= $this->addMediaplayer($layoutData);
 		$html .= '</div>';
 
 		return $html;
@@ -202,6 +192,7 @@ class JFormFieldVideo extends JFormFieldUrl
 		// Note that the input type "url" is suitable only for external URLs, so if internal URLs are allowed
 		// we have to use the input type "text" instead.
 		$inputType    = $this->element['relative'] ? 'type="text"' : 'type="url"';
+
 		$extraData = array(
 			'maxLength' => $maxLength,
 			'inputType' => $inputType,
@@ -227,11 +218,6 @@ class JFormFieldVideo extends JFormFieldUrl
 			$autoPlay = 'autoplay';
 		}
 
-		if (isset($layoutData['field']->element->attributes()->muted))
-		{
-			$muted = 'muted';
-		}
-
 		$html .= '
 				<video ' . $autoPlay . ' id="player_' . $layoutData['field']->id . '"
 					height="' . $layoutData['field']->element->attributes()->height . '"
@@ -239,8 +225,95 @@ class JFormFieldVideo extends JFormFieldUrl
 					preload="auto"
 					poster ="' . $layoutData['field']->element->attributes()->poster . '"
 					controls playsinline webkit-playsinline
-					src="' . $videoUrl . '" ' . $muted . '>
+					src="' . $videoUrl . '">
 				</video>';
+
+		return $html;
+	}
+
+	/**
+	 * Method to add media player to render video file.
+	 *
+	 * @param   array   $layoutData  layoutData.
+	 * @param   string  $videoUrl    videoUrl
+	 *
+	 * @return  string
+	 *
+	 * @since    1.5
+	 */
+	protected function addMediaplayer($layoutData)
+	{
+		$doc = JFactory::getDocument();
+
+		$doc->addScript(JUri::root() . 'administrator/components/com_tjfields/assets/js/mediaplayer/mediaelement-and-player.min.js');
+		$doc->addStyleSheet(JUri::root() . 'administrator/components/com_tjfields/assets/css/mediaplayer/mediaelementplayer.min.css');
+
+		if(strpos( $layoutData['value'], "vimeo") !== false)
+		{
+			if (isset($layoutData['field']->element->attributes()->vimeo))
+			{
+				$doc->addScript(JUri::root() . 'administrator/components/com_tjfields/assets/js/mediaplayer/vimeo.min.js');
+			}
+			else
+			{
+				$html .="<p>Enable vimeo</p>";
+			}
+		}
+		elseif(strpos( $layoutData['value'], "facebook") !== false)
+		{
+			if (isset($layoutData['field']->element->attributes()->Facebook))
+			{
+				$doc->addScript(JUri::root() . 'administrator/components/com_tjfields/assets/js/mediaplayer/facebook.min.js');
+			}
+			else
+			{
+				$html .="<p>Enable facebook</p>";
+			}
+		}
+		elseif(strpos( $layoutData['value'], "twitch") !== false)
+		{
+			if (isset($layoutData['field']->element->attributes()->twitch))
+			{
+				$doc->addScript(JUri::root() . 'administrator/components/com_tjfields/assets/js/mediaplayer/twitch.min.js');
+			}
+			else
+			{
+				$html .="<p>Enable twitch</p>";
+			}
+		}
+		elseif(strpos( $layoutData['value'], "dailymotion") !== false)
+		{
+			if (isset($layoutData['field']->element->attributes()->dailymotion))
+			{
+				$doc->addScript(JUri::root() . 'administrator/components/com_tjfields/assets/js/mediaplayer/dailymotion.min.js');
+			}
+			else
+			{
+				$html .="<p>Enable DailyMotion</p>";
+			}
+		}
+		elseif(strpos( $layoutData['value'], "soundcloud") !== false)
+		{
+			if (isset($layoutData['field']->element->attributes()->soundcloud))
+			{
+				$doc->addScript(JUri::root() . 'administrator/components/com_tjfields/assets/js/mediaplayer/soundcloud.min.js');
+			}
+			else
+			{
+				$html .="<p>Enable SoundCloud</p>";
+			}
+		}
+
+		$doc->addScriptDeclaration('
+			jQuery(document).ready(function() {
+				jQuery("#player_' . $layoutData['field']->id . '").mediaelementplayer({
+					pluginPath: "/path/to/shims/",
+					success: function(mediaElement, originalNode, instance) {
+				}
+				});
+			});
+		');
+
 
 		return $html;
 	}
