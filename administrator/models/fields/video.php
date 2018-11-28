@@ -15,7 +15,7 @@ JLoader::register('JFormFieldUrl', JPATH_BASE . '/libraries/joomla/form/fields/u
  * Form Field video class
  * Supports a multi line area for entry of plain text with count char
  *
- * @since  11.1
+ * @since  DEPLOY_VERSION`
  */
 class JFormFieldVideo extends JFormFieldUrl
 {
@@ -23,7 +23,7 @@ class JFormFieldVideo extends JFormFieldUrl
 	 * The form field type.
 	 *
 	 * @var    string
-	 * @since  11.1
+	 * @since  DEPLOY_VERSION
 	 */
 	protected $type = 'video';
 
@@ -31,7 +31,7 @@ class JFormFieldVideo extends JFormFieldUrl
 	 * The SimpleXMLElement object representing the `<field>` tag for the form field object.
 	 *
 	 * @var    mixed
-	 * @since  3.2
+	 * @since  DEPLOY_VERSION
 	 */
 	protected $element;
 
@@ -39,7 +39,7 @@ class JFormFieldVideo extends JFormFieldUrl
 	 * Name of the layout being used to render the field
 	 *
 	 * @var    string
-	 * @since  3.6
+	 * @since  DEPLOY_VERSION
 	 */
 	protected $layout = 'joomla.form.field.url';
 
@@ -50,7 +50,7 @@ class JFormFieldVideo extends JFormFieldUrl
 	 *
 	 * @return  mixed  The property value or null.
 	 *
-	 * @since   3.2
+	 * @since   DEPLOY_VERSION
 	 */
 	public function __get($name)
 	{
@@ -75,7 +75,7 @@ class JFormFieldVideo extends JFormFieldUrl
 	 *
 	 * @return  void
 	 *
-	 * @since   3.2
+	 * @since   DEPLOY_VERSION
 	 */
 	public function __set($name, $value)
 	{
@@ -98,7 +98,7 @@ class JFormFieldVideo extends JFormFieldUrl
 	 * @return  boolean  True on success.
 	 *
 	 * @see     JFormField::setup()
-	 * @since   3.2
+	 * @since   DEPLOY_VERSION
 	 */
 	public function setup(SimpleXMLElement $element, $value, $group = null)
 	{
@@ -112,7 +112,7 @@ class JFormFieldVideo extends JFormFieldUrl
 	 *
 	 * @return  string  The field input markup.
 	 *
-	 * @since   3.1.2 (CMS)
+	 * @since   DEPLOY_VERSION
 	 */
 	protected function getInput()
 	{
@@ -136,20 +136,21 @@ class JFormFieldVideo extends JFormFieldUrl
 
 				$html .= '<div class="container">
 							<!-- Trigger the modal with a button -->
-								<button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal_'.$layoutData['field']->id .'">click to show video</button>
+								<button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal_' . $layoutData['field']->id . '">
+								click to show video</button>
 
-								<div class="modal fade" id="myModal_'.$layoutData['field']->id .'" role="dialog">
+								<div class="modal fade" id="myModal_' . $layoutData['field']->id . '" role="dialog">
 									<div class="modal-dialog">
 										<!-- Modal content-->
 											<div class="modal-content">
 												<div class="modal-header">
 											<button type="button" class="close" data-dismiss="modal">&times;</button>
-											<h4 class="modal-title">Modal Header</h4>
+											<h4 class="modal-title">Video</h4>
 								</div>
 
 								<div class="modal-body">';
 									$html .= $this->rendervideo($layoutData, $layoutData['value']);
-									$html .='
+									$html .= '
 								</div>
 									<div class="modal-footer">
 									<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -180,7 +181,7 @@ class JFormFieldVideo extends JFormFieldUrl
 	 *
 	 * @return  array
 	 *
-	 * @since 3.7
+	 * @since DEPLOY_VERSION
 	 */
 	protected function getLayoutData()
 	{
@@ -202,14 +203,14 @@ class JFormFieldVideo extends JFormFieldUrl
 	}
 
 	/**
-	 * Method to render image file.
+	 * Method to render video.
 	 *
 	 * @param   array   $layoutData  layoutData.
 	 * @param   string  $videoUrl    videoUrl
 	 *
 	 * @return  string
 	 *
-	 * @since    1.5
+	 * @since   DEPLOY_VERSION
 	 */
 	protected function rendervideo($layoutData, $videoUrl)
 	{
@@ -232,14 +233,13 @@ class JFormFieldVideo extends JFormFieldUrl
 	}
 
 	/**
-	 * Method to add media player to render video file.
+	 * Method to add media player to render video.
 	 *
-	 * @param   array   $layoutData  layoutData.
-	 * @param   string  $videoUrl    videoUrl
+	 * @param   array  $layoutData  layoutData.
 	 *
 	 * @return  string
 	 *
-	 * @since    1.5
+	 * @since   DEPLOY_VERSION
 	 */
 	protected function addMediaplayer($layoutData)
 	{
@@ -248,7 +248,7 @@ class JFormFieldVideo extends JFormFieldUrl
 		$doc->addScript(JUri::root() . 'administrator/components/com_tjfields/assets/js/mediaplayer/mediaelement-and-player.min.js');
 		$doc->addStyleSheet(JUri::root() . 'administrator/components/com_tjfields/assets/css/mediaplayer/mediaelementplayer.min.css');
 
-		if(strpos( $layoutData['value'], "vimeo") !== false)
+		if (strpos($layoutData['value'], "vimeo") !== false)
 		{
 			if (isset($layoutData['field']->element->attributes()->vimeo))
 			{
@@ -256,10 +256,10 @@ class JFormFieldVideo extends JFormFieldUrl
 			}
 			else
 			{
-				$html .="<p>Enable vimeo</p>";
+				$html .= "<p>Enable vimeo Renderer</p>";
 			}
 		}
-		elseif(strpos( $layoutData['value'], "facebook") !== false)
+		elseif (strpos($layoutData['value'], "facebook") !== false)
 		{
 			if (isset($layoutData['field']->element->attributes()->Facebook))
 			{
@@ -267,10 +267,10 @@ class JFormFieldVideo extends JFormFieldUrl
 			}
 			else
 			{
-				$html .="<p>Enable facebook</p>";
+				$html .= "<p>Enable facebook Renderer</p>";
 			}
 		}
-		elseif(strpos( $layoutData['value'], "twitch") !== false)
+		elseif (strpos($layoutData['value'], "twitch") !== false)
 		{
 			if (isset($layoutData['field']->element->attributes()->twitch))
 			{
@@ -278,10 +278,10 @@ class JFormFieldVideo extends JFormFieldUrl
 			}
 			else
 			{
-				$html .="<p>Enable twitch</p>";
+				$html .= "<p>Enable twitch Renderer</p>";
 			}
 		}
-		elseif(strpos( $layoutData['value'], "dailymotion") !== false)
+		elseif (strpos($layoutData['value'], "dailymotion") !== false)
 		{
 			if (isset($layoutData['field']->element->attributes()->dailymotion))
 			{
@@ -289,10 +289,10 @@ class JFormFieldVideo extends JFormFieldUrl
 			}
 			else
 			{
-				$html .="<p>Enable DailyMotion</p>";
+				$html .= "<p>Enable DailyMotion Renderer</p>";
 			}
 		}
-		elseif(strpos( $layoutData['value'], "soundcloud") !== false)
+		elseif (strpos($layoutData['value'], "soundcloud") !== false)
 		{
 			if (isset($layoutData['field']->element->attributes()->soundcloud))
 			{
@@ -300,7 +300,7 @@ class JFormFieldVideo extends JFormFieldUrl
 			}
 			else
 			{
-				$html .="<p>Enable SoundCloud</p>";
+				$html .= "<p>Enable SoundCloud Renderer</p>";
 			}
 		}
 
@@ -313,7 +313,6 @@ class JFormFieldVideo extends JFormFieldUrl
 				});
 			});
 		');
-
 
 		return $html;
 	}
