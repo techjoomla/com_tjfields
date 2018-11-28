@@ -180,9 +180,8 @@ class JFormFieldAudio extends JFormFieldVideo
 	 *
 	 * @since    1.5
 	 */
-	protected function renderAudio($layoutData, $videoUrl)
+	protected function renderAudio($layoutData, $audioUrl)
 	{
-
 		if (isset($layoutData['field']->element->attributes()->autoplay))
 		{
 			$autoPlay = 'autoplay';
@@ -197,14 +196,12 @@ class JFormFieldAudio extends JFormFieldVideo
 				<audio ' . $autoPlay . ' id="player_' . $layoutData['field']->id . '"
 					height="' . $layoutData['field']->element->attributes()->height . '"
 					width="' . $layoutData['field']->element->attributes()->width . '
-					preload="auto" loop
+					preload="auto"
 					poster ="' . $layoutData['field']->element->attributes()->poster . '"
 					controls playsinline webkit-playsinline
-					src="' . $videoUrl . '" '.$muted .'>
+					src="' . $audioUrl . '" ' . $muted . '>
 				</audio>';
 
 		return $html;
 	}
-
-
 }
