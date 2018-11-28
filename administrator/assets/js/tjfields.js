@@ -147,7 +147,7 @@ jQuery(document).ready(function(){
     });
 
     jQuery(document).delegate('.image-filefield-class', 'change', function(event) {
-			jQuery(this).closest('div').find('.control-group').hide();
+		jQuery(this).closest('div').find('.control-group').hide();
     });
 
     /* Code for number field validation */
