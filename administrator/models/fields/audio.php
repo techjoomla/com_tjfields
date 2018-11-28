@@ -15,7 +15,7 @@ JLoader::register('JFormFieldUrl', JPATH_BASE . '/libraries/joomla/form/fields/u
  * Form Field video class
  * Supports a multi line area for entry of plain text with count char
  *
- * @since  11.1
+ * @since  DEPLOY_VERSION
  */
 class JFormFieldAudio extends JFormFieldVideo
 {
@@ -23,7 +23,7 @@ class JFormFieldAudio extends JFormFieldVideo
 	 * The form field type.
 	 *
 	 * @var    string
-	 * @since  11.1
+	 * @since  DEPLOY_VERSION
 	 */
 	protected $type = 'audio';
 
@@ -31,7 +31,7 @@ class JFormFieldAudio extends JFormFieldVideo
 	 * The SimpleXMLElement object representing the `<field>` tag for the form field object.
 	 *
 	 * @var    mixed
-	 * @since  3.2
+	 * @since  DEPLOY_VERSION
 	 */
 	protected $element;
 
@@ -39,7 +39,7 @@ class JFormFieldAudio extends JFormFieldVideo
 	 * Name of the layout being used to render the field
 	 *
 	 * @var    string
-	 * @since  3.6
+	 * @since  DEPLOY_VERSION
 	 */
 	protected $layout = 'joomla.form.field.url';
 
@@ -50,7 +50,7 @@ class JFormFieldAudio extends JFormFieldVideo
 	 *
 	 * @return  mixed  The property value or null.
 	 *
-	 * @since   3.2
+	 * @since   DEPLOY_VERSION
 	 */
 	public function __get($name)
 	{
@@ -75,7 +75,7 @@ class JFormFieldAudio extends JFormFieldVideo
 	 *
 	 * @return  void
 	 *
-	 * @since   3.2
+	 * @since   DEPLOY_VERSION
 	 */
 	public function __set($name, $value)
 	{
@@ -98,7 +98,7 @@ class JFormFieldAudio extends JFormFieldVideo
 	 * @return  boolean  True on success.
 	 *
 	 * @see     JFormField::setup()
-	 * @since   3.2
+	 * @since   DEPLOY_VERSION
 	 */
 	public function setup(SimpleXMLElement $element, $value, $group = null)
 	{
@@ -112,7 +112,7 @@ class JFormFieldAudio extends JFormFieldVideo
 	 *
 	 * @return  string  The field input markup.
 	 *
-	 * @since   3.1.2 (CMS)
+	 * @since   DEPLOY_VERSION
 	 */
 	protected function getInput()
 	{
@@ -149,7 +149,7 @@ class JFormFieldAudio extends JFormFieldVideo
 	 *
 	 * @return  array
 	 *
-	 * @since 3.7
+	 * @since   DEPLOY_VERSION
 	 */
 	protected function getLayoutData()
 	{
@@ -178,7 +178,7 @@ class JFormFieldAudio extends JFormFieldVideo
 	 *
 	 * @return  string
 	 *
-	 * @since    1.5
+	 * @since   DEPLOY_VERSION
 	 */
 	protected function renderAudio($layoutData, $audioUrl)
 	{
