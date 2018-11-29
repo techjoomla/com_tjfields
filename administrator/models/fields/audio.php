@@ -12,7 +12,7 @@ defined('JPATH_PLATFORM') or die;
 JLoader::register('JFormFieldUrl', JPATH_BASE . '/libraries/joomla/form/fields/url.php');
 
 /**
- * Form Field video class
+ * Form Field Audio class
  * Supports a multi line area for entry of plain text with count char
  *
  * @since  DEPLOY_VERSION
@@ -171,7 +171,7 @@ class JFormFieldAudio extends JFormFieldVideo
 	}
 
 	/**
-	 * Method to render image file.
+	 * Method to render audio file.
 	 *
 	 * @param   array   $layoutData  layoutData.
 	 * @param   string  $audioUrl    audioUrl
