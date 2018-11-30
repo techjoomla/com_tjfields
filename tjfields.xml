@@ -31,6 +31,9 @@
 		<filename>filterFields.php</filename>
 		<filename>tjfields.php</filename>
 	</files>
+	<media destination="com_tjfields" folder="media">
+		<folder>vendors</folder>
+	</media>
 	<languages folder="site_language">
 		<language tag="en-GB">en-GB/en-GB.com_tjfields.ini</language>
 		<language tag="en-GB">en-GB/en-GB.tjgeo.countries.ini</language>
