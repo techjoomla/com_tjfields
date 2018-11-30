@@ -146,7 +146,7 @@ jQuery(document).ready(function(){
 			return false;
     });
 
-    jQuery(document).delegate('.image-filefield-class', 'change', function(event) {
+    jQuery(document).delegate('.tjfields-input-image', 'change', function(event) {
 		jQuery(this).closest('div').find('.control-group').hide();
     });
 

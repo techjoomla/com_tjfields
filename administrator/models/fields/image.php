@@ -1,5 +1,13 @@
 <?php
 /**
+ * @package     Joomla.Platform
+ * @subpackage  Form
+ *
+ * @copyright   Copyright (C) 2005 - 2016 Open Source Matters, Inc. All rights reserved.
+ * @license     GNU General Public License version 2 or later; see LICENSE
+ */
+
+/**
  * @version    SVN:<SVN_ID>
  * @package    TJFields
  * @author     Techjoomla <extensions@techjoomla.com>
@@ -48,7 +56,7 @@ class JFormFieldImage extends JFormFieldFile
 	 * @var    string
 	 * @since  DEPLOY_VERSION
 	 */
-	protected $layout = 'com_tjfields.joomla.form.field.file';
+	protected $layout = 'joomla.form.field.file';
 
 	/**
 	 * Method to get certain otherwise inaccessible properties from the form field object.
