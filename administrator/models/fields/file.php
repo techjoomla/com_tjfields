@@ -146,7 +146,7 @@ class JFormFieldFile extends JFormField
 			}
 		}
 
-			return $html;
+		return $html;
 	}
 
 	/**
@@ -247,8 +247,8 @@ class JFormFieldFile extends JFormField
 			$data->mediaLink = $tjFieldHelper->getMediaUrl($layoutData["value"], '&id=' . $data->fields_value_table->id . '&client=' . $data->clientForm);
 		}
 
-			$data->html .= '</div>';
-			$data->html .= '</div>';
+		$data->html .= '</div>';
+		$data->html .= '</div>';
 
 		return $data;
 	}
