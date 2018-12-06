@@ -170,7 +170,7 @@ class JFormFieldFile extends JFormField
 	/**
 	 * Method to required data for file.
 	 *
-	 * @param   object  $layoutData  layoutData
+	 * @param   array  $layoutData  layoutData
 	 *
 	 * @return  object
 	 *
@@ -257,7 +257,7 @@ class JFormFieldFile extends JFormField
 	 * Method to download file.
 	 *
 	 * @param   object  $data        file data.
-	 * @param   object  $layoutData  layoutData
+	 * @param   array   $layoutData  layoutData
 	 *
 	 * @return  string
 	 *
@@ -286,7 +286,7 @@ class JFormFieldFile extends JFormField
 	 * Method to delete file.
 	 *
 	 * @param   object  $data        file data.
-	 * @param   object  $layoutData  layoutData
+	 * @param   array   $layoutData  layoutData
 	 *
 	 * @return  string
 	 *
