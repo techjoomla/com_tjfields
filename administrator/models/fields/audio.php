@@ -9,7 +9,7 @@
 
 defined('JPATH_PLATFORM') or die;
 
-JLoader::register('JFormFieldUrl', JPATH_BASE . '/libraries/joomla/form/fields/url.php');
+JLoader::import('components.com_tjfields.models.fields.video', JPATH_ADMINISTRATOR);
 
 /**
  * Form Field Audio class
@@ -61,7 +61,6 @@ class JFormFieldAudio extends JFormFieldVideo
 			case 'element';
 
 				return $this->element;
-				break;
 		}
 
 		return parent::__get($name);
@@ -117,8 +116,6 @@ class JFormFieldAudio extends JFormFieldVideo
 	protected function getInput()
 	{
 		require_once JPATH_SITE . '/components/com_tjfields/helpers/tjfields.php';
-
-		$tjFieldHelper = new TjfieldsHelper;
 
 		$layoutData = $this->getLayoutData();
 
