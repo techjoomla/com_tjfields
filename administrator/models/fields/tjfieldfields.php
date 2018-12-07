@@ -70,7 +70,9 @@ class JFormFieldtjfieldfields extends JFormField
 		$options[] = JHtml::_('select.option', 'file', JText::_('COM_TJFIELDS_FILE'));
 		$options[] = JHtml::_('select.option', 'spacer', JText::_('COM_TJFIELDS_SPACER'));
 		$options[] = JHtml::_('select.option', 'subform', JText::_('COM_TJFIELDS_SUBFORM'));
+		$options[] = JHtml::_('select.option', 'image', JText::_('COM_TJFIELDS_IMAGE'));
 		$options[] = JHtml::_('select.option', 'audio', JText::_('COM_TJFIELDS_AUDIO'));
+
 
 		if ($installUcm === 1)
 		{
