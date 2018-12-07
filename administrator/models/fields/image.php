@@ -22,7 +22,7 @@ JLoader::import('components.com_tjfields.models.fields.file', JPATH_ADMINISTRATO
  * Form Field Image class
  * Supports a multi line area for entry of plain text with count char
  *
- * @since  DEPLOY_VERSION
+ * @since  __DEPLOY_VERSION__
  */
 class JFormFieldImage extends JFormFieldFile
 {
@@ -30,7 +30,7 @@ class JFormFieldImage extends JFormFieldFile
 	 * The form field type.
 	 *
 	 * @var    string
-	 * @since  DEPLOY_VERSION
+	 * @since  __DEPLOY_VERSION__
 	 */
 	protected $type = 'image';
 
@@ -38,7 +38,7 @@ class JFormFieldImage extends JFormFieldFile
 	 * The accepted file type list.
 	 *
 	 * @var    mixed
-	 * @since  DEPLOY_VERSION
+	 * @since  __DEPLOY_VERSION__
 	 */
 	protected $accept;
 
@@ -46,7 +46,7 @@ class JFormFieldImage extends JFormFieldFile
 	 * The SimpleXMLElement object representing the `<field>` tag for the form field object.
 	 *
 	 * @var    mixed
-	 * @since DEPLOY_VERSION
+	 * @since  __DEPLOY_VERSION__
 	 */
 	protected $element;
 
@@ -54,7 +54,7 @@ class JFormFieldImage extends JFormFieldFile
 	 * Name of the layout being used to render the field
 	 *
 	 * @var    string
-	 * @since  DEPLOY_VERSION
+	 * @since  __DEPLOY_VERSION__
 	 */
 	protected $layout = 'joomla.form.field.file';
 
@@ -65,7 +65,7 @@ class JFormFieldImage extends JFormFieldFile
 	 *
 	 * @return  mixed  The property value or null.
 	 *
-	 * @since   DEPLOY_VERSION
+	 * @since   __DEPLOY_VERSION__
 	 */
 	public function __get($name)
 	{
@@ -95,7 +95,7 @@ class JFormFieldImage extends JFormFieldFile
 	 *
 	 * @return  void
 	 *
-	 * @since   DEPLOY_VERSION
+	 * @since   __DEPLOY_VERSION__
 	 */
 	public function __set($name, $value)
 	{
@@ -126,7 +126,7 @@ class JFormFieldImage extends JFormFieldFile
 	 * @return  boolean  True on success.
 	 *
 	 * @see     JFormField::setup()
-	 * @since   DEPLOY_VERSION
+	 * @since   __DEPLOY_VERSION__
 	 */
 	public function setup(SimpleXMLElement $element, $value, $group = null)
 	{
@@ -146,7 +146,7 @@ class JFormFieldImage extends JFormFieldFile
 	 *
 	 * @return  string  The field input markup.
 	 *
-	 * @since   DEPLOY_VERSION
+	 * @since   __DEPLOY_VERSION__
 	 */
 	protected function getInput()
 	{
@@ -181,7 +181,7 @@ class JFormFieldImage extends JFormFieldFile
 	 *
 	 * @return  array
 	 *
-	 * @since DEPLOY_VERSION
+	 * @since __DEPLOY_VERSION__
 	 */
 	protected function getLayoutData()
 	{
@@ -203,7 +203,7 @@ class JFormFieldImage extends JFormFieldFile
 	 *
 	 * @return  string
 	 *
-	 * @since   DEPLOY_VERSION
+	 * @since   __DEPLOY_VERSION__
 	 */
 	protected function renderImage($data,$layoutData)
 	{
