@@ -179,6 +179,10 @@ class JFormFieldAudio extends JFormFieldVideo
 	 */
 	protected function renderAudio($layoutData, $audioUrl)
 	{
+		$html = '';
+		$autoPlay= '';
+		$muted = '';
+
 		if (isset($layoutData['field']->element->attributes()->autoplay))
 		{
 			$autoPlay = 'autoplay';
