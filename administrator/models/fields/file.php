@@ -154,7 +154,7 @@ class JFormFieldFile extends JFormField
 	 *
 	 * @return  array
 	 *
-	 * @since 3.6
+	 * @since  __DEPLOY_VERSION__
 	 */
 	protected function getLayoutData()
 	{
@@ -174,7 +174,7 @@ class JFormFieldFile extends JFormField
 	 *
 	 * @return  object
 	 *
-	 * @since    1.5
+	 * @since  __DEPLOY_VERSION__
 	 */
 	protected function buildData($layoutData)
 	{
