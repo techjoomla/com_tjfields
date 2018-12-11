@@ -61,7 +61,6 @@ class JFormFieldVideo extends JFormFieldUrl
 			case 'element';
 
 				return $this->element;
-				break;
 		}
 
 		return parent::__get($name);
@@ -117,8 +116,6 @@ class JFormFieldVideo extends JFormFieldUrl
 	protected function getInput()
 	{
 		require_once JPATH_SITE . '/components/com_tjfields/helpers/tjfields.php';
-
-		$tjFieldHelper = new TjfieldsHelper;
 
 		$layoutData = $this->getLayoutData();
 
@@ -214,6 +211,10 @@ class JFormFieldVideo extends JFormFieldUrl
 	 */
 	protected function rendervideo($layoutData, $videoUrl)
 	{
+		$html = '';
+		$autoPlay = '';
+		$muted = '';
+
 		if (isset($layoutData['field']->element->attributes()->autoplay))
 		{
 			$autoPlay = 'autoplay';
@@ -245,14 +246,14 @@ class JFormFieldVideo extends JFormFieldUrl
 	{
 		$doc = JFactory::getDocument();
 
-		$doc->addScript(JUri::root() . 'media/vendors/MediaElementPlayer/mediaelement-and-player.min.js');
-		$doc->addStyleSheet(JUri::root() . 'media/vendors/MediaElementPlayer/mediaelementplayer.min.css');
+		$doc->addScript(JUri::root() . 'media/vendors/mediaelementplayer/mediaelement-and-player.min.js');
+		$doc->addStyleSheet(JUri::root() . 'media/vendors/mediaelementplayer/mediaelementplayer.min.css');
 
 		if (strpos($layoutData['value'], "vimeo") !== false)
 		{
 			if (isset($layoutData['field']->element->attributes()->vimeo))
 			{
-				$doc->addScript(JUri::root() . 'media/vendors/MediaElementPlayer/renderers/vimeo.min.js');
+				$doc->addScript(JUri::root() . 'media/vendors/mediaelementplayer/renderers/vimeo.min.js');
 			}
 			else
 			{
@@ -263,7 +264,7 @@ class JFormFieldVideo extends JFormFieldUrl
 		{
 			if (isset($layoutData['field']->element->attributes()->Facebook))
 			{
-				$doc->addScript(JUri::root() . 'media/vendors/MediaElementPlayer/renderers/facebook.min.js');
+				$doc->addScript(JUri::root() . 'media/vendors/mediaelementplayer/renderers/facebook.min.js');
 			}
 			else
 			{
@@ -274,7 +275,7 @@ class JFormFieldVideo extends JFormFieldUrl
 		{
 			if (isset($layoutData['field']->element->attributes()->twitch))
 			{
-				$doc->addScript(JUri::root() . 'media/vendors/MediaElementPlayer/renderers/twitch.min.js');
+				$doc->addScript(JUri::root() . 'media/vendors/mediaelementplayer/renderers/twitch.min.js');
 			}
 			else
 			{
@@ -285,7 +286,7 @@ class JFormFieldVideo extends JFormFieldUrl
 		{
 			if (isset($layoutData['field']->element->attributes()->dailymotion))
 			{
-				$doc->addScript(JUri::root() . 'media/vendors/MediaElementPlayer/renderers/dailymotion.min.js');
+				$doc->addScript(JUri::root() . 'media/vendors/mediaelementplayer/renderers/dailymotion.min.js');
 			}
 			else
 			{
@@ -296,7 +297,7 @@ class JFormFieldVideo extends JFormFieldUrl
 		{
 			if (isset($layoutData['field']->element->attributes()->soundcloud))
 			{
-				$doc->addScript(JUri::root() . 'media/vendors/MediaElementPlayer/renderers/soundcloud.min.js');
+				$doc->addScript(JUri::root() . 'media/vendors/mediaelementplayer/renderers/soundcloud.min.js');
 			}
 			else
 			{
