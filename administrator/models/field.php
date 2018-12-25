@@ -258,12 +258,18 @@ class TjfieldsModelField extends JModelAdmin
 			{
 				// Firstly Delete Fields Options That are Removed
 				$field_options = $TjfieldsHelper->getOptions($id);
+				$fields_in_DB = array();
 
 				foreach ($field_options as $fokey => $fovalue)
 				{
 					if ($fovalue->id)
 					{
 						$fields_in_DB[] = $fovalue->id;
+					}
+
+					if ($fovalue->default_option && $data['type'] == "single_select")
+					{
+						$data['default'] = $fovalue->value;
 					}
 				}
 
@@ -272,11 +278,6 @@ class TjfieldsModelField extends JModelAdmin
 					if ($value['hiddenoptionid'])
 					{
 						$options_filled[] = $value['hiddenoptionid'];
-					}
-
-					if ($fovalue->default_option && $data['type'] == "single_select")
-					{
-						$data['default'] = $fovalue->value;
 					}
 				}
 
