@@ -435,7 +435,7 @@ class TjfieldsModelField extends JModelAdmin
 	/**
 	 * Method To Delete Option
 	 *
-	 * @param   Integer  $delete_ids  Id for delete record
+	 * @param   ARRAY  $delete_ids  Id for delete record
 	 *
 	 * @return  boolean
 	 *
