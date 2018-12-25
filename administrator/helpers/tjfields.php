@@ -339,6 +339,7 @@ class TjfieldsHelper extends JHelperContent
 							// Set Default blank Option
 							$option = $field->addChild('option', '- ' . JText::_('COM_TJFIELDS_SELECT_OPTION') . " " . $f->label . ' -');
 							$option->addAttribute('value', '');
+							$field->addAttribute('default', $data['default']);
 						}
 					}
 

@@ -273,6 +273,11 @@ class TjfieldsModelField extends JModelAdmin
 					{
 						$options_filled[] = $value['hiddenoptionid'];
 					}
+
+					if ($fovalue->default_option && $data['type'] == "single_select")
+					{
+						$data['default'] = $fovalue->value;
+					}
 				}
 
 				if ($fields_in_DB)
