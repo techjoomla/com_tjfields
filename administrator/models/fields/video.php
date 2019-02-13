@@ -213,7 +213,6 @@ class JFormFieldVideo extends JFormFieldUrl
 	{
 		$html = '';
 		$autoPlay = '';
-		$muted = '';
 
 		if (isset($layoutData['field']->element->attributes()->autoplay))
 		{
