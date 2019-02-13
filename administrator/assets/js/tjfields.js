@@ -19,9 +19,8 @@ jQuery(document).ready(function(){
 		return true;
 	}
 
-	var deleteFile;
 	/* This function deletes tjucm file via ajax */
-	deleteFile = function(filePath, fieldId, valueId, subformFileFieldId, isSubformField, client)
+	var deleteFile = function(filePath, fieldId, valueId, subformFileFieldId, isSubformField, client)
 	{
 		if (!filePath)
 		{
