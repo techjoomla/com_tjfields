@@ -243,6 +243,8 @@ class JFormFieldVideo extends JFormFieldUrl
 	 */
 	protected function addMediaplayer($layoutData)
 	{
+		$html = '';
+
 		$doc = JFactory::getDocument();
 
 		$doc->addScript(JUri::root() . 'media/vendors/mediaelementplayer/mediaelement-and-player.min.js');
