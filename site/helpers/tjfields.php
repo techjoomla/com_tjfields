@@ -784,7 +784,7 @@ class TjfieldsHelper
 			$db    = JFactory::getDbo();
 			$query = $db->getQuery(true);
 
-			$query->select($db->quoteName(array('options','default_option','value')));
+			$query->select($db->quoteName(array('options','value')));
 			$query->from($db->quoteName('#__tjfields_options'));
 			$query->where($db->quoteName('field_id') . ' = ' . (int) $field_id);
 
@@ -817,7 +817,6 @@ class TjfieldsHelper
 			$obj = new stdclass;
 			$obj->id = '';
 			$obj->options = '';
-			$obj->default_option = '';
 			$obj->value = '';
 
 			$extra_options[] = $obj;

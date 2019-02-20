@@ -112,7 +112,7 @@ class TjfieldsModelField extends JModelAdmin
 			{
 				$db = JFactory::getDbo();
 				$query = $db->getQuery(true);
-				$query->select('opt.id,opt.options,opt.value,opt.default_option FROM #__tjfields_options as opt');
+				$query->select('opt.id,opt.options,opt.value FROM #__tjfields_options as opt');
 				$query->where('opt.field_id=' . $input->get('id', '', 'INT'));
 				$db->setQuery($query);
 				$option_name = $db->loadObjectlist();
@@ -294,15 +294,9 @@ class TjfieldsModelField extends JModelAdmin
 					// Save option fields.
 					foreach ($options as $option)
 					{
-						if (!isset($option['hiddenoption']))
-						{
-							$option['hiddenoption'] = 0;
-						}
-
 						$obj = new stdClass;
 						$obj->options = $option['optionname'];
 						$obj->value = $option['optionvalue'];
-						$obj->default_option = $option['hiddenoption'];
 						$obj->field_id = $id;
 
 						// If edit options
