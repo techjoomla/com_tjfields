@@ -167,6 +167,7 @@ class TjfieldsModelField extends JModelAdmin
 		$table = $this->getTable();
 		$data  = $post->get('jform', '', 'ARRAY');
 		$input = JFactory::getApplication()->input;
+		$data['label'] = trim($data['label']);
 
 		// Set field title as field label
 		if (!empty($data['label']))
