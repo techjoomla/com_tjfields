@@ -178,7 +178,7 @@
 				name="showonlist"
 				label="COM_TJFIELDS_FORM_LBL_FIELD_SHOW_IN_LIST_VIEW"
 				description="COM_TJFIELDS_FORM_DESC_FIELD_SHOW_IN_LIST_VIEW"
-				default="0"
+				default="1"
 				required="true"
 				class="btn-group">
 			<option value="1">COM_TJFIELDS_YES</option>
