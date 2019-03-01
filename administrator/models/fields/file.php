@@ -207,7 +207,7 @@ class JFormFieldFile extends JFormField
 			$data->subFormFileFieldId = $fileFieldData->id;
 		}
 
-		$data->html .= '<input fileFieldId="' . $layoutData["id"] . '" type="hidden" name="'
+		$data->html = '<input fileFieldId="' . $layoutData["id"] . '" type="hidden" name="'
 		. $layoutData["name"] . '"' . 'id="' . $layoutData["id"] . '"' . 'value="' . $layoutData["value"] . '" />';
 		$data->html .= '<div class="control-group">';
 

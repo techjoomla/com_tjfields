@@ -172,7 +172,7 @@ class TjfieldsHelper
 		{
 			$field_data = $this->getFieldData($k);
 
-			if ($field_data->type === 'subform' || $field_data->type === 'ucmsubform')
+			if (isset($field_data->type) && ($field_data->type === 'subform' || $field_data->type === 'ucmsubform'))
 			{
 				$fileData = array();
 
@@ -1217,32 +1217,32 @@ class TjfieldsHelper
 	/**
 	 * Method to get media URL.
 	 *
-	 * @param   STRING  $fileName            media file path
-	 * @param   ARRAY   $extraUrlPramsArray  extra url params
+	 * @param   STRING  $fileName             media file path
+	 * @param   ARRAY   $extraUrlParamsArray  extra url params
 	 *
 	 * @return  string|boolean  True on success.
 	 *
 	 * @since   3.2
 	 */
-	public function getMediaUrl($fileName, $extraUrlPramsArray = '')
+	public function getMediaUrl($fileName, $extraUrlParamsArray = '')
 	{
 		if (!empty($fileName))
 		{
 			$extraUrlParams = '';
 
 			// If url extra param is present
-			if (!empty($extraUrlPramsArray))
+			if (!empty($extraUrlParamsArray))
 			{
-				$extraUrlParams = "&id=" . $extraUrlPramsArray['id'];
+				$extraUrlParams = "&id=" . $extraUrlParamsArray['id'];
 
 				// Get client & add extraURL params which are needed to download the media
 				$data = new stdClass;
 				JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_tjfields/tables');
 				$data->fields_value_table = JTable::getInstance('Fieldsvalue', 'TjfieldsTable');
 
-				if ($extraUrlPramsArray['subFormFileFieldId'])
+				if (isset($extraUrlParamsArray['subFormFileFieldId']))
 				{
-					$extraUrlParams .= "&subFormFileFieldId=" . $extraUrlPramsArray['subFormFileFieldId'];
+					$extraUrlParams .= "&subFormFileFieldId=" . $extraUrlParamsArray['subFormFileFieldId'];
 				}
 			}
 
