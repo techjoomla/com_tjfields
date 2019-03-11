@@ -150,6 +150,8 @@ class TjfieldsHelper
 			return false;
 		}
 
+		$app = JFactory::getApplication();
+
 		// Get field Id and field type.
 		$insert_obj = new stdClass;
 		$insert_obj->content_id = $data['content_id'];
@@ -236,92 +238,105 @@ class TjfieldsHelper
 
 					if ($file_field_data->id)
 					{
-					if (!empty($singleFile))
-					{
-						if ($singleFile['error'] != 4)
+						if (!empty($singleFile))
 						{
-						JTable::addIncludePath(JPATH_ADMINISTRATOR . "/components/com_tjfields/tables");
-						JModelLegacy::addIncludePath(JPATH_ADMINISTRATOR . "/components/com_tjfields/models");
-						$fieldModel = JModelLegacy::getInstance('Field', 'TjfieldsModel', array("ignore_request" => 1));
-
-						$fieldId = (int) $file_field_data->id;
-						$fieldItems = $fieldModel->getItem($fieldId);
-
-						// Code for file size validation
-						$acceptSize = $fieldItems->params['size'];
-
-						// Upload path
-						$mediaPath = $fieldItems->params['uploadpath'];
-
-						// Code for file type validation
-						$acceptType = $fieldItems->params['accept'];
-
-						// Configs for Media library
-						$config = array();
-
-						if (!empty($acceptType))
-						{
-							$localMime = TJMediaStorageLocal::getInstance();
-
-							$validMIMEArray = explode(',', $acceptType);
-
-							$validtype = array();
-
-							foreach ($validMIMEArray as $mimeType)
+							if ($singleFile['error'] != 4)
 							{
-								$validtype[] = $localMime->getMime(strtolower(str_ireplace('.', '', $mimeType)));
-							}
+								JTable::addIncludePath(JPATH_ADMINISTRATOR . "/components/com_tjfields/tables");
+								JModelLegacy::addIncludePath(JPATH_ADMINISTRATOR . "/components/com_tjfields/models");
+								$fieldModel = JModelLegacy::getInstance('Field', 'TjfieldsModel', array("ignore_request" => 1));
 
-							$config['type'] = $validtype;
-						}
+								$fieldId = (int) $file_field_data->id;
+								$fieldItems = $fieldModel->getItem($fieldId);
 
-						$config['uploadPath'] = $mediaPath;
-						$config['size'] = $acceptSize;
-						$config['saveData'] = '0';
-						$media = TJMediaStorageLocal::getInstance($config);
+								// Code for file size validation
+								$acceptSize = $fieldItems->params['size'];
 
-						$returnData = $media->upload(array($singleFile));
+								// Upload path
+								$mediaPath = isset($fieldItems->params['uploadpath']) ? $fieldItems->params['uploadpath'] : '';
 
-						$htaccessFile = $mediaPath . '/' . $this->htaccess;
+								// Code for file type validation
+								$acceptType = $fieldItems->params['accept'];
 
-						// If the destination directory doesn't exist we need to create it
-						jimport('joomla.filesystem.file');
+								// Configs for Media library
+								$config = array();
 
-						if (!JFile::exists($htaccessFile))
-						{
-							jimport('joomla.filesystem.folder');
-							JFolder::create(dirname($htaccessFile));
-							JFile::write($htaccessFile, $this->htaccessFileContent);
-						}
-
-						if ($returnData[0]['source'])
-						{
-							$existingFileRecordId = $this->checkRecordExistence($data, $file_field_data->id);
-
-							$insert_obj_file->value = $returnData[0]['source'];
-
-							if ($insert_obj_file->value)
-							{
-								if (!empty($existingFileRecordId))
+								if (!empty($acceptType))
 								{
-									$insert_obj_file->id = $existingFileRecordId;
-									$db->updateObject('#__tjfields_fields_value', $insert_obj_file, 'id');
+									$localMime = TJMediaStorageLocal::getInstance();
+
+									$validMIMEArray = explode(',', $acceptType);
+
+									$validtype = array();
+
+									foreach ($validMIMEArray as $mimeType)
+									{
+										$validtype[] = $localMime->getMime(strtolower(str_ireplace('.', '', $mimeType)));
+									}
+
+									$config['type'] = $validtype;
+								}
+
+								$user = JFactory::getUser();
+								$config['uploadPath'] = ($file_field_data->type == 'image') ? JPATH_SITE . $mediaPath : $mediaPath;
+								$config['size'] = $acceptSize;
+								$config['saveData'] = '0';
+								$config['auth'] = $user->authorise('core.field.addfieldvalue', 'com_tjfields.field.' . $file_field_data->id);
+								$media = TJMediaStorageLocal::getInstance($config);
+								$returnData = $media->upload(array($singleFile));
+								$errors = $media->getErrors();
+
+								if (!empty($errors))
+								{
+									foreach ($errors as $error)
+									{
+										$app->enqueueMessage($error, 'error');
+									}
+								}
+
+								if ($file_field_data->type == 'file')
+								{
+									$htaccessFile = $mediaPath . '/' . $this->htaccess;
+
+									// If the destination directory doesn't exist we need to create it
+									jimport('joomla.filesystem.file');
+
+									if (!JFile::exists($htaccessFile))
+									{
+										jimport('joomla.filesystem.folder');
+										JFolder::create(dirname($htaccessFile));
+										JFile::write($htaccessFile, $this->htaccessFileContent);
+									}
+								}
+
+								if ($returnData[0]['source'])
+								{
+									$existingFileRecordId = $this->checkRecordExistence($data, $file_field_data->id);
+
+									$insert_obj_file->value = $returnData[0]['source'];
+
+									if ($insert_obj_file->value)
+									{
+										if (!empty($existingFileRecordId))
+										{
+											$insert_obj_file->id = $existingFileRecordId;
+											$db->updateObject('#__tjfields_fields_value', $insert_obj_file, 'id');
+										}
+										else
+										{
+											$insert_obj_file->id = '';
+											$db->insertObject('#__tjfields_fields_value', $insert_obj_file, 'id');
+										}
+									}
+
+									$fieldsSubmitted[] = $insert_obj_file->field_id;
 								}
 								else
 								{
-									$insert_obj_file->id = '';
-									$db->insertObject('#__tjfields_fields_value', $insert_obj_file, 'id');
+									return false;
 								}
 							}
-
-							$fieldsSubmitted[] = $insert_obj_file->field_id;
 						}
-						else
-						{
-							return false;
-						}
-						}
-					}
 					}
 				}
 			}
@@ -499,6 +514,7 @@ class TjfieldsHelper
 	public function saveSubformData($postFieldData, $subformFname, $field_data)
 	{
 		// Select all entries for __tjfields_fields_value
+		$app = JFactory::getApplication();
 		$db    = JFactory::getDbo();
 		$query = $db->getQuery(true);
 		$query->select('*');
@@ -537,7 +553,7 @@ class TjfieldsHelper
 						$acceptSize = $fieldItems->params['size'];
 
 						// Upload path
-						$mediaPath = $fieldItems->params['uploadpath'];
+						$mediaPath = isset($fieldItems->params['uploadpath']) ? $fieldItems->params['uploadpath'] : '';
 
 						// Configs for Media library
 						$config = array();
@@ -557,25 +573,40 @@ class TjfieldsHelper
 							$config['type'] = $validtype;
 						}
 
-						$config['uploadPath'] = $mediaPath;
+						$user = JFactory::getUser();
+						$config['uploadPath'] = ($file_field_data->type == 'image') ? JPATH_SITE . $mediaPath : $mediaPath;
 						$config['size'] = $acceptSize;
 						$config['saveData'] = '0';
+						$config['auth'] = $user->authorise('core.field.addfieldvalue', 'com_tjfields.field.' . $file_field_data->id);
 
 						$media = TJMediaStorageLocal::getInstance($config);
 
 						$returnData = $media->upload(array($v));
+						$errors = $media->getErrors();
+
+						if (!empty($errors))
+						{
+							foreach ($errors as $error)
+							{
+								$app->enqueueMessage($error, 'error');
+							}
+						}
+
 						$subformField[$key][$k] = $returnData[0]['source'];
 
-						$htaccessFile = $mediaPath . '/' . $this->htaccess;
-
-						// If the destination directory doesn't exist we need to create it
-						jimport('joomla.filesystem.file');
-
-						if (!JFile::exists($htaccessFile))
+						if ($file_field_data->type == 'file')
 						{
-							jimport('joomla.filesystem.folder');
-							JFolder::create(dirname($htaccessFile));
-							JFile::write($htaccessFile, $this->htaccessFileContent);
+							$htaccessFile = $mediaPath . '/' . $this->htaccess;
+
+							// If the destination directory doesn't exist we need to create it
+							jimport('joomla.filesystem.file');
+
+							if (!JFile::exists($htaccessFile))
+							{
+								jimport('joomla.filesystem.folder');
+								JFolder::create(dirname($htaccessFile));
+								JFile::write($htaccessFile, $this->htaccessFileContent);
+							}
 						}
 
 						unset($subformField[$key]['filesData']);

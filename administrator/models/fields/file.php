@@ -26,7 +26,7 @@ class JFormFieldFile extends JFormField
 	 * @var    string
 	 * @since  11.1
 	 */
-	protected $type = 'File';
+	protected $type = 'file';
 
 	/**
 	 * The accepted file type list.
@@ -133,6 +133,9 @@ class JFormFieldFile extends JFormField
 		// Load backend language file
 		$lang = JFactory::getLanguage();
 		$lang->load('com_tjfields', JPATH_SITE);
+
+		// Add constant to the JS
+		JText::script('COM_TJFIELDS_FILE_DELETE_CONFIRM');
 
 		if (!empty($layoutData["value"]))
 		{

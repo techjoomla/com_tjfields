@@ -14,6 +14,7 @@ jQuery(document).ready(function(){
 				return false;
 			}
 		}
+
 		Joomla.submitform(task);
 
 		return true;
@@ -36,10 +37,10 @@ jQuery(document).ready(function(){
 			url: Joomla.getOptions('system.paths').base + "/index.php?option=com_tjfields&task=fields.deleteFile&format=json",
 			type: 'POST',
 			data:{
-							fileName: fileName,
-							valueId: valueId,
-							subformFileFieldId:subformFileFieldId,
-							isSubformField:isSubformField
+                fileName: fileName,
+                valueId: valueId,
+                subformFileFieldId:subformFileFieldId,
+                isSubformField:isSubformField
 			},
 			cache: false,
 			dataType: "json",

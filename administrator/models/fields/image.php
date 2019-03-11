@@ -1,13 +1,5 @@
 <?php
 /**
- * @package     Joomla.Platform
- * @subpackage  Form
- *
- * @copyright   Copyright (C) 2005 - 2016 Open Source Matters, Inc. All rights reserved.
- * @license     GNU General Public License version 2 or later; see LICENSE
- */
-
-/**
  * @version    SVN:<SVN_ID>
  * @package    TJFields
  * @author     Techjoomla <extensions@techjoomla.com>
@@ -165,8 +157,8 @@ class JFormFieldImage extends JFormFieldFile
 			if (!empty($data->mediaLink))
 			{
 				$html .= $this->renderImage($data, $layoutData);
-				$html .= parent::canDownloadFile($data, $layoutData);
-				$html .= parent::canDeleteFile($data, $layoutData);
+				$html .= $this->canDownloadFile($data, $layoutData);
+				$html .= $this->canDeleteFile($data, $layoutData);
 			}
 
 				$html .= '</div>';
@@ -205,9 +197,71 @@ class JFormFieldImage extends JFormFieldFile
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	protected function renderImage($data,$layoutData)
+	protected function renderImage($data, $layoutData)
 	{
-		return '<img src="' . JUri::root() . 'images/mediamanager/' . $data->fields_value_table->value . '" height=
+		return '<img src="' . JUri::root() . 'images/mediamanager/' . $layoutData['value'] . '" height=
 		"' . $layoutData['field']->element->attributes()->height . '"width="' . $layoutData['field']->element->attributes()->width . '" ></img>';
+	}
+
+	/**
+	 * Method to download file.
+	 *
+	 * @param   object  $data        file data.
+	 * @param   array   $layoutData  layoutData
+	 *
+	 * @return  string
+	 *
+	 * @since    1.5
+	 */
+	protected function canDownloadFile($data,$layoutData)
+	{
+		$mediaLink = JUri::root() . "index.php?option=com_tjfields&task=getImage&fpht=" . base64_encode($layoutData['value']);
+
+		return '<div> <a href="' . $mediaLink . '">' . JText::_("COM_TJFIELDS_FILE_DOWNLOAD") . '</a>';
+	}
+
+	/**
+	 * Method to delete file.
+	 *
+	 * @param   object  $data        file data.
+	 * @param   array   $layoutData  layoutData
+	 *
+	 * @return  string
+	 *
+	 * @since    1.5
+	 */
+	protected function canDeleteFile($data,$layoutData)
+	{
+		$canEdit = 0;
+
+		if ($data->user->authorise('core.field.editfieldvalue', 'com_tjfields.group.' . $data->tjFieldFieldTable->group_id))
+		{
+			$canEdit = $data->user->authorise('core.field.editfieldvalue', 'com_tjfields.field.' . $data->tjFieldFieldTable->id);
+		}
+
+		$canEditOwn = 0;
+
+		if ($data->user->authorise('core.field.editownfieldvalue', 'com_tjfields.group.' . $data->tjFieldFieldTable->group_id))
+		{
+			$canEditOwn = $data->user->authorise('core.field.editownfieldvalue', 'com_tjfields.field.' . $data->tjFieldFieldTable->id);
+
+			if ($canEditOwn && ($data->user->id != $data->fields_value_table->user_id))
+			{
+				$canEditOwn = 0;
+			}
+		}
+
+		$deleteFiledata = '';
+
+		if (!empty($data->mediaLink) && ($canEdit || $canEditOwn) && $layoutData['required'] == '' && $data->fields_value_table->id)
+		{
+			$deleteFiledata .= ' <span class="btn btn-remove"> <a id="remove_' . $layoutData["id"] . '" href="javascript:void(0);"
+				onclick="deleteFile(\'' . base64_encode($layoutData["value"]) . '\',
+				 \'' . $layoutData["id"] . '\', \'' . base64_encode($data->fields_value_table->id) . '\',
+				  \'' . $data->subFormFileFieldId . '\',\'' . $data->isSubformField . '\');">'
+				. JText::_("COM_TJFIELDS_FILE_DELETE") . '</a> </span>';
+		}
+
+		return $deleteFiledata;
 	}
 }

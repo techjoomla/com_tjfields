@@ -117,4 +117,31 @@ class TjfieldsController extends JControllerLegacy
 
 		jexit();
 	}
+
+	/**
+	 * Fuction to get download media file
+	 *
+	 * @return object
+	 */
+	public function getImage()
+	{
+		JLoader::import("/techjoomla/media/storage/local", JPATH_LIBRARIES);
+		$app = JFactory::getApplication();
+		$jinput = $app->input;
+		$mediaLocal = TJMediaStorageLocal::getInstance();
+
+		$encodedFileName = $jinput->get('fpht', '', 'STRING');
+		$decodedFileName = base64_decode($encodedFileName);
+		$decodedPath = JPATH_SITE . '/images/mediamanager/' . $decodedFileName;
+
+		$status = $mediaLocal->downloadMedia($decodedPath, '', '', 0);
+
+		if ($status === 2)
+		{
+			$app->enqueueMessage(JText::_('COM_TJFIELDS_FILE_NOT_FOUND'), 'error');
+			$app->redirect($this->returnURL);
+		}
+
+		jexit();
+	}
 }
