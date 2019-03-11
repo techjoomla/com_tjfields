@@ -66,7 +66,6 @@ class JFormFieldtjfieldfields extends JFormField
 		$options[] = JHtml::_('select.option', 'calendar', JText::_('COM_TJFIELDS_CALENDAR'));
 		$options[] = JHtml::_('select.option', 'editor', JText::_('COM_TJFIELDS_EDITOR'));
 		$options[] = JHtml::_('select.option', 'email', JText::_('COM_TJFIELDS_EMAIL'));
-		$options[] = JHtml::_('select.option', 'user', JText::_('COM_TJFIELDS_USERS'));
 		$options[] = JHtml::_('select.option', 'file', JText::_('COM_TJFIELDS_FILE'));
 		$options[] = JHtml::_('select.option', 'spacer', JText::_('COM_TJFIELDS_SPACER'));
 		$options[] = JHtml::_('select.option', 'subform', JText::_('COM_TJFIELDS_SUBFORM'));

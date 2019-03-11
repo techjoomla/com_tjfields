@@ -61,7 +61,6 @@
 				<option value="calendar">COM_TJFIELDS_CALENDAR</option>
 				<option value="editor">COM_TJFIELDS_EDITOR</option>
 				<option value="email">COM_TJFIELDS_EMAIL</option>
-				<option value="user">COM_TJFIELDS_USERS</option>
 				<option value="file">COM_TJFIELDS_FILE</option>
 				<option value="subform">COM_TJFIELDS_SUBFORM</option>
 				<option value="ucmsubform">COM_TJFIELDS_UCMSUBFORM</option>
