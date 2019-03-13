@@ -37,17 +37,19 @@ class TjfieldsControllerFields extends JControllerForm
 		$jinput = $app->input;
 
 		$data = array();
-
-		// Here, fpht means file encoded path
-		$data['filePath'] = base64_decode($jinput->get('filePath', '', 'BASE64'));
+		$data['fileName'] = base64_decode($jinput->get('fileName', '', 'BASE64'));
 		$data['valueId'] = base64_decode($jinput->get('valueId', '', 'BASE64'));
 		$data['subformFileFieldId'] = $jinput->get('subformFileFieldId');
 		$data['isSubformField'] = $jinput->get('isSubformField');
-		$data['client'] = $jinput->get('client', '', 'STRING');
 
-		$client = explode('.', $data['client']);
+		// Get media storage path
+		JLoader::import('components.com_tjfields.models.fields', JPATH_SITE);
+		$fieldsModel     = JModelLegacy::getInstance('Fields', 'TjfieldsModel', array('ignore_request' => true));
+		$fieldData = $fieldsModel->getMediaStoragePath($data['valueId'], $data['subformFileFieldId']);
 
-		$data['storagePath'] = '/media/' . $client[0] . '/' . $client[1];
+		$tjFieldFieldTableParamData = json_decode($fieldData->tjFieldFieldTable->params);
+		$data['storagePath'] = ($fieldData->tjFieldFieldTable->type == 'image') ? JPATH_SITE . $tjFieldFieldTableParamData->uploadpath : $tjFieldFieldTableParamData->uploadpath;
+		$data['client'] = $fieldData->tjFieldFieldTable->client;
 
 		require_once JPATH_SITE . '/components/com_tjfields/helpers/tjfields.php';
 
