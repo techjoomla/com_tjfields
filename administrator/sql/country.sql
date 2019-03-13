@@ -269,4 +269,5 @@ INSERT IGNORE  INTO `#__tj_country` (`id`, `country`, `country_3_code`, `country
 (249, 'Serbia', 'SRB', 'RS', 'TJ_GEO_COUNTRY_SERBIA', 243, 1, 1, 1),
 (250, 'Isle of Man', 'IMN', 'IM', 'TJ_GEO_COUNTRY_ISLEOFMAN', 244, 1, 1, 1),
 (251, 'Montenegro', 'MNE', 'ME', 'TJ_GEO_COUNTRY_MONTENEGRO', 245, 1, 1, 1),
-(252, 'Palestinian Territory, Occupied', 'PSE', 'PS', 'TJ_GEO_COUNTRY_PALESTINIANTERRITORYOCCUPIED', 246, 1, 1, 1);
+(252, 'Palestinian Territory, Occupied', 'PSE', 'PS', 'TJ_GEO_COUNTRY_PALESTINIANTERRITORYOCCUPIED', 246, 1, 1, 1),
+(253, 'Kosovo', 'XKX', 'XK', 'TJ_GEO_COUNTRY_KOSOVO', 247, 1, 1, 1);
