@@ -8,6 +8,8 @@
  */
 
 defined('_JEXEC') or die;
+JLoader::import("/techjoomla/media/storage/local", JPATH_LIBRARIES);
+
 
 /**
  * Helper class for tjfields
@@ -19,18 +21,17 @@ defined('_JEXEC') or die;
 class TjfieldsHelper
 {
 	/**
-	 * My function
+	 * htaccess file content (used to restrict direct access of media file)
 	 *
-	 * @return  string
-	 *
-	 * @since   1.6
+	 * @var    mixed
+	 * @since  1.4
 	 */
-	public static function myFunction()
-	{
-		$result = 'Something';
+	protected $htaccessFileContent = '<FilesMatch ".*">
+    Order Allow,Deny
+    Deny from All
+</FilesMatch>';
 
-		return $result;
-	}
+	protected $htaccess = '.htaccess';
 
 	/**
 	 * Function used for renderring. fetching value
@@ -149,6 +150,8 @@ class TjfieldsHelper
 			return false;
 		}
 
+		$app = JFactory::getApplication();
+
 		// Get field Id and field type.
 		$insert_obj = new stdClass;
 		$insert_obj->content_id = $data['content_id'];
@@ -165,6 +168,45 @@ class TjfieldsHelper
 		$singleSelectionFields = array('single_select', 'radio');
 		$multipleSelectionFields = array('multi_select');
 		$fieldsSubmitted = array();
+
+		// Separating out the subform files data from files array
+		foreach ($data['fieldsvalue'] as $k => $v)
+		{
+			$field_data = $this->getFieldData($k);
+
+			if (isset($field_data->type) && ($field_data->type === 'subform' || $field_data->type === 'ucmsubform'))
+			{
+				$fileData = array();
+
+				foreach ($data['fieldsvalue']['tjFieldFileField'] as $key => $value)
+				{
+						// Checking if the subform name is present as key of array in the files array, if present separate  the array
+						if ($key === $field_data->name)
+						{
+							$fileData[$key] = $value;
+
+							unset($data['fieldsvalue']['tjFieldFileField'][$key]);
+						}
+						else
+						{
+							$fileData[$key] = '';
+						}
+				}
+
+				// Adding separated files array to respective subform data  by creating new variable filesData
+				foreach ($v as $key => $value)
+				{
+					if (array_key_exists($key, $fileData[$k]))
+					{
+						$data['fieldsvalue'][$field_data->name][$key]['filesData'] = $fileData[$k][$key];
+					}
+					else
+					{
+						$data['fieldsvalue'][$field_data->name][$key]['filesData'] = '';
+					}
+				}
+			}
+		}
 
 		// Values array will contain menu fields value.
 		foreach ($data['fieldsvalue'] as $fname => $fvalue)
@@ -194,37 +236,106 @@ class TjfieldsHelper
 					$file_field_data = $this->getFieldData($fieldName);
 					$insert_obj_file->field_id = $file_field_data->id;
 
-					if (!empty($singleFile))
+					if ($file_field_data->id)
 					{
-						$filename = $this->uploadFile($singleFile, $insert_obj_file, $file_field_data);
-
-						if ($filename)
+						if (!empty($singleFile))
 						{
-							$existingFileRecordId = $this->checkRecordExistence($data, $file_field_data->id);
-
-							$client = explode('.', $insert_obj_file->client);
-
-							$insert_obj_file->value = '/media/' . $client[0] . '/' . $client[1] . '/' . $filename;
-
-							if ($insert_obj_file->value)
+							if ($singleFile['error'] != 4)
 							{
-								if (!empty($existingFileRecordId))
+								JTable::addIncludePath(JPATH_ADMINISTRATOR . "/components/com_tjfields/tables");
+								JModelLegacy::addIncludePath(JPATH_ADMINISTRATOR . "/components/com_tjfields/models");
+								$fieldModel = JModelLegacy::getInstance('Field', 'TjfieldsModel', array("ignore_request" => 1));
+
+								$fieldId = (int) $file_field_data->id;
+								$fieldItems = $fieldModel->getItem($fieldId);
+
+								// Code for file size validation
+								$acceptSize = $fieldItems->params['size'];
+
+								// Upload path
+								$mediaPath = isset($fieldItems->params['uploadpath']) ? $fieldItems->params['uploadpath'] : '';
+
+								// Code for file type validation
+								$acceptType = $fieldItems->params['accept'];
+
+								// Configs for Media library
+								$config = array();
+
+								if (!empty($acceptType))
 								{
-									$insert_obj_file->id = $existingFileRecordId;
-									$db->updateObject('#__tjfields_fields_value', $insert_obj_file, 'id');
+									$localMime = TJMediaStorageLocal::getInstance();
+
+									$validMIMEArray = explode(',', $acceptType);
+
+									$validtype = array();
+
+									foreach ($validMIMEArray as $mimeType)
+									{
+										$validtype[] = $localMime->getMime(strtolower(str_ireplace('.', '', $mimeType)));
+									}
+
+									$config['type'] = $validtype;
+								}
+
+								$user = JFactory::getUser();
+								$config['uploadPath'] = ($file_field_data->type == 'image') ? JPATH_SITE . $mediaPath : $mediaPath;
+								$config['size'] = $acceptSize;
+								$config['saveData'] = '0';
+								$config['auth'] = $user->authorise('core.field.addfieldvalue', 'com_tjfields.field.' . $file_field_data->id);
+								$media = TJMediaStorageLocal::getInstance($config);
+								$returnData = $media->upload(array($singleFile));
+								$errors = $media->getErrors();
+
+								if (!empty($errors))
+								{
+									foreach ($errors as $error)
+									{
+										$app->enqueueMessage($error, 'error');
+									}
+								}
+
+								if ($file_field_data->type == 'file')
+								{
+									$htaccessFile = $mediaPath . '/' . $this->htaccess;
+
+									// If the destination directory doesn't exist we need to create it
+									jimport('joomla.filesystem.file');
+
+									if (!JFile::exists($htaccessFile))
+									{
+										jimport('joomla.filesystem.folder');
+										JFolder::create(dirname($htaccessFile));
+										JFile::write($htaccessFile, $this->htaccessFileContent);
+									}
+								}
+
+								if ($returnData[0]['source'])
+								{
+									$existingFileRecordId = $this->checkRecordExistence($data, $file_field_data->id);
+
+									$insert_obj_file->value = $returnData[0]['source'];
+
+									if ($insert_obj_file->value)
+									{
+										if (!empty($existingFileRecordId))
+										{
+											$insert_obj_file->id = $existingFileRecordId;
+											$db->updateObject('#__tjfields_fields_value', $insert_obj_file, 'id');
+										}
+										else
+										{
+											$insert_obj_file->id = '';
+											$db->insertObject('#__tjfields_fields_value', $insert_obj_file, 'id');
+										}
+									}
+
+									$fieldsSubmitted[] = $insert_obj_file->field_id;
 								}
 								else
 								{
-									$insert_obj_file->id = '';
-									$db->insertObject('#__tjfields_fields_value', $insert_obj_file, 'id');
+									return false;
 								}
 							}
-
-							$fieldsSubmitted[] = $insert_obj_file->field_id;
-						}
-						else
-						{
-							return false;
 						}
 					}
 				}
@@ -345,138 +456,6 @@ class TjfieldsHelper
 	}
 
 	/**
-	 * Function to upload file
-	 *
-	 * @param   string  $singleFile       name of field
-	 * @param   object  $insert_obj_file  file object
-	 * @param   string  $file_field_data  data
-	 *
-	 * @return  string|boolean
-	 */
-	public function uploadFile($singleFile, $insert_obj_file, $file_field_data)
-	{
-		$app      = JFactory::getApplication();
-		$user     = JFactory::getUser();
-		$username = preg_replace('/\s+/', '', $user->name);
-
-		$title = $singleFile['name'];
-		$title = preg_replace('/\s+/', '', $title);
-
-		jimport('joomla.filesystem.file');
-
-		// Check if the server found any error.
-		$fileError = $singleFile['error'];
-		$message   = '';
-
-		if ($fileError > 0 && $fileError != 4)
-		{
-			switch ($fileError)
-			{
-				case 1:
-					$message = JText::_('COM_TJFIELDS_FILE_UPLOAD_ERROR_SIZE_EXCEED');
-					break;
-				case 2:
-					$message = JText::_('COM_TJFIELDS_FILE_UPLOAD_ERROR_SIZE_EXCEED1');
-					break;
-				case 3:
-					$message = JText::_('COM_TJFIELDS_FILE_UPLOAD_ERROR_SIZE_EXCEED2');
-					break;
-			}
-
-			if ($message != '')
-			{
-				$app->enqueueMessage($message, 'warning');
-
-				return false;
-			}
-		}
-		elseif ($fileError == 4)
-		{
-			if (isset($singleFile['name']))
-			{
-				$filename = $singleFile['name'];
-			}
-		}
-		else
-		{
-			JTable::addIncludePath(JPATH_ADMINISTRATOR . "/components/com_tjfields/tables");
-			JModelLegacy::addIncludePath(JPATH_ADMINISTRATOR . "/components/com_tjfields/models");
-			$fieldModel = JModelLegacy::getInstance('Field', 'TjfieldsModel', array("ignore_request" => 1));
-
-			$fieldId = (int) $file_field_data->id;
-			$fieldItems = $fieldModel->getItem($fieldId);
-
-			// Code for file size validation
-			$acceptSize = $fieldItems->params['size'];
-			$fileSize = $singleFile['size'];
-
-			if ($acceptSize != "")
-			{
-				$filesizeInBytes = $this->formatSizeUnits($acceptSize);
-
-				if ($fileSize > $filesizeInBytes)
-				{
-					$app->enqueueMessage(JText::_('COM_TJFIELDS_FILE_ERROR_MAX_SIZE'), 'warning');
-
-					return false;
-				}
-			}
-
-			// Code for file type validation
-			$acceptType = $fieldItems->params['accept'];
-
-			if (empty($acceptType))
-			{
-				$okMIMETypes    = 'pdf,PDF,doc,DOC,docx,DOCX,xls,XLS,xlsx,XLSX,jpeg,JPEG,png,PNG,jpg,JPG';
-			}
-			else
-			{
-				$okMIMETypes = $acceptType;
-				$okMIMETypes = str_ireplace('.', '', $okMIMETypes);
-			}
-
-			$validMIMEArray = explode(',', $okMIMETypes);
-			$client = explode('.', $insert_obj_file->client);
-
-			$filename  = JFile::stripExt($singleFile['name']);
-			$extension = JFile::getExt($singleFile['name']);
-
-			jimport('joomla.filesystem.file');
-			$fileMime = JFile::getExt($singleFile['name']);
-
-			if (!in_array($fileMime, $validMIMEArray))
-			{
-				$app->enqueueMessage(JText::_('COM_TJFIELDS_FILE_ERROR_INVALID_TYPE'), 'warning');
-
-				return false;
-			}
-
-			// Replace any special characters in the filename
-
-			$random_string = rand();
-			$filename = $client[1] . "_" . $username . "_" . $random_string;
-
-			$filename = $filename . '.' . $extension;
-
-			$uploadPath = JPATH_ROOT . '/media/' . $client[0] . '/' . $client[1] . '/' . $filename;
-
-			$fileTemp = $singleFile['tmp_name'];
-
-			if (!JFile::exists($uploadPath))
-			{
-				if (!JFile::upload($fileTemp, $uploadPath))
-				{
-					$app->enqueueMessage(JText::_('COM_TJFIELDS_FILE_ERROR_MOVE_FILE'), 'warning');
-
-					return false;
-				}
-			}
-
-			return $filename;
-		}
-	}
-
-	/**
 	 * check if the fields values are already store. so it means we need to edit the entry
 	 *
 	 * @param   array  $postFieldData  Post array which content (client, content_id, Fname, Fvalue, u_id)
@@ -535,6 +514,7 @@ class TjfieldsHelper
 	public function saveSubformData($postFieldData, $subformFname, $field_data)
 	{
 		// Select all entries for __tjfields_fields_value
+		$app = JFactory::getApplication();
 		$db    = JFactory::getDbo();
 		$query = $db->getQuery(true);
 		$query->select('*');
@@ -562,6 +542,93 @@ class TjfieldsHelper
 		if (count($subformField) > $acceptmaxSize)
 		{
 			return false;
+		}
+
+		foreach ($subformField as $key => $value)
+		{
+			if (!empty($value['filesData']))
+			{
+				foreach ($value['filesData'] as $k => $v)
+				{
+					if (!empty($v['name']))
+					{
+						$file_field_data = $this->getFieldData($k);
+
+						if (!empty($file_field_data))
+						{
+							JModelLegacy::addIncludePath(JPATH_ADMINISTRATOR . "/components/com_tjfields/models");
+							$fieldModel = JModelLegacy::getInstance('Field', 'TjfieldsModel', array("ignore_request" => 1));
+							$fieldId = (int) $file_field_data->id;
+							$fieldItems = $fieldModel->getItem($fieldId);
+
+							// Code for file type validation
+							$acceptType = $fieldItems->params['accept'];
+						}
+
+						// Code for file size validation
+						$acceptSize = $fieldItems->params['size'];
+
+						// Upload path
+						$mediaPath = isset($fieldItems->params['uploadpath']) ? $fieldItems->params['uploadpath'] : '';
+
+						// Configs for Media library
+						$config = array();
+
+						if (!empty($acceptType))
+						{
+							$validMIMEArray = explode(',', $acceptType);
+
+							$validtype = array();
+
+							foreach ($validMIMEArray as $mimeType)
+							{
+								$localGetMime = TJMediaStorageLocal::getInstance();
+								$validtype[] = $localGetMime->getMime(strtolower(str_ireplace('.', '', $mimeType)));
+							}
+
+							$config['type'] = $validtype;
+						}
+
+						$user = JFactory::getUser();
+						$config['uploadPath'] = ($file_field_data->type == 'image') ? JPATH_SITE . $mediaPath : $mediaPath;
+						$config['size'] = $acceptSize;
+						$config['saveData'] = '0';
+						$config['auth'] = $user->authorise('core.field.addfieldvalue', 'com_tjfields.field.' . $file_field_data->id);
+
+						$media = TJMediaStorageLocal::getInstance($config);
+
+						$returnData = $media->upload(array($v));
+						$errors = $media->getErrors();
+
+						if (!empty($errors))
+						{
+							foreach ($errors as $error)
+							{
+								$app->enqueueMessage($error, 'error');
+							}
+						}
+
+						$subformField[$key][$k] = $returnData[0]['source'];
+
+						if ($file_field_data->type == 'file')
+						{
+							$htaccessFile = $mediaPath . '/' . $this->htaccess;
+
+							// If the destination directory doesn't exist we need to create it
+							jimport('joomla.filesystem.file');
+
+							if (!JFile::exists($htaccessFile))
+							{
+								jimport('joomla.filesystem.folder');
+								JFolder::create(dirname($htaccessFile));
+								JFile::write($htaccessFile, $this->htaccessFileContent);
+							}
+						}
+
+						unset($subformField[$key]['filesData']);
+					}
+				}
+			}
 		}
 
 		if (!empty($dbFieldValue))
@@ -780,7 +847,7 @@ class TjfieldsHelper
 			$db    = JFactory::getDbo();
 			$query = $db->getQuery(true);
 
-			$query->select($db->quoteName(array('options','default_option','value')));
+			$query->select($db->quoteName(array('options','value')));
 			$query->from($db->quoteName('#__tjfields_options'));
 			$query->where($db->quoteName('field_id') . ' = ' . (int) $field_id);
 
@@ -813,7 +880,6 @@ class TjfieldsHelper
 			$obj = new stdclass;
 			$obj->id = '';
 			$obj->options = '';
-			$obj->default_option = '';
 			$obj->value = '';
 
 			$extra_options[] = $obj;
@@ -1196,463 +1262,41 @@ class TjfieldsHelper
 	}
 
 	/**
-	 * download the file
-	 *
-	 * @param   STRING  $file             - file path eg /var/www/j30/media/com_quick2cart/qtc_pack.zip
-	 * @param   STRING  $filename_direct  - for direct download it will be file path like http://
-	 * localhost/j30/media/com_quick2cart/qtc_pack.zip  -- for FUTURE SCOPE
-	 * @param   STRING  $extern           - for direct download it will be file path like http://
-	 * @param   STRING  $exitHere         - for direct download it will be file path like http://
-	 *
-	 * @return  integer
-	 */
-	public function downloadMedia($file, $filename_direct = '', $extern = '', $exitHere = 1)
-	{
-		jimport('joomla.filesystem.file');
-		$file = substr($file, 1);
-
-		clearstatcache();
-
-		//  Existiert file - wenn nicht error
-		if (!$extern)
-		{
-			if (!JFile::exists($file))
-			{
-				return 2;
-			}
-			else
-			{
-				$len = filesize($file);
-			}
-		}
-		else
-		{
-			$len = urlfilesize($file);
-		}
-
-		$filename       = basename($file);
-
-		$file_extension = strtolower(substr(strrchr($filename, "."), 1));
-		$ctype = $this->getMime($file_extension);
-
-		ob_end_clean();
-
-		//  Needed for MS IE - otherwise content disposition is not used?
-		if (ini_get('zlib.output_compression'))
-		{
-			ini_set('zlib.output_compression', 'Off');
-		}
-
-		header("Cache-Control: public, must-revalidate");
-		header('Cache-Control: pre-check=0, post-check=0, max-age=0');
-		header("Expires: 0");
-		header("Content-Description: File Transfer");
-		header("Content-Type: " . $ctype);
-		header("Content-Length: " . (string) $len);
-		header('Content-Disposition: attachment; filename="' . $filename . '"');
-
-		//  set_time_limit doesn't work in safe mode
-		if (!ini_get('safe_mode'))
-		{
-			@set_time_limit(0);
-		}
-
-		@readfile($file);
-
-		if ($exitHere == 1)
-		{
-			exit;
-		}
-	}
-
-	/**
-	 * getMime
-	 *
-	 * @param   STRING  $filetype  filetype
-	 *
-	 * @return  string
-	 */
-	public function getMime($filetype)
-	{
-		switch ($filetype)
-		{
-			case "ez":
-				$mime = "application/andrew-inset";
-				break;
-			case "hqx":
-				$mime = "application/mac-binhex40";
-				break;
-			case "cpt":
-				$mime = "application/mac-compactpro";
-				break;
-			case "doc":
-				$mime = "application/msword";
-				break;
-			case "bin":
-				$mime = "application/octet-stream";
-				break;
-			case "dms":
-				$mime = "application/octet-stream";
-				break;
-			case "lha":
-				$mime = "application/octet-stream";
-				break;
-			case "lzh":
-				$mime = "application/octet-stream";
-				break;
-			case "exe":
-				$mime = "application/octet-stream";
-				break;
-			case "class":
-				$mime = "application/octet-stream";
-				break;
-			case "dll":
-				$mime = "application/octet-stream";
-				break;
-			case "oda":
-				$mime = "application/oda";
-				break;
-			case "pdf":
-				$mime = "application/pdf";
-				break;
-			case "ai":
-				$mime = "application/postscript";
-				break;
-			case "eps":
-				$mime = "application/postscript";
-				break;
-			case "ps":
-				$mime = "application/postscript";
-				break;
-			case "xls":
-				$mime = "application/vnd.ms-excel";
-				break;
-			case "ppt":
-				$mime = "application/vnd.ms-powerpoint";
-				break;
-			case "wbxml":
-				$mime = "application/vnd.wap.wbxml";
-				break;
-			case "wmlc":
-				$mime = "application/vnd.wap.wmlc";
-				break;
-			case "wmlsc":
-				$mime = "application/vnd.wap.wmlscriptc";
-				break;
-			case "vcd":
-				$mime = "application/x-cdlink";
-				break;
-			case "pgn":
-				$mime = "application/x-chess-pgn";
-				break;
-			case "csh":
-				$mime = "application/x-csh";
-				break;
-			case "dvi":
-				$mime = "application/x-dvi";
-				break;
-			case "spl":
-				$mime = "application/x-futuresplash";
-				break;
-			case "gtar":
-				$mime = "application/x-gtar";
-				break;
-			case "hdf":
-				$mime = "application/x-hdf";
-				break;
-			case "js":
-				$mime = "application/x-javascript";
-				break;
-			case "nc":
-				$mime = "application/x-netcdf";
-				break;
-			case "cdf":
-				$mime = "application/x-netcdf";
-				break;
-			case "swf":
-				$mime = "application/x-shockwave-flash";
-				break;
-			case "tar":
-				$mime = "application/x-tar";
-				break;
-			case "tcl":
-				$mime = "application/x-tcl";
-				break;
-			case "tex":
-				$mime = "application/x-tex";
-				break;
-			case "texinfo":
-				$mime = "application/x-texinfo";
-				break;
-			case "texi":
-				$mime = "application/x-texinfo";
-				break;
-			case "t":
-				$mime = "application/x-troff";
-				break;
-			case "tr":
-				$mime = "application/x-troff";
-				break;
-			case "roff":
-				$mime = "application/x-troff";
-				break;
-			case "man":
-				$mime = "application/x-troff-man";
-				break;
-			case "me":
-				$mime = "application/x-troff-me";
-				break;
-			case "ms":
-				$mime = "application/x-troff-ms";
-				break;
-			case "ustar":
-				$mime = "application/x-ustar";
-				break;
-			case "src":
-				$mime = "application/x-wais-source";
-				break;
-			case "zip":
-				$mime = "application/x-zip";
-				break;
-			case "au":
-				$mime = "audio/basic";
-				break;
-			case "snd":
-				$mime = "audio/basic";
-				break;
-			case "mid":
-				$mime = "audio/midi";
-				break;
-			case "midi":
-				$mime = "audio/midi";
-				break;
-			case "kar":
-				$mime = "audio/midi";
-				break;
-			case "mpga":
-				$mime = "audio/mpeg";
-				break;
-			case "mp2":
-				$mime = "audio/mpeg";
-				break;
-			case "mp3":
-				$mime = "audio/mpeg";
-				break;
-			case "aif":
-				$mime = "audio/x-aiff";
-				break;
-			case "aiff":
-				$mime = "audio/x-aiff";
-				break;
-			case "aifc":
-				$mime = "audio/x-aiff";
-				break;
-			case "m3u":
-				$mime = "audio/x-mpegurl";
-				break;
-			case "ram":
-				$mime = "audio/x-pn-realaudio";
-				break;
-			case "rm":
-				$mime = "audio/x-pn-realaudio";
-				break;
-			case "rpm":
-				$mime = "audio/x-pn-realaudio-plugin";
-				break;
-			case "ra":
-				$mime = "audio/x-realaudio";
-				break;
-			case "wav":
-				$mime = "audio/x-wav";
-				break;
-			case "pdb":
-				$mime = "chemical/x-pdb";
-				break;
-			case "xyz":
-				$mime = "chemical/x-xyz";
-				break;
-			case "bmp":
-				$mime = "image/bmp";
-				break;
-			case "gif":
-				$mime = "image/gif";
-				break;
-			case "ief":
-				$mime = "image/ief";
-				break;
-			case "jpeg":
-				$mime = "image/jpeg";
-				break;
-			case "jpg":
-				$mime = "image/jpeg";
-				break;
-			case "jpe":
-				$mime = "image/jpeg";
-				break;
-			case "png":
-				$mime = "image/png";
-				break;
-			case "tiff":
-				$mime = "image/tiff";
-				break;
-			case "tif":
-				$mime = "image/tiff";
-				break;
-			case "wbmp":
-				$mime = "image/vnd.wap.wbmp";
-				break;
-			case "ras":
-				$mime = "image/x-cmu-raster";
-				break;
-			case "pnm":
-				$mime = "image/x-portable-anymap";
-				break;
-			case "pbm":
-				$mime = "image/x-portable-bitmap";
-				break;
-			case "pgm":
-				$mime = "image/x-portable-graymap";
-				break;
-			case "ppm":
-				$mime = "image/x-portable-pixmap";
-				break;
-			case "rgb":
-				$mime = "image/x-rgb";
-				break;
-			case "xbm":
-				$mime = "image/x-xbitmap";
-				break;
-			case "xpm":
-				$mime = "image/x-xpixmap";
-				break;
-			case "xwd":
-				$mime = "image/x-xwindowdump";
-				break;
-			case "msh":
-				$mime = "model/mesh";
-				break;
-			case "mesh":
-				$mime = "model/mesh";
-				break;
-			case "silo":
-				$mime = "model/mesh";
-				break;
-			case "wrl":
-				$mime = "model/vrml";
-				break;
-			case "vrml":
-				$mime = "model/vrml";
-				break;
-			case "css":
-				$mime = "text/css";
-				break;
-			case "asc":
-				$mime = "text/plain";
-				break;
-			case "txt":
-				$mime = "text/plain";
-				break;
-			case "gpg":
-				$mime = "text/plain";
-				break;
-			case "rtx":
-				$mime = "text/richtext";
-				break;
-			case "rtf":
-				$mime = "text/rtf";
-				break;
-			case "wml":
-				$mime = "text/vnd.wap.wml";
-				break;
-			case "wmls":
-				$mime = "text/vnd.wap.wmlscript";
-				break;
-			case "etx":
-				$mime = "text/x-setext";
-				break;
-			case "xsl":
-				$mime = "text/xml";
-				break;
-			case "flv":
-				$mime = "video/x-flv";
-				break;
-			case "mpeg":
-				$mime = "video/mpeg";
-				break;
-			case "mpg":
-				$mime = "video/mpeg";
-				break;
-			case "mpe":
-				$mime = "video/mpeg";
-				break;
-			case "qt":
-				$mime = "video/quicktime";
-				break;
-			case "mov":
-				$mime = "video/quicktime";
-				break;
-			case "mxu":
-				$mime = "video/vnd.mpegurl";
-				break;
-			case "avi":
-				$mime = "video/x-msvideo";
-				break;
-			case "movie":
-				$mime = "video/x-sgi-movie";
-				break;
-			case "asf":
-				$mime = "video/x-ms-asf";
-				break;
-			case "asx":
-				$mime = "video/x-ms-asf";
-				break;
-			case "wm":
-				$mime = "video/x-ms-wm";
-				break;
-			case "wmv":
-				$mime = "video/x-ms-wmv";
-				break;
-			case "wvx":
-				$mime = "video/x-ms-wvx";
-				break;
-			case "ice":
-				$mime = "x-conference/x-cooltalk";
-				break;
-			case "rar":
-				$mime = "application/x-rar";
-				break;
-			default:
-				$mime = "application/octet-stream";
-				break;
-		}
-
-		return $mime;
-	}
-
-	/**
 	 * Method to get media URL.
 	 *
-	 * @param   STRING  $filePath       media file path
-	 * @param   STRING  $extraUrlPrams  extra url params
+	 * @param   STRING  $fileName             media file path
+	 * @param   ARRAY   $extraUrlParamsArray  extra url params
 	 *
 	 * @return  string|boolean  True on success.
 	 *
 	 * @since   3.2
 	 */
-	public function getMediaUrl($filePath, $extraUrlPrams = '')
+	public function getMediaUrl($fileName, $extraUrlParamsArray = '')
 	{
-		if (!empty($filePath))
+		if (!empty($fileName))
 		{
+			$extraUrlParams = '';
+
 			// If url extra param is present
-			if (!empty($extraUrlPrams))
+			if (!empty($extraUrlParamsArray))
 			{
-				$extraUrlPrams = '&' . $extraUrlPrams;
+				$extraUrlParams = "&id=" . $extraUrlParamsArray['id'];
+
+				// Get client & add extraURL params which are needed to download the media
+				$data = new stdClass;
+				JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_tjfields/tables');
+				$data->fields_value_table = JTable::getInstance('Fieldsvalue', 'TjfieldsTable');
+
+				if (isset($extraUrlParamsArray['subFormFileFieldId']))
+				{
+					$extraUrlParams .= "&subFormFileFieldId=" . $extraUrlParamsArray['subFormFileFieldId'];
+				}
 			}
 
 			// Here, fpht means file encoded path
-			$encodedPath = base64_encode($filePath);
+			$encodedFileName = base64_encode($fileName);
 			$basePathLink = 'index.php?option=com_tjfields&task=getMedia&fpht=';
-			$mediaURLlink = JUri::root() . substr(JRoute::_($basePathLink . $encodedPath . $extraUrlPrams), strlen(JUri::base(true)) + 1);
+			$mediaURLlink = JUri::root() . substr(JRoute::_($basePathLink . $encodedFileName . $extraUrlParams), strlen(JUri::base(true)) + 1);
 
 			return $mediaURLlink;
 		}
@@ -1689,13 +1333,13 @@ class TjfieldsHelper
 	/**
 	 * tjFileDelete .
 	 *
-	 * @param   string  $filePath  file path.
+	 * @param   Array  $data  file path.
 	 *
 	 * @return boolean|string
 	 *
 	 * @since	1.6
 	 */
-	public function deleteFile($filePath)
+	public function deleteFile($data)
 	{
 		$user = JFactory::getUser();
 
@@ -1706,23 +1350,116 @@ class TjfieldsHelper
 
 		JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_tjfields/tables');
 		$fields_value_table = JTable::getInstance('Fieldsvalue', 'TjfieldsTable');
-		$fields_value_table->load(array('value' => $filePath));
 
-		if (!empty($fields_value_table->user_id))
+		$fields_value_table->load(array('id' => $data['valueId']));
+
+		$subData = new stdClass;
+		$fieldId = 0;
+
+		if ($data['isSubformField'] == 1)
 		{
-			$canEdit = $user->authorise('core.field.editfieldvalue', 'com_tjfields.field.' . $fields_value_table->field_id);
+			$subData = json_decode($fields_value_table->value);
 
-			$canEditOwn = $user->authorise('core.field.editownfieldvalue', 'com_tjfields.field.' . $fields_value_table->field_id);
-
-			if ($canEdit || (($user->id == $fields_value_table->user_id) && $canEditOwn))
+			foreach ($subData as $value)
 			{
-				$fileToDelete = JPATH_ROOT . $filePath;
+				$subformData = (array) $value;
 
-				if (JFile::exists($fileToDelete) && JFile::delete($fileToDelete))
+				if (in_array($data['fileName'], $subformData))
+				{
+					$fileUser = $fields_value_table->user_id;
+				}
+			}
+
+			// Check for file field is of subform or ucmsubform
+			if ($data['subformFileFieldId'])
+			{
+				$fieldId = $data['subformFileFieldId'];
+			}
+			else
+			{
+				$fieldId = $fields_value_table->field_id;
+			}
+		}
+		else
+		{
+			if ($data['fileName'] === $fields_value_table->value)
+			{
+				$fileUser = $fields_value_table->user_id;
+				$fieldId = $fields_value_table->field_id;
+			}
+		}
+
+		$file_extension = strtolower(substr(strrchr($data['fileName'], "."), 1));
+		$localGetMime = TJMediaStorageLocal::getInstance();
+
+		$ctype = $localGetMime->getMime($file_extension);
+
+		if (!empty($fileUser))
+		{
+			$canEdit = $user->authorise('core.field.editfieldvalue', 'com_tjfields.field.' . $fieldId);
+
+			$canEditOwn = $user->authorise('core.field.editownfieldvalue', 'com_tjfields.field.' . $fieldId);
+
+			if ($canEdit || (($user->id == $fileUser) && $canEditOwn))
+			{
+				$type = explode('/', $ctype);
+
+				if ($type[0] === 'image')
+				{
+					$deleteData = array();
+					$deleteData[] = $data['storagePath'] . '/' . $data['fileName'];
+
+					$deleteData[] = $data['storagePath'] . '/S_' . $data['fileName'];
+					$deleteData[] = $data['storagePath'] . '/M_' . $data['fileName'];
+					$deleteData[] = $data['storagePath'] . '/L_' . $data['fileName'];
+
+					foreach ($deleteData as $image)
+					{
+						if (JFile::exists($image))
+						{
+							JFile::delete($image);
+						}
+					}
+
+					$deleted = 1;
+				}
+				else
+				{
+					if (!JFile::delete($data['storagePath'] . '/' . $data['fileName']))
+					{
+						return false;
+					}
+
+					$deleted = 1;
+				}
+
+				if ($deleted == 1)
 				{
 					$db = JFactory::getDbo();
 					$fields_obj = new stdClass;
-					$fields_obj->value = '';
+
+					// Making value object if the field is under subform form subfrom
+					if ($data['isSubformField'] == 1)
+					{
+						foreach ($subData as $subformName => $value)
+						{
+							foreach ($value as $k => $v)
+							{
+								// Finding the particular index and making it null
+								if ($v === $data['fileName'])
+								{
+									$subData->$subformName->$k = '';
+								}
+							}
+						}
+
+						$fields_obj->value = json_encode($subData);
+					}
+					else
+					{
+						$fields_obj->value = '';
+					}
+
 					$fields_obj->id = $fields_value_table->id;
 					$db->updateObject('#__tjfields_fields_value', $fields_obj, 'id');
 
@@ -1747,5 +1484,6 @@ class TjfieldsHelper
 	public static function getLanguageConstantForJs()
 	{
 		JText::script('COM_TJFIELDS_FILE_DELETE_CONFIRM');
+		JText::script('COM_TJFIELDS_FILE_ERROR_MAX_SIZE');
 	}
 }

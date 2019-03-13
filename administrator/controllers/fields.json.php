@@ -1,9 +1,8 @@
 <?php
 /**
- * @version    SVN: <svn_id>
  * @package    Com_Tjfields
  * @author     Techjoomla <extensions@techjoomla.com>
- * @copyright  Copyright (c) 2009-2017 TechJoomla. All rights reserved.
+ * @copyright  Copyright (c) 2009-2018 TechJoomla. All rights reserved.
  * @license    GNU General Public License version 2 or later.
  */
 
@@ -12,14 +11,15 @@ defined('_JEXEC') or die;
 
 jimport('joomla.filesystem.file');
 
-require_once JPATH_SITE . "/components/com_tjfields/filterFields.php";
+JLoader::import('filterFields', JPATH_SITE . '/components/com_tjfields');
+use Joomla\CMS\MVC\Controller\FormController;
 
 /**
  * Item controller class.
  *
  * @since  1.4
  */
-class TjfieldsControllerFields extends JControllerForm
+class TjfieldsControllerFields extends FormController
 {
 	/**
 	 * Delete File .
@@ -37,21 +37,18 @@ class TjfieldsControllerFields extends JControllerForm
 		$jinput = $app->input;
 
 		$data = array();
-		$data['fileName'] = base64_decode($jinput->get('fileName', '', 'BASE64'));
+
+		// Here, fpht means file encoded path
+		$data['filePath'] = base64_decode($jinput->get('filePath', '', 'BASE64'));
 		$data['valueId'] = base64_decode($jinput->get('valueId', '', 'BASE64'));
 		$data['subformFileFieldId'] = $jinput->get('subformFileFieldId');
 		$data['isSubformField'] = $jinput->get('isSubformField');
+		$data['client'] = $jinput->get('client', '', 'STRING');
 
-		// Get media storage path
-		JLoader::import('components.com_tjfields.models.fields', JPATH_SITE);
-		$fieldsModel     = JModelLegacy::getInstance('Fields', 'TjfieldsModel', array('ignore_request' => true));
-		$fieldData = $fieldsModel->getMediaStoragePath($data['valueId'], $data['subformFileFieldId']);
+		$client = explode('.', $data['client']);
 
-		$tjFieldFieldTableParamData = json_decode($fieldData->tjFieldFieldTable->params);
-		$data['storagePath'] = ($fieldData->tjFieldFieldTable->type == 'image') ? JPATH_SITE . $tjFieldFieldTableParamData->uploadpath : $tjFieldFieldTableParamData->uploadpath;
-		$data['client'] = $fieldData->tjFieldFieldTable->client;
-
-		require_once JPATH_SITE . '/components/com_tjfields/helpers/tjfields.php';
+		$data['storagePath'] = '/media/' . $client[0] . '/' . $client[1];
+		require_once JPATH_ADMINISTRATOR . '/components/com_tjfields/helpers/tjfields.php';
 
 		$tjFieldsHelper = new TjfieldsHelper;
 		$returnValue = $tjFieldsHelper->deleteFile($data);

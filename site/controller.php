@@ -49,38 +49,51 @@ class TjfieldsController extends JControllerLegacy
 	 */
 	public function getMedia()
 	{
+		JLoader::import("/techjoomla/media/storage/local", JPATH_LIBRARIES);
 		$app = JFactory::getApplication();
 		$jinput = $app->input;
+		$mediaLocal = TJMediaStorageLocal::getInstance();
 
-		// Here, fpht means file encoded path
-		$encodedFilePath = $jinput->get('fpht', '', 'STRING');
-		$decodedPath = base64_decode($encodedFilePath);
+		// Here, fpht means file encoded name
+		$encodedFileName = $jinput->get('fpht', '', 'STRING');
+		$decodedFileName = base64_decode($encodedFileName);
 
-		$db = JFactory::getDbo();
-		$query = $db->getQuery(true);
-		$query->select('*');
-		$query->from('#__tjfields_fields_value');
-		$query->where($db->quoteName('value') . " = " . $db->quote($decodedPath));
-		$db->setQuery($query);
-		$data = $db->loadObject();
+		// Subform File field Id for checking autherization for specific field under subform
+		$subformFileFieldId = $jinput->get('subFormFileFieldId', '', 'INT');
 
-		if (!empty($data))
+		// Get media storage path
+		JLoader::import('components.com_tjfields.models.fields', JPATH_SITE);
+		$fieldsModel     = JModelLegacy::getInstance('Fields', 'TjfieldsModel', array('ignore_request' => true));
+		$data = $fieldsModel->getMediaStoragePath($jinput->get('id', '', 'INT'), $subformFileFieldId);
+
+		$extraFieldParams = json_decode($data->tjFieldFieldTable->params);
+		$storagePath = $extraFieldParams->uploadpath;
+		$decodedPath = $storagePath . '/' . $decodedFileName;
+
+		if ($data->tjFieldFieldTable->fieldValueId)
 		{
 			$user = JFactory::getUser();
-			$canView = $user->authorise('core.field.viewfieldvalue', 'com_tjfields.field.' . $data->field_id);
 
-			// Allow to view own data
-			if ($data->user_id != null && ($user->id == $data->user_id))
+			if ($subformFileFieldId)
 			{
-				$canView = true;
+				$canView = $user->authorise('core.field.viewfieldvalue', 'com_tjfields.field.' . $subformFileFieldId);
+			}
+			else
+			{
+				$canView = $user->authorise('core.field.viewfieldvalue', 'com_tjfields.field.' . $data->tjFieldFieldTable->field_id);
 			}
 
-			if ($canView)
-			{
-				$tjfieldsHelper = new TjfieldsHelper;
+			$canDownload = 0;
 
-				// Download will start
-				$down_status = $tjfieldsHelper->downloadMedia($decodedPath, '', '', 0);
+			// Allow to view own data
+			if ($data->tjFieldFieldTable->user_id != null && ($user->id == $data->tjFieldFieldTable->user_id))
+			{
+				$canDownload = true;
+			}
+
+			if ($canView || $canDownload)
+			{
+				$down_status = $mediaLocal->downloadMedia($decodedPath, '', '', 0);
 
 				if ($down_status === 2)
 				{
@@ -99,6 +112,33 @@ class TjfieldsController extends JControllerLegacy
 		else
 		{
 			$app->enqueueMessage(JText::_('JERROR_ALERTNOAUTHOR'), 'error');
+			$app->redirect($this->returnURL);
+		}
+
+		jexit();
+	}
+
+	/**
+	 * Fuction to get download media file
+	 *
+	 * @return object
+	 */
+	public function getImage()
+	{
+		JLoader::import("/techjoomla/media/storage/local", JPATH_LIBRARIES);
+		$app = JFactory::getApplication();
+		$jinput = $app->input;
+		$mediaLocal = TJMediaStorageLocal::getInstance();
+
+		$encodedFileName = $jinput->get('fpht', '', 'STRING');
+		$decodedFileName = base64_decode($encodedFileName);
+		$decodedPath = JPATH_SITE . '/images/mediamanager/' . $decodedFileName;
+
+		$status = $mediaLocal->downloadMedia($decodedPath, '', '', 0);
+
+		if ($status === 2)
+		{
+			$app->enqueueMessage(JText::_('COM_TJFIELDS_FILE_NOT_FOUND'), 'error');
 			$app->redirect($this->returnURL);
 		}
 
