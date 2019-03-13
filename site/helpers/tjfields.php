@@ -365,15 +365,63 @@ class TjfieldsHelper
 						{
 							$insert_obj->value = $fvalue;
 
-							if (!empty($existingRecordId))
+							// If calender field
+
+							if ($field_data->type === 'calendar')
 							{
-								$insert_obj->id = $existingRecordId;
-								$db->updateObject('#__tjfields_fields_value', $insert_obj, 'id');
+								// Call call tjfield model
+								JTable::addIncludePath(JPATH_ADMINISTRATOR . "/components/com_tjfields/tables");
+								JModelLegacy::addIncludePath(JPATH_ADMINISTRATOR . "/components/com_tjfields/models");
+								$fieldModel = JModelLegacy::getInstance('Field', 'TjfieldsModel', array("ignore_request" => 1));
+
+								$fieldId = (int) $field_data->id;
+								$fieldItems = $fieldModel->getItem($fieldId);
+
+								// Get calender date format
+								$dateFormat = str_replace('%', '', $fieldItems->params['format']);
+								$showtime = $fieldItems->params['showtime'];
+
+								if ($showtime)
+								{
+									$dateFormat = str_replace('M', 'i', $dateFormat);
+									$dateFormat = str_replace('S', 's', $dateFormat);
+								}
+
+								// Posted calender value again format using saved config parameter
+								$postDate = new JDate($data['fieldsvalue'][$fname]);
+								$formattedDate = $postDate->format($dateFormat);
+								// Posted calender value check with formatted calender data
+
+								if ($data['fieldsvalue'][$fname] == $formattedDate)
+								{
+									if (!empty($existingRecordId))
+									{
+										$insert_obj->id = $existingRecordId;
+										$db->updateObject('#__tjfields_fields_value', $insert_obj, 'id');
+									}
+									else
+									{
+										$insert_obj->id = '';
+										$db->insertObject('#__tjfields_fields_value', $insert_obj, 'id');
+									}
+								}
+								else
+								{
+									return false;
+								}
 							}
 							else
 							{
-								$insert_obj->id = '';
-								$db->insertObject('#__tjfields_fields_value', $insert_obj, 'id');
+								if (!empty($existingRecordId))
+								{
+									$insert_obj->id = $existingRecordId;
+									$db->updateObject('#__tjfields_fields_value', $insert_obj, 'id');
+								}
+								else
+								{
+									$insert_obj->id = '';
+									$db->insertObject('#__tjfields_fields_value', $insert_obj, 'id');
+								}
 							}
 						}
 					}

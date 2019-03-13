@@ -5,6 +5,11 @@
 			<field name="format" type="text" default="%Y-%m-%d"
 				label="COM_TJFIELDS_FORM_LBL_FIELD_FORMAT" description="COM_TJFIELDS_FORM_DESC_FIELD_FORMAT"
 				size="20" />
+			<field name="showtime" type="radio" default="false"
+				label="COM_TJFIELDS_FORM_LBL_FIELD_SHOWTIME" description="COM_TJFIELDS_FORM_DESC_FIELD_SHOWTIME">
+				<option value="true">JYES</option>
+				<option value="false">JNO</option>
+			</field>
 		</fieldset>
 	</fields>
 </form>
