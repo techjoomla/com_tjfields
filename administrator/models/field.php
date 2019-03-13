@@ -46,15 +46,12 @@ class TjfieldsModelField extends JModelAdmin
 	 * @param   Array    $data      An optional array of data for the form to interogate.
 	 * @param   Boolean  $loadData  True if the form is to load its own data (default case), false if not.
 	 *
-	 * @return  \JForm|boolean  A \JForm object on success, false on failure
+	 * @return  JForm|boolean  A JForm object on success, false on failure
 	 *
 	 * @since  1.6
 	 */
 	public function getForm($data = array(), $loadData = true)
 	{
-		// Initialise variables.
-		$app = JFactory::getApplication();
-
 		// Get the form.
 		$form = $this->loadForm('com_tjfields.field', 'field', array('control' => 'jform','load_data' => $loadData));
 
@@ -158,12 +155,14 @@ class TjfieldsModelField extends JModelAdmin
 	 *
 	 * @param   Array  $post  Post
 	 *
-	 * @return  mixed
+	 * @return  int|boolean A int on success, false on failuer
 	 *
 	 * @since  1.6
 	 */
 	public function save_option($post)
 	{
+		$fields_in_DB = array();
+		$options_filled = array();
 		$table = $this->getTable();
 		$data  = $post->get('jform', '', 'ARRAY');
 		$input = JFactory::getApplication()->input;
@@ -252,8 +251,6 @@ class TjfieldsModelField extends JModelAdmin
 		if ($id)
 		{
 			$options = $post->get('tjfields', '', 'ARRAY');
-			$jformData   = $post->get('jform', '', 'ARRAY');
-			$optionsData = json_decode($jformData['params']['options']);
 
 			if ($data['saveOption'] == 1)
 			{
@@ -391,7 +388,7 @@ class TjfieldsModelField extends JModelAdmin
 	 * @param   Array    $jsarray  JSArray
 	 * @param   Integer  $fieldid  Field Id
 	 *
-	 * @return  boolean
+	 * @return  boolean A false if failure
 	 *
 	 * @since  1.6
 	 */
@@ -424,9 +421,9 @@ class TjfieldsModelField extends JModelAdmin
 	/**
 	 * Method To Delete Option
 	 *
-	 * @param   Integer  $delete_ids  Id for delete record
+	 * @param   array  $delete_ids  Id for delete record
 	 *
-	 * @return  boolean
+	 * @return  boolean A false on failure
 	 *
 	 * @since  1.6
 	 */
@@ -451,8 +448,8 @@ class TjfieldsModelField extends JModelAdmin
 	/**
 	 * Method for Delete Field Categories Mapping
 	 *
-	 * @param   Integer  $field_id  Id
-	 * @param   String   $cats      Category
+	 * @param   array  $field_id  Id
+	 * @param   array  $cats      Category
 	 *
 	 * @return  Boolean
 	 *
@@ -478,14 +475,15 @@ class TjfieldsModelField extends JModelAdmin
 				$query->delete($db->quoteName('#__tjfields_category_mapping'));
 				$query->where($conditions);
 				$db->setQuery($query);
-				$result = $db->execute();
+
+				$db->execute();
 			}
 		}
 		catch (RuntimeException $e)
 		{
 			$this->setError($e->getMessage());
 
-			return 0;
+			return false;
 		}
 	}
 
