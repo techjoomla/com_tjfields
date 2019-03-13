@@ -53,7 +53,7 @@ class JFormFieldCustomfield extends JFormField
 	 * @return	list	The list of frequencies
 	 */
 
-	function fetchGroupid($name, $value, &$node, $control_name)
+	protected function fetchGroupid($name, $value, &$node, $control_name)
 	{
 		$input = JFactory::getApplication()->input;
 		$db=JFactory::getDbo();
@@ -66,7 +66,8 @@ class JFormFieldCustomfield extends JFormField
 		foreach($groups as $group){
 			$options[] = JHtml::_('select.option',$group->id, $group->name);
 		}
-		return JHtml::_('select.genericlist',  $options, $name, 'class="inputbox required"', 'value', 'text', $value, $control_name.$name );
+
+		return JHtml::_('select.genericlist',  $options, $name, 'class="inputbox required"', 'value', 'text', $value,'jform_group_id');
 	}
 
 	/**

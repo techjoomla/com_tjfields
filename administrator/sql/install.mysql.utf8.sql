@@ -50,7 +50,6 @@ CREATE TABLE IF NOT EXISTS `#__tjfields_options` (
 	`id` int(11) NOT NULL AUTO_INCREMENT,
 	`field_id` int(11) NOT NULL,
 	`options` varchar(255) NOT NULL,
-	`default_option` varchar(255) NOT NULL,
 	`value` varchar(255) NOT NULL,
 	PRIMARY KEY (`id`)
 )   DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;

@@ -6,12 +6,15 @@
  * @copyright  Copyright (c) 2009-2016 TechJoomla. All rights reserved.
  * @license    GNU General Public License version 2 or later.
  */
+JLoader::import("/techjoomla/media/storage/local", JPATH_LIBRARIES);
+
 
 // No direct access
 defined('_JEXEC') or die;
+use Joomla\String\StringHelper;
 
 /**
- * helper class for tjfields
+ * Helper class for tjfields
  *
  * @package     Tjfields
  * @subpackage  com_tjfields
@@ -323,7 +326,6 @@ class TjfieldsHelper extends JHelperContent
 					}
 				}
 
-				$default_value = array();
 				$value_string = '';
 
 				// ADD option if present.
@@ -346,11 +348,6 @@ class TjfieldsHelper extends JHelperContent
 					{
 						$option = $field->addChild('option', $f_option->options);
 						$option->addAttribute('value', $f_option->value);
-
-						if ($f_option->default_option == 1)
-						{
-							$default_value[] = $f_option->value;
-						}
 					}
 				}
 			}
@@ -445,7 +442,7 @@ class TjfieldsHelper extends JHelperContent
 	{
 		$db = JFactory::getDbo();
 		$query	= $db->getQuery(true);
-		$query->select('id,options,default_option,value FROM #__tjfields_options');
+		$query->select('id,options,value FROM #__tjfields_options');
 		$query->where('field_id=' . $field_id);
 		$db->setQuery($query);
 		$extra_options = $db->loadObjectlist('id');
@@ -486,5 +483,152 @@ class TjfieldsHelper extends JHelperContent
 	public static function getLanguageConstant()
 	{
 		JText::script('COM_TJFIELDS_LABEL_WHITESPACES_NOT_ALLOWED');
+	}
+
+	/**
+	 * tjFileDelete .
+	 *
+	 * @param   Array  $data  file path.
+	 *
+	 * @return boolean|string
+	 *
+	 * @since	1.6
+	 */
+	public function deleteFile($data)
+	{
+		$user = JFactory::getUser();
+
+		if (!$user->id)
+		{
+			return false;
+		}
+
+		JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_tjfields/tables');
+		$fieldsValueTable = JTable::getInstance('Fieldsvalue', 'TjfieldsTable');
+
+		$fieldsValueTable->load(array('id' => $data['valueId']));
+
+		$subData = new stdClass();
+		$fieldId = 0;
+
+		if ($data['isSubformField'] == 1)
+		{
+			$subData = json_decode($fieldsValueTable->value);
+
+			foreach ($subData as $value)
+			{
+				$subformData = (array) $value;
+
+				if (in_array($data['filePath'], $subformData))
+				{
+					$fileUser = $fieldsValueTable->user_id;
+				}
+			}
+
+			// Check for file field is of subform or ucmsubform
+			if ($data['subformFileFieldId'])
+			{
+				$fieldId = $data['subformFileFieldId'];
+			}
+			else
+			{
+				$fieldId = $fieldsValueTable->field_id;
+			}
+		}
+		else
+		{
+			if ($data['filePath'] === $fieldsValueTable->value)
+			{
+				$fileUser = $fieldsValueTable->user_id;
+				$fieldId = $fieldsValueTable->field_id;
+			}
+		}
+
+		$fileExtension = StringHelper::strtolower(StringHelper::substr(strrchr($data['filePath'], "."), 1));
+		$localGetMime = TJMediaStorageLocal::getInstance();
+
+		$ctype = $localGetMime->getMime($fileExtension);
+
+		if (!empty($fileUser))
+		{
+			$canEdit = $user->authorise('core.field.editfieldvalue', 'com_tjfields.field.' . $fieldId);
+
+			$canEditOwn = $user->authorise('core.field.editownfieldvalue', 'com_tjfields.field.' . $fieldId);
+
+			if ($canEdit || (($user->id == $fileUser) && $canEditOwn))
+			{
+				$type = explode('/', $ctype);
+
+				if ($type[0] === 'image')
+				{
+					$deleteData = array();
+					$deleteData[] = JPATH_ROOT . $data['storagePath'] . '/' . $type[0] . '/' . $data['filePath'];
+
+					$deleteData[] = JPATH_ROOT . $data['storagePath'] . '/' . $type[0] . '/S_' . $data['filePath'];
+					$deleteData[] = JPATH_ROOT . $data['storagePath'] . '/' . $type[0] . '/M_' . $data['filePath'];
+					$deleteData[] = JPATH_ROOT . $data['storagePath'] . '/' . $type[0] . '/L_' . $data['filePath'];
+
+					foreach ($deleteData as $image)
+					{
+						if (JFile::exists($image))
+						{
+							JFile::delete($image);
+						}
+					}
+
+					$deleted = 1;
+				}
+				else
+				{
+					if (!JFile::delete(JPATH_ROOT . $data['storagePath'] . '/' . $type[0] . '/' . $data['filePath']))
+					{
+						return false;
+					}
+					else
+					{
+						$deleted = 1;
+					}
+				}
+
+				if ($deleted == 1)
+				{
+					$db = JFactory::getDbo();
+					$fields_obj = new stdClass;
+
+					// Making value object if the field is under subform form subfrom
+					if ($data['isSubformField'] == 1)
+					{
+						foreach ($subData as $subformName => $value)
+						{
+							foreach ($value as $k => $v)
+							{
+								// Finding the particular index and making it null
+								if ($v === $data['filePath'])
+								{
+									$subData->$subformName->$k = '';
+								}
+							}
+						}
+
+						$fields_obj->value = json_encode($subData);
+					}
+					else
+					{
+						$fields_obj->value = '';
+					}
+
+					$fields_obj->id = $fieldsValueTable->id;
+					$db->updateObject('#__tjfields_fields_value', $fields_obj, 'id');
+
+					return true;
+				}
+
+				return false;
+			}
+
+			return false;
+		}
+
+		return false;
 	}
 }

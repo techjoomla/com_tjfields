@@ -14,6 +14,9 @@ jimport('joomla.application.component.modellist');
 jimport('joomla.filesystem.file');
 jimport('joomla.database.table');
 
+$lang = JFactory::getLanguage();
+$lang->load('com_tjfields', JPATH_SITE);
+
 /**
  * Methods supporting a list of regions records.
  *
@@ -29,7 +32,7 @@ trait TjfieldsFilterField
 	 * @param   array    $data      An optional ordering field.
 	 * @param   boolean  $loadData  An optional direction (asc|desc).
 	 *
-	 * @return  JForm    $form      A JForm object on success, false on failure
+	 * @return  JForm|boolean    $form      A JForm object on success, false on failure
 	 *
 	 * @since   2.2
 	 */
@@ -50,22 +53,6 @@ trait TjfieldsFilterField
 	}
 
 	/**
-	 * Method to get a single record.
-	 *
-	 * @param   integer  $pk  The id of the primary key.
-	 *
-	 * @return  mixed  $item  Object on success, false on failure.
-	 */
-	public function getItem($pk = null)
-	{
-		if ($item = parent::getItem($pk))
-		{
-		}
-
-		return $item;
-	}
-
-	/**
 	 * Method to get the form for extra fields.
 	 * This form file will be created by field manager.
 	 *
@@ -74,7 +61,7 @@ trait TjfieldsFilterField
 	 * @param   Array    $data      An optional array of data for the form to interogate.
 	 * @param   Boolean  $loadData  True if the form is to load its own data (default case), false if not.
 	 *
-	 * @return  JForm    A JForm    object on success, false on failure
+	 * @return  array|boolean    A JForm    object on success, false on failure
 	 *
 	 * @since	1.6
 	 */
@@ -133,22 +120,30 @@ trait TjfieldsFilterField
 			{
 				$tjFieldFieldTable->load(array('name' => $field->fieldname));
 
-				if ($user->authorise('core.field.addfieldvalue', 'com_tjfields.field.' . $tjFieldFieldTable->group_id))
+				$canAdd = 0;
+
+				if ($user->authorise('core.field.addfieldvalue', 'com_tjfields.group.' . $tjFieldFieldTable->group_id))
 				{
 					$canAdd = $user->authorise('core.field.addfieldvalue', 'com_tjfields.field.' . $tjFieldFieldTable->id);
 				}
 
-				if ($user->authorise('core.field.editfieldvalue', 'com_tjfields.field.' . $tjFieldFieldTable->group_id))
+				$canEdit = 0;
+
+				if ($user->authorise('core.field.editfieldvalue', 'com_tjfields.group.' . $tjFieldFieldTable->group_id))
 				{
 					$canEdit = $user->authorise('core.field.editfieldvalue', 'com_tjfields.field.' . $tjFieldFieldTable->id);
 				}
 
-				if ($user->authorise('core.field.viewfieldvalue', 'com_tjfields.field.' . $tjFieldFieldTable->group_id))
+				$canView = 0;
+
+				if ($user->authorise('core.field.viewfieldvalue', 'com_tjfields.group.' . $tjFieldFieldTable->group_id))
 				{
 					$canView = $user->authorise('core.field.viewfieldvalue', 'com_tjfields.field.' . $tjFieldFieldTable->id);
 				}
 
-				if ($user->authorise('core.field.editownfieldvalue', 'com_tjfields.field.' . $tjFieldFieldTable->group_id))
+				$canEditOwn = 0;
+
+				if ($user->authorise('core.field.editownfieldvalue', 'com_tjfields.group.' . $tjFieldFieldTable->group_id))
 				{
 					$canEditOwn = $user->authorise('core.field.editownfieldvalue', 'com_tjfields.field.' . $tjFieldFieldTable->id);
 				}
@@ -172,18 +167,18 @@ trait TjfieldsFilterField
 							if (!empty($extraData[$tjFieldFieldTable->id]))
 							{
 								$userId = $extraData[$tjFieldFieldTable->id]->user_id;
-							}
 
-							if (!$canEdit && ($user->id != $userId))
-							{
-								$form->setFieldAttribute($field->fieldname, 'readonly', true);
-								$form->setFieldAttribute($field->fieldname, 'disabled', true);
-							}
-
-							if (!$canEditOwn && ($user->id == $userId))
-							{
-								$form->setFieldAttribute($field->fieldname, 'readonly', true);
-								$form->setFieldAttribute($field->fieldname, 'disabled', true);
+								if (!$canEdit && ($user->id != $userId))
+								{
+									$form->setFieldAttribute($field->fieldname, 'readonly', true);
+									$form->setFieldAttribute($field->fieldname, 'disabled', true);
+								}
+	
+								if (!$canEditOwn && ($user->id == $userId))
+								{
+									$form->setFieldAttribute($field->fieldname, 'readonly', true);
+									$form->setFieldAttribute($field->fieldname, 'disabled', true);
+								}
 							}
 						}
 						else
@@ -196,6 +191,8 @@ trait TjfieldsFilterField
 				}
 				else
 				{
+					$userId = 0;
+
 					if (!empty($extraData[$tjFieldFieldTable->id]))
 					{
 						$userId = $extraData[$tjFieldFieldTable->id]->user_id;
@@ -237,6 +234,19 @@ trait TjfieldsFilterField
 	{
 		$form = new stdclass;
 
+		// Call to extra fields
+		if (!empty($data['category']))
+		{
+			$form = $this->getFormObject($data, $loadData);
+
+			if (!$form)
+			{
+				unset($data['category']);
+			}
+		}
+
+		$form = new stdclass;
+
 		// Call to global extra fields
 		$form = $this->getFormObject($data, $loadData);
 
@@ -249,9 +259,9 @@ trait TjfieldsFilterField
 	 *
 	 * The base form is loaded from XML
 	 *
-	 * @param   ATTAY  $data  data
+	 * @param   array  $data  data
 	 *
-	 * @return  JForm    A JForm    object on success, false on failure
+	 * @return  array|bool  array on success, flase on failure
 	 *
 	 * @since	1.6
 	 */
@@ -266,10 +276,10 @@ trait TjfieldsFilterField
 	 * Method to get the data of extra form fields
 	 * This form file will be created by field manager.
 	 *
-	 * @param   ATTAY  $data  data
+	 * @param   array  $data  data
 	 * @param   INT    $id    Id of record
 	 *
-	 * @return  JForm    A JForm    object on success, false on failure
+	 * @return  array|bool  array on success, flase on failure
 	 *
 	 * @since	1.6
 	 */
@@ -382,17 +392,16 @@ trait TjfieldsFilterField
 	 * @param   array  $data  data
 	 * @param   array  $id    Id of the record
 	 *
-	 * @return	Extra field data
+	 * @return	array|boolean field data
 	 *
 	 * @since	1.8.5
 	 */
 	public function getDataExtra($data, $id = null)
 	{
-		$input = JFactory::getApplication()->input;
-
 		if (empty($id))
 		{
-			$id = (empty($data['content_id']))?$input->get('content_id', '', 'INT'):$data['content_id'];
+			$input = JFactory::getApplication()->input;
+			$id = (empty($data['content_id'])) ? $input->get('content_id', '', 'INT') : $data['content_id'];
 		}
 
 		if (empty($id))
@@ -420,7 +429,7 @@ trait TjfieldsFilterField
 	 *
 	 * @param   array  $data  data
 	 *
-	 * @return  JForm  A JForm object on success, false on failure
+	 * @return  boolean  A JForm object on success, false on failure
 	 *
 	 * @since  1.6
 	 */
@@ -470,5 +479,18 @@ trait TjfieldsFilterField
 		$result = $db->execute();
 
 		return $result;
+	}
+
+	/**
+	 * This define the  language constant which you have use in js file.
+	 *
+	 * @since   1.0
+	 * @return   null
+	 */
+	public static function getLanguage()
+	{
+		JText::script('COM_TJFIELDS_FILE_DELETE_CONFIRM');
+		JText::script('COM_TJFIELDS_FILE_ERROR_MAX_SIZE');
+		JText::script('COM_TJFIELDS_FILE_DELETE_SUCCESS');
 	}
 }

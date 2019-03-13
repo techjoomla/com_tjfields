@@ -65,7 +65,11 @@ class TjfieldsModelFields extends JModelList
 
 		// Set client in model state
 		$client = $app->input->get('client', '', 'STRING');
-		$this->setState('filter.client', $client);
+
+		if (!empty($client))
+		{
+			$this->setState('filter.client', $client);
+		}
 
 		// Load the filter state.
 		$search = $app->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
@@ -189,11 +193,11 @@ class TjfieldsModelFields extends JModelList
 	}
 
 	/**
-	 * Method GetItems
+	 * Method to get an array of data items.
 	 *
-	 * @return  items
+	 * @return  mixed  An array of data items on success, false on failure.
 	 *
-	 * @since  1.6
+	 * @since   1.6
 	 */
 	public function getItems()
 	{
