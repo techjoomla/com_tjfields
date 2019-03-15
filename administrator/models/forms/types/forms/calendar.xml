@@ -6,10 +6,13 @@
 				label="COM_TJFIELDS_FORM_LBL_FIELD_FORMAT" description="COM_TJFIELDS_FORM_DESC_FIELD_FORMAT"
 				size="20" />
 			<field name="showtime" type="radio" default="false"
-				label="COM_TJFIELDS_FORM_LBL_FIELD_SHOWTIME" description="COM_TJFIELDS_FORM_DESC_FIELD_SHOWTIME">
+				label="COM_TJFIELDS_FORM_LBL_CALENDAR_FIELD_SHOWTIME" description="COM_TJFIELDS_FORM_DESC_CALENDAR_FIELD_SHOWTIME">
 				<option value="true">JYES</option>
 				<option value="false">JNO</option>
 			</field>
+			<field name="translateformat" type="hidden" default="true" />
+			<field name="size" type="hidden" default="22" />
+			<field name="filter" type="hidden" default="user_utc" />
 		</fieldset>
 	</fields>
 </form>
