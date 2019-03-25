@@ -199,7 +199,7 @@ class JFormFieldImage extends JFormFieldFile
 	 */
 	protected function renderImage($data, $layoutData)
 	{
-		return '<img src="' . JUri::root() . 'images/mediamanager/' . $layoutData['value'] . '" height=
+		return '<img src="' . JUri::root() . 'images/tjmedia/' . $layoutData['value'] . '" height=
 		"' . $layoutData['field']->element->attributes()->height . '"width="' . $layoutData['field']->element->attributes()->width . '" ></img>';
 	}
 

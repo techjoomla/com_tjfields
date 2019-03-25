@@ -177,8 +177,10 @@ class TjfieldsHelper
 			{
 				$fileData = array();
 
-				foreach ($data['fieldsvalue']['tjFieldFileField'] as $key => $value)
+				if (isset($data['fieldsvalue']['tjFieldFileField']))
 				{
+					foreach ($data['fieldsvalue']['tjFieldFileField'] as $key => $value)
+					{
 						// Checking if the subform name is present as key of array in the files array, if present separate  the array
 						if ($key === $field_data->name)
 						{
@@ -190,18 +192,22 @@ class TjfieldsHelper
 						{
 							$fileData[$key] = '';
 						}
+					}
 				}
 
 				// Adding separated files array to respective subform data  by creating new variable filesData
-				foreach ($v as $key => $value)
+				if (!empty($v))
 				{
-					if (array_key_exists($key, $fileData[$k]))
+					foreach ($v as $key => $value)
 					{
-						$data['fieldsvalue'][$field_data->name][$key]['filesData'] = $fileData[$k][$key];
-					}
-					else
-					{
-						$data['fieldsvalue'][$field_data->name][$key]['filesData'] = '';
+						if (array_key_exists($key, $fileData[$k]))
+						{
+							$data['fieldsvalue'][$field_data->name][$key]['filesData'] = $fileData[$k][$key];
+						}
+						else
+						{
+							$data['fieldsvalue'][$field_data->name][$key]['filesData'] = '';
+						}
 					}
 				}
 			}
@@ -252,7 +258,7 @@ class TjfieldsHelper
 								$acceptSize = $fieldItems->params['size'];
 
 								// Upload path
-								$mediaPath = isset($fieldItems->params['uploadpath']) ? $fieldItems->params['uploadpath'] : '';
+								$mediaPath = isset($fieldItems->params['uploadpath']) ? $fieldItems->params['uploadpath'] : JPATH_SITE . '/images/tjmedia/';
 
 								// Code for file type validation
 								$acceptType = $fieldItems->params['accept'];
@@ -276,8 +282,20 @@ class TjfieldsHelper
 									$config['type'] = $validtype;
 								}
 
+								if (isset($fieldItems->params['accept']) && !empty($fieldItems->params['accept']))
+								{
+									$allowedTypes = explode(',', $fieldItems->params['accept']);
+
+									foreach ($allowedTypes as $k => $allowedType)
+									{
+										$allowedTypes[$k] = trim(str_replace('.', '', $allowedType));
+									}
+
+									$config['allowedExtension'] = $allowedTypes;
+								}
+
 								$user = JFactory::getUser();
-								$config['uploadPath'] = ($file_field_data->type == 'image') ? JPATH_SITE . $mediaPath : $mediaPath;
+								$config['uploadPath'] = $mediaPath;
 								$config['size'] = $acceptSize;
 								$config['saveData'] = '0';
 								$config['auth'] = $user->authorise('core.field.addfieldvalue', 'com_tjfields.field.' . $file_field_data->id);
@@ -568,7 +586,7 @@ class TjfieldsHelper
 						$acceptSize = $fieldItems->params['size'];
 
 						// Upload path
-						$mediaPath = isset($fieldItems->params['uploadpath']) ? $fieldItems->params['uploadpath'] : '';
+						$mediaPath = isset($fieldItems->params['uploadpath']) ? $fieldItems->params['uploadpath'] : JPATH_SITE . '/images/tjmedia/';
 
 						// Configs for Media library
 						$config = array();
@@ -588,8 +606,20 @@ class TjfieldsHelper
 							$config['type'] = $validtype;
 						}
 
+						if (isset($fieldItems->params['accept']) && !empty($fieldItems->params['accept']))
+						{
+							$allowedTypes = explode(',', $fieldItems->params['accept']);
+
+							foreach ($allowedTypes as $k => $allowedType)
+							{
+								$allowedTypes[$k] = trim(str_replace('.', '', $allowedType));
+							}
+
+							$config['allowedExtension'] = $allowedTypes;
+						}
+
 						$user = JFactory::getUser();
-						$config['uploadPath'] = ($file_field_data->type == 'image') ? JPATH_SITE . $mediaPath : $mediaPath;
+						$config['uploadPath'] = $mediaPath;
 						$config['size'] = $acceptSize;
 						$config['saveData'] = '0';
 						$config['auth'] = $user->authorise('core.field.addfieldvalue', 'com_tjfields.field.' . $file_field_data->id);

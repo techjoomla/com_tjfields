@@ -132,7 +132,7 @@ class TjfieldsController extends JControllerLegacy
 
 		$encodedFileName = $jinput->get('fpht', '', 'STRING');
 		$decodedFileName = base64_decode($encodedFileName);
-		$decodedPath = JPATH_SITE . '/images/mediamanager/' . $decodedFileName;
+		$decodedPath = JPATH_SITE . '/images/tjmedia/' . $decodedFileName;
 
 		$status = $mediaLocal->downloadMedia($decodedPath, '', '', 0);
 
