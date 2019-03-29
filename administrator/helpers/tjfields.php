@@ -270,6 +270,7 @@ class TjfieldsHelper extends JHelperContent
 			$i = 0;
 			$new_fieldset = $newXML->addChild('fieldset');
 			$new_fieldset->addAttribute('name', $fields[0]->group_name);
+			$new_fieldset->addAttribute('addrulepath', 'administrator/components/com_tjfields/models/rules');
 
 			foreach ($fields as $f)
 			{
