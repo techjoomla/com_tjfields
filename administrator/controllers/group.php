@@ -45,8 +45,8 @@ class TjfieldsControllerGroup extends JControllerForm
 		{
 			$msg = JText::_('COMTJFILEDS_GROUP_CREATED_SUCCESSFULLY');
 			$link = JRoute::_('index.php?option=com_tjfields&view=group&layout=edit', false);
-
 			$link .= '&client=' . $input->get('client', '', 'STRING') . '&id=' . $if_saved;
+			$this->setRedirect($link, $msg);
 		}
 		else
 		{
@@ -54,9 +54,8 @@ class TjfieldsControllerGroup extends JControllerForm
 			$this->setMessage(JText::plural($msg, 1));
 			$link = JRoute::_('index.php?option=com_tjfields&view=group&layout=edit', false);
 			$link .= '&client=' . $input->get('client', '', 'STRING') . '&id=' . $input->get('id');
+			$this->setRedirect($link, $msg, 'error');
 		}
-
-		$this->setRedirect($link, $msg);
 	}
 
 	/**
@@ -91,14 +90,14 @@ class TjfieldsControllerGroup extends JControllerForm
 		{
 			$msg = JText::_('COMTJFILEDS_GROUP_CREATED_SUCCESSFULLY');
 			$link = JRoute::_('index.php?option=com_tjfields&view=groups&client=' . $input->get('client', '', 'STRING'), false);
+			$this->setRedirect($link, $msg);
 		}
 		else
 		{
 			$msg = JText::_('TJFIELDS_ERROR_MSG');
 			$link = JRoute::_('index.php?option=com_tjfields&view=groups&client=' . $input->get('client', '', 'STRING'), false);
+			$this->setRedirect($link, $msg, 'error');
 		}
-
-		$this->setRedirect($link, $msg);
 	}
 
 	/**
@@ -117,14 +116,14 @@ class TjfieldsControllerGroup extends JControllerForm
 		{
 			$msg = JText::_('COMTJFILEDS_GROUP_CREATED_SUCCESSFULLY');
 			$link = JRoute::_('index.php?option=com_tjfields&view=group&layout=edit&client=' . $input->get('client', '', 'STRING'), false);
+			$this->setRedirect($link, $msg, 'error');
 		}
 		else
 		{
 			$msg = JText::_('TJFIELDS_ERROR_MSG');
 			$link = JRoute::_('index.php?option=com_tjfields&view=group&layout=edit&client=' . $input->get('client', '', 'STRING'), false);
+			$this->setRedirect($link, $msg, 'error');
 		}
-
-		$this->setRedirect($link, $msg);
 	}
 
 	/**
