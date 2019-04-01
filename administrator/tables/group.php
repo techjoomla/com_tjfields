@@ -70,6 +70,16 @@ class TjfieldsTablegroup extends JTable
 			$this->ordering = self::getNextOrder();
 		}
 
+		// Check for duplicate group name
+		$table = JTable::getInstance('Group', 'TjfieldsTable', array('dbo', $db));
+
+		if ($table->load(array('name' => $this->name)) && ($table->id != $this->id || $this->id == 0))
+		{
+			JFactory::getApplication()->enqueueMessage(JText::_('COM_TJFIELDS_GROUP_TITLE_ALREADY_EXISTS'), 'error');
+
+			return false;
+		}
+
 		return parent::check();
 	}
 
