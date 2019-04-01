@@ -10,8 +10,8 @@
 				<option value="true">True</option>
 				<option value="false">False</option>
 			</field>
-			<field name="min" type="text" label="COM_TJFIELDS_FORM_LBL_FIELD_FORM_MIN" description="COM_TJFIELDS_FORM_DESC_FIELD_FORM_MIN" default="0" />
-			<field name="max" type="text" label="COM_TJFIELDS_FORM_LBL_FIELD_FORM_MAX" description="COM_TJFIELDS_FORM_DESC_FIELD_FORM_MAX" default="1000" />
+			<field name="min" type="number" label="COM_TJFIELDS_FORM_LBL_FIELD_FORM_MIN" description="COM_TJFIELDS_FORM_DESC_FIELD_FORM_MIN" default="0" />
+			<field name="max" type="number" label="COM_TJFIELDS_FORM_LBL_FIELD_FORM_MAX" description="COM_TJFIELDS_FORM_DESC_FIELD_FORM_MAX" default="1000" />
 		</fieldset>
 	</fields>
 </form>
