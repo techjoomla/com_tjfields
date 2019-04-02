@@ -265,8 +265,24 @@ class TjfieldsModelField extends JModelAdmin
 					}
 				}
 
+				// Check for empty options
+				if (count($options) == 0)
+				{
+					JFactory::getApplication()->enqueueMessage(JText::_('COM_TJFIELDS_INVALID_OPTION_VALUES'), 'error');
+
+					return $id;
+				}
+
 				foreach ($options as $key => $value)
 				{
+					// Check for empty options
+					if ((!empty($value['optionname']) && $value['optionvalue'] == '') || ($value['optionname'] == '' && !empty($value['optionvalue'])))
+					{
+						JFactory::getApplication()->enqueueMessage(JText::_('COM_TJFIELDS_INVALID_OPTION_VALUES'), 'error');
+
+						return $id;
+					}
+
 					if ($value['hiddenoptionid'])
 					{
 						$options_filled[] = $value['hiddenoptionid'];
@@ -308,7 +324,7 @@ class TjfieldsModelField extends JModelAdmin
 								{
 									echo $this->_db->stderr();
 
-									return false;
+									return $id;
 								}
 							}
 						}
@@ -322,7 +338,7 @@ class TjfieldsModelField extends JModelAdmin
 								{
 									echo $this->_db->stderr();
 
-									return false;
+									return $id;
 								}
 							}
 						}
@@ -360,7 +376,7 @@ class TjfieldsModelField extends JModelAdmin
 						{
 							echo $this->_db->stderr();
 
-							return false;
+							return $id;
 						}
 					}
 				}

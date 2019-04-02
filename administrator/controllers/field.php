@@ -47,6 +47,8 @@ class TjfieldsControllerField extends JControllerForm
 			$link = JRoute::_(
 			'index.php?option=com_tjfields&view=field&layout=edit&client=' . $input->get('client', '', 'STRING'), false
 			);
+
+			$this->setRedirect($link, $msg);
 		}
 		else
 		{
@@ -55,9 +57,9 @@ class TjfieldsControllerField extends JControllerForm
 			$link = JRoute::_(
 			'index.php?option=com_tjfields&view=field&layout=edit&client=' . $input->get('client', '', 'STRING'), false
 			);
-		}
 
-		$this->setRedirect($link, $msg);
+			$this->setRedirect($link, $msg, 'error');
+		}
 	}
 
 	/**
@@ -96,6 +98,8 @@ class TjfieldsControllerField extends JControllerForm
 			$msg = JText::_('COMTJFILEDS_FIELD_CREATED_SUCCESSFULLY');
 			$link = JRoute::_('index.php?option=com_tjfields&view=fields&client=' . $input->get('client', '', 'STRING'), false
 			);
+
+			$this->setRedirect($link, $msg);
 		}
 		else
 		{
@@ -103,9 +107,9 @@ class TjfieldsControllerField extends JControllerForm
 			$this->setMessage(JText::plural($msg, 1));
 			$link = JRoute::_('index.php?option=com_tjfields&view=fields&client=' . $input->get('client', '', 'STRING'), false
 			);
-		}
 
-		$this->setRedirect($link, $msg);
+			$this->setRedirect($link, $msg, 'error');
+		}
 	}
 
 	/**
@@ -127,6 +131,8 @@ class TjfieldsControllerField extends JControllerForm
 			'index.php?option=com_tjfields&view=field&layout=edit&id=' . $field_id . '&client='
 			. $input->get('client', '', 'STRING'), false
 			);
+
+			$this->setRedirect($link, $msg);
 		}
 		else
 		{
@@ -135,9 +141,9 @@ class TjfieldsControllerField extends JControllerForm
 			'index.php?option=com_tjfields&view=field&layout=edit&id=' . $field_id . '&client='
 			. $input->get('client', '', 'STRING'), false
 			);
-		}
 
-		$this->setRedirect($link, $msg);
+			$this->setRedirect($link, $msg, 'error');
+		}
 	}
 
 	/**
