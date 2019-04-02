@@ -87,7 +87,12 @@ class JFormFieldFieldoption extends JFormField
 					if (required == 1)
 					{
 						jQuery.each(optionInputs, function(index, value){
-							jQuery(this).attr("required", true);
+							let name = jQuery(this).attr("name");
+							
+							if (name.indexOf("hidden") === -1)
+							{
+								jQuery(this).attr("required", true);
+							}
 						});
 					}
 					else
