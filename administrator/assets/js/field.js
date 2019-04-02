@@ -18,6 +18,8 @@ function addClone(rId,rClass)
 		newElem.find('input[name=\"tjfields[' + pre + '][hiddenoption]\"]').attr({'name': 'tjfields[' + field_lenght + '][hiddenoption]','value':''});
 		newElem.find('input[name=\"tjfields[' + pre + '][hiddenoptionid]\"]').attr({'name': 'tjfields[' + field_lenght + '][hiddenoptionid]','value':''});
 		newElem.find('span[name=\"tjfields[' + pre + '][defaultoptionvalue]\"]').attr({'name': 'tjfields[' + field_lenght + '][defaultoptionvalue]'}); //newElem.find('img[src="localhost/jt315/administrator/components/com_tjfields/images/default.png"]').attr({'src':'localhost/jt315/administrator/components/com_tjfields/images/nodefault.png'});
+		newElem.find('input[name=\"tjfields[' + field_lenght + '][optionname]\"]').removeClass('invalid');
+		newElem.find('input[name=\"tjfields[' + field_lenght + '][optionvalue]\"]').removeClass('invalid');
 
 		/*incremnt id*/
 		newElem.find('input[id=\"tjfields_optionname_'+pre+'\"]').attr({'id': 'tjfields_optionname_'+field_lenght,'value':''});
