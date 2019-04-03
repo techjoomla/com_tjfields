@@ -126,9 +126,9 @@ class JFormFieldFieldoption extends JFormField
 									) . $this->fetchOptionValue(
 									$this->name, (isset($this->value[$k]->value))?$this->value[$k]->value:"", $this->element, $this->options['control'], $k, $required
 									) . $this->fetchhiddenoption(
-									$this->name, "", $this->element, $this->options['control'], $k, $required
+									$this->name, "", $this->element, $this->options['control'], $k
 									) . $this->fetchhiddenoptionid(
-									$this->name, (isset($this->value[$k]->id))?$this->value[$k]->id:"", $this->element, $this->options['control'], $k, $required
+									$this->name, (isset($this->value[$k]->id))?$this->value[$k]->id:"", $this->element, $this->options['control'], $k
 									) . '
 								</div>
 							</div>';
@@ -158,10 +158,10 @@ class JFormFieldFieldoption extends JFormField
 								$this->name, (isset($this->value[$k]->value))?$this->value[$k]->value:"", $this->element, $this->options['control'], $k, true
 								)
 								. $this->fetchhiddenoption(
-								$this->name, "", $this->element, $this->options['control'], $k, true
+								$this->name, "", $this->element, $this->options['control'], $k
 								)
 								. $this->fetchhiddenoptionid(
-								$this->name, (isset($this->value[$k]->id))?$this->value[$k]->id:"", $this->element, $this->options['control'], $k, true
+								$this->name, (isset($this->value[$k]->id))?$this->value[$k]->id:"", $this->element, $this->options['control'], $k
 								)
 								. '
 							</div>
@@ -234,18 +234,17 @@ class JFormFieldFieldoption extends JFormField
 	/**
 	 * Method to fetch hide option.
 	 *
-	 * @param   string   $fieldName     A new field name.
-	 * @param   string   $value         A new field value.
-	 * @param   string   &$node         A new field node.
-	 * @param   string   $control_name  A new field control name.
-	 * @param   string   $k             A new field k value.
-	 * @param   boolean  $required      flag for required
+	 * @param   string  $fieldName     A new field name.
+	 * @param   string  $value         A new field value.
+	 * @param   string  &$node         A new field node.
+	 * @param   string  $control_name  A new field control name.
+	 * @param   string  $k             A new field k value.
 	 *
 	 * @return int hide option.
 	 *
 	 * @since 1.6
 	 */
-	public function fetchhiddenoption($fieldName, $value, &$node, $control_name,$k, $required = false)
+	public function fetchhiddenoption($fieldName, $value, &$node, $control_name,$k)
 	{
 		return $hiddenoption = '<input type="hidden" id="tjfields_hiddenoption_' . $k .
 		'" name="tjfields[' . $k . '][hiddenoption]"  class="tjfields_hiddenoption "  placeholder="Value"  value="'
@@ -255,18 +254,17 @@ class JFormFieldFieldoption extends JFormField
 	/**
 	 * Method to fetch hide option id.
 	 *
-	 * @param   string   $fieldName     A new field name.
-	 * @param   string   $value         A new field value.
-	 * @param   string   &$node         A new field node.
-	 * @param   string   $control_name  A new field control name.
-	 * @param   string   $k             A new field k value.
-	 * @param   boolean  $required      flag for required
+	 * @param   string  $fieldName     A new field name.
+	 * @param   string  $value         A new field value.
+	 * @param   string  &$node         A new field node.
+	 * @param   string  $control_name  A new field control name.
+	 * @param   string  $k             A new field k value.
 	 *
 	 * @return int hide option id.
 	 *
 	 * @since 1.6
 	 */
-	public function fetchhiddenoptionid($fieldName, $value, &$node, $control_name, $k, $required = false)
+	public function fetchhiddenoptionid($fieldName, $value, &$node, $control_name, $k)
 	{
 		return $hiddenoptionid = '<input type="hidden" id="tjfields_hiddenoptionid_' .
 		$k . '" name="tjfields[' . $k . '][hiddenoptionid]"  class="tjfields_hiddenoptionid "  placeholder="Value"  value="' . $value . '">';
