@@ -52,136 +52,126 @@ class JFormFieldFieldoption extends JFormField
 	 */
 	protected function getInput()
 	{
-		// Print_r($this->value); die('asdas');
+		$countoption = empty($this->value) ? 0 : count($this->value);
 
-		$countoption = count($this->value);
+		$k = 0;
 
-		if (empty($this->value))
-		{
-			$countoption = 0;
-		}
+		$html = '
+		<script>var field_lenght=' . $countoption . '
+			var tjfield_icon_emptystar = "icon-unfeatured";
+			var tjfield_icon_minus = "icon-minus-2 ";
 
-		// $this->countoption=count($this->value);
-		// $this->countoption=count($this->value);
+			function tjFieldsOptionChange(currInput){
+				let optionInputs = jQuery(currInput).parent().find("input");
+				let required = 0;
 
-			$k = 0;
+				jQuery.each(optionInputs, function(index, value){
+					if (jQuery(value).val() != "")
+					{
+						required = 1;
 
-			$html = '
-			<script>var field_lenght=' . $countoption . '
-				var tjfield_icon_emptystar = "icon-unfeatured";
-				var tjfield_icon_minus = "icon-minus-2 ";
+						return false;
+					}
+				});
 
-				function tjFieldsOptionChange(currInput){
-					let optionInputs = jQuery(currInput).parent().find("input");
-					let required = 0;
-
+				if (required == 1)
+				{
 					jQuery.each(optionInputs, function(index, value){
-						if (jQuery(value).val() != "")
+						let name = jQuery(this).attr("name");
+						
+						if (name.indexOf("hidden") === -1)
 						{
-							required = 1;
-
-							return false;
+							jQuery(this).attr("required", true);
 						}
 					});
-
-					if (required == 1)
-					{
-						jQuery.each(optionInputs, function(index, value){
-							let name = jQuery(this).attr("name");
-							
-							if (name.indexOf("hidden") === -1)
-							{
-								jQuery(this).attr("required", true);
-							}
-						});
-					}
-					else
-					{
-						jQuery.each(optionInputs, function(index, value){
-							jQuery(this).removeAttr("required");
-							jQuery(this).removeClass("invalid");
-						});
-					}
 				}
-			</script>';
-
-			$html .= '<div class="techjoomla-bootstrap">
-				<div id="tjfield_container" class="tjfield_container" >';
-
-			if ($this->value)
-			{
-				for ($k = 0;$k <= count($this->value);$k++)
+				else
 				{
-					$required = true;
-
-					if ($k == count($this->value))
-					{
-						$required = false;
-					}
-
-					$html .= '<div id="com_tjfields_repeating_block' . $k . '"    class="com_tjfields_repeating_block span7">
-								<div class="form-inline">
-									' . $this->fetchOptionName(
-									$this->name, (isset($this->value[$k]->options))?$this->value[$k]->options:"", $this->element, $this->options['control'], $k, $required
-									) . $this->fetchOptionValue(
-									$this->name, (isset($this->value[$k]->value))?$this->value[$k]->value:"", $this->element, $this->options['control'], $k, $required
-									) . $this->fetchhiddenoption(
-									$this->name, "", $this->element, $this->options['control'], $k
-									) . $this->fetchhiddenoptionid(
-									$this->name, (isset($this->value[$k]->id))?$this->value[$k]->id:"", $this->element, $this->options['control'], $k
-									) . '
-								</div>
-							</div>';
-
-					if ($k < count($this->value))
-					{
-						$html .= '<div id="remove_btn_div' . $k . '" class="com_tjfields_remove_button span3">
-							<div class="com_tjfields_remove_button">
-								<button class="btn btn-small btn-danger" type="button" id="remove'
-								. $k . '" onclick="removeClone(\'com_tjfields_repeating_block'
-								. $k . '\',\'remove_btn_div' . $k . '\');" >
-												<i class="' . $this->tjfield_icon_minus
-												. '"></i></button>
-							</div>
-						</div>';
-					}
+					jQuery.each(optionInputs, function(index, value){
+						jQuery(this).removeAttr("required");
+						jQuery(this).removeClass("invalid");
+					});
 				}
 			}
-			else
+		</script>';
+
+		$html .= '<div class="techjoomla-bootstrap">
+			<div id="tjfield_container" class="tjfield_container" >';
+
+		if ($this->value)
+		{
+			for ($k = 0;$k <= count($this->value);$k++)
 			{
-				$html .= '<div id="com_tjfields_repeating_block0" class="com_tjfields_repeating_block span7">
+				$required = true;
+
+				if ($k == count($this->value))
+				{
+					$required = false;
+				}
+
+				$html .= '<div id="com_tjfields_repeating_block' . $k . '"    class="com_tjfields_repeating_block span7">
 							<div class="form-inline">
 								' . $this->fetchOptionName(
-								$this->name, (isset($this->value[$k]->options))?$this->value[$k]->options:"", $this->element, $this->options['control'], $k, true
-								)
-								. $this->fetchOptionValue(
-								$this->name, (isset($this->value[$k]->value))?$this->value[$k]->value:"", $this->element, $this->options['control'], $k, true
-								)
-								. $this->fetchhiddenoption(
+								$this->name, (isset($this->value[$k]->options))?$this->value[$k]->options:"", $this->element, $this->options['control'], $k, $required
+								) . $this->fetchOptionValue(
+								$this->name, (isset($this->value[$k]->value))?$this->value[$k]->value:"", $this->element, $this->options['control'], $k, $required
+								) . $this->fetchhiddenoption(
 								$this->name, "", $this->element, $this->options['control'], $k
-								)
-								. $this->fetchhiddenoptionid(
+								) . $this->fetchhiddenoptionid(
 								$this->name, (isset($this->value[$k]->id))?$this->value[$k]->id:"", $this->element, $this->options['control'], $k
-								)
-								. '
+								) . '
 							</div>
 						</div>';
+
+				if ($k < count($this->value))
+				{
+					$html .= '<div id="remove_btn_div' . $k . '" class="com_tjfields_remove_button span3">
+						<div class="com_tjfields_remove_button">
+							<button class="btn btn-small btn-danger" type="button" id="remove'
+							. $k . '" onclick="removeClone(\'com_tjfields_repeating_block'
+							. $k . '\',\'remove_btn_div' . $k . '\');" >
+											<i class="' . $this->tjfield_icon_minus
+											. '"></i></button>
+						</div>
+					</div>';
+				}
 			}
+		}
+		else
+		{
+			$html .= '<div id="com_tjfields_repeating_block0" class="com_tjfields_repeating_block span7">
+						<div class="form-inline">
+							' . $this->fetchOptionName(
+							$this->name, (isset($this->value[$k]->options))?$this->value[$k]->options:"", $this->element, $this->options['control'], $k, true
+							)
+							. $this->fetchOptionValue(
+							$this->name, (isset($this->value[$k]->value))?$this->value[$k]->value:"", $this->element, $this->options['control'], $k, true
+							)
+							. $this->fetchhiddenoption(
+							$this->name, "", $this->element, $this->options['control'], $k
+							)
+							. $this->fetchhiddenoptionid(
+							$this->name, (isset($this->value[$k]->id))?$this->value[$k]->id:"", $this->element, $this->options['control'], $k
+							)
+							. '
+						</div>
+					</div>';
+		}
 
-			$html .= '<div class="com_tjfields_add_button span3">
-						<button class="btn btn-small btn-success" type="button" id="add"
-							onclick="addClone(\'com_tjfields_repeating_block\',\'com_tjlms_repeating_block\');"
-							title=' . JText::_("COM_TJFIELDS_ADD_BUTTON") . '>
-							<i class="' . $this->tjfield_icon_plus . '"></i>
-						</button>
-					</div>
-					<div style="clear:both"></div>
-					<div class="row-fluid">
-					</div>
+		$html .= '<div class="com_tjfields_add_button span3">
+					<button class="btn btn-small btn-success" type="button" id="add"
+						onclick="addClone(\'com_tjfields_repeating_block\',\'com_tjlms_repeating_block\');"
+						title=' . JText::_("COM_TJFIELDS_ADD_BUTTON") . '>
+						<i class="' . $this->tjfield_icon_plus . '"></i>
+					</button>
 				</div>
-			</div>';
+				<div style="clear:both"></div>
+				<div class="row-fluid">
+				</div>
+			</div>
+		</div>';
 
-			return $html;
+		return $html;
 	}
 
 	protected $name = 'fieldoption';
