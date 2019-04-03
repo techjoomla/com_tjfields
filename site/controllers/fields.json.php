@@ -48,8 +48,11 @@ class TjfieldsControllerFields extends JControllerForm
 		$fieldData = $fieldsModel->getMediaStoragePath($data['valueId'], $data['subformFileFieldId']);
 
 		$tjFieldFieldTableParamData = json_decode($fieldData->tjFieldFieldTable->params);
-		$data['storagePath'] = (isset($tjFieldFieldTableParamData->uploadpath)) ? $tjFieldFieldTableParamData->uploadpath : JPATH_SITE . '/images/tjmedia/';
-		$data['client'] = $fieldData->tjFieldFieldTable->client;
+		$client = $fieldData->tjFieldFieldTable->client;
+		$type = $fieldData->tjFieldFieldTable->type;
+		$uploadPath = $tjFieldFieldTableParamData->uploadpath;
+		$data['storagePath'] = (isset($uploadPath)) ? $uploadPath : JPATH_SITE . '/' . $type . 's/tjmedia/' . str_replace(".", "/", $client . '/');
+		$data['client'] = $client;
 
 		require_once JPATH_SITE . '/components/com_tjfields/helpers/tjfields.php';
 

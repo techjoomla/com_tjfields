@@ -199,7 +199,14 @@ class JFormFieldImage extends JFormFieldFile
 	 */
 	protected function renderImage($data, $layoutData)
 	{
-		return '<img src="' . JUri::root() . 'images/tjmedia/' . $layoutData['value'] . '" height=
+		$path = JUri::root() . 'images/tjmedia/';
+
+		if (!empty($data->clientForm))
+		{
+			$path .= str_replace(".", "/", $data->clientForm . '/');
+		}
+
+		return '<img src="' . $path . $layoutData['value'] . '" height=
 		"' . $layoutData['field']->element->attributes()->height . '"width="' . $layoutData['field']->element->attributes()->width . '" ></img>';
 	}
 
@@ -215,7 +222,7 @@ class JFormFieldImage extends JFormFieldFile
 	 */
 	protected function canDownloadFile($data,$layoutData)
 	{
-		$mediaLink = JUri::root() . "index.php?option=com_tjfields&task=getImage&fpht=" . base64_encode($layoutData['value']);
+		$mediaLink = JUri::root() . "index.php?option=com_tjfields&task=getMedia&fpht=" . base64_encode($layoutData['value']);
 
 		return '<div> <a href="' . $mediaLink . '">' . JText::_("COM_TJFIELDS_FILE_DOWNLOAD") . '</a>';
 	}
