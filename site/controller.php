@@ -11,6 +11,10 @@
 defined('_JEXEC') or die;
 
 jimport('joomla.application.component.controller');
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\CMS\Language\Text;
 
 /**
  * TJField Controller class
@@ -47,10 +51,10 @@ class TjfieldsController extends JControllerLegacy
 	 *
 	 * @return object
 	 */
-	public function getMedia()
+	public function getMediaFile()
 	{
 		JLoader::import("/techjoomla/media/storage/local", JPATH_LIBRARIES);
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$jinput = $app->input;
 		$mediaLocal = TJMediaStorageLocal::getInstance();
 
@@ -63,7 +67,7 @@ class TjfieldsController extends JControllerLegacy
 
 		// Get media storage path
 		JLoader::import('components.com_tjfields.models.fields', JPATH_SITE);
-		$fieldsModel     = JModelLegacy::getInstance('Fields', 'TjfieldsModel', array('ignore_request' => true));
+		$fieldsModel     = BaseDatabaseModel::getInstance('Fields', 'TjfieldsModel', array('ignore_request' => true));
 		$data = $fieldsModel->getMediaStoragePath($jinput->get('id', '', 'INT'), $subformFileFieldId);
 
 		$extraFieldParams = json_decode($data->tjFieldFieldTable->params);
@@ -72,7 +76,7 @@ class TjfieldsController extends JControllerLegacy
 
 		if ($data->tjFieldFieldTable->fieldValueId)
 		{
-			$user = JFactory::getUser();
+			$user = Factory::getUser();
 
 			if ($subformFileFieldId)
 			{
@@ -97,7 +101,7 @@ class TjfieldsController extends JControllerLegacy
 
 				if ($down_status === 2)
 				{
-					$app->enqueueMessage(JText::_('COM_TJFIELDS_FILE_NOT_FOUND'), 'error');
+					$app->enqueueMessage(Text::_('COM_TJFIELDS_FILE_NOT_FOUND'), 'error');
 					$app->redirect($this->returnURL);
 				}
 
@@ -105,13 +109,13 @@ class TjfieldsController extends JControllerLegacy
 			}
 			else
 			{
-				$app->enqueueMessage(JText::_('JERROR_ALERTNOAUTHOR'), 'error');
+				$app->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'error');
 				$app->redirect($this->returnURL);
 			}
 		}
 		else
 		{
-			$app->enqueueMessage(JText::_('JERROR_ALERTNOAUTHOR'), 'error');
+			$app->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'error');
 			$app->redirect($this->returnURL);
 		}
 
@@ -123,22 +127,37 @@ class TjfieldsController extends JControllerLegacy
 	 *
 	 * @return object
 	 */
-	public function getImage()
+	public function getMedia()
 	{
 		JLoader::import("/techjoomla/media/storage/local", JPATH_LIBRARIES);
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$jinput = $app->input;
 		$mediaLocal = TJMediaStorageLocal::getInstance();
 
 		$encodedFileName = $jinput->get('fpht', '', 'STRING');
 		$decodedFileName = base64_decode($encodedFileName);
-		$decodedPath = JPATH_SITE . '/images/tjmedia/' . $decodedFileName;
+
+		$db = Factory::getDbo();
+
+		// Load TJ-Fields table
+		Table::addIncludePath(JPATH_ROOT . '/administrator/components/com_tjfields/tables');
+
+		// Get field value record
+		$fieldValueTable = Table::getInstance('Fieldsvalue', 'TjfieldsTable', array('dbo', $db));
+		$fieldValueTable->load(array('value' => $decodedFileName));
+
+		// Get field record
+		$fieldTable = Table::getInstance('Field', 'TjfieldsTable', array('dbo', $db));
+		$fieldTable->load(array('id' => $fieldValueTable->field_id));
+
+		$fieldType = $fieldTable->type;
+		$decodedPath = JPATH_SITE . '/' . $fieldType . 's/tjmedia/' . str_replace(".", "/", $fieldValueTable->client) . '/' . $decodedFileName;
 
 		$status = $mediaLocal->downloadMedia($decodedPath, '', '', 0);
 
 		if ($status === 2)
 		{
-			$app->enqueueMessage(JText::_('COM_TJFIELDS_FILE_NOT_FOUND'), 'error');
+			$app->enqueueMessage(Text::_('COM_TJFIELDS_FILE_NOT_FOUND'), 'error');
 			$app->redirect($this->returnURL);
 		}
 

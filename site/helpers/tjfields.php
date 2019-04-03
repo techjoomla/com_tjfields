@@ -253,12 +253,19 @@ class TjfieldsHelper
 
 								$fieldId = (int) $file_field_data->id;
 								$fieldItems = $fieldModel->getItem($fieldId);
+								$client = $fieldItems->client;
+								$type = $fieldItems->type;
+
+								if (isset($fieldItems->params['uploadpath']))
+								{
+									$uploadPath = $fieldItems->params['uploadpath'];
+								}
 
 								// Code for file size validation
 								$acceptSize = $fieldItems->params['size'];
 
 								// Upload path
-								$mediaPath = isset($fieldItems->params['uploadpath']) ? $fieldItems->params['uploadpath'] : JPATH_SITE . '/images/tjmedia/';
+								$mediaPath = isset($uploadPath) ? $uploadPath : JPATH_SITE . '/' . $type . 's/tjmedia/' . str_replace(".", "/", $client . "/");
 
 								// Code for file type validation
 								$acceptType = $fieldItems->params['accept'];
@@ -577,6 +584,13 @@ class TjfieldsHelper
 							$fieldModel = JModelLegacy::getInstance('Field', 'TjfieldsModel', array("ignore_request" => 1));
 							$fieldId = (int) $file_field_data->id;
 							$fieldItems = $fieldModel->getItem($fieldId);
+							$client = $fieldItems->client;
+							$type = $fieldItems->type;
+
+							if (isset($fieldItems->params['uploadpath']))
+							{
+								$uploadPath = $fieldItems->params['uploadpath'];
+							}
 
 							// Code for file type validation
 							$acceptType = $fieldItems->params['accept'];
@@ -586,7 +600,7 @@ class TjfieldsHelper
 						$acceptSize = $fieldItems->params['size'];
 
 						// Upload path
-						$mediaPath = isset($fieldItems->params['uploadpath']) ? $fieldItems->params['uploadpath'] : JPATH_SITE . '/images/tjmedia/';
+						$mediaPath = isset($fieldItems->params['uploadpath']) ? $fieldItems->params['uploadpath'] : JPATH_SITE . '/' . $type . 's/tjmedia/' . str_replace(".", "/", $client . "/");
 
 						// Configs for Media library
 						$config = array();
@@ -1324,7 +1338,7 @@ class TjfieldsHelper
 
 			// Here, fpht means file encoded path
 			$encodedFileName = base64_encode($fileName);
-			$basePathLink = 'index.php?option=com_tjfields&task=getMedia&fpht=';
+			$basePathLink = 'index.php?option=com_tjfields&task=getMediaFile&fpht=';
 			$mediaURLlink = JUri::root() . substr(JRoute::_($basePathLink . $encodedFileName . $extraUrlParams), strlen(JUri::base(true)) + 1);
 
 			return $mediaURLlink;
