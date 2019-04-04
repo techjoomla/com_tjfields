@@ -10,7 +10,11 @@
 				<option value="true">JYES</option>
 				<option value="false">JNO</option>
 			</field>
-			<field name="translateformat" type="hidden" default="true" />
+			<field name="translateformat" type="radio" default="false"
+				label="COM_TJFIELDS_FORM_LBL_CALENDAR_FIELD_TRANSLATEFORMAT" description="COM_TJFIELDS_FORM_DESC_CALENDAR_FIELD_TRANSLATEFORMAT">
+				<option value="true">JYES</option>
+				<option value="false">JNO</option>
+			</field>
 			<field name="size" type="hidden" default="22" />
 			<field name="filter" type="hidden" default="user_utc" />
 		</fieldset>
