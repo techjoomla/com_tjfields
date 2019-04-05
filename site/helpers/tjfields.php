@@ -293,9 +293,9 @@ class TjfieldsHelper
 								{
 									$allowedTypes = explode(',', $fieldItems->params['accept']);
 
-									foreach ($allowedTypes as $k => $allowedType)
+									foreach ($allowedTypes as $j => $allowedType)
 									{
-										$allowedTypes[$k] = trim(str_replace('.', '', $allowedType));
+										$allowedTypes[$j] = trim(str_replace('.', '', $allowedType));
 									}
 
 									$config['allowedExtension'] = $allowedTypes;
@@ -624,9 +624,9 @@ class TjfieldsHelper
 						{
 							$allowedTypes = explode(',', $fieldItems->params['accept']);
 
-							foreach ($allowedTypes as $k => $allowedType)
+							foreach ($allowedTypes as $j => $allowedType)
 							{
-								$allowedTypes[$k] = trim(str_replace('.', '', $allowedType));
+								$allowedTypes[$j] = trim(str_replace('.', '', $allowedType));
 							}
 
 							$config['allowedExtension'] = $allowedTypes;
