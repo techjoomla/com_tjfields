@@ -201,9 +201,9 @@ class JFormFieldImage extends JFormFieldFile
 	{
 		$path = JUri::root() . 'images/tjmedia/';
 
-		if (!empty($data->clientForm))
+		if (!empty($data->tjFieldFieldTable))
 		{
-			$path .= str_replace(".", "/", $data->clientForm . '/');
+			$path .= str_replace(".", "/", $data->tjFieldFieldTable->get('client') . '/');
 		}
 
 		return '<img src="' . $path . $layoutData['value'] . '" height=

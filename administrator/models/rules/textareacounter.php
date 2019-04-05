@@ -36,13 +36,22 @@ class JFormRuleTextareaCounter extends JFormRule
 	{
 		$maxLength = ($element['maxlength'] instanceof SimpleXMLElement) ? $element['maxlength']->__toString() : '';
 		$minLength = ($element['minlength'] instanceof SimpleXMLElement) ? $element['minlength']->__toString() : '';
+		$required = ($element['required'] instanceof SimpleXMLElement) ? $element['required']->__toString() : 'false';
 
-		if (($maxLength != '') && (strlen($value) > (int) $maxLength))
+		if ($required == 'true')
+		{
+			if (strlen(trim($value)) == 0)
+			{
+				return false;
+			}
+		}
+
+		if ((strlen(trim($value)) > 0) && ($maxLength != '') && (strlen(trim($value)) > (int) $maxLength))
 		{
 			return false;
 		}
 
-		if (($minLength != '') && (strlen($value) < (int) $minLength))
+		if ((strlen(trim($value)) > 0) && ($minLength != '') && (strlen(trim($value)) < (int) $minLength))
 		{
 			return false;
 		}
