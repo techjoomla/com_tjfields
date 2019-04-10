@@ -169,25 +169,6 @@ class JFormFieldImage extends JFormFieldFile
 	}
 
 	/**
-	 * Method to get the data to be passed to the layout for rendering.
-	 *
-	 * @return  array
-	 *
-	 * @since __DEPLOY_VERSION__
-	 */
-	protected function getLayoutData()
-	{
-		$data = parent::getLayoutData();
-
-		$extraData = array(
-			'accept'   => $this->accept,
-			'multiple' => $this->multiple,
-		);
-
-		return array_merge($data, $extraData);
-	}
-
-	/**
 	 * Method to render image file.
 	 *
 	 * @param   object  $data        file data.
@@ -208,67 +189,5 @@ class JFormFieldImage extends JFormFieldFile
 
 		return '<img src="' . $path . $layoutData['value'] . '" height=
 		"' . $layoutData['field']->element->attributes()->height . '"width="' . $layoutData['field']->element->attributes()->width . '" ></img>';
-	}
-
-	/**
-	 * Method to download file.
-	 *
-	 * @param   object  $data        file data.
-	 * @param   array   $layoutData  layoutData
-	 *
-	 * @return  string
-	 *
-	 * @since    1.5
-	 */
-	protected function canDownloadFile($data,$layoutData)
-	{
-		$mediaLink = JUri::root() . "index.php?option=com_tjfields&task=getMedia&fpht=" . base64_encode($layoutData['value']);
-
-		return '<div> <a href="' . $mediaLink . '">' . JText::_("COM_TJFIELDS_FILE_DOWNLOAD") . '</a>';
-	}
-
-	/**
-	 * Method to delete file.
-	 *
-	 * @param   object  $data        file data.
-	 * @param   array   $layoutData  layoutData
-	 *
-	 * @return  string
-	 *
-	 * @since    1.5
-	 */
-	protected function canDeleteFile($data,$layoutData)
-	{
-		$canEdit = 0;
-
-		if ($data->user->authorise('core.field.editfieldvalue', 'com_tjfields.group.' . $data->tjFieldFieldTable->group_id))
-		{
-			$canEdit = $data->user->authorise('core.field.editfieldvalue', 'com_tjfields.field.' . $data->tjFieldFieldTable->id);
-		}
-
-		$canEditOwn = 0;
-
-		if ($data->user->authorise('core.field.editownfieldvalue', 'com_tjfields.group.' . $data->tjFieldFieldTable->group_id))
-		{
-			$canEditOwn = $data->user->authorise('core.field.editownfieldvalue', 'com_tjfields.field.' . $data->tjFieldFieldTable->id);
-
-			if ($canEditOwn && ($data->user->id != $data->fields_value_table->user_id))
-			{
-				$canEditOwn = 0;
-			}
-		}
-
-		$deleteFiledata = '';
-
-		if (!empty($data->mediaLink) && ($canEdit || $canEditOwn) && $layoutData['required'] == '' && $data->fields_value_table->id)
-		{
-			$deleteFiledata .= ' <span class="btn btn-remove"> <a id="remove_' . $layoutData["id"] . '" href="javascript:void(0);"
-				onclick="deleteFile(\'' . base64_encode($layoutData["value"]) . '\',
-				 \'' . $layoutData["id"] . '\', \'' . base64_encode($data->fields_value_table->id) . '\',
-				  \'' . $data->subFormFileFieldId . '\',\'' . $data->isSubformField . '\');">'
-				. JText::_("COM_TJFIELDS_FILE_DELETE") . '</a> </span>';
-		}
-
-		return $deleteFiledata;
 	}
 }

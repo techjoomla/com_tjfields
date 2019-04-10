@@ -173,7 +173,7 @@ trait TjfieldsFilterField
 									$form->setFieldAttribute($field->fieldname, 'readonly', true);
 									$form->setFieldAttribute($field->fieldname, 'disabled', true);
 								}
-	
+
 								if (!$canEditOwn && ($user->id == $userId))
 								{
 									$form->setFieldAttribute($field->fieldname, 'readonly', true);

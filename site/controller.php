@@ -70,9 +70,17 @@ class TjfieldsController extends JControllerLegacy
 		$fieldsModel     = BaseDatabaseModel::getInstance('Fields', 'TjfieldsModel', array('ignore_request' => true));
 		$data = $fieldsModel->getMediaStoragePath($jinput->get('id', '', 'INT'), $subformFileFieldId);
 
-		$extraFieldParams = json_decode($data->tjFieldFieldTable->params);
-		$storagePath = $extraFieldParams->uploadpath;
-		$decodedPath = $storagePath . '/' . $decodedFileName;
+		if ($data->tjFieldFieldTable->type == "file")
+		{
+			$extraFieldParams = json_decode($data->tjFieldFieldTable->params);
+			$storagePath = $extraFieldParams->uploadpath;
+			$decodedPath = $storagePath . '/' . $decodedFileName;
+		}
+		else
+		{
+			$fieldType = $data->tjFieldFieldTable->type;
+			$decodedPath = JPATH_SITE . '/' . $fieldType . 's/tjmedia/' . str_replace(".", "/", $data->tjFieldFieldTable->client) . '/' . $decodedFileName;
+		}
 
 		if ($data->tjFieldFieldTable->fieldValueId)
 		{
@@ -116,48 +124,6 @@ class TjfieldsController extends JControllerLegacy
 		else
 		{
 			$app->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'error');
-			$app->redirect($this->returnURL);
-		}
-
-		jexit();
-	}
-
-	/**
-	 * Fuction to get download media file
-	 *
-	 * @return object
-	 */
-	public function getMedia()
-	{
-		JLoader::import("/techjoomla/media/storage/local", JPATH_LIBRARIES);
-		$app = Factory::getApplication();
-		$jinput = $app->input;
-		$mediaLocal = TJMediaStorageLocal::getInstance();
-
-		$encodedFileName = $jinput->get('fpht', '', 'STRING');
-		$decodedFileName = base64_decode($encodedFileName);
-
-		$db = Factory::getDbo();
-
-		// Load TJ-Fields table
-		Table::addIncludePath(JPATH_ROOT . '/administrator/components/com_tjfields/tables');
-
-		// Get field value record
-		$fieldValueTable = Table::getInstance('Fieldsvalue', 'TjfieldsTable', array('dbo', $db));
-		$fieldValueTable->load(array('value' => $decodedFileName));
-
-		// Get field record
-		$fieldTable = Table::getInstance('Field', 'TjfieldsTable', array('dbo', $db));
-		$fieldTable->load(array('id' => $fieldValueTable->field_id));
-
-		$fieldType = $fieldTable->type;
-		$decodedPath = JPATH_SITE . '/' . $fieldType . 's/tjmedia/' . str_replace(".", "/", $fieldValueTable->client) . '/' . $decodedFileName;
-
-		$status = $mediaLocal->downloadMedia($decodedPath, '', '', 0);
-
-		if ($status === 2)
-		{
-			$app->enqueueMessage(Text::_('COM_TJFIELDS_FILE_NOT_FOUND'), 'error');
 			$app->redirect($this->returnURL);
 		}
 

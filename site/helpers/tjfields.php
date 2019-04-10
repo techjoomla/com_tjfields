@@ -200,13 +200,16 @@ class TjfieldsHelper
 				{
 					foreach ($v as $key => $value)
 					{
-						if (array_key_exists($key, $fileData[$k]))
+						if (isset($fileData[$k]))
 						{
-							$data['fieldsvalue'][$field_data->name][$key]['filesData'] = $fileData[$k][$key];
-						}
-						else
-						{
-							$data['fieldsvalue'][$field_data->name][$key]['filesData'] = '';
+							if (array_key_exists($key, $fileData[$k]))
+							{
+								$data['fieldsvalue'][$field_data->name][$key]['filesData'] = $fileData[$k][$key];
+							}
+							else
+							{
+								$data['fieldsvalue'][$field_data->name][$key]['filesData'] = '';
+							}
 						}
 					}
 				}
@@ -256,6 +259,8 @@ class TjfieldsHelper
 								$client = $fieldItems->client;
 								$type = $fieldItems->type;
 
+								$uploadPath = "";
+
 								if (isset($fieldItems->params['uploadpath']))
 								{
 									$uploadPath = $fieldItems->params['uploadpath'];
@@ -265,7 +270,7 @@ class TjfieldsHelper
 								$acceptSize = $fieldItems->params['size'];
 
 								// Upload path
-								$mediaPath = isset($uploadPath) ? $uploadPath : JPATH_SITE . '/' . $type . 's/tjmedia/' . str_replace(".", "/", $client . "/");
+								$mediaPath = ($uploadPath != '') ? $uploadPath : JPATH_SITE . '/' . $type . 's/tjmedia/' . str_replace(".", "/", $client . "/");
 
 								// Code for file type validation
 								$acceptType = $fieldItems->params['accept'];
@@ -587,6 +592,8 @@ class TjfieldsHelper
 							$client = $fieldItems->client;
 							$type = $fieldItems->type;
 
+							$uploadPath = "";
+
 							if (isset($fieldItems->params['uploadpath']))
 							{
 								$uploadPath = $fieldItems->params['uploadpath'];
@@ -600,7 +607,7 @@ class TjfieldsHelper
 						$acceptSize = $fieldItems->params['size'];
 
 						// Upload path
-						$mediaPath = isset($fieldItems->params['uploadpath']) ? $fieldItems->params['uploadpath'] : JPATH_SITE . '/' . $type . 's/tjmedia/' . str_replace(".", "/", $client . "/");
+						$mediaPath = ($uploadPath != '') ? $uploadPath : JPATH_SITE . '/' . $type . 's/tjmedia/' . str_replace(".", "/", $client . "/");
 
 						// Configs for Media library
 						$config = array();
