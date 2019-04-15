@@ -55,6 +55,18 @@ class TjfieldsModelField extends JModelAdmin
 		// Get the form.
 		$form = $this->loadForm('com_tjfields.field', 'field', array('control' => 'jform','load_data' => $loadData));
 
+		// Load field params in the field form
+		if (!empty($data['type']))
+		{
+			$path = JPATH_SITE . '/administrator/components/com_tjfields/models/forms/types/forms/' . $data['type'] . '.xml';
+
+			// If category XML esists then add global fields XML in current JForm object else create new object of Global Fields
+			if (!empty($form) && JFile::exists($path))
+			{
+				$form->loadFile($path, true, '/form/*');
+			}
+		}
+
 		if (empty($form))
 		{
 			return false;
@@ -153,18 +165,62 @@ class TjfieldsModelField extends JModelAdmin
 	/**
 	 * Method Save Option
 	 *
-	 * @param   Array  $post  Post
+	 * @param   Array  $data  Post
 	 *
 	 * @return  int|boolean A int on success, false on failuer
 	 *
 	 * @since  1.6
 	 */
-	public function save_option($post)
+	public function save($data)
 	{
+		$app = JFactory::getApplication();
 		$fields_in_DB = array();
 		$options_filled = array();
 		$table = $this->getTable();
-		$data  = $post->get('jform', '', 'ARRAY');
+		$form = $this->getForm($data);
+
+		// Dont allow to save radio/single/multi selects without any options
+		if ($data['type'] == 'radio' || $data['type'] == 'single_select' || $data['type'] == 'multi_select')
+		{
+			$form->setFieldAttribute('fieldoption', 'required', true);
+		}
+
+		$validatedData = $this->validate($form, $data);
+
+		// Get the validation messages.
+		$errors = $this->getErrors();
+
+		// Check for errors.
+		if (!empty($errors))
+		{
+			// Push up to three validation messages out to the user.
+			for ($i = 0, $n = count($errors); $i < $n && $i < 3; $i++)
+			{
+				if ($errors[$i] instanceof Exception)
+				{
+					$app->enqueueMessage($errors[$i]->getMessage(), 'warning');
+				}
+				else
+				{
+					$app->enqueueMessage($errors[$i], 'warning');
+				}
+			}
+
+			// Save the data in the session.
+			$app->setUserState('com_tjfields.edit.field.data', $data);
+
+			// Tweak *important
+			$app->setUserState('com_tjfields.edit.field.id', $data['id']);
+
+			// Redirect back to the edit screen.
+			$id = (int) $app->getUserState('com_tjfields.edit.field.id');
+			$app->redirect(JRoute::_('index.php?option=com_tjfields&view=field&layout=edit&id=' . $id . '&client=' . $data['client'], false));
+
+			return false;
+		}
+
+		$data = $validatedData;
+
 		$input = JFactory::getApplication()->input;
 		$data['label'] = trim($data['label']);
 
@@ -201,7 +257,8 @@ class TjfieldsModelField extends JModelAdmin
 		}
 
 		// Add clint type in data as it is not present in jform
-		$data['client_type'] = $post->get('client_type', '', 'STRING');
+		$input = $app->input;
+		$data['client_type'] = $input->post->get('client_type', '', 'STRING');
 		$data['saveOption'] = 0;
 
 		if ($data['type'] == "radio" || $data['type'] == "single_select" || $data['type'] == "multi_select")
@@ -240,7 +297,7 @@ class TjfieldsModelField extends JModelAdmin
 		}
 
 		// Save javascript functions.
-		$js = $post->get('tjfieldsJs', '', 'ARRAY');
+		$js = $input->post->get('tjfieldsJs', '', 'ARRAY');
 
 		if (!empty($js))
 		{
@@ -250,7 +307,7 @@ class TjfieldsModelField extends JModelAdmin
 		// If the field is inserted.
 		if ($id)
 		{
-			$options = $post->get('tjfields', '', 'ARRAY');
+			$options = $input->post->get('tjfields', '', 'ARRAY');
 
 			if ($data['saveOption'] == 1)
 			{
