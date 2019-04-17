@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config>
 	<fieldset name="component" label="COM_TJFIELDS_COMPONENT_LABEL" description="COM_TJFIELDS_COMPONENT_DESC">
-		<field name="test" type="radio" default="1" label="COM_TJFIELDS_TEST_LABEL" description="COM_TJFIELDS_TEST_DESC">
+		<field name="test" type="radio" default="1" label="COM_TJFIELDS_TEST_LABEL" description="COM_TJFIELDS_TEST_LABEL">
 			<option value="0">JHIDE</option>
 			<option value="1">JSHOW</option>
 		</field>
