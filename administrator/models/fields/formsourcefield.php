@@ -39,12 +39,22 @@ class JFormFieldformsourcefield extends JFormField
 	{
 		$options = array();
 
+		$input = JFactory::getApplication()->input;
+		$currentClient = $input->get('client', '', "STRING");
+
 		$db    = JFactory::getDbo();
 		$query = $db->getQuery(true);
 
 		$query->select($db->quoteName(array('id', 'title', 'unique_identifier')));
 		$query->from($db->quoteName('#__tj_ucm_types'));
-		$query->where($db->quoteName('params') . ' LIKE ' . $db->quote('%"is_subform":"%1%"%'));
+		$query->where($db->quoteName('params') . ' LIKE ' . $db->quote('%"is_subform":"1"%'));
+
+		if (!empty($currentClient))
+		{
+			$query->where($db->quoteName('unique_identifier') . ' <> ' . $db->quote($currentClient));
+		}
+
+		$query->where($db->quoteName('state') . '=1');
 
 		$db->setQuery($query);
 		$isSubform  = $db->loadObjectList();

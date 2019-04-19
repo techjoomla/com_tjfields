@@ -11,7 +11,10 @@
 defined('_JEXEC') or die;
 
 jimport('joomla.application.component.controller');
-JLoader::import("/techjoomla/media/storage/local", JPATH_LIBRARIES);
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\CMS\Language\Text;
 
 /**
  * TJField Controller class
@@ -48,39 +51,40 @@ class TjfieldsController extends JControllerLegacy
 	 *
 	 * @return object
 	 */
-	public function getMedia()
+	public function getMediaFile()
 	{
-		$app = JFactory::getApplication();
+		JLoader::import("/techjoomla/media/storage/local", JPATH_LIBRARIES);
+		$app = Factory::getApplication();
 		$jinput = $app->input;
-
-		// Here, fpht means file encoded path
-		$encodedFileName = $jinput->get('fpht', '', 'STRING');
-		$decodedFileName = base64_decode($encodedFileName);
-
-		$client = $jinput->get('client', '', 'STRING');
-
-		$client = explode('.', $client);
-
-		$file_extension = strtolower(substr(strrchr($decodedFileName, "."), 1));
-
 		$mediaLocal = TJMediaStorageLocal::getInstance();
 
-		$ctype = $mediaLocal->getMime($file_extension);
-
-		$type = explode('/', $ctype);
-
-		$decodedPath = 'media/' . $client[0] . '/' . $client[1] . '/' . $type[0] . '/' . $decodedFileName;
-
-		JTable::addIncludePath(JPATH_ROOT . '/administrator/components/com_tjfields/tables');
-		$tjFieldFieldValuesTable = JTable::getInstance('fieldsvalue', 'TjfieldsTable');
-		$tjFieldFieldValuesTable->load(array('id' => $jinput->get('id', '', 'INT')));
+		// Here, fpht means file encoded name
+		$encodedFileName = $jinput->get('fpht', '', 'STRING');
+		$decodedFileName = base64_decode($encodedFileName);
 
 		// Subform File field Id for checking autherization for specific field under subform
 		$subformFileFieldId = $jinput->get('subFormFileFieldId', '', 'INT');
 
-		if ($tjFieldFieldValuesTable->id)
+		// Get media storage path
+		JLoader::import('components.com_tjfields.models.fields', JPATH_SITE);
+		$fieldsModel     = BaseDatabaseModel::getInstance('Fields', 'TjfieldsModel', array('ignore_request' => true));
+		$data = $fieldsModel->getMediaStoragePath($jinput->get('id', '', 'INT'), $subformFileFieldId);
+
+		if ($data->tjFieldFieldTable->type == "file")
 		{
-			$user = JFactory::getUser();
+			$extraFieldParams = json_decode($data->tjFieldFieldTable->params);
+			$storagePath = $extraFieldParams->uploadpath;
+			$decodedPath = $storagePath . '/' . $decodedFileName;
+		}
+		else
+		{
+			$fieldType = $data->tjFieldFieldTable->type;
+			$decodedPath = JPATH_SITE . '/' . $fieldType . 's/tjmedia/' . str_replace(".", "/", $data->tjFieldFieldTable->client) . '/' . $decodedFileName;
+		}
+
+		if ($data->tjFieldFieldTable->fieldValueId)
+		{
+			$user = Factory::getUser();
 
 			if ($subformFileFieldId)
 			{
@@ -88,22 +92,24 @@ class TjfieldsController extends JControllerLegacy
 			}
 			else
 			{
-				$canView = $user->authorise('core.field.viewfieldvalue', 'com_tjfields.field.' . $tjFieldFieldValuesTable->field_id);
+				$canView = $user->authorise('core.field.viewfieldvalue', 'com_tjfields.field.' . $data->tjFieldFieldTable->field_id);
 			}
+
+			$canDownload = 0;
 
 			// Allow to view own data
-			if ($tjFieldFieldValuesTable->user_id != null && ($user->id == $tjFieldFieldValuesTable->user_id))
+			if ($data->tjFieldFieldTable->user_id != null && ($user->id == $data->tjFieldFieldTable->user_id))
 			{
-				$canView = true;
+				$canDownload = true;
 			}
 
-			if ($canView)
+			if ($canView || $canDownload)
 			{
 				$down_status = $mediaLocal->downloadMedia($decodedPath, '', '', 0);
 
 				if ($down_status === 2)
 				{
-					$app->enqueueMessage(JText::_('COM_TJFIELDS_FILE_NOT_FOUND'), 'error');
+					$app->enqueueMessage(Text::_('COM_TJFIELDS_FILE_NOT_FOUND'), 'error');
 					$app->redirect($this->returnURL);
 				}
 
@@ -111,13 +117,13 @@ class TjfieldsController extends JControllerLegacy
 			}
 			else
 			{
-				$app->enqueueMessage(JText::_('JERROR_ALERTNOAUTHOR'), 'error');
+				$app->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'error');
 				$app->redirect($this->returnURL);
 			}
 		}
 		else
 		{
-			$app->enqueueMessage(JText::_('JERROR_ALERTNOAUTHOR'), 'error');
+			$app->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'error');
 			$app->redirect($this->returnURL);
 		}
 

@@ -180,17 +180,21 @@ class JFormFieldTextareacounter extends JFormFieldTextarea
 	private function getCounterMask()
 	{
 		$text = '<span class="charscontainer pull-left" id="charscontainer_' . $this->id . '">';
-		$text .= $this->countertext;
 
-		$text = str_replace('{used}', '<span class="charscontainer_used" id="usedchars_' . $this->id . '">0</span>', $text);
-		$text = str_replace('{filled}',
-							'<span class="charscontainer_filled" id="filledchars_' . $this->id . '">' . $this->maxlength . '</span>',
+		if (!empty($this->maxlength))
+		{
+			$text .= $this->countertext;
+
+			$text = str_replace('{used}', '<span class="charscontainer_used" id="usedchars_' . $this->id . '">0</span>', $text);
+			$text = str_replace('{filled}',
+								'<span class="charscontainer_filled" id="filledchars_' . $this->id . '">' . $this->maxlength . '</span>',
+								$text
+								);
+			$text = str_replace('{maxlength}',
+							'<span class="charscontainer_maxlength" id="maxlength_' . $this->id . '">' . $this->maxlength . '</span>',
 							$text
 							);
-		$text = str_replace('{maxlength}',
-						'<span class="charscontainer_maxlength" id="maxlength_' . $this->id . '">' . $this->maxlength . '</span>',
-						$text
-						);
+		}
 
 		$text .= '</span>';
 

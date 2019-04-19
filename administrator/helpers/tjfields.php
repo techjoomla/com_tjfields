@@ -270,6 +270,7 @@ class TjfieldsHelper extends JHelperContent
 			$i = 0;
 			$new_fieldset = $newXML->addChild('fieldset');
 			$new_fieldset->addAttribute('name', $fields[0]->group_name);
+			$new_fieldset->addAttribute('addrulepath', 'administrator/components/com_tjfields/models/rules');
 
 			foreach ($fields as $f)
 			{
@@ -326,7 +327,6 @@ class TjfieldsHelper extends JHelperContent
 					}
 				}
 
-				$default_value = array();
 				$value_string = '';
 
 				// ADD option if present.
@@ -349,11 +349,6 @@ class TjfieldsHelper extends JHelperContent
 					{
 						$option = $field->addChild('option', $f_option->options);
 						$option->addAttribute('value', $f_option->value);
-
-						if ($f_option->default_option == 1)
-						{
-							$default_value[] = $f_option->value;
-						}
 					}
 				}
 			}
@@ -448,7 +443,7 @@ class TjfieldsHelper extends JHelperContent
 	{
 		$db = JFactory::getDbo();
 		$query	= $db->getQuery(true);
-		$query->select('id,options,default_option,value FROM #__tjfields_options');
+		$query->select('id,options,value FROM #__tjfields_options');
 		$query->where('field_id=' . $field_id);
 		$db->setQuery($query);
 		$extra_options = $db->loadObjectlist('id');

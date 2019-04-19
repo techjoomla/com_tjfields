@@ -46,17 +46,26 @@ class TjfieldsModelField extends JModelAdmin
 	 * @param   Array    $data      An optional array of data for the form to interogate.
 	 * @param   Boolean  $loadData  True if the form is to load its own data (default case), false if not.
 	 *
-	 * @return  \JForm|boolean  A \JForm object on success, false on failure
+	 * @return  JForm|boolean  A JForm object on success, false on failure
 	 *
 	 * @since  1.6
 	 */
 	public function getForm($data = array(), $loadData = true)
 	{
-		// Initialise variables.
-		$app = JFactory::getApplication();
-
 		// Get the form.
 		$form = $this->loadForm('com_tjfields.field', 'field', array('control' => 'jform','load_data' => $loadData));
+
+		// Load field params in the field form
+		if (!empty($data['type']))
+		{
+			$path = JPATH_SITE . '/administrator/components/com_tjfields/models/forms/types/forms/' . $data['type'] . '.xml';
+
+			// If category XML esists then add global fields XML in current JForm object else create new object of Global Fields
+			if (!empty($form) && JFile::exists($path))
+			{
+				$form->loadFile($path, true, '/form/*');
+			}
+		}
 
 		if (empty($form))
 		{
@@ -112,7 +121,7 @@ class TjfieldsModelField extends JModelAdmin
 			{
 				$db = JFactory::getDbo();
 				$query = $db->getQuery(true);
-				$query->select('opt.id,opt.options,opt.value,opt.default_option FROM #__tjfields_options as opt');
+				$query->select('opt.id,opt.options,opt.value FROM #__tjfields_options as opt');
 				$query->where('opt.field_id=' . $input->get('id', '', 'INT'));
 				$db->setQuery($query);
 				$option_name = $db->loadObjectlist();
@@ -156,17 +165,64 @@ class TjfieldsModelField extends JModelAdmin
 	/**
 	 * Method Save Option
 	 *
-	 * @param   Array  $post  Post
+	 * @param   Array  $data  Post
 	 *
-	 * @return  mixed
+	 * @return  int|boolean A int on success, false on failuer
 	 *
 	 * @since  1.6
 	 */
-	public function save_option($post)
+	public function save($data)
 	{
+		$app = JFactory::getApplication();
+		$fields_in_DB = array();
+		$options_filled = array();
 		$table = $this->getTable();
-		$data  = $post->get('jform', '', 'ARRAY');
+		$form = $this->getForm($data);
+
+		// Dont allow to save radio/single/multi selects without any options
+		if ($data['type'] == 'radio' || $data['type'] == 'single_select' || $data['type'] == 'multi_select')
+		{
+			$form->setFieldAttribute('fieldoption', 'required', true);
+		}
+
+		$validatedData = $this->validate($form, $data);
+
+		// Get the validation messages.
+		$errors = $this->getErrors();
+
+		// Check for errors.
+		if (!empty($errors))
+		{
+			// Push up to three validation messages out to the user.
+			for ($i = 0, $n = count($errors); $i < $n && $i < 3; $i++)
+			{
+				if ($errors[$i] instanceof Exception)
+				{
+					$app->enqueueMessage($errors[$i]->getMessage(), 'warning');
+				}
+				else
+				{
+					$app->enqueueMessage($errors[$i], 'warning');
+				}
+			}
+
+			// Save the data in the session.
+			$app->setUserState('com_tjfields.edit.field.data', $data);
+
+			// Tweak *important
+			$app->setUserState('com_tjfields.edit.field.id', $data['id']);
+
+			// Redirect back to the edit screen.
+			$id = (int) $app->getUserState('com_tjfields.edit.field.id');
+			$app->redirect(JRoute::_('index.php?option=com_tjfields&view=field&layout=edit&id=' . $id . '&client=' . $data['client'], false));
+
+			return false;
+		}
+
+		$data = $validatedData;
+
 		$input = JFactory::getApplication()->input;
+		$data['label'] = trim($data['label']);
 
 		// Set field title as field label
 		if (!empty($data['label']))
@@ -201,7 +257,8 @@ class TjfieldsModelField extends JModelAdmin
 		}
 
 		// Add clint type in data as it is not present in jform
-		$data['client_type'] = $post->get('client_type', '', 'STRING');
+		$input = $app->input;
+		$data['client_type'] = $input->post->get('client_type', '', 'STRING');
 		$data['saveOption'] = 0;
 
 		if ($data['type'] == "radio" || $data['type'] == "single_select" || $data['type'] == "multi_select")
@@ -240,7 +297,7 @@ class TjfieldsModelField extends JModelAdmin
 		}
 
 		// Save javascript functions.
-		$js = $post->get('tjfieldsJs', '', 'ARRAY');
+		$js = $input->post->get('tjfieldsJs', '', 'ARRAY');
 
 		if (!empty($js))
 		{
@@ -250,9 +307,7 @@ class TjfieldsModelField extends JModelAdmin
 		// If the field is inserted.
 		if ($id)
 		{
-			$options = $post->get('tjfields', '', 'ARRAY');
-			$jformData   = $post->get('jform', '', 'ARRAY');
-			$optionsData = json_decode($jformData['params']['options']);
+			$options = $input->post->get('tjfields', '', 'ARRAY');
 
 			if ($data['saveOption'] == 1)
 			{
@@ -267,8 +322,24 @@ class TjfieldsModelField extends JModelAdmin
 					}
 				}
 
+				// Check for empty options
+				if (count($options) == 0)
+				{
+					JFactory::getApplication()->enqueueMessage(JText::_('COM_TJFIELDS_INVALID_OPTION_VALUES'), 'error');
+
+					return $id;
+				}
+
 				foreach ($options as $key => $value)
 				{
+					// Check for empty options
+					if ((!empty($value['optionname']) && $value['optionvalue'] == '') || ($value['optionname'] == '' && !empty($value['optionvalue'])))
+					{
+						JFactory::getApplication()->enqueueMessage(JText::_('COM_TJFIELDS_INVALID_OPTION_VALUES'), 'error');
+
+						return $id;
+					}
+
 					if ($value['hiddenoptionid'])
 					{
 						$options_filled[] = $value['hiddenoptionid'];
@@ -294,15 +365,9 @@ class TjfieldsModelField extends JModelAdmin
 					// Save option fields.
 					foreach ($options as $option)
 					{
-						if (!isset($option['hiddenoption']))
-						{
-							$option['hiddenoption'] = 0;
-						}
-
 						$obj = new stdClass;
 						$obj->options = $option['optionname'];
 						$obj->value = $option['optionvalue'];
-						$obj->default_option = $option['hiddenoption'];
 						$obj->field_id = $id;
 
 						// If edit options
@@ -316,7 +381,7 @@ class TjfieldsModelField extends JModelAdmin
 								{
 									echo $this->_db->stderr();
 
-									return false;
+									return $id;
 								}
 							}
 						}
@@ -330,7 +395,7 @@ class TjfieldsModelField extends JModelAdmin
 								{
 									echo $this->_db->stderr();
 
-									return false;
+									return $id;
 								}
 							}
 						}
@@ -368,7 +433,7 @@ class TjfieldsModelField extends JModelAdmin
 						{
 							echo $this->_db->stderr();
 
-							return false;
+							return $id;
 						}
 					}
 				}
@@ -396,7 +461,7 @@ class TjfieldsModelField extends JModelAdmin
 	 * @param   Array    $jsarray  JSArray
 	 * @param   Integer  $fieldid  Field Id
 	 *
-	 * @return  boolean
+	 * @return  boolean A false if failure
 	 *
 	 * @since  1.6
 	 */
@@ -429,9 +494,9 @@ class TjfieldsModelField extends JModelAdmin
 	/**
 	 * Method To Delete Option
 	 *
-	 * @param   Integer  $delete_ids  Id for delete record
+	 * @param   array  $delete_ids  Id for delete record
 	 *
-	 * @return  boolean
+	 * @return  boolean A false on failure
 	 *
 	 * @since  1.6
 	 */
@@ -456,8 +521,8 @@ class TjfieldsModelField extends JModelAdmin
 	/**
 	 * Method for Delete Field Categories Mapping
 	 *
-	 * @param   Integer  $field_id  Id
-	 * @param   String   $cats      Category
+	 * @param   array  $field_id  Id
+	 * @param   array  $cats      Category
 	 *
 	 * @return  Boolean
 	 *
@@ -483,14 +548,15 @@ class TjfieldsModelField extends JModelAdmin
 				$query->delete($db->quoteName('#__tjfields_category_mapping'));
 				$query->where($conditions);
 				$db->setQuery($query);
-				$result = $db->execute();
+
+				$db->execute();
 			}
 		}
 		catch (RuntimeException $e)
 		{
 			$this->setError($e->getMessage());
 
-			return 0;
+			return false;
 		}
 	}
 
