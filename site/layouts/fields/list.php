@@ -32,15 +32,23 @@ if ($field->value)
 	if (!is_array($field->value))
 	{
 		// If single select
-		echo isset($options[$field->value]) ? ucfirst($options[$field->value]) : "";
+		if (isset($options[$field->value]))
+		{
+			$options[$field->value] = htmlspecialchars($options[$field->value], ENT_COMPAT, 'UTF-8');
+			echo ucfirst($options[$field->value]);
+		}
 	}
 	else
 	{
 		// If multi select
 		foreach ($field->value as $value)
 		{
-			echo isset($options[$value]) ? ucfirst($options[$value]) : "";
-			echo "<br>";
+			if (isset($options[$value]))
+			{
+				$options[$value] = htmlspecialchars($options[$value], ENT_COMPAT, 'UTF-8');
+				echo ucfirst($options[$value]);
+				echo "<br>";
+			}
 		}
 	}
 }

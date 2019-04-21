@@ -187,6 +187,15 @@ class TjfieldsModelField extends JModelAdmin
 
 		$validatedData = $this->validate($form, $data);
 
+		// Sanitize the field data
+		foreach($validatedData as $k => $validatedFieldData)
+		{
+			if (!is_array($validatedFieldData))
+			{
+				$validatedData[$k] = htmlspecialchars($validatedFieldData, ENT_COMPAT, 'UTF-8');
+			}
+		}
+
 		// Get the validation messages.
 		$errors = $this->getErrors();
 
