@@ -11,16 +11,16 @@
 			<field name="hide" type="text" default=""
 				 label="COM_TJFIELDS_FORM_LBL_SHOW_BUTTONS_HIDE"
 				description="COM_TJFIELDS_FORM_DESC_SHOW_BUTTONS_HIDE" />
-			<field name="width" type="text" default=""
+			<field name="width" type="number" default=""
 				label="COM_TJFIELDS_FORM_LBL_EDITOR_WIDTH" description="COM_TJFIELDS_FORM_DESC_EDITOR_WIDTH"
 				size="5"/>
-			<field name="height" type="text" default=""
+			<field name="height" type="number" default=""
 				label="COM_TJFIELDS_FORM_LBL_EDITOR_HEIGHT" description="COM_TJFIELDS_FORM_DESC_EDITOR_HEIGHT"
 				size="5" />
-			<field name="rows" type="text" default=""
+			<field name="rows" type="number" default=""
 				label="COM_TJFIELDS_FORM_LBL_FIELD_ROWS" description="COM_TJFIELDS_FORM_DESC_FIELD_ROWS"
 				size="5" />
-			<field name="cols" type="text" default=""
+			<field name="cols" type="number" default=""
 				label="COM_TJFIELDS_FORM_LBL_FIELD_COLS" description="COM_TJFIELDS_FORM_DESC_FIELD_COLS"
 				size="5" />
 		</fieldset>

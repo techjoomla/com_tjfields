@@ -4,25 +4,26 @@ jQuery(document).ready(function(){
 	{
 		if (task == 'fields.delete')
 		{
-			if (confirm(Joomla.JText._('COM_TJFIELD_CONFIRM_DELETE_FIELD')) == false)
+			if (confirm(Joomla.JText._('COM_TJFIELD_CONFIRM_DELETE_FIELD')) === false)
 			{
 				return false;
 			}
 
-			if (confirm(Joomla.JText._('COM_TJFIELD_CONFIRM_DELETE_REFRENCE_DATA')) == false)
+			if (confirm(Joomla.JText._('COM_TJFIELD_CONFIRM_DELETE_REFRENCE_DATA')) === false)
 			{
 				return false;
 			}
 		}
+
 		Joomla.submitform(task);
 
 		return true;
 	}
 
 	/* This function deletes tjucm file via ajax */
-	deleteFile = function(filePath, fieldId, valueId, subformFileFieldId, isSubformField, client)
+	deleteFile = function(fileName, fieldId, valueId, subformFileFieldId, isSubformField)
 	{
-		if (!filePath)
+		if (!fileName)
 		{
 			return;
 		}
@@ -36,11 +37,10 @@ jQuery(document).ready(function(){
 			url: Joomla.getOptions('system.paths').base + "/index.php?option=com_tjfields&task=fields.deleteFile&format=json",
 			type: 'POST',
 			data:{
-							filePath: filePath,
-							valueId: valueId,
-							subformFileFieldId:subformFileFieldId,
-							isSubformField:isSubformField,
-							client:client
+                fileName: fileName,
+                valueId: valueId,
+                subformFileFieldId:subformFileFieldId,
+                isSubformField:isSubformField
 			},
 			cache: false,
 			dataType: "json",
@@ -142,11 +142,11 @@ jQuery(document).ready(function(){
        jQuery(this).parent().siblings(':eq(0)').show();
     });
 
-    jQuery(document).delegate('.calendar-textfield-class', 'keydown contextmenu', function(event) {
+    jQuery(document).delegate('.calendar-textfield-class', 'keydown contextmenu', function() {
 			return false;
     });
 
-    jQuery(document).delegate('.tjfields-input-image', 'change', function(event) {
+    jQuery(document).delegate('.tjfields-input-image', 'change', function() {
 		jQuery(this).closest('div').find('.control-group').hide();
     });
 

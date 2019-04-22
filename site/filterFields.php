@@ -53,22 +53,6 @@ trait TjfieldsFilterField
 	}
 
 	/**
-	 * Method to get a single record.
-	 *
-	 * @param   integer  $pk  The id of the primary key.
-	 *
-	 * @return  mixed  $item  Object on success, false on failure.
-	 */
-	public function getItem($pk = null)
-	{
-		if ($item = parent::getItem($pk))
-		{
-		}
-
-		return $item;
-	}
-
-	/**
 	 * Method to get the form for extra fields.
 	 * This form file will be created by field manager.
 	 *
@@ -183,18 +167,18 @@ trait TjfieldsFilterField
 							if (!empty($extraData[$tjFieldFieldTable->id]))
 							{
 								$userId = $extraData[$tjFieldFieldTable->id]->user_id;
-							}
 
-							if (!$canEdit && ($user->id != $userId))
-							{
-								$form->setFieldAttribute($field->fieldname, 'readonly', true);
-								$form->setFieldAttribute($field->fieldname, 'disabled', true);
-							}
+								if (!$canEdit && ($user->id != $userId))
+								{
+									$form->setFieldAttribute($field->fieldname, 'readonly', true);
+									$form->setFieldAttribute($field->fieldname, 'disabled', true);
+								}
 
-							if (!$canEditOwn && ($user->id == $userId))
-							{
-								$form->setFieldAttribute($field->fieldname, 'readonly', true);
-								$form->setFieldAttribute($field->fieldname, 'disabled', true);
+								if (!$canEditOwn && ($user->id == $userId))
+								{
+									$form->setFieldAttribute($field->fieldname, 'readonly', true);
+									$form->setFieldAttribute($field->fieldname, 'disabled', true);
+								}
 							}
 						}
 						else

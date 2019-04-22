@@ -38,21 +38,9 @@ class JFormFieldFieldoption extends JFormField
 		parent::__construct();
 		$this->countoption = 0;
 
-		if (JVERSION >= 3.0)
-		{
-			$this->tjfield_icon_plus = "icon-plus-2 ";
-			$this->tjfield_icon_minus = "icon-minus-2 ";
-			$this->tjfield_icon_star = "icon-featured";
-			$this->tjfield_icon_emptystar = "icon-unfeatured";
-		}
-		else
-		{
-			// For joomla3.0
-			$this->tjfield_icon_plus = "icon-plus ";
-			$this->tjfield_icon_minus = "icon-minus ";
-			$this->tjfield_icon_star = "icon-star";
-			$this->tjfield_icon_emptystar = "icon-star-empty";
-		}
+		$this->tjfield_icon_plus = "icon-plus-2 ";
+		$this->tjfield_icon_minus = "icon-minus-2 ";
+		$this->tjfield_icon_emptystar = "icon-unfeatured";
 	}
 
 	/**
@@ -64,196 +52,173 @@ class JFormFieldFieldoption extends JFormField
 	 */
 	protected function getInput()
 	{
-		// Print_r($this->value); die('asdas');
+		$countoption = empty($this->value) ? 0 : count($this->value);
 
-		$countoption = count($this->value);
+		$k = 0;
 
-		if (empty($this->value))
-		{
-			$countoption = 0;
-		}
+		$html = '
+		<script>var field_lenght=' . $countoption . '
+			var tjfield_icon_emptystar = "icon-unfeatured";
+			var tjfield_icon_minus = "icon-minus-2 ";
 
-		// $this->countoption=count($this->value);
-		// $this->countoption=count($this->value);
+			function tjFieldsOptionChange(currInput){
+				let optionInputs = jQuery(currInput).parent().find("input");
+				let required = 0;
 
-			$k = 0;
-			$html = '';
+				jQuery.each(optionInputs, function(index, value){
+					if (jQuery(value).val() != "")
+					{
+						required = 1;
 
-			if (JVERSION >= 3.0)
-			{
-				$html .= '
-				<script>var field_lenght=' . $countoption . '
-					var tjfield_icon_emptystar = "icon-unfeatured";
-					var tjfield_icon_star = "icon-featured";
-					var tjfield_icon_minus = "icon-minus-2 ";
-				</script>';
-			}
-			else
-			{
-				$html .= '
-				<script>var field_lenght=' . $countoption . '
-					var tjfield_icon_emptystar = "icon-star-empty";
-					var tjfield_icon_star = "icon-star";
-					var tjfield_icon_minus = "icon-minus ";
-				</script>';
-			}
+						return false;
+					}
+				});
 
-			$html .= '<div class="techjoomla-bootstrap">
-				<div id="tjfield_container" class="tjfield_container" >';
-
-			if ($this->value)
-			{
-				for ($k = 0;$k <= count($this->value);$k++)
+				if (required == 1)
 				{
-						$html .= '<div id="com_tjfields_repeating_block' . $k . '"    class="com_tjfields_repeating_block span7">
-									<div class="form-inline">
-										' . $this->fetchOptionName(
-										$this->name, (isset($this->value[$k]->options))?$this->value[$k]->options:"", $this->element, $this->options['control'], $k
-										) . $this->fetchOptionValue(
-										$this->name, (isset($this->value[$k]->value))?$this->value[$k]->value:"", $this->element, $this->options['control'], $k
-										) . $this->fetchdedaultoption(
-										$this->name, (isset($this->value[$k]->default_option))?$this->value[$k]->default_option:"", $this->element, $this->options['control'], $k
-										) . $this->fetchhiddenoption(
-										$this->name, (isset($this->value[$k]->default_option))?$this->value[$k]->default_option:"", $this->element, $this->options['control'], $k
-										) . $this->fetchhiddenoptionid(
-										$this->name, (isset($this->value[$k]->id))?$this->value[$k]->id:"", $this->element, $this->options['control'], $k
-										) . '
-									</div>
-								</div>';
-
-							if ($k < count($this->value))
-							{
-											$html .= '<div id="remove_btn_div' . $k . '" class="com_tjfields_remove_button span3">
-												<div class="com_tjfields_remove_button">
-													<button class="btn btn-small btn-danger" type="button" id="remove'
-													. $k . '" onclick="removeClone(\'com_tjfields_repeating_block'
-													. $k . '\',\'remove_btn_div' . $k . '\');" >
-																	<i class="' . $this->tjfield_icon_minus
-																	. '"></i></button>
-												</div>
-											</div>';
-							}
+					jQuery.each(optionInputs, function(index, value){
+						let name = jQuery(this).attr("name");
+						
+						if (name.indexOf("hidden") === -1)
+						{
+							jQuery(this).attr("required", true);
+						}
+					});
+				}
+				else
+				{
+					jQuery.each(optionInputs, function(index, value){
+						jQuery(this).removeAttr("required");
+						jQuery(this).removeClass("invalid");
+					});
 				}
 			}
-			else
+		</script>';
+
+		$html .= '<div class="techjoomla-bootstrap">
+			<div id="tjfield_container" class="tjfield_container" >';
+
+		if ($this->value)
+		{
+			for ($k = 0;$k <= count($this->value);$k++)
 			{
-						$html .= '<div id="com_tjfields_repeating_block0" class="com_tjfields_repeating_block span7">
-									<div class="form-inline">
-										' . $this->fetchOptionName(
-										$this->name, (isset($this->value[$k]->options))?$this->value[$k]->options:"", $this->element, $this->options['control'], $k
-										)
-										. $this->fetchOptionValue(
-										$this->name, (isset($this->value[$k]->value))?$this->value[$k]->value:"", $this->element, $this->options['control'], $k
-										)
-										. $this->fetchdedaultoption(
-										$this->name, (isset($this->value[$k]->default_option))?$this->value[$k]->default_option:"", $this->element, $this->options['control'], $k
-										)
-										. $this->fetchhiddenoption(
-										$this->name, (isset($this->value[$k]->default_option))?$this->value[$k]->default_option:"", $this->element, $this->options['control'], $k
-										)
-										. $this->fetchhiddenoptionid(
-										$this->name, (isset($this->value[$k]->id))?$this->value[$k]->id:"", $this->element, $this->options['control'], $k
-										)
-										. '
-									</div>
-								</div>';
+				$required = true;
+
+				if ($k == count($this->value))
+				{
+					$required = false;
+				}
+
+				$html .= '<div id="com_tjfields_repeating_block' . $k . '"    class="com_tjfields_repeating_block span7">
+							<div class="form-inline">
+								' . $this->fetchOptionName(
+								$this->name, (isset($this->value[$k]->options))?$this->value[$k]->options:"", $this->element, $this->options['control'], $k, $required
+								) . $this->fetchOptionValue(
+								$this->name, (isset($this->value[$k]->value))?$this->value[$k]->value:"", $this->element, $this->options['control'], $k, $required
+								) . $this->fetchhiddenoption(
+								$this->name, "", $this->element, $this->options['control'], $k
+								) . $this->fetchhiddenoptionid(
+								$this->name, (isset($this->value[$k]->id))?$this->value[$k]->id:"", $this->element, $this->options['control'], $k
+								) . '
+							</div>
+						</div>';
+
+				if ($k < count($this->value))
+				{
+					$html .= '<div id="remove_btn_div' . $k . '" class="com_tjfields_remove_button span3">
+						<div class="com_tjfields_remove_button">
+							<button class="btn btn-small btn-danger" type="button" id="remove'
+							. $k . '" onclick="removeClone(\'com_tjfields_repeating_block'
+							. $k . '\',\'remove_btn_div' . $k . '\');" >
+											<i class="' . $this->tjfield_icon_minus
+											. '"></i></button>
+						</div>
+					</div>';
+				}
 			}
+		}
+		else
+		{
+			$html .= '<div id="com_tjfields_repeating_block0" class="com_tjfields_repeating_block span7">
+						<div class="form-inline">
+							' . $this->fetchOptionName(
+							$this->name, (isset($this->value[$k]->options))?$this->value[$k]->options:"", $this->element, $this->options['control'], $k, true
+							)
+							. $this->fetchOptionValue(
+							$this->name, (isset($this->value[$k]->value))?$this->value[$k]->value:"", $this->element, $this->options['control'], $k, true
+							)
+							. $this->fetchhiddenoption(
+							$this->name, "", $this->element, $this->options['control'], $k
+							)
+							. $this->fetchhiddenoptionid(
+							$this->name, (isset($this->value[$k]->id))?$this->value[$k]->id:"", $this->element, $this->options['control'], $k
+							)
+							. '
+						</div>
+					</div>';
+		}
 
-						$html .= '<div class="com_tjfields_add_button span3">
-														<button class="btn btn-small btn-success" type="button" id="add"
-														onclick="addClone(\'com_tjfields_repeating_block\',\'com_tjlms_repeating_block\');"
-														title=' . JText::_("COM_TJFIELDS_ADD_BUTTON") . '>
-															<i class="' . $this->tjfield_icon_plus . '"></i>
-														</button>
-										</div>
-					<div style="clear:both"></div>
-					<div class="row-fluid">
-						<div class="span9 alert alert-info alert-help-inline">';
-					$html .= JText::sprintf("COM_TJFIELDS_MAKE_DEFAULT_MSG", ' <i class="' .
-					$this->tjfield_icon_emptystar . '"></i> ');
-					$html .= '</div>
-					</div>
+		$html .= '<div class="com_tjfields_add_button span3">
+					<button class="btn btn-small btn-success" type="button" id="add"
+						onclick="addClone(\'com_tjfields_repeating_block\',\'com_tjlms_repeating_block\');"
+						title=' . JText::_("COM_TJFIELDS_ADD_BUTTON") . '>
+						<i class="' . $this->tjfield_icon_plus . '"></i>
+					</button>
 				</div>
-			</div>';
+				<div style="clear:both"></div>
+				<div class="row-fluid">
+				</div>
+			</div>
+		</div>';
 
-			return $html;
+		return $html;
 	}
 
 	protected $name = 'fieldoption';
 	/**
 	 * Method to fetch option name.
 	 *
-	 * @param   string  $fieldName     A new field name.
-	 * @param   string  $value         A new field value.
-	 * @param   string  &$node         A new field node.
-	 * @param   string  $control_name  A new field control name.
-	 * @param   string  $k             A new field k value.
+	 * @param   string   $fieldName     A new field name.
+	 * @param   string   $value         A new field value.
+	 * @param   string   &$node         A new field node.
+	 * @param   string   $control_name  A new field control name.
+	 * @param   string   $k             A new field k value.
+	 * @param   boolean  $required      flag for required
 	 *
 	 * @return int option name.
 	 *
 	 * @since 1.6
 	 */
-	public function fetchOptionName($fieldName, $value, &$node, $control_name,$k)
+	public function fetchOptionName($fieldName, $value, &$node, $control_name, $k, $required = false)
 	{
+		$required = ($required) ? ' required="true" ' : '';
+
 		return $OptionName = '<input type="text" id="tjfields_optionname_' . $k .
-		'"	 name="tjfields[' . $k . '][optionname]" class="tjfields_optionname "  placeholder="Name" value="'
+		'"	 name="tjfields[' . $k . '][optionname]" class="tjfields_optionname " ' . $required . ' onchange="tjFieldsOptionChange(this)" placeholder="Name" value="'
 		. $value . '">';
 	}
 
 	/**
 	 * Method to fetch option value.
 	 *
-	 * @param   string  $fieldName     A new field name.
-	 * @param   string  $value         A new field value.
-	 * @param   string  &$node         A new field node.
-	 * @param   string  $control_name  A new field control name.
-	 * @param   string  $k             A new field k value.
+	 * @param   string   $fieldName     A new field name.
+	 * @param   string   $value         A new field value.
+	 * @param   string   &$node         A new field node.
+	 * @param   string   $control_name  A new field control name.
+	 * @param   string   $k             A new field k value.
+	 * @param   boolean  $required      flag for required
 	 *
 	 * @return int option value.
 	 *
 	 * @since 1.6
 	 */
-	public function fetchOptionValue($fieldName, $value, &$node, $control_name,$k)
+	public function fetchOptionValue($fieldName, $value, &$node, $control_name, $k, $required = false)
 	{
+		$required = ($required) ? ' required="true" ' : '';
+
 		return $OptionValue = '<input type="text" id="tjfields_optionvalue_' . $k .
-		'" name="tjfields[' . $k . '][optionvalue]"  class="tjfields_optionvalue "  placeholder="Value"  value="'
+		'" name="tjfields[' . $k . '][optionvalue]"  class="tjfields_optionvalue " ' . $required . ' onchange="tjFieldsOptionChange(this)" placeholder="Value"  value="'
 		. $value . '">';
-	}
-
-	/**
-	 * Method to fetch default option.
-	 *
-	 * @param   string  $fieldName     A new field name.
-	 * @param   string  $value         A new field value.
-	 * @param   string  &$node         A new field node.
-	 * @param   string  $control_name  A new field control name.
-	 * @param   string  $k             A new field k value.
-	 *
-	 * @return int default option.
-	 *
-	 * @since 1.6
-	 */
-	public function fetchdedaultoption($fieldName, $value, &$node, $control_name,$k)
-	{
-		if ($value == 1)
-		{
-			$icon = 'class="' . $this->tjfield_icon_star . '"';
-		}
-		else
-		{
-			$icon = 'class="' . $this->tjfield_icon_emptystar . '"';
-		}
-
-		return $dedaultoption = '<span class=" tjfields_defaultoptionvalue " id="tjfields_defaultoptionvalue_' .
-		$k . '" onclick="getdefaultimage(this.id)" name="tjfields[' . $k .
-		'][defaultoptionvalue]"   ><i ' . $icon . ' ></i></span>';
-
-		/*
-		'<img src="' . JURI::root() . 'administrator'
-		. DS . 'components' . DS . 'com_tjfields' . DS . 'images' .
-		DS . 'nodefault.png" id="tjfields_defaultoptionvalue_0" onclick="getdefaultimage(this.id)"
-		name="tjfields[0][defaultoptionvalue]"  class="tjfields_defaultoptionvalue featured " />';
-		*/
 	}
 
 	/**
@@ -289,7 +254,7 @@ class JFormFieldFieldoption extends JFormField
 	 *
 	 * @since 1.6
 	 */
-	public function fetchhiddenoptionid($fieldName, $value, &$node, $control_name,$k)
+	public function fetchhiddenoptionid($fieldName, $value, &$node, $control_name, $k)
 	{
 		return $hiddenoptionid = '<input type="hidden" id="tjfields_hiddenoptionid_' .
 		$k . '" name="tjfields[' . $k . '][hiddenoptionid]"  class="tjfields_hiddenoptionid "  placeholder="Value"  value="' . $value . '">';

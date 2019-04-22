@@ -1,13 +1,5 @@
 <?php
 /**
- * @package     Joomla.Platform
- * @subpackage  Form
- *
- * @copyright   Copyright (C) 2005 - 2016 Open Source Matters, Inc. All rights reserved.
- * @license     GNU General Public License version 2 or later; see LICENSE
- */
-
-/**
  * @version    SVN:<SVN_ID>
  * @package    TJFields
  * @author     Techjoomla <extensions@techjoomla.com>
@@ -165,8 +157,8 @@ class JFormFieldImage extends JFormFieldFile
 			if (!empty($data->mediaLink))
 			{
 				$html .= $this->renderImage($data, $layoutData);
-				$html .= parent::canDownloadFile($data, $layoutData);
-				$html .= parent::canDeleteFile($data, $layoutData);
+				$html .= $this->canDownloadFile($data, $layoutData);
+				$html .= $this->canDeleteFile($data, $layoutData);
 			}
 
 				$html .= '</div>';
@@ -174,25 +166,6 @@ class JFormFieldImage extends JFormFieldFile
 		}
 
 		return $html;
-	}
-
-	/**
-	 * Method to get the data to be passed to the layout for rendering.
-	 *
-	 * @return  array
-	 *
-	 * @since __DEPLOY_VERSION__
-	 */
-	protected function getLayoutData()
-	{
-		$data = parent::getLayoutData();
-
-		$extraData = array(
-			'accept'   => $this->accept,
-			'multiple' => $this->multiple,
-		);
-
-		return array_merge($data, $extraData);
 	}
 
 	/**
@@ -205,12 +178,16 @@ class JFormFieldImage extends JFormFieldFile
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	protected function renderImage($data,$layoutData)
+	protected function renderImage($data, $layoutData)
 	{
-		$html = '';
-		$html .= '<img src="' . $data->mediaLink . '" height=
-		"' . $layoutData['field']->element->attributes()->height . '"width="' . $layoutData['field']->element->attributes()->width . '" ></img>';
+		$path = JUri::root() . 'images/tjmedia/';
 
-		return $html;
+		if (!empty($data->tjFieldFieldTable))
+		{
+			$path .= str_replace(".", "/", $data->tjFieldFieldTable->get('client') . '/');
+		}
+
+		return '<img src="' . $path . $layoutData['value'] . '" height=
+		"' . $layoutData['field']->element->attributes()->height . '"width="' . $layoutData['field']->element->attributes()->width . '" ></img>';
 	}
 }

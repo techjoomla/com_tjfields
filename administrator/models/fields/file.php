@@ -26,7 +26,7 @@ class JFormFieldFile extends JFormField
 	 * @var    string
 	 * @since  11.1
 	 */
-	protected $type = 'File';
+	protected $type = 'file';
 
 	/**
 	 * The accepted file type list.
@@ -134,6 +134,9 @@ class JFormFieldFile extends JFormField
 		$lang = JFactory::getLanguage();
 		$lang->load('com_tjfields', JPATH_SITE);
 
+		// Add constant to the JS
+		JText::script('COM_TJFIELDS_FILE_DELETE_CONFIRM');
+
 		if (!empty($layoutData["value"]))
 		{
 			$data = $this->buildData($layoutData);
@@ -144,6 +147,9 @@ class JFormFieldFile extends JFormField
 				$html .= $this->canDownloadFile($data, $layoutData);
 				$html .= $this->canDeleteFile($data, $layoutData);
 			}
+
+			$html .= '</div>';
+			$html .= '</div>';
 		}
 
 		return $html;
@@ -204,7 +210,7 @@ class JFormFieldFile extends JFormField
 			$data->subFormFileFieldId = $fileFieldData->id;
 		}
 
-		$data->html .= '<input fileFieldId="' . $layoutData["id"] . '" type="hidden" name="'
+		$data->html = '<input fileFieldId="' . $layoutData["id"] . '" type="hidden" name="'
 		. $layoutData["name"] . '"' . 'id="' . $layoutData["id"] . '"' . 'value="' . $layoutData["value"] . '" />';
 		$data->html .= '<div class="control-group">';
 
@@ -235,20 +241,16 @@ class JFormFieldFile extends JFormField
 			$data->fields_value_table->load(array('value' => $layoutData['value']));
 		}
 
+		$extraParamArray = array();
+		$extraParamArray['id'] = $data->fields_value_table->id;
+
 		// Creating media link by check subform or not
 		if ($data->isSubformField)
 		{
-			$data->mediaLink = $tjFieldHelper->getMediaUrl(
-			$layoutData["value"], '&id=' . $data->fields_value_table->id . '&client=' . $data->clientForm . '&subFormFileFieldId=' . $data->subFormFileFieldId
-			);
-		}
-		else
-		{
-			$data->mediaLink = $tjFieldHelper->getMediaUrl($layoutData["value"], '&id=' . $data->fields_value_table->id . '&client=' . $data->clientForm);
+			$extraParamArray['subFormFileFieldId'] = $data->subFormFileFieldId;
 		}
 
-		$data->html .= '</div>';
-		$data->html .= '</div>';
+		$data->mediaLink = $tjFieldHelper->getMediaUrl($layoutData["value"], $extraParamArray);
 
 		return $data;
 	}
@@ -266,15 +268,29 @@ class JFormFieldFile extends JFormField
 	protected function canDownloadFile($data,$layoutData)
 	{
 		$canView = 0;
+		$canDownload = 0;
+		$user = JFactory::getUser();
 
 		if ($data->user->authorise('core.field.viewfieldvalue', 'com_tjfields.group.' . $data->tjFieldFieldTable->group_id))
 		{
-			$canView = $data->user->authorise('core.field.viewfieldvalue', 'com_tjfields.field.' . $data->tjFieldFieldTable->id);
+			if ($data->isSubformField)
+			{
+				$canView = $data->user->authorise('core.field.viewfieldvalue', 'com_tjfields.field.' . $data->subFormFileFieldId);
+			}
+			else
+			{
+				$canView = $data->user->authorise('core.field.viewfieldvalue', 'com_tjfields.field.' . $data->tjFieldFieldTable->id);
+			}
+		}
+
+		if ($data->fields_value_table->user_id != null && $user->id == $data->fields_value_table->user_id)
+		{
+			$canDownload = true;
 		}
 
 		$downloadFile = '';
 
-		if ($canView)
+		if ($canView || $canDownload)
 		{
 			$downloadFile .= '<div> <a href="' . $data->mediaLink . '">' . JText::_("COM_TJFIELDS_FILE_DOWNLOAD") . '</a>';
 		}
@@ -320,7 +336,7 @@ class JFormFieldFile extends JFormField
 			$deleteFiledata .= ' <span class="btn btn-remove"> <a id="remove_' . $layoutData["id"] . '" href="javascript:void(0);"
 				onclick="deleteFile(\'' . base64_encode($layoutData["value"]) . '\',
 				 \'' . $layoutData["id"] . '\', \'' . base64_encode($data->fields_value_table->id) . '\',
-				  \'' . $data->subFormFileFieldId . '\',\'' . $data->isSubformField . '\',\'' . $data->clientForm . '\');">'
+				  \'' . $data->subFormFileFieldId . '\',\'' . $data->isSubformField . '\');">'
 				. JText::_("COM_TJFIELDS_FILE_DELETE") . '</a> </span>';
 		}
 
