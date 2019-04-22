@@ -256,20 +256,12 @@ class JFormFieldVideo extends JFormFieldUrl
 			{
 				$doc->addScript(JUri::root() . 'media/com_tjfields/vendors/mediaelementplayer/renderers/vimeo.min.js');
 			}
-			else
-			{
-				$html .= "<p>Enable vimeo Renderer</p>";
-			}
 		}
 		elseif (strpos($layoutData['value'], "facebook") !== false)
 		{
 			if (isset($layoutData['field']->element->attributes()->Facebook))
 			{
 				$doc->addScript(JUri::root() . 'media/com_tjfields/vendors/mediaelementplayer/renderers/facebook.min.js');
-			}
-			else
-			{
-				$html .= "<p>Enable facebook Renderer</p>";
 			}
 		}
 		elseif (strpos($layoutData['value'], "twitch") !== false)
@@ -278,10 +270,6 @@ class JFormFieldVideo extends JFormFieldUrl
 			{
 				$doc->addScript(JUri::root() . 'media/com_tjfields/vendors/mediaelementplayer/renderers/twitch.min.js');
 			}
-			else
-			{
-				$html .= "<p>Enable twitch Renderer</p>";
-			}
 		}
 		elseif (strpos($layoutData['value'], "dailymotion") !== false)
 		{
@@ -289,20 +277,12 @@ class JFormFieldVideo extends JFormFieldUrl
 			{
 				$doc->addScript(JUri::root() . 'media/com_tjfields/vendors/mediaelementplayer/renderers/dailymotion.min.js');
 			}
-			else
-			{
-				$html .= "<p>Enable DailyMotion Renderer</p>";
-			}
 		}
 		elseif (strpos($layoutData['value'], "soundcloud") !== false)
 		{
 			if (isset($layoutData['field']->element->attributes()->soundcloud))
 			{
 				$doc->addScript(JUri::root() . 'media/com_tjfields/vendors/mediaelementplayer/renderers/soundcloud.min.js');
-			}
-			else
-			{
-				$html .= "<p>Enable SoundCloud Renderer</p>";
 			}
 		}
 

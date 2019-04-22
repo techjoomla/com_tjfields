@@ -13,27 +13,26 @@
 				<option value="1">COM_TJFIELDS_YES</option>
 				<option value="0">COM_TJFIELDS_NO</option>
 			</field>
-			<field name="vimeo" type="radio" default="0" label="COM_TJFIELDS_FORM_LBL_FIELD_VIMEO_VIDEO" description="COM_TJFIELDS_FORM_DESC_FIELD_VIMEO_VIDEO" class="btn-group">
+			<field name="vimeo" type="radio" default="1" label="COM_TJFIELDS_FORM_LBL_FIELD_VIMEO_VIDEO" description="COM_TJFIELDS_FORM_DESC_FIELD_VIMEO_VIDEO" class="btn-group">
 				<option value="1">COM_TJFIELDS_YES</option>
 				<option value="0">COM_TJFIELDS_NO</option>
 			</field>>
-			<field name="Facebook" type="radio" default="0" label="COM_TJFIELDS_FORM_LBL_FIELD_FACEBOOK_VIDEO" description="COM_TJFIELDS_FORM_DESC_FIELD_FACEBOOK_VIDEO" class="btn-group">
+			<field name="Facebook" type="radio" default="1" label="COM_TJFIELDS_FORM_LBL_FIELD_FACEBOOK_VIDEO" description="COM_TJFIELDS_FORM_DESC_FIELD_FACEBOOK_VIDEO" class="btn-group">
 				<option value="1">COM_TJFIELDS_YES</option>
 				<option value="0">COM_TJFIELDS_NO</option>
 			</field>
-			<field name="twitch" type="radio" default="0" label="COM_TJFIELDS_FORM_LBL_FIELD_TWITCH_VIDEO" description="COM_TJFIELDS_FORM_DESC_FIELD_TWITCH_VIDEO" class="btn-group">
+			<field name="twitch" type="radio" default="1" label="COM_TJFIELDS_FORM_LBL_FIELD_TWITCH_VIDEO" description="COM_TJFIELDS_FORM_DESC_FIELD_TWITCH_VIDEO" class="btn-group">
 				<option value="1">COM_TJFIELDS_YES</option>
 				<option value="0">COM_TJFIELDS_NO</option>
 			</field>
-			<field name="dailymotion" type="radio" default="0" label="COM_TJFIELDS_FORM_LBL_FIELD_DAILYMOTION_VIDEO" description="COM_TJFIELDS_FORM_DESC_FIELD_DAILYMOTION_VIDEO" class="btn-group">
+			<field name="dailymotion" type="radio" default="1" label="COM_TJFIELDS_FORM_LBL_FIELD_DAILYMOTION_VIDEO" description="COM_TJFIELDS_FORM_DESC_FIELD_DAILYMOTION_VIDEO" class="btn-group">
 				<option value="1">COM_TJFIELDS_YES</option>
 				<option value="0">COM_TJFIELDS_NO</option>
 			</field>
-			<field name="soundcloud" type="radio" default="0" label="COM_TJFIELDS_FORM_LBL_FIELD_SOUNDCLOUD_VIDEO" description="COM_TJFIELDS_FORM_DESC_FIELD_SOUNDCLOUD_VIDEO" class="btn-group">
+			<field name="soundcloud" type="radio" default="1" label="COM_TJFIELDS_FORM_LBL_FIELD_SOUNDCLOUD_VIDEO" description="COM_TJFIELDS_FORM_DESC_FIELD_SOUNDCLOUD_VIDEO" class="btn-group">
 				<option value="1">COM_TJFIELDS_YES</option>
 				<option value="0">COM_TJFIELDS_NO</option>
 			</field>
-
 		</fieldset>
 	</fields>
 </form>
