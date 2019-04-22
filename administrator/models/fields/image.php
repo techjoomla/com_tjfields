@@ -24,7 +24,7 @@ class JFormFieldImage extends JFormFieldFile
 	 * @var    string
 	 * @since  __DEPLOY_VERSION__
 	 */
-	protected $type = 'image';
+	protected $type = 'Image';
 
 	/**
 	 * The accepted file type list.

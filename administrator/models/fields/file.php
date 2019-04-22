@@ -26,7 +26,7 @@ class JFormFieldFile extends JFormField
 	 * @var    string
 	 * @since  11.1
 	 */
-	protected $type = 'file';
+	protected $type = 'File';
 
 	/**
 	 * The accepted file type list.
@@ -169,6 +169,9 @@ class JFormFieldFile extends JFormField
 			'accept'   => $this->accept,
 			'multiple' => $this->multiple,
 		);
+
+		// Sanitize the value of the file field
+		$data['value'] = isset($data['value']) ? htmlspecialchars($data['value'], ENT_COMPAT, 'UTF-8') : '';
 
 		return array_merge($data, $extraData);
 	}

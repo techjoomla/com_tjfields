@@ -25,7 +25,7 @@ class JFormFieldVideo extends JFormFieldUrl
 	 * @var    string
 	 * @since  DEPLOY_VERSION
 	 */
-	protected $type = 'video';
+	protected $type = 'Video';
 
 	/**
 	 * The SimpleXMLElement object representing the `<field>` tag for the form field object.
@@ -247,62 +247,42 @@ class JFormFieldVideo extends JFormFieldUrl
 
 		$doc = JFactory::getDocument();
 
-		$doc->addScript(JUri::root() . 'media/vendors/mediaelementplayer/mediaelement-and-player.min.js');
-		$doc->addStyleSheet(JUri::root() . 'media/vendors/mediaelementplayer/mediaelementplayer.min.css');
+		$doc->addScript(JUri::root() . 'media/com_tjfields/vendors/mediaelementplayer/mediaelement-and-player.min.js');
+		$doc->addStyleSheet(JUri::root() . 'media/com_tjfields/vendors/mediaelementplayer/mediaelementplayer.min.css');
 
 		if (strpos($layoutData['value'], "vimeo") !== false)
 		{
 			if (isset($layoutData['field']->element->attributes()->vimeo))
 			{
-				$doc->addScript(JUri::root() . 'media/vendors/mediaelementplayer/renderers/vimeo.min.js');
-			}
-			else
-			{
-				$html .= "<p>Enable vimeo Renderer</p>";
+				$doc->addScript(JUri::root() . 'media/com_tjfields/vendors/mediaelementplayer/renderers/vimeo.min.js');
 			}
 		}
 		elseif (strpos($layoutData['value'], "facebook") !== false)
 		{
 			if (isset($layoutData['field']->element->attributes()->Facebook))
 			{
-				$doc->addScript(JUri::root() . 'media/vendors/mediaelementplayer/renderers/facebook.min.js');
-			}
-			else
-			{
-				$html .= "<p>Enable facebook Renderer</p>";
+				$doc->addScript(JUri::root() . 'media/com_tjfields/vendors/mediaelementplayer/renderers/facebook.min.js');
 			}
 		}
 		elseif (strpos($layoutData['value'], "twitch") !== false)
 		{
 			if (isset($layoutData['field']->element->attributes()->twitch))
 			{
-				$doc->addScript(JUri::root() . 'media/vendors/mediaelementplayer/renderers/twitch.min.js');
-			}
-			else
-			{
-				$html .= "<p>Enable twitch Renderer</p>";
+				$doc->addScript(JUri::root() . 'media/com_tjfields/vendors/mediaelementplayer/renderers/twitch.min.js');
 			}
 		}
 		elseif (strpos($layoutData['value'], "dailymotion") !== false)
 		{
 			if (isset($layoutData['field']->element->attributes()->dailymotion))
 			{
-				$doc->addScript(JUri::root() . 'media/vendors/mediaelementplayer/renderers/dailymotion.min.js');
-			}
-			else
-			{
-				$html .= "<p>Enable DailyMotion Renderer</p>";
+				$doc->addScript(JUri::root() . 'media/com_tjfields/vendors/mediaelementplayer/renderers/dailymotion.min.js');
 			}
 		}
 		elseif (strpos($layoutData['value'], "soundcloud") !== false)
 		{
 			if (isset($layoutData['field']->element->attributes()->soundcloud))
 			{
-				$doc->addScript(JUri::root() . 'media/vendors/mediaelementplayer/renderers/soundcloud.min.js');
-			}
-			else
-			{
-				$html .= "<p>Enable SoundCloud Renderer</p>";
+				$doc->addScript(JUri::root() . 'media/com_tjfields/vendors/mediaelementplayer/renderers/soundcloud.min.js');
 			}
 		}
 

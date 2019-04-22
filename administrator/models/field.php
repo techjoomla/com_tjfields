@@ -187,6 +187,15 @@ class TjfieldsModelField extends JModelAdmin
 
 		$validatedData = $this->validate($form, $data);
 
+		// Sanitize the field data
+		foreach($validatedData as $k => $validatedFieldData)
+		{
+			if (!is_array($validatedFieldData))
+			{
+				$validatedData[$k] = htmlspecialchars($validatedFieldData, ENT_COMPAT, 'UTF-8');
+			}
+		}
+
 		// Get the validation messages.
 		$errors = $this->getErrors();
 
@@ -366,8 +375,8 @@ class TjfieldsModelField extends JModelAdmin
 					foreach ($options as $option)
 					{
 						$obj = new stdClass;
-						$obj->options = $option['optionname'];
-						$obj->value = $option['optionvalue'];
+						$obj->options = htmlspecialchars($option['optionname'], ENT_COMPAT, 'UTF-8');
+						$obj->value = htmlspecialchars($option['optionvalue'], ENT_COMPAT, 'UTF-8');
 						$obj->field_id = $id;
 
 						// If edit options
