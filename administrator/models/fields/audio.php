@@ -3,7 +3,7 @@
  * @version    SVN:<SVN_ID>
  * @package    TJFields
  * @author     Techjoomla <extensions@techjoomla.com>
- * @copyright  Copyright (c) 2009-2018 TechJoomla. All rights reserved
+ * @copyright  Copyright (c) 2009-2019 TechJoomla. All rights reserved
  * @license    GNU General Public License version 2, or later
  */
 
@@ -25,7 +25,7 @@ class JFormFieldAudio extends JFormFieldVideo
 	 * @var    string
 	 * @since  DEPLOY_VERSION
 	 */
-	protected $type = 'audio';
+	protected $type = 'Audio';
 
 	/**
 	 * The SimpleXMLElement object representing the `<field>` tag for the form field object.
