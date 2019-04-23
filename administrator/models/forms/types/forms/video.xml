@@ -33,6 +33,8 @@
 				<option value="1">COM_TJFIELDS_YES</option>
 				<option value="0">COM_TJFIELDS_NO</option>
 			</field>
+			<field name="validate" type="hidden" default="url"/>
+			<field name="filter" type="hidden" default="url"/>
 		</fieldset>
 	</fields>
 </form>

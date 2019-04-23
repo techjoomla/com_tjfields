@@ -19,19 +19,19 @@ $field = $displayData['field'];
 
 if ($field->value)
 {
-				if (is_array($field->value))
-				{
-					foreach ($field->value as $eachFieldValue)
-					{
-						?>
-						<p><?php echo "-" . htmlspecialchars($eachFieldValue, ENT_COMPAT, 'UTF-8'); ?></p>
-						<?php
-					}
-				}
-				else
-				{
-					echo htmlspecialchars($field->value, ENT_COMPAT, 'UTF-8');
-				}
+	if (is_array($field->value))
+	{
+		foreach ($field->value as $eachFieldValue)
+		{
+			?>
+			<p><?php echo "-" . htmlspecialchars($eachFieldValue, ENT_COMPAT, 'UTF-8'); ?></p>
+			<?php
+		}
+	}
+	else
+	{
+		echo htmlspecialchars($field->value, ENT_COMPAT, 'UTF-8');
+	}
 }
 else
 {
