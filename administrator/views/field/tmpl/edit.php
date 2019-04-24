@@ -46,6 +46,10 @@ $document->addStyleSheet('components/com_tjfields/assets/css/tjfields.css');
 	var clientType = '<?php echo $clientType;?>';
 	var invalidFormErrorMsg = '<?php echo $this->escape(JText::_('COM_TJFIELDS_INVALID_FORM')); ?>';
 	var editFormlink = '<?php echo $link;?>';
+
+	jQuery(document).ready(function(){
+		jQuery("#field-form #jform_type").attr('onchange', 'show_option_div(this.value);');
+	});
 </script>
 <?php $document->addScript(JUri::root() . 'administrator/components/com_tjfields/assets/js/field.js'); ?>
 <div class="techjoomla-bootstrap">
