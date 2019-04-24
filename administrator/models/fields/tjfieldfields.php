@@ -10,14 +10,14 @@
 defined('JPATH_PLATFORM') or die;
 
 jimport('joomla.html.html');
-jimport('joomla.form.formfield');
+JFormHelper::loadFieldClass('list');
 
 /**
  * List of fields
  *
  * @since  1.3
  */
-class JFormFieldtjfieldfields extends JFormField
+class JFormFieldtjfieldfields extends JFormFieldList
 {
 	/**
 	 * The form field type.
@@ -73,16 +73,17 @@ class JFormFieldtjfieldfields extends JFormField
 		$options[] = JHtml::_('select.option', 'audio', JText::_('COM_TJFIELDS_AUDIO'));
 		$options[] = JHtml::_('select.option', 'video', JText::_('COM_TJFIELDS_VIDEO'));
 		$options[] = JHtml::_('select.option', 'itemcategory', JText::_('COM_TJFIELDS_ITEM_CATEGORY'));
+		$options[] = JHtml::_('select.option', 'number', JText::_('COM_TJFIELDS_NUMBER'));
 
 		if ($installUcm === 1)
 		{
 			$options[] = JHtml::_('select.option', 'ucmsubform', JText::_('COM_TJFIELDS_UCMSUBFORM'));
 		}
 
-		$options[] = JHtml::_('select.option', 'number', JText::_('COM_TJFIELDS_NUMBER'));
+		$options = array_merge(parent::getOptions(), $options);
 
 		return JHtml::_('select.genericlist', $options, $this->name,
-		'class="required" onchange="show_option_div(this.value)"', 'value', 'text', $this->value, 'jform_type'
+		'class="required" onchange="this.form.submit();"', 'value', 'text', $this->value, 'jform_type'
 		);
 	}
 }
