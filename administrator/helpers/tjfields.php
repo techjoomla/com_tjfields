@@ -266,20 +266,42 @@ class TjfieldsHelper extends JHelperContent
 
 		if (!empty($fields))
 		{
-			$current_group = $fields[0]->group_id;
-			$i = 0;
-			$new_fieldset = $newXML->addChild('fieldset');
-			$new_fieldset->addAttribute('name', $fields[0]->group_name);
-			$new_fieldset->addAttribute('addrulepath', 'administrator/components/com_tjfields/models/rules');
+			// Sort fields as per group to generate JForm XML file - start
+			$sortedFieldsArray = array();
+			$sortedGroups = array();
+
+			for ($i = 0; $i < count($fields); $i++)
+			{
+				for ($j = $i; $j < count($fields); $j++)
+				{
+					if (($fields[$i]->group_id == $fields[$j]->group_id) && (!in_array($fields[$i]->group_id, $sortedGroups)))
+					{
+						$sortedFieldsArray[] = $fields[$j];
+					}
+				}
+
+				if (!in_array($fields[$i]->group_id, $sortedGroups))
+				{
+					$sortedGroups[] = $fields[$i]->group_id;
+				}
+			}
+
+			$fields = $sortedFieldsArray;
+
+			// Sort fields as per group to generate JForm XML file - end
+
+			// To store added field groups to the JForm
+			$addedFieldGroups = array();
 
 			foreach ($fields as $f)
 			{
-				// Add fieldset as per group id
-				if ($current_group != $f->group_id)
+				if (!in_array($f->group_id, $addedFieldGroups))
 				{
+					$addedFieldGroups[] = $f->group_id;
 					$new_fieldset = $newXML->addChild('fieldset');
 					$new_fieldset->addAttribute('name', $f->group_name);
-					$current_group = $f->group_id;
+					$new_fieldset->addAttribute('addrulepath', 'administrator/components/com_tjfields/models/rules');
+					$new_fieldset->addAttribute('addfieldpath', 'administrator/components/com_tjfields/models/fields');
 				}
 
 				$f = $this->getOptionData($f);
