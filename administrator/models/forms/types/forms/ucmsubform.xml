@@ -12,7 +12,6 @@
 			</field>
 			<field name="min" type="number" label="COM_TJFIELDS_FORM_LBL_FIELD_FORM_MIN" description="COM_TJFIELDS_FORM_DESC_FIELD_FORM_MIN" default="0" />
 			<field name="max" type="number" label="COM_TJFIELDS_FORM_LBL_FIELD_FORM_MAX" description="COM_TJFIELDS_FORM_DESC_FIELD_FORM_MAX" default="1000" />
-			<field name="addfieldpath" type="hidden" default="/administrator/components/com_tjfields/models/fields"/>
 		</fieldset>
 	</fields>
 </form>
