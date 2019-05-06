@@ -188,7 +188,7 @@ class TjfieldsModelField extends JModelAdmin
 		$validatedData = $this->validate($form, $data);
 
 		// Sanitize the field data
-		foreach($validatedData as $k => $validatedFieldData)
+		foreach ($validatedData as $k => $validatedFieldData)
 		{
 			if (!is_array($validatedFieldData))
 			{
@@ -283,6 +283,19 @@ class TjfieldsModelField extends JModelAdmin
 			$client = explode('.', $data['client']);
 			$client = $client[0];
 			$data_unique_name = $client . '_' . $data['client_type'] . '_' . $data_name;
+
+			// To store cluster type fields in core UCM hence rename the field name
+			if ($data['type'] == 'cluster')
+			{
+				$data_unique_name = $client . '_' . $data['type'] . 'clusterid';
+			}
+
+			// To store ownership type fields in core UCM hence rename the field name
+			if ($data['type'] == 'ownership')
+			{
+				$data_unique_name = $client . '_' . $data['type'] . 'createdby';
+			}
+
 			$data['name'] = $data_unique_name;
 		}
 
