@@ -47,13 +47,14 @@ class TjfieldsHelper
 
 		$db    = JFactory::getDbo();
 		$query = $db->getQuery(true);
-		$query->select('#__tjfields_fields_value.field_id, #__tjfields_fields_value.user_id, #__tjfields_fields.type,value FROM #__tjfields_fields_value ');
-		$query->join('INNER', $db->qn('#__tjfields_fields') . ' ON (' .
-		$db->qn('#__tjfields_fields.id') . ' = ' . $db->qn('#__tjfields_fields_value.field_id') . ')');
+		$query->select('fv.field_id, fv.user_id, f.type, fv.value, f.params');
+		$query->from($db->qn('#__tjfields_fields_value', 'fv'));
+		$query->join('INNER', $db->qn('#__tjfields_fields', 'f') . ' ON (' .
+		$db->qn('f.id') . ' = ' . $db->qn('fv.field_id') . ')');
 
-		$query->where('#__tjfields_fields_value.content_id=' . $content_id);
-		$query->where('#__tjfields_fields_value.client="' . $client . '" ' . $query_user_string);
-		$query->where('#__tjfields_fields.state=' . $db->quote("1"));
+		$query->where('fv.content_id=' . $content_id);
+		$query->where('fv.client="' . $client . '" ' . $query_user_string);
+		$query->where('f.state=' . $db->quote("1"));
 		$db->setQuery($query);
 
 		$field_data_value = $db->loadObjectlist();
@@ -62,13 +63,16 @@ class TjfieldsHelper
 
 		foreach ($field_data_value as $k => $data)
 		{
+			$fieldParams = json_decode($data->params);
+			$multipleValueField = (isset($fieldParams->multiple) && !empty($fieldParams->multiple)) ? 1 : 0;
+
 			if ($data->type == "radio" || $data->type == "single_select")
 			{
 				$fieldDataValue[$data->field_id] = new stdclass;
 				$fieldDataValue[$data->field_id]->value[] = $data->value;
 				$fieldDataValue[$data->field_id]->field_id = $data->field_id;
 			}
-			elseif ($data->type == "multi_select")
+			elseif ($data->type == "multi_select" || ($data->type == "related" && $multipleValueField))
 			{
 				$fieldDataValue[$data->field_id]->value[] = $data->value;
 				$fieldDataValue[$data->field_id]->field_id = $data->field_id;
@@ -88,17 +92,33 @@ class TjfieldsHelper
 		{
 			$fieldData = $this->getFieldData('', $fdata->field_id);
 
+			$fieldParams = json_decode($fieldData->params);
+			$multipleValueField = (isset($fieldParams->multiple) && !empty($fieldParams->multiple)) ? 1 : 0;
+
 			if (!empty($fieldData))
 			{
 				if ($fieldData->type == 'single_select' || $fieldData->type == 'multi_select' || $fieldData->type == 'radio')
 				{
-					$extra_options = $this->getOptions($fdata->field_id, json_encode($fdata->value));
-					$fdata->value  = $extra_options;
+					$fdata->value = $this->getOptions($fdata->field_id, json_encode($fdata->value));
+				}
+				elseif ($fieldData->type == 'related' && $multipleValueField)
+				{
+					$values = array();
+
+					foreach ($fdata->value as $value)
+					{
+						$tmp = new stdclass;
+						$tmp->value = $value;
+						$values[] = $tmp;
+					}
+
+					$fdata->value = $values;
 				}
 
 				$fdata->type  = $fieldData->type;
 				$fdata->name  = $fieldData->name;
 				$fdata->label = $fieldData->label;
+				$fdata->params = $fieldData->params;
 			}
 		}
 
@@ -117,7 +137,7 @@ class TjfieldsHelper
 	{
 		$db    = JFactory::getDbo();
 		$query = $db->getQuery(true);
-		$query->select($db->quoteName(array('id', 'type', 'name', 'label')));
+		$query->select($db->quoteName(array('id', 'type', 'name', 'label', 'params')));
 		$query->from($db->quoteName('#__tjfields_fields'));
 
 		if ($fname)
@@ -378,11 +398,14 @@ class TjfieldsHelper
 
 					if (!empty($fvalue))
 					{
+						$fieldParams = json_decode($field_data->params);
+						$multipleValueField = (isset($fieldParams->multiple) && !empty($fieldParams->multiple)) ? 1 : 0;
+
 						if ($field_data->type === 'subform' || $field_data->type === 'ucmsubform')
 						{
 							$this->saveSubformData($data, $fname, $field_data);
 						}
-						elseif (in_array($field_data->type, $multipleSelectionFields))
+						elseif (in_array($field_data->type, $multipleSelectionFields) || ($field_data->type === 'related' && $multipleValueField))
 						{
 							$this->saveMultiselectOptions($data, $fname, $field_data);
 						}
@@ -812,10 +835,13 @@ class TjfieldsHelper
 			->where($db->quoteName('field_id') . " = " . (int) $insert_obj->field_id)
 			->where($db->quoteName('value') . " = " . $db->quote($insert_obj->value));
 			$db->setQuery($query);
-
 			$insert_obj->option_id = $db->loadResult();
 
-			if (!empty($insert_obj->option_id))
+			JLoader::import('field', JPATH_ADMINISTRATOR . '/components/com_tjfields/tables');
+			$fieldTable = JTable::getInstance('Field', 'TjfieldsTable', array('dbo', $db));
+			$fieldTable->load(array('id' => $insert_obj->field_id));
+
+			if (!empty($insert_obj->option_id) || $fieldTable->type == 'related')
 			{
 				// Insert into db
 				$db = JFactory::getDbo();
