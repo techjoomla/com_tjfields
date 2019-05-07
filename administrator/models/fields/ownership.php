@@ -29,7 +29,7 @@ class JFormFieldOwnerShip extends JFormFieldList
 	 * @var    string
 	 * @since  __DEPLOY_VERSION__
 	 */
-	protected $type = 'ownership';
+	protected $type = 'Ownership';
 
 	/**
 	 * Method to get a list of options for cluster field.
@@ -41,6 +41,7 @@ class JFormFieldOwnerShip extends JFormFieldList
 	protected function getOptions()
 	{
 		$user = Factory::getUser();
+		$options = array();
 
 		if (!$user->id)
 		{
@@ -52,10 +53,9 @@ class JFormFieldOwnerShip extends JFormFieldList
 
 		$data = $this->getLayoutData();
 
-		$fieldName = str_replace("[", '_', $data['field']->name);
-		$fieldName = str_replace("]", '', $fieldName);
 		$fieldValue = $data['field']->value;
 
+		// Used to keep pre selected user value in 'Ownership' type field
 		echo '<input name="ownership_user" id="ownership_user" type="hidden" value="' . $fieldValue . '" />';
 
 		$options = array();

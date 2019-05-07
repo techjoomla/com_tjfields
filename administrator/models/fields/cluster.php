@@ -29,7 +29,7 @@ class JFormFieldCluster extends JFormFieldList
 	 * @var    string
 	 * @since  __DEPLOY_VERSION__
 	 */
-	protected $type = 'cluster';
+	protected $type = 'Cluster';
 
 	/**
 	 * Fiedd to decide if options are being loaded externally and from xml
@@ -49,6 +49,7 @@ class JFormFieldCluster extends JFormFieldList
 	protected function getOptions()
 	{
 		$user = Factory::getUser();
+		$options = $clusters = array();
 
 		if (!$user->id)
 		{
@@ -56,15 +57,9 @@ class JFormFieldCluster extends JFormFieldList
 		}
 
 		$superUser    = $user->authorise('core.admin');
-		$options = $clusters = array();
 
 		// Initialize array to store dropdown options
 		$options[] = HTMLHelper::_('select.option', "", Text::_('COM_TJFIELDS_OWNERSHIP_CLUSTER'));
-
-		$data = $this->getLayoutData();
-
-		$fieldName = str_replace("[", '_', $data['field']->name);
-		$fieldName = str_replace("]", '', $fieldName);
 
 		// Get com_subusers component status
 		$clusterExist = ComponentHelper::getComponent('com_cluster', true)->enabled;

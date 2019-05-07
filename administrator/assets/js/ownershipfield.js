@@ -23,7 +23,7 @@ var ownership = {
 					{
 						selectOption = ' selected="selected" ';
 					}
-					var op="<option value='"+data[index].value+"' "+selectOption+" > " + data[index]['text'] + "</option>" ;
+					let op="<option value='"+data[index].value+"' "+selectOption+" > " + data[index]['text'] + "</option>" ;
 					jQuery('.user-ownership').append(op);
 				}
 
@@ -34,20 +34,19 @@ var ownership = {
 	},
 	/* This function to populate all users in ownership field of tjucm form */
 	setUsers: function (element) {
-		if (jQuery(".cluster-ownership")[0])
+		let clientId = '';
+		element.user_id = jQuery("#ownership_user").val();
+
+		// Check class exists or not
+		if (jQuery(".cluster-ownership").length > 0)
 		{
-			let clientId = jQuery(".cluster-ownership").val();
+			clientId = jQuery(".cluster-ownership").val();
 
 			element.client = clientId;
 			element.iscluster = 1;
-			element.user_id = jQuery("#ownership_user").val();
-
-			if (jQuery.trim(clientId) != '' && clientId != 'undefined' )
-			{
-				this.getUsers(element);
-			}
 		}
-		else
+
+		if ((jQuery.trim(clientId) != '' && clientId != 'undefined') || (jQuery(".user-ownership").length > 0 && jQuery(".cluster-ownership").length == 0))
 		{
 			this.getUsers(element);
 		}
@@ -56,7 +55,8 @@ var ownership = {
 
 jQuery(document).ready(function() {
 
-	if (jQuery(".user-ownership")[0])
+	// Check class exists or not
+	if (jQuery(".user-ownership").length > 0)
 	{
 		let dataFields = {client: 0, iscluster: 0, user_id: 0};
 
@@ -68,14 +68,12 @@ jQuery(document).ready(function() {
 	jQuery('.cluster-ownership').change(function(){
 
 		// Check class exists or not
-		if (!jQuery(".user-ownership")[0]){
+		if (!jQuery(".user-ownership").length > 0)
+		{
 			return false;
 		}
 
-		let clientId = jQuery(this).val();
-		let userId = jQuery("#ownership_user").val();
-
-		let dataFields = {client: clientId,iscluster: 1, user_id: userId};
+		let dataFields = {client: jQuery(this).val() ,iscluster: 1, user_id: jQuery("#ownership_user").val()};
 
 		//Get All associated users
 		ownership.getUsers(dataFields);
