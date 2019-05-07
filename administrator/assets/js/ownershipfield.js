@@ -9,6 +9,7 @@ var ownership = {
 	/* This function to get all users in tjucm via ajax */
 	getUsers: function (element) {
 		let selectOption = '';
+		let op = '';
 		jQuery('.user-ownership, .chzn-results').empty();
 		jQuery.ajax({
 			url: Joomla.getOptions('system.paths').base + "/index.php?option=com_cluster&task=clusterusers.getUsersByClientId&format=json",
@@ -23,7 +24,7 @@ var ownership = {
 					{
 						selectOption = ' selected="selected" ';
 					}
-					let op="<option value='"+data[index].value+"' "+selectOption+" > " + data[index]['text'] + "</option>" ;
+					op="<option value='"+data[index].value+"' "+selectOption+" > " + data[index]['text'] + "</option>" ;
 					jQuery('.user-ownership').append(op);
 				}
 
