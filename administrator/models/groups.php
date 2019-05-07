@@ -62,7 +62,7 @@ class TjfieldsModelGroups extends JModelList
 	 *
 	 * @since   12.2
 	 */
-	protected function populateState($ordering = null, $direction = null)
+	protected function populateState($ordering = 'a.id', $direction = 'desc')
 	{
 		// Initialise variables.
 		$app = JFactory::getApplication('administrator');
@@ -79,7 +79,7 @@ class TjfieldsModelGroups extends JModelList
 		$this->setState('params', $params);
 
 		// List state information.
-		parent::populateState('a.name', 'asc');
+		parent::populateState($ordering, $direction);
 	}
 
 	/**
