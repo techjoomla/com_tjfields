@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+	<fields name="params" label="COM_TJFIELDS_FIELD_BASIC_LABEL">
+		<fieldset name="params">
+			<field name="multiple" type="radio" label="multiple" default="0" class="btn-group" description="multiple">
+				<option value="1">COM_TJFIELDS_YES</option>
+				<option value="0">COM_TJFIELDS_NO</option>
+			</field>
+			<field name="fieldName" type="subform" formsource="administrator/components/com_tjfields/models/forms/types/forms/relatedfields.xml" multiple="true" min="1" />
+		</fieldset>
+	</fields>
+</form>

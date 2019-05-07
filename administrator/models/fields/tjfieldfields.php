@@ -78,6 +78,7 @@ class JFormFieldtjfieldfields extends JFormFieldList
 		if ($installUcm === 1)
 		{
 			$options[] = JHtml::_('select.option', 'ucmsubform', JText::_('COM_TJFIELDS_UCMSUBFORM'));
+			$options[] = JHtml::_('select.option', 'related', JText::_('COM_TJFIELDS_RELATED'));
 		}
 
 		$options = array_merge(parent::getOptions(), $options);
