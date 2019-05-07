@@ -69,7 +69,7 @@ jQuery(document).ready(function() {
 	jQuery('.cluster-ownership').change(function(){
 
 		// Check class exists or not
-		if (!jQuery(".user-ownership").length > 0)
+		if (jQuery(".user-ownership").length == 0)
 		{
 			return false;
 		}
