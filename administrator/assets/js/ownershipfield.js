@@ -8,6 +8,7 @@
 var ownership = {
 	/* This function to get all users in tjucm via ajax */
 	getUsers: function (element) {
+		let selectOption = '';
 		jQuery('.user-ownership, .chzn-results').empty();
 		jQuery.ajax({
 			url: Joomla.getOptions('system.paths').base + "/index.php?option=com_cluster&task=clusterusers.getUsersByClientId&format=json",
@@ -17,7 +18,12 @@ var ownership = {
 			success: function (data) {
 				for(index = 0; index < data.length; ++index)
 				{
-					var op="<option value='"+data[index].value+"' > " + data[index]['text'] + "</option>" ;
+					selectOption = '';
+					if (element.user_id == data[index].value)
+					{
+						selectOption = ' selected="selected" ';
+					}
+					var op="<option value='"+data[index].value+"' "+selectOption+" > " + data[index]['text'] + "</option>" ;
 					jQuery('.user-ownership').append(op);
 				}
 
@@ -34,6 +40,7 @@ var ownership = {
 
 			element.client = clientId;
 			element.iscluster = 1;
+			element.user_id = jQuery("#ownership_user").val();
 
 			if (jQuery.trim(clientId) != '' && clientId != 'undefined' )
 			{
@@ -51,7 +58,7 @@ jQuery(document).ready(function() {
 
 	if (jQuery(".user-ownership")[0])
 	{
-		let dataFields = {client: 0, iscluster: 0};
+		let dataFields = {client: 0, iscluster: 0, user_id: 0};
 
 		//Get All users for user field
 		ownership.setUsers(dataFields);
@@ -66,7 +73,9 @@ jQuery(document).ready(function() {
 		}
 
 		let clientId = jQuery(this).val();
-		let dataFields = {client: clientId,iscluster: 1};
+		let userId = jQuery("#ownership_user").val();
+
+		let dataFields = {client: clientId,iscluster: 1, user_id: userId};
 
 		//Get All associated users
 		ownership.getUsers(dataFields);

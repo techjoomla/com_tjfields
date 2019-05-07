@@ -50,6 +50,14 @@ class JFormFieldOwnerShip extends JFormFieldList
 		$doc = Factory::getDocument();
 		$doc->addScript(JUri::root() . 'administrator/components/com_tjfields/assets/js/ownershipfield.js');
 
+		$data = $this->getLayoutData();
+
+		$fieldName = str_replace("[", '_', $data['field']->name);
+		$fieldName = str_replace("]", '', $fieldName);
+		$fieldValue = $data['field']->value;
+
+		echo '<input name="ownership_user" id="ownership_user" type="hidden" value="' . $fieldValue . '" />';
+
 		$options = array();
 
 		// Initialize array to store dropdown options
