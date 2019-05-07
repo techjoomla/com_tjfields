@@ -56,4 +56,33 @@ class TjfieldsControllerFields extends FormController
 
 		echo new JResponseJson($returnValue, $msg);
 	}
+
+	/**
+	 * Function to get fields of perticular client
+	 *
+	 * @return string
+	 *
+	 * @since  1.5.0
+	 */
+	public function getFields()
+	{
+		// Check for request forgeries.
+		(JSession::checkToken() or JSession::checkToken('get')) or jexit(JText::_('JINVALID_TOKEN'));
+
+		$app = JFactory::getApplication('administrator');
+		$client = $app->input->get('client', '', 'STRING');
+
+		$fieldsModel = parent::getModel("Fields", "TjfieldsModel", array('ignore_request' => true));
+
+		// Set client in model state
+		if (!empty($client))
+		{
+			$fieldsModel->setState('filter.client', $client);
+			$fieldsModel->setState('filter.state', 1);
+		}
+
+		$result = $fieldsModel->getItems();
+
+		echo new JResponseJson($result);
+	}
 }

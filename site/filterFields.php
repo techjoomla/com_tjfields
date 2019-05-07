@@ -328,6 +328,7 @@ trait TjfieldsFilterField
 
 				switch ($efd->type)
 				{
+					case 'related':
 					case 'multi_select':
 						foreach ($efd->value as $option)
 						{
