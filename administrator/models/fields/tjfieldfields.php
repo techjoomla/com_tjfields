@@ -74,6 +74,8 @@ class JFormFieldtjfieldfields extends JFormFieldList
 		$options[] = JHtml::_('select.option', 'video', JText::_('COM_TJFIELDS_VIDEO'));
 		$options[] = JHtml::_('select.option', 'itemcategory', JText::_('COM_TJFIELDS_ITEM_CATEGORY'));
 		$options[] = JHtml::_('select.option', 'number', JText::_('COM_TJFIELDS_NUMBER'));
+		$options[] = JHtml::_('select.option', 'cluster', JText::_('COM_TJFIELDS_CLUSTER'));
+		$options[] = JHtml::_('select.option', 'ownership', JText::_('COM_TJFIELDS_OWNERSHIP'));
 
 		if ($installUcm === 1)
 		{
