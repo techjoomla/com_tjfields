@@ -75,7 +75,7 @@ techjoomla.jQuery( document ).ready(function(){
 
 	techjoomla.jQuery('#jform_filterable').parent().parent().hide();
 
-	if (field_type == 'radio' || field_type == 'single_select' || field_type == 'multi_select' || field_type == 'list')
+	if (field_type == 'radio' || field_type == 'single_select' || field_type == 'multi_select' || field_type == 'list' || field_type == 'tjlist')
 	{
 		techjoomla.jQuery('#jform_filterable').parent().parent().show();
 		techjoomla.jQuery('#option_div').show();
@@ -138,6 +138,7 @@ Joomla.submitbutton = function(task)
 
 			switch(field_type)
 			{
+				case 'tjlist':
 				case 'multi_select':
 				case 'single_select':
 				case 'radio':
