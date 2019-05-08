@@ -80,8 +80,7 @@ class TjfieldsControllerFields extends JControllerForm
 		// Check for request forgeries.
 		Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 
-		$app = Factory::getApplication();
-		$allUsers = array();
+		$userOptions = array();
 
 		// Initialize array to store dropdown options
 		$userOptions[] = HTMLHelper::_('select.option', "", Text::_('COM_TJFIELDS_OWNERSHIP_USER'));

@@ -49,7 +49,7 @@ class JFormFieldCluster extends JFormFieldList
 	protected function getOptions()
 	{
 		$user = Factory::getUser();
-		$options = $clusters = array();
+		$options = array();
 
 		if (!$user->id)
 		{

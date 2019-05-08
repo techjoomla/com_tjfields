@@ -8,8 +8,6 @@
 var ownership = {
 	/* This function to get all users in tjucm via ajax */
 	getUsers: function (element, ajaxUrl) {
-		let selectOption = '';
-		let op = '';
 		jQuery('.user-ownership, .chzn-results').empty();
 		jQuery.ajax({
 			url: ajaxUrl,
@@ -17,7 +15,10 @@ var ownership = {
 			data: element,
 			dataType:"json",
 			success: function (data) {
-				for(index = 0; index < data.length; ++index)
+				let selectOption = '';
+				let op = '';
+
+				for(let index = 0; index < data.length; ++index)
 				{
 					selectOption = '';
 					if (element.user_id == data[index].value)
@@ -69,7 +70,7 @@ jQuery(document).ready(function() {
 		// Check class exists or not
 		if (jQuery(".user-ownership").length == 0)
 		{
-			return false;
+			return undefined;
 		}
 
 		let dataFields = {client: jQuery(this).val() , user_id: jQuery("#ownership_user").val()};
