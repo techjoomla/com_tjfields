@@ -7,12 +7,12 @@
 
 var ownership = {
 	/* This function to get all users in tjucm via ajax */
-	getUsers: function (element) {
+	getUsers: function (element, ajaxUrl) {
 		let selectOption = '';
 		let op = '';
 		jQuery('.user-ownership, .chzn-results').empty();
 		jQuery.ajax({
-			url: Joomla.getOptions('system.paths').base + "/index.php?option=com_cluster&task=clusterusers.getUsersByClientId&format=json",
+			url: ajaxUrl,
 			type: 'POST',
 			data: element,
 			dataType:"json",
@@ -36,6 +36,8 @@ var ownership = {
 	/* This function to populate all users in ownership field of tjucm form */
 	setUsers: function (element) {
 		let clientId = '';
+		let ajaxUrl = Joomla.getOptions('system.paths').base + "/index.php?option=com_tjfields&task=fields.getAllUsers&format=json";
+
 		element.user_id = jQuery("#ownership_user").val();
 
 		// Check class exists or not
@@ -44,26 +46,22 @@ var ownership = {
 			clientId = jQuery(".cluster-ownership").val();
 
 			element.client = clientId;
-			element.iscluster = 1;
+			ajaxUrl = Joomla.getOptions('system.paths').base + "/index.php?option=com_cluster&task=clusterusers.getUsersByClientId&format=json";
 		}
 
-		if ((jQuery.trim(clientId) != '' && clientId != 'undefined') || (jQuery(".user-ownership").length > 0 && jQuery(".cluster-ownership").length == 0))
+		if ((jQuery.trim(clientId) != '' && clientId != 'undefined') || (jQuery(".cluster-ownership").length == 0))
 		{
-			this.getUsers(element);
+			this.getUsers(element, ajaxUrl);
 		}
 	}
 }
 
 jQuery(document).ready(function() {
 
-	// Check class exists or not
-	if (jQuery(".user-ownership").length > 0)
-	{
-		let dataFields = {client: 0, iscluster: 0, user_id: 0};
+	let dataFields = {client: 0, user_id: 0};
 
-		//Get All users for user field
-		ownership.setUsers(dataFields);
-	}
+	//Get All users for user field
+	ownership.setUsers(dataFields);
 
 	/* This function to get users based on cluster value in tjucm via ajax */
 	jQuery('.cluster-ownership').change(function(){
@@ -74,9 +72,9 @@ jQuery(document).ready(function() {
 			return false;
 		}
 
-		let dataFields = {client: jQuery(this).val() ,iscluster: 1, user_id: jQuery("#ownership_user").val()};
-
+		let dataFields = {client: jQuery(this).val() , user_id: jQuery("#ownership_user").val()};
+		let ajaxUrl = Joomla.getOptions('system.paths').base + "/index.php?option=com_cluster&task=clusterusers.getUsersByClientId&format=json";
 		//Get All associated users
-		ownership.getUsers(dataFields);
+		ownership.getUsers(dataFields, ajaxUrl);
 	});
 });
