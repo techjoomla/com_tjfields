@@ -84,13 +84,12 @@ class TjfieldsHelper
 				$fieldDataValue[$data->field_id]->field_id = $data->field_id;
 			}
 
+			// Add field name, label, type, params & user_id
+			$fieldDataValue[$data->field_id]->name    = $data->name;
+			$fieldDataValue[$data->field_id]->label   = $data->label;
+			$fieldDataValue[$data->field_id]->type    = $data->type;
+			$fieldDataValue[$data->field_id]->params  = $data->params;
 			$fieldDataValue[$data->field_id]->user_id = $data->user_id;
-
-			// Add field name, label, type & params
-			$fieldDataValue[$data->field_id]->name = $data->name;
-			$fieldDataValue[$data->field_id]->label = $data->label;
-			$fieldDataValue[$data->field_id]->type = $data->type;
-			$fieldDataValue[$data->field_id]->params = $data->params;
 		}
 
 		// Check if the field type is list or radio (fields which have option)
