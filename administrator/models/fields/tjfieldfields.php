@@ -9,6 +9,8 @@
 
 defined('JPATH_PLATFORM') or die;
 
+use Joomla\CMS\Component\ComponentHelper;
+
 jimport('joomla.html.html');
 JFormHelper::loadFieldClass('list');
 
@@ -39,19 +41,20 @@ class JFormFieldtjfieldfields extends JFormFieldList
 	{
 		jimport('joomla.filesystem.file');
 
-		$installUcm = 1;
+		$installUcm = 0;
 
-		// Check if tjucm is installed
-		if (JFile::exists(JPATH_ROOT . '/components/com_tjucm/tjucm.php'))
+		$installCluster = 0;
+
+		// To check com_tjucm component is installed
+		if (ComponentHelper::getComponent('com_tjucm', true)->enabled)
 		{
-			if (!JComponentHelper::isEnabled('com_tjucm', true))
-			{
-				$installUcm = 0;
-			}
+			$installUcm = 1;
 		}
-		else
+
+		// To check com_cluster component is installed
+		if (ComponentHelper::getComponent('com_cluster', true)->enabled)
 		{
-			$installUcm = 0;
+			$installCluster = 1;
 		}
 
 		$options = array();
@@ -81,6 +84,13 @@ class JFormFieldtjfieldfields extends JFormFieldList
 			$options[] = JHtml::_('select.option', 'ucmsubform', JText::_('COM_TJFIELDS_UCMSUBFORM'));
 			$options[] = JHtml::_('select.option', 'related', JText::_('COM_TJFIELDS_RELATED'));
 		}
+
+		if ($installCluster === 1)
+		{
+			$options[] = JHtml::_('select.option', 'cluster', JText::_('COM_TJFIELDS_CLUSTER'));
+		}
+
+		$options[] = JHtml::_('select.option', 'ownership', JText::_('COM_TJFIELDS_OWNERSHIP'));
 
 		$options = array_merge(parent::getOptions(), $options);
 
