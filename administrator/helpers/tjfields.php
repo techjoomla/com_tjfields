@@ -355,11 +355,11 @@ class TjfieldsHelper extends JHelperContent
 				if (isset($f->extra_options))
 				{
 					// Extra value for only Single select field // && $f->multiple == 'false')
-					if ($f->type == 'list')
+					if ($f->type == 'list' || $f->type == 'tjlist')
 					{
 						$fieldAttribute = json_decode($f->params);
 
-						if ($fieldAttribute->multiple != 'true')
+						if ($fieldAttribute->multiple != 'true' && !$fieldAttribute->multiple)
 						{
 							// Set Default blank Option
 							$option = $field->addChild('option', '- ' . JText::_('COM_TJFIELDS_SELECT_OPTION') . " " . $f->label . ' -');
@@ -419,7 +419,7 @@ class TjfieldsHelper extends JHelperContent
 	 */
 	public function getOptionData($data)
 	{
-		if ($data->type == 'radio' || $data->type == 'single_select' || $data->type == 'multi_select')
+		if ($data->type == 'radio' || $data->type == 'single_select' || $data->type == 'multi_select'  || $data->type == 'tjlist')
 		{
 			// For field type single select and multi select field type in xml is 'list'
 			if ($data->type == 'single_select' || $data->type == 'multi_select')
@@ -531,7 +531,7 @@ class TjfieldsHelper extends JHelperContent
 
 		$fieldsValueTable->load(array('id' => $data['valueId']));
 
-		$subData = new stdClass();
+		$subData = new stdClass;
 		$fieldId = 0;
 
 		if ($data['isSubformField'] == 1)

@@ -47,7 +47,7 @@ class TjfieldsHelper
 
 		$db    = JFactory::getDbo();
 		$query = $db->getQuery(true);
-		$query->select('fv.field_id, fv.user_id, f.type, fv.value, f.params');
+		$query->select('fv.field_id, fv.user_id, f.type, fv.value, f.params, f.name, f.label');
 		$query->from($db->qn('#__tjfields_fields_value', 'fv'));
 		$query->join('INNER', $db->qn('#__tjfields_fields', 'f') . ' ON (' .
 		$db->qn('f.id') . ' = ' . $db->qn('fv.field_id') . ')');
@@ -72,7 +72,7 @@ class TjfieldsHelper
 				$fieldDataValue[$data->field_id]->value[] = $data->value;
 				$fieldDataValue[$data->field_id]->field_id = $data->field_id;
 			}
-			elseif ($data->type == "multi_select" || ($data->type == "related" && $multipleValueField))
+			elseif ($data->type == "multi_select" || (($data->type == "related" || $data->type == "tjlist") && $multipleValueField))
 			{
 				$fieldDataValue[$data->field_id]->value[] = $data->value;
 				$fieldDataValue[$data->field_id]->field_id = $data->field_id;
@@ -84,24 +84,27 @@ class TjfieldsHelper
 				$fieldDataValue[$data->field_id]->field_id = $data->field_id;
 			}
 
+			// Add field name, label, type, params & user_id
+			$fieldDataValue[$data->field_id]->name    = $data->name;
+			$fieldDataValue[$data->field_id]->label   = $data->label;
+			$fieldDataValue[$data->field_id]->type    = $data->type;
+			$fieldDataValue[$data->field_id]->params  = $data->params;
 			$fieldDataValue[$data->field_id]->user_id = $data->user_id;
 		}
 
 		// Check if the field type is list or radio (fields which have option)
 		foreach ($fieldDataValue as $fdata)
 		{
-			$fieldData = $this->getFieldData('', $fdata->field_id);
-
-			$fieldParams = json_decode($fieldData->params);
-			$multipleValueField = (isset($fieldParams->multiple) && !empty($fieldParams->multiple)) ? 1 : 0;
-
-			if (!empty($fieldData))
+			if (!empty($fdata))
 			{
-				if ($fieldData->type == 'single_select' || $fieldData->type == 'multi_select' || $fieldData->type == 'radio')
+				$fieldParams = json_decode($fdata->params);
+				$multipleValueField = (isset($fieldParams->multiple) && !empty($fieldParams->multiple)) ? 1 : 0;
+
+				if ($fdata->type == 'single_select' || $fdata->type == 'multi_select' || $fdata->type == 'radio' || $fdata->type == 'tjlist')
 				{
 					$fdata->value = $this->getOptions($fdata->field_id, json_encode($fdata->value));
 				}
-				elseif ($fieldData->type == 'related' && $multipleValueField)
+				elseif ($fdata->type == 'related' && $multipleValueField)
 				{
 					$values = array();
 
@@ -114,11 +117,6 @@ class TjfieldsHelper
 
 					$fdata->value = $values;
 				}
-
-				$fdata->type  = $fieldData->type;
-				$fdata->name  = $fieldData->name;
-				$fdata->label = $fieldData->label;
-				$fdata->params = $fieldData->params;
 			}
 		}
 
@@ -405,11 +403,12 @@ class TjfieldsHelper
 						{
 							$this->saveSubformData($data, $fname, $field_data);
 						}
-						elseif (in_array($field_data->type, $multipleSelectionFields) || ($field_data->type === 'related' && $multipleValueField))
+						elseif (in_array($field_data->type, $multipleSelectionFields)
+							|| (($field_data->type == 'related' || $field_data->type == 'tjlist') && $multipleValueField))
 						{
 							$this->saveMultiselectOptions($data, $fname, $field_data);
 						}
-						elseif (in_array($field_data->type, $singleSelectionFields))
+						elseif (in_array($field_data->type, $singleSelectionFields) || ($field_data->type == 'tjlist' && !$multipleValueField))
 						{
 							$this->saveSingleSelectFieldValue($data, $fname, $field_data, $existingRecordId);
 						}
@@ -760,6 +759,32 @@ class TjfieldsHelper
 		$newFields = $postFieldData['fieldsvalue'];
 		$multiselectField = $newFields[$multiselectFname];
 
+		// Check for Tjlist - Remove Other option before save
+		if ($field_data->type == 'tjlist')
+		{
+			$tjListParams = json_decode($field_data->params);
+
+			if ($tjListParams->multiple && $tjListParams->other)
+			{
+				$otherValKey = array_search(JText::_('COM_TJFIELDS_TJLIST_OTHER_OPTION_VALUE'), $multiselectField);
+
+				if (is_numeric($otherValKey))
+				{
+					unset($multiselectField[$otherValKey]);
+					$multiselectField = array_values($multiselectField);
+
+					// Search for blank values
+					$blankVal = array_search('', $multiselectField);
+
+					if (is_numeric($blankVal))
+					{
+						unset($multiselectField[$blankVal]);
+						$multiselectField = array_values($multiselectField);
+					}
+				}
+			}
+		}
+
 		if (!empty($dbFieldValue))
 		{
 			// Check for update
@@ -837,17 +862,53 @@ class TjfieldsHelper
 			$db->setQuery($query);
 			$insert_obj->option_id = $db->loadResult();
 
-			JLoader::import('field', JPATH_ADMINISTRATOR . '/components/com_tjfields/tables');
-			$fieldTable = JTable::getInstance('Field', 'TjfieldsTable', array('dbo', $db));
-			$fieldTable->load(array('id' => $insert_obj->field_id));
+			$fieldData = $this->getFieldData('', $insert_obj->field_id);
 
-			if (!empty($insert_obj->option_id) || $fieldTable->type == 'related')
+			if (!empty($insert_obj->option_id) || $fieldData->type == 'related' || $fieldData->type == 'tjlist')
 			{
 				// Insert into db
 				$db = JFactory::getDbo();
 				$db->insertObject('#__tjfields_fields_value', $insert_obj, 'id');
 			}
 		}
+	}
+
+	/**
+	 * Function to build safe query for IN clause
+	 *
+	 * @param   string  $filterString  filter string
+	 *
+	 * @return  string
+	 */
+	public function buildSafeInClause($filterString)
+	{
+		$db = JFactory::getDbo();
+
+		// Check if $filterString is comma separated string.
+		if ((strpos($filterString, ',') !== false))
+		{
+			// Remove single and double quotes from string.
+			$filterString = str_replace(array('\'', '"'), '', $filterString);
+
+			// Create an array of string.
+			$filterArray  = explode(',', $filterString);
+
+			// Joomla $db->quote every element of array.
+			$filterArray  = array_map(array($db, 'quote'), $filterArray);
+
+			// Create safe string of array.
+			$filterString = implode(',', $filterArray);
+		}
+		else
+		{
+			// Remove single and double quotes from string.
+			$filterString = str_replace(array('\'', '"'), '', $filterString);
+
+			// Joomla $db->quote $filterString.
+			$filterString = $db->quote($filterString);
+		}
+
+		return $filterString;
 	}
 
 	/**
@@ -865,8 +926,10 @@ class TjfieldsHelper
 
 			$query = $db->getQuery(true);
 
+			$fieldValueEntryId = $this->buildSafeInClause($fieldValueEntryId);
+
 			$conditions = array(
-				$db->quoteName('id') . ' IN (' . $db->quote($fieldValueEntryId) . ') '
+				$db->quoteName('id') . ' IN (' . $fieldValueEntryId . ') '
 			);
 
 			$query->delete($db->quoteName('#__tjfields_fields_value'));
@@ -949,6 +1012,46 @@ class TjfieldsHelper
 
 			$db->setQuery($query);
 			$extra_options = $db->loadObjectlist();
+
+			$fieldData = $this->getFieldData('', $field_id);
+
+			if (!empty($fieldData))
+			{
+				// Check for Tjlist - start
+				$tjListParams = json_decode($fieldData->params);
+
+				if ($fieldData->type == 'tjlist' && $tjListParams->other)
+				{
+					$allValues = $new_option_value;
+
+					// Get array of dropdown values
+					$otherValues = array_column($extra_options, 'value');
+
+					// For single select value, convert string into array
+					if (!is_array($allValues))
+					{
+						$allValues = array ();
+						$allValues[] = $new_option_value;
+					}
+
+					// Get other/extra values that are not present in dropdown list
+					$otherValues = array_diff($allValues, $otherValues);
+
+					$otherValues = array_values($otherValues);
+
+					if (!empty($otherValues))
+					{
+						$tjListOtherObj = new stdClass;
+
+						$tjListOtherObj->options = $otherValues[0];
+						$tjListOtherObj->default_option = '';
+						$tjListOtherObj->value = $otherValues[0];
+
+						$extra_options[] = $tjListOtherObj;
+					}
+				}
+				// Check for Tjlist - end
+			}
 		}
 		else
 		{
@@ -1038,7 +1141,7 @@ class TjfieldsHelper
 			$query->where($db->quoteName('f.filterable') . " = 1");
 			$query->where($db->quoteName('f.state') . " = 1");
 			$query->where('fv.option_id IS NOT NULL');
-			$query->where("f.type IN ('single_select','multi_select', 'radio')");
+			$query->where("f.type IN ('single_select', 'multi_select', 'radio', 'tjlist')");
 
 			// Doesn't have mapped any category
 			$query->where('NOT EXISTS (select * FROM #__tjfields_category_mapping AS cm where f.id=cm.field_id)');
@@ -1065,7 +1168,7 @@ class TjfieldsHelper
 				$queryCat->where($db->quoteName('f.filterable') . " = 1");
 				$queryCat->where($db->quoteName('f.state') . " = 1");
 				$queryCat->where('fv.option_id IS NOT NULL');
-				$queryCat->where("f.type IN ('single_select','multi_select', 'radio')");
+				$queryCat->where("f.type IN ('single_select', 'multi_select', 'radio', 'tjlist')");
 
 				$queryCat->JOIN('INNER', '#__tjfields_category_mapping AS fcm ON fcm.field_id = f.id');
 				$queryCat->where($db->quoteName('fcm.category_id') . " = " . $category_id);

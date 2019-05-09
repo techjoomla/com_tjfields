@@ -180,7 +180,7 @@ class TjfieldsModelField extends JModelAdmin
 		$form = $this->getForm($data);
 
 		// Dont allow to save radio/single/multi selects without any options
-		if ($data['type'] == 'radio' || $data['type'] == 'single_select' || $data['type'] == 'multi_select')
+		if ($data['type'] == 'radio' || $data['type'] == 'single_select' || $data['type'] == 'multi_select' || $data['type'] == 'tjlist')
 		{
 			$form->setFieldAttribute('fieldoption', 'required', true);
 		}
@@ -270,7 +270,7 @@ class TjfieldsModelField extends JModelAdmin
 		$data['client_type'] = $input->post->get('client_type', '', 'STRING');
 		$data['saveOption'] = 0;
 
-		if ($data['type'] == "radio" || $data['type'] == "single_select" || $data['type'] == "multi_select")
+		if ($data['type'] == "radio" || $data['type'] == "single_select" || $data['type'] == "multi_select" || $data['type'] == "tjlist")
 		{
 			$data['saveOption'] = 1;
 		}

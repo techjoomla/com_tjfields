@@ -121,7 +121,7 @@ $document->addStyleSheet('components/com_tjfields/assets/css/tjfields.css');
 						<?php
 						$type = $this->form->getValue('type');
 
-						if ($type == 'radio' || $type == 'single_select' || $type == 'multi_select')
+						if ($type == 'radio' || $type == 'single_select' || $type == 'multi_select' || $type == 'tjlist')
 						{
 							?>
 							<div class="control-group displaynone" id="option_div" >

@@ -40,7 +40,13 @@ class JFormFieldRelated extends JFormFieldList
 	protected function getOptions()
 	{
 		$fieldname = preg_replace('/[^a-zA-Z0-9_\-]/', '_', $this->fieldname);
-		$options   = array(array('value' => '', "text" => JText::_("JGLOBAL_SELECT_AN_OPTION")));
+
+		$options = array();
+
+		if (!$this->multiple)
+		{
+			$options = array(array('value' => '', "text" => JText::_("JGLOBAL_SELECT_AN_OPTION")));
+		}
 
 		$db = Factory::getDbo();
 		Table::addIncludePath(JPATH_ROOT . '/administrator/components/com_tjfields/tables');
@@ -64,22 +70,27 @@ class JFormFieldRelated extends JFormFieldList
 			$query->where($db->quoteName('client') . ' = ' . $db->quote($realtedField->client));
 			$db->setQuery($query);
 			$result = $db->loadColumn();
-			$ucmRecordIds = implode(",", $result);
-			$fieldIds = implode(",", $realtedField->fieldIds);
 
-			// Get field values for the fields configured in related fields for the given UCM Type
-			$query = $db->getQuery(true);
-			$query->select($db->quoteName('ud.id', 'value'));
-			$query->select("GROUP_CONCAT(" . $db->quoteName('fv.value') . " SEPARATOR ' ') AS text");
-			$query->from($db->quoteName('#__tj_ucm_data', 'ud'));
-			$query->join('INNER', $db->qn('#__tjfields_fields_value', 'fv') . ' ON (' . $db->qn('ud.id') . ' = ' . $db->qn('fv.content_id') . ')');
-			$query->where($db->quoteName('field_id') . ' IN( ' . $fieldIds . ')');
-			$query->where($db->quoteName('content_id') . ' IN( ' . $ucmRecordIds . ')');
-			$query->group($db->quoteName('content_id'));
-			$db->setQuery($query);
+			if (!empty($result))
+			{
+				$ucmRecordIds = implode(",", $result);
+				$fieldIds = implode(",", $realtedField->fieldIds);
 
-			// Load the results as a list of stdClass objects (see later for more options on retrieving data).
-			$result = $db->loadAssocList();
+				// Get field values for the fields configured in related fields for the given UCM Type
+				$query = $db->getQuery(true);
+				$query->select($db->quoteName('ud.id', 'value'));
+				$query->select("GROUP_CONCAT(" . $db->quoteName('fv.value') . " SEPARATOR ' ') AS text");
+				$query->from($db->quoteName('#__tj_ucm_data', 'ud'));
+				$query->join('INNER', $db->qn('#__tjfields_fields_value', 'fv') . ' ON (' . $db->qn('ud.id') . ' = ' . $db->qn('fv.content_id') . ')');
+				$query->where($db->quoteName('field_id') . ' IN( ' . $fieldIds . ')');
+				$query->where($db->quoteName('content_id') . ' IN( ' . $ucmRecordIds . ')');
+				$query->group($db->quoteName('content_id'));
+
+				$db->setQuery($query);
+
+				// Load the results as a list of stdClass objects (see later for more options on retrieving data).
+				$result = $db->loadAssocList();
+			}
 
 			$options = array_merge($options, $result);
 		}
