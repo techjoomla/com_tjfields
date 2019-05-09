@@ -105,7 +105,7 @@ class JFormFieldTjList extends JFormFieldList
 		$html = parent::getInput();
 
 		$doc = JFactory::getDocument();
-		$doc->addScript(JUri::root() . 'administrator/components/com_tjfields/assets/js/tjlist.js');
+		$doc->addScript(JUri::root() . 'administrator/components/com_tjfields/assets/js/tjlist.min.js');
 
 		$options = $this->getOptions();
 
