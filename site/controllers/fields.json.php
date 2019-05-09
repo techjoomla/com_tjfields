@@ -97,7 +97,7 @@ class TjfieldsControllerFields extends JControllerForm
 			}
 		}
 
-		echo json_encode($userOptions);
+		echo new JResponseJson($userOptions);
 		jexit();
 	}
 }

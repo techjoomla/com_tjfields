@@ -14,9 +14,10 @@ var ownership = {
 			type: 'POST',
 			data: element,
 			dataType:"json",
-			success: function (data) {
+			success: function (response) {
 				let selectOption = '';
 				let op = '';
+				let data = response.data;
 
 				for(let index = 0; index < data.length; ++index)
 				{
@@ -36,7 +37,7 @@ var ownership = {
 	},
 	/* This function to populate all users in ownership field of tjucm form */
 	setUsers: function (element) {
-		let clientId = '';
+		let clusterId = '';
 		let ajaxUrl = Joomla.getOptions('system.paths').base + "/index.php?option=com_tjfields&task=fields.getAllUsers&format=json";
 
 		element.user_id = jQuery("#ownership_user").val();
@@ -44,13 +45,13 @@ var ownership = {
 		// Check class exists or not
 		if (jQuery(".cluster-ownership").length > 0)
 		{
-			clientId = jQuery(".cluster-ownership").val();
+			clusterId = jQuery(".cluster-ownership").val();
 
-			element.client = clientId;
+			element.cluster_id = clusterId;
 			ajaxUrl = Joomla.getOptions('system.paths').base + "/index.php?option=com_cluster&task=clusterusers.getUsersByClientId&format=json";
 		}
 
-		if ((jQuery.trim(clientId) != '' && clientId != 'undefined') || (jQuery(".cluster-ownership").length == 0))
+		if ((jQuery.trim(clusterId) != '' && clusterId != 'undefined') || (jQuery(".cluster-ownership").length == 0))
 		{
 			this.getUsers(element, ajaxUrl);
 		}
@@ -59,7 +60,7 @@ var ownership = {
 
 jQuery(document).ready(function() {
 
-	let dataFields = {client: 0, user_id: 0};
+	let dataFields = {cluster_id: 0, user_id: 0};
 
 	//Get All users for user field
 	ownership.setUsers(dataFields);
@@ -73,7 +74,7 @@ jQuery(document).ready(function() {
 			return undefined;
 		}
 
-		let dataFields = {client: jQuery(this).val() , user_id: jQuery("#ownership_user").val()};
+		let dataFields = {cluster_id: jQuery(this).val() , user_id: jQuery("#ownership_user").val()};
 		let ajaxUrl = Joomla.getOptions('system.paths').base + "/index.php?option=com_cluster&task=clusterusers.getUsersByClientId&format=json";
 		//Get All associated users
 		ownership.getUsers(dataFields, ajaxUrl);
