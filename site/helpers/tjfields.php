@@ -766,7 +766,7 @@ class TjfieldsHelper
 
 			if ($tjListParams->multiple && $tjListParams->other)
 			{
-				$otherValKey = array_search(JText::_('COM_TJFIELDS_TJLIST_OTHER_OPTION'), $multiselectField);
+				$otherValKey = array_search(JText::_('COM_TJFIELDS_TJLIST_OTHER_OPTION_VALUE'), $multiselectField);
 
 				if (is_numeric($otherValKey))
 				{

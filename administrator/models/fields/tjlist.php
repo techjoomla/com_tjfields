@@ -101,6 +101,7 @@ class JFormFieldTjList extends JFormFieldList
 	{
 		// Add Other option language constant for JavaScript
 		Text::script('COM_TJFIELDS_TJLIST_OTHER_OPTION');
+		Text::script('COM_TJFIELDS_TJLIST_OTHER_OPTION_VALUE');
 
 		$html = parent::getInput();
 
@@ -159,7 +160,7 @@ class JFormFieldTjList extends JFormFieldList
 				// Hide dropdown
 				$doc->addScriptDeclaration('
 					jQuery(document).ready(function() {
-						jQuery("select[name=\"' . $this->name . '\"] option[value=\"' . JText::_('COM_TJFIELDS_TJLIST_OTHER_OPTION') . '\"]")
+						jQuery("select[name=\"' . $this->name . '\"] option[value=\"' . Text::_('COM_TJFIELDS_TJLIST_OTHER_OPTION_VALUE') . '\"]")
 						.prop("selected", true).trigger("liszt:updated");
 					});
 				');
@@ -182,7 +183,7 @@ class JFormFieldTjList extends JFormFieldList
 
 		if ($this->element['other'])
 		{
-			$options[] = HTMLHelper::_('select.option', Text::_('COM_TJFIELDS_TJLIST_OTHER_OPTION'), Text::_('COM_TJFIELDS_TJLIST_OTHER_OPTION'));
+			$options[] = HTMLHelper::_('select.option', Text::_('COM_TJFIELDS_TJLIST_OTHER_OPTION_VALUE'), Text::_('COM_TJFIELDS_TJLIST_OTHER_OPTION'));
 		}
 
 		return array_merge(parent::getOptions(), $options);

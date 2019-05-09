@@ -31,9 +31,9 @@ jQuery(document).ready(function() {
 		let selectedVal = jQuery(this).val();
 
 		if (
-			(jQuery.inArray(Joomla.JText._('COM_TJFIELDS_TJLIST_OTHER_OPTION'), selectedVal) !== -1)
+			(jQuery.inArray(Joomla.JText._('COM_TJFIELDS_TJLIST_OTHER_OPTION_VALUE'), selectedVal) !== -1)
 			||
-			(selectedVal == Joomla.JText._('COM_TJFIELDS_TJLIST_OTHER_OPTION'))
+			(selectedVal == Joomla.JText._('COM_TJFIELDS_TJLIST_OTHER_OPTION_VALUE'))
 		)
 		{
 			if (jQuery('input[name="' + jQuery(this).attr('name') + '"').length == 0)
