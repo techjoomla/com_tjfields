@@ -1,9 +1,10 @@
 <?php
+<?php
 /**
- * @version    SVN: <svn_id>
- * @package    TJField
+ * @package    TjFields
+ *
  * @author     Techjoomla <extensions@techjoomla.com>
- * @copyright  Copyright (c) 2014-2016 TechJoomla. All rights reserved.
+ * @copyright  Copyright (c) 2009-2018 TechJoomla. All rights reserved.
  * @license    GNU General Public License version 2 or later.
  */
 defined('_JEXEC') or die;
@@ -13,7 +14,7 @@ jimport('joomla.application.component.modellist');
 /**
  * Methods supporting a list of Tjfields option records.
  *
- * @since  2.5
+ * @since  _DEPLOY_VERSION_
  */
 class TjfieldsModelOptions extends JModelList
 {
@@ -22,7 +23,7 @@ class TjfieldsModelOptions extends JModelList
 	 *
 	 * @param   Array  $config  An optional associative array of configuration settings.
 	 *
-	 * @since    1.6
+	 * @since  _DEPLOY_VERSION_
 	 */
 	public function __construct($config = array())
 	{
@@ -44,7 +45,7 @@ class TjfieldsModelOptions extends JModelList
 	 *
 	 * @return  JDatabaseQuery
 	 *
-	 * @since   1.0
+	 * @since  _DEPLOY_VERSION_
 	 */
 	protected function getListQuery()
 	{
@@ -75,7 +76,7 @@ class TjfieldsModelOptions extends JModelList
 	 *
 	 * @return  mixed  An array of data items on success, false on failure.
 	 *
-	 * @since   1.0
+	 * @since  _DEPLOY_VERSION_
 	 */
 	public function getItems()
 	{
