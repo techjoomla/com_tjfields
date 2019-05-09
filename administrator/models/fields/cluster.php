@@ -97,14 +97,14 @@ class JFormFieldCluster extends JFormFieldList
 				if ($subUserExist && !$superUser)
 				{
 					// Check user has permission for mentioned cluster
-					if (RBACL::authorise($user->id, 'com_tjucm', 'core.manage.cluster', $cluster->client_id))
+					if (RBACL::authorise($user->id, 'com_cluster', 'core.manage.cluster', $cluster->cluster_id))
 					{
-						$options[] = HTMLHelper::_('select.option', $cluster->client_id, trim($cluster->name));
+						$options[] = HTMLHelper::_('select.option', $cluster->cluster_id, trim($cluster->name));
 					}
 				}
 				else
 				{
-					$options[] = HTMLHelper::_('select.option', $cluster->client_id, trim($cluster->name));
+					$options[] = HTMLHelper::_('select.option', $cluster->cluster_id, trim($cluster->name));
 				}
 			}
 		}

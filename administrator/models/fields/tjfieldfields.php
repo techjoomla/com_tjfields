@@ -45,8 +45,7 @@ class JFormFieldtjfieldfields extends JFormFieldList
 
 		$installCluster = 0;
 
-		// Check if tjucm is installed
-		// To check com_cluster component is installed
+		// To check com_tjucm component is installed
 		if (ComponentHelper::getComponent('com_tjucm', true)->enabled)
 		{
 			$installUcm = 1;
