@@ -81,7 +81,7 @@ class JFormFieldTjList extends JFormFieldList
 	{
 		$return = parent::setup($element, $value, $group);
 
-		if ($return)
+		if ($return && $this->element['other'])
 		{
 			$this->class .= ' tjfieldTjList';
 		}
