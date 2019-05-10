@@ -41,7 +41,7 @@ class TjfieldsModelFields extends JModelList
 				'validation_class', 'a.validation_class',
 				'ordering', 'a.ordering',
 				'client', 'a.client',
-				'group_id', 'a.group_id',
+				'group_id', 'a.group_id'        
 			);
 		}
 
@@ -58,7 +58,7 @@ class TjfieldsModelFields extends JModelList
 	 *
 	 * @since  1.6
 	 */
-	protected function populateState($ordering = null, $direction = null)
+	protected function populateState($ordering = 'a.id', $direction = 'desc')
 	{
 		// Initialise variables.
 		$app = JFactory::getApplication('administrator');
@@ -86,7 +86,7 @@ class TjfieldsModelFields extends JModelList
 		$this->setState('params', $params);
 
 		// List state information.
-		parent::populateState('a.type', 'asc');
+		parent::populateState($ordering, $direction);
 	}
 
 	/**
@@ -130,6 +130,13 @@ class TjfieldsModelFields extends JModelList
 		// Join over the user field 'created_by'
 		$query->select('created_by.name AS created_by');
 		$query->join('LEFT', '#__users AS created_by ON created_by.id = a.created_by');
+		
+		// Filter by group state
+		$groupId = $this->getState('filter.group_id');
+		if (is_numeric($groupId))
+		{
+		    $query->where('a.group_id = ' . (int) $groupId);
+		}
 
 		// Filter by published state
 		$published = $this->getState('filter.state');
