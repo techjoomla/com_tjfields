@@ -72,7 +72,7 @@ class JFormFieldCluster extends JFormFieldList
 		JLoader::import("/components/com_cluster/includes/cluster", JPATH_ADMINISTRATOR);
 		$ClusterModel = ClusterFactory::model('ClusterUsers', array('ignore_request' => true));
 		$ClusterModel->setState('list.group_by_client_id', 1);
-		$ClusterModel->setState('filter.clusterState', 1);
+		$ClusterModel->setState('filter.published', 1);
 
 		if (!$superUser && !$user->authorise('core.manageall.cluster', 'com_cluster'))
 		{
