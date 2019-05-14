@@ -87,6 +87,8 @@ class TjfieldsControllerFields extends JControllerForm
 
 		JModelLegacy::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_users/models');
 		$userModel = JModelLegacy::getInstance('Users', 'UsersModel', array('ignore_request' => true));
+		$userModel->setState('filter.state', 0);
+
 		$allUsers = $userModel->getItems();
 
 		if (!empty($allUsers))
