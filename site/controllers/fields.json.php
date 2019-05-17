@@ -10,6 +10,11 @@
 // No direct access
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Session\Session;
+
 jimport('joomla.filesystem.file');
 
 require_once JPATH_SITE . "/components/com_tjfields/filterFields.php";
@@ -61,5 +66,40 @@ class TjfieldsControllerFields extends JControllerForm
 		$msg = $returnValue ? JText::_('COM_TJFIELDS_FILE_DELETE_SUCCESS') : JText::_('COM_TJFIELDS_FILE_DELETE_ERROR');
 
 		echo new JResponseJson($returnValue, $msg);
+	}
+
+	/**
+	 * Method to get user list.
+	 *
+	 * @return   null
+	 *
+	 * @since    1.6
+	 */
+	public function getAllUsers()
+	{
+		// Check for request forgeries.
+		Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
+
+		$userOptions = array();
+
+		// Initialize array to store dropdown options
+		$userOptions[] = HTMLHelper::_('select.option', "", Text::_('COM_TJFIELDS_OWNERSHIP_USER'));
+
+		JModelLegacy::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_users/models');
+		$userModel = JModelLegacy::getInstance('Users', 'UsersModel', array('ignore_request' => true));
+		$userModel->setState('filter.state', 0);
+
+		$allUsers = $userModel->getItems();
+
+		if (!empty($allUsers))
+		{
+			foreach ($allUsers as $user)
+			{
+				$userOptions[] = HTMLHelper::_('select.option', $user->id, trim($user->username));
+			}
+		}
+
+		echo new JResponseJson($userOptions);
+		jexit();
 	}
 }

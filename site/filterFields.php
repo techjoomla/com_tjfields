@@ -328,6 +328,7 @@ trait TjfieldsFilterField
 
 				switch ($efd->type)
 				{
+					case 'tjlist':
 					case 'related':
 					case 'multi_select':
 						foreach ($efd->value as $option)
@@ -342,14 +343,6 @@ trait TjfieldsFilterField
 
 					break;
 
-					case 'single_select':
-						foreach ($efd->value as $option)
-						{
-							$extra_fields_data_formatted[$efd->name] = $option->value;
-						}
-					break;
-
-					case 'radio':
 					default:
 						foreach ($efd->value as $option)
 						{
