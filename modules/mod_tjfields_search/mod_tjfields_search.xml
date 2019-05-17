@@ -4,10 +4,10 @@
 	<author>Techjoomla</author>
 	<authorEmail>extensions@techjoomla.com</authorEmail>
 	<authorUrl>https://techjoomla.com</authorUrl>
-	<copyright>Copyright (C) 2010 - 2018 Techjoomla. All rights reserved.</copyright>
+	<copyright>Copyright (C) 2010 - 2019 Techjoomla. All rights reserved.</copyright>
 	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
-	<creationDate>16th Nov 2018</creationDate>
-	<version>1.4.1</version>
+	<creationDate>17th May 2019</creationDate>
+	<version>1.4.2</version>
 	<description>MOD_TJFIELDS_SEARCH_XML_DESCRIPTION</description>
 	<files>
 		<filename module="mod_tjfields_search">mod_tjfields_search.php</filename>
