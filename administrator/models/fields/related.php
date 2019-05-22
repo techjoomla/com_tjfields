@@ -13,6 +13,7 @@ JFormHelper::loadFieldClass('list');
 use Joomla\CMS\Factory;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Router\Route;
+use Joomla\CMS\Language\Text;
 
 /**
  * Form Field class for the Joomla Platform.
@@ -39,13 +40,16 @@ class JFormFieldRelated extends JFormFieldList
 	 */
 	protected function getOptions()
 	{
+		// Load TJ-Fields language file
+		$lang = Factory::getLanguage()->load('com_tjfields', JPATH_ADMINISTRATOR);
+
 		$fieldname = preg_replace('/[^a-zA-Z0-9_\-]/', '_', $this->fieldname);
 
 		$options = array();
 
 		if (!$this->multiple)
 		{
-			$options = array(array('value' => '', "text" => JText::_("JGLOBAL_SELECT_AN_OPTION")));
+			$options = array(array('value' => '', "text" => Text::_("JGLOBAL_SELECT_AN_OPTION")));
 		}
 
 		$db = Factory::getDbo();
@@ -53,8 +57,10 @@ class JFormFieldRelated extends JFormFieldList
 		$fieldTable = Table::getInstance('field', 'TjfieldsTable', array('dbo', $db));
 		$fieldTable->load(array('name' => $fieldname));
 
+		$fieldParams = json_decode($fieldTable->params);
+
 		// UCM fields and fields from which options are to be generated
-		$realtedFields = json_decode($fieldTable->params)->fieldName;
+		$realtedFields = $fieldParams->fieldName;
 
 		foreach ($realtedFields as $realtedField)
 		{
@@ -68,6 +74,18 @@ class JFormFieldRelated extends JFormFieldList
 			$query->select($db->quoteName(array('id')));
 			$query->from($db->quoteName('#__tj_ucm_data'));
 			$query->where($db->quoteName('client') . ' = ' . $db->quote($realtedField->client));
+
+			if ($fieldParams->clusterAware == 1)
+			{
+				$jInput = Factory::getApplication()->input;
+				$clusterId = $jInput->get("cluster_id", 0, "INT");
+
+				if (!empty($clusterId))
+				{
+					$query->where($db->quoteName('cluster_id') . ' = ' . $clusterId);
+				}
+			}
+
 			$db->setQuery($query);
 			$result = $db->loadColumn();
 
@@ -148,10 +166,12 @@ class JFormFieldRelated extends JFormFieldList
 				}
 			}
 
-			if ($canCreate)
+			$showAddNewRecordLink = json_decode($fieldTable->params)->showAddNewRecordLink;
+
+			if ($canCreate && !empty($showAddNewRecordLink))
 			{
 				$masterUcmLink = Route::_('index.php?option=com_tjucm&view=itemform&client=' . $ucmTypeTable->unique_identifier, false);
-				$html .= "<div><a target='_blank' href='" . $masterUcmLink . "'>Add Record</a></div>";
+				$html .= "<div><a target='_blank' href='" . $masterUcmLink . "'>" . Text::_("COM_TJFIELDS_FORM_DESC_FIELD_RELATED_ADD_RECORD") . "</a></div>";
 			}
 		}
 
