@@ -70,12 +70,12 @@ jQuery(document).ready(function() {
 	ownership.setUsers(dataFields);
 
 	/* This function to get users based on cluster value in tjucm via ajax */
-	jQuery('.cluster-ownership').change(function(){
+	jQuery('.cluster-ownership').change(function(e){
 
 		// Check class exists or not
 		if (jQuery(".user-ownership").length == 0)
 		{
-			return undefined;
+			return e.preventDefault();
 		}
 
 		let dataFields = {cluster_id: jQuery(this).val() , user_id: jQuery("#ownership_user").val()};
