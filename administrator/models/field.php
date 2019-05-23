@@ -287,13 +287,13 @@ class TjfieldsModelField extends JModelAdmin
 			// To store cluster type fields in core UCM hence rename the field name
 			if ($data['type'] == 'cluster')
 			{
-				$data_unique_name = $client . '_' . $data['type'] . 'clusterid';
+				$data_unique_name = $client . '_' . $data['client_type'] . '_' . $data['type'] . 'clusterid';
 			}
 
 			// To store ownership type fields in core UCM hence rename the field name
 			if ($data['type'] == 'ownership')
 			{
-				$data_unique_name = $client . '_' . $data['type'] . 'createdby';
+				$data_unique_name = $client . '_' . $data['client_type'] . '_' . $data['type'] . 'createdby';
 			}
 
 			$data['name'] = $data_unique_name;
