@@ -399,7 +399,7 @@ class TjfieldsHelper
 						$fieldParams = json_decode($field_data->params);
 						$multipleValueField = (isset($fieldParams->multiple) && !empty($fieldParams->multiple)) ? 1 : 0;
 
-						if ($field_data->type === 'subform' || $field_data->type === 'ucmsubform')
+						if ($field_data->type === 'subform')
 						{
 							$this->saveSubformData($data, $fname, $field_data);
 						}
