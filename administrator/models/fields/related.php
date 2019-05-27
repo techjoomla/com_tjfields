@@ -58,7 +58,8 @@ class JFormFieldRelated extends JFormFieldList
 		$fieldTable->load(array('name' => $fieldname));
 
 		// UCM fields and fields from which options are to be generated
-		$realtedFields = json_decode($fieldTable->params)->fieldName;
+		$fieldParams = json_decode($fieldTable->params);
+		$realtedFields = $fieldParams->fieldName;
 
 		foreach ($realtedFields as $realtedField)
 		{
@@ -140,7 +141,8 @@ class JFormFieldRelated extends JFormFieldList
 		$fieldTable->load(array('name' => $fieldname));
 
 		// UCM fields and fields from which options are to be generated
-		$realtedFields = (array) json_decode($fieldTable->params)->fieldName;
+		$fieldParams = json_decode($fieldTable->params);
+		$realtedFields = (array) $fieldParams->fieldName;
 
 		if (count($realtedFields) == 1)
 		{
@@ -164,7 +166,7 @@ class JFormFieldRelated extends JFormFieldList
 				}
 			}
 
-			$showAddNewRecordLink = json_decode($fieldTable->params)->showAddNewRecordLink;
+			$showAddNewRecordLink = $fieldParams->showAddNewRecordLink;
 
 			if ($canCreate && !empty($showAddNewRecordLink))
 			{
