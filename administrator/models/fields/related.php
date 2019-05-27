@@ -57,10 +57,8 @@ class JFormFieldRelated extends JFormFieldList
 		$fieldTable = Table::getInstance('field', 'TjfieldsTable', array('dbo', $db));
 		$fieldTable->load(array('name' => $fieldname));
 
-		$fieldParams = json_decode($fieldTable->params);
-
 		// UCM fields and fields from which options are to be generated
-		$realtedFields = $fieldParams->fieldName;
+		$realtedFields = json_decode($fieldTable->params)->fieldName;
 
 		foreach ($realtedFields as $realtedField)
 		{
