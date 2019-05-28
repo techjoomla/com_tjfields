@@ -40,6 +40,14 @@ class JFormFieldCluster extends JFormFieldList
 	protected $loadExternally = 0;
 
 	/**
+	 * The form field value.
+	 *
+	 * @var    mixed
+	 * @since  __DEPLOY_VERSION__
+	 */
+	protected $value = '';
+
+	/**
 	 * Method to get a list of options for cluster field.
 	 *
 	 * @return array An array of JHtml options.
@@ -49,11 +57,19 @@ class JFormFieldCluster extends JFormFieldList
 	protected function getOptions()
 	{
 		$user = Factory::getUser();
+		$app = Factory::getApplication();
+		$clusterId = $app->input->getInt('cluster_id', 0);
+
 		$options = array();
 
 		if (!$user->id)
 		{
 			return $options;
+		}
+
+		if (!empty($clusterId))
+		{
+			$this->value = $clusterId;
 		}
 
 		$superUser    = $user->authorise('core.admin');
