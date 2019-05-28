@@ -57,19 +57,12 @@ class JFormFieldCluster extends JFormFieldList
 	protected function getOptions()
 	{
 		$user = Factory::getUser();
-		$app = Factory::getApplication();
-		$clusterId = $app->input->getInt('cluster_id', 0);
 
 		$options = array();
 
 		if (!$user->id)
 		{
 			return $options;
-		}
-
-		if (!empty($clusterId))
-		{
-			$this->value = $clusterId;
 		}
 
 		$superUser    = $user->authorise('core.admin');
@@ -111,7 +104,6 @@ class JFormFieldCluster extends JFormFieldList
 			foreach ($clusters as $cluster)
 			{
 				// Check rbacl component active and normal user is logged-in
-
 				if ($subUserExist && (!$superUser && !$user->authorise('core.manageall.cluster', 'com_cluster')))
 				{
 					// Check user has permission for mentioned cluster
@@ -128,5 +120,25 @@ class JFormFieldCluster extends JFormFieldList
 		}
 
 		return $options;
+	}
+
+	/**
+	 * Method to get the field input markup.
+	 *
+	 * @return  string  The field input markup.
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	protected function getInput()
+	{
+		$clusterId = Factory::getApplication()->input->getInt('cluster_id', 0);
+
+		if (!empty($clusterId))
+		{
+			$this->value = $clusterId;
+			$this->readonly = true;
+		}
+
+		return parent::getInput();
 	}
 }
