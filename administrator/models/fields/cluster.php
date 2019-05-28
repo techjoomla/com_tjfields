@@ -104,7 +104,6 @@ class JFormFieldCluster extends JFormFieldList
 			foreach ($clusters as $cluster)
 			{
 				// Check rbacl component active and normal user is logged-in
-
 				if ($subUserExist && (!$superUser && !$user->authorise('core.manageall.cluster', 'com_cluster')))
 				{
 					// Check user has permission for mentioned cluster
