@@ -450,8 +450,8 @@ class TjfieldsHelper
 	/**
 	 * Get option which are stored in field option table.
 	 *
-	 * @param   array  $field_id      field if
-	 * @param   array  $option_value  option value
+	 * @param   INT     $field_id      field if
+	 * @param   String  $option_value  option value
 	 *
 	 * @return array Option for the particular field
 	 */
@@ -475,7 +475,7 @@ class TjfieldsHelper
 				{
 					$option_value_string = implode("','", $new_option_value);
 
-					$query->where($db->quoteName('value') . 'IN (' . $db->quote($option_value_string) . ')');
+					$query->where($db->quoteName('value') . "IN ('" . ($option_value_string) . "')");
 				}
 				else
 				{
@@ -498,9 +498,9 @@ class TjfieldsHelper
 	/**
 	 * Get option which are stored in field option table.
 	 *
-	 * @param   array  $client  Get all fields based on client
+	 * @param   String  $client  Get all fields based on client
 	 *
-	 * @return object
+	 * @return  mixed   The return value or null if the query failed.
 	 */
 	public function getUniversalFields($client)
 	{
