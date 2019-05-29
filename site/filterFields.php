@@ -254,25 +254,6 @@ trait TjfieldsFilterField
 	}
 
 	/**
-	 * Method to get the form for extra fields.
-	 * This form file will be created by field manager.
-	 *
-	 * The base form is loaded from XML
-	 *
-	 * @param   array  $data  data
-	 *
-	 * @return  array|bool  array on success, flase on failure
-	 *
-	 * @since	1.6
-	 */
-	protected function loadFormDataExtra($data)
-	{
-		$dataExtra = $this->getDataExtraFields($data);
-
-		return $dataExtra;
-	}
-
-	/**
 	 * Method to get the data of extra form fields
 	 * This form file will be created by field manager.
 	 *
@@ -283,7 +264,7 @@ trait TjfieldsFilterField
 	 *
 	 * @since	1.6
 	 */
-	public function getDataExtraFields($data, $id = null)
+	public function loadFormDataExtra($data, $id = null)
 	{
 		$input = JFactory::getApplication()->input;
 		$user = JFactory::getUser();
@@ -313,7 +294,6 @@ trait TjfieldsFilterField
 		$data['user_id']     = JFactory::getUser()->id;
 
 		$extra_fields_data = $tjFieldsHelper->FetchDatavalue($data);
-
 		$extra_fields_data_formatted = array();
 
 		foreach ($extra_fields_data as $efd)
@@ -321,6 +301,11 @@ trait TjfieldsFilterField
 			if (!is_array($efd->value))
 			{
 				$extra_fields_data_formatted[$efd->name] = $efd->value;
+
+				if ($efd->type == 'ucmsubform')
+				{
+					$extra_fields_data_formatted[$efd->name] = $this->getUcmSubFormFieldDataJson($data['content_id'], $efd);
+				}
 			}
 			else
 			{

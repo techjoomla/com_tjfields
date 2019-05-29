@@ -24,8 +24,14 @@ var relatedField = {
 
 				if (result.data)
 				{
-					jQuery.each(result.data, function( index, field ) {
-						jQuery("#"+fieldsElementId).append("<option value="+field.id+">"+field.label+"</option>");
+					let allowedFieldTypes = ["text", "textarea", "textareacounter", "email", "number"];
+
+					jQuery.each(result.data, function( index, field) {
+
+						if (allowedFieldTypes.includes(field.type))
+						{
+							jQuery("#"+fieldsElementId).append("<option value="+field.id+">"+field.label+"</option>");
+						}
 					});
 
 					jQuery("#"+fieldsElementId).trigger("liszt:updated");

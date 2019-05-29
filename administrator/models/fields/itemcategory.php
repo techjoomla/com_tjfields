@@ -12,6 +12,10 @@ defined('JPATH_PLATFORM') or die;
 JFormHelper::loadFieldClass('list');
 JFormHelper::loadFieldClass('category');
 
+use Joomla\CMS\Factory;
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Language\Text;
+
 /**
  * Form Field class for the Joomla Platform.
  * Supports an HTML select list of categories
@@ -40,10 +44,32 @@ class JFormFieldItemCategory extends JFormFieldCategory
 	 */
 	protected function getOptions()
 	{
-		$jinput = JFactory::getApplication()->input;
+		$app    = Factory::getApplication();
+		$jinput = $app->input;
 		$client = $jinput->get('client', '', "STRING");
+
+		if (empty($client))
+		{
+			$menu = $app->getMenu()->getActive();
+
+			if ($menu->params instanceof Joomla\Registry\Registry)
+			{
+				$ucmTypeAlias = $menu->params->get('ucm_type', '', 'STRING');
+
+				$db = Factory::getDbo();
+				Table::addIncludePath(JPATH_ROOT . '/administrator/components/com_tjucm/tables');
+				$ucmTypeTable = Table::getInstance('Type', 'TjucmTable', array('dbo', $db));
+				$ucmTypeTable->load(array('alias' => $ucmTypeAlias));
+
+				$client = $ucmTypeTable->unique_identifier;
+			}
+		}
+
 		$this->element->addAttribute('extension', $client);
 
-		return parent::getOptions();
+		$options = array(array('value' => '', "text" => Text::_("JGLOBAL_SELECT_AN_OPTION")));
+		$options = array_merge($options, parent::getOptions());
+
+		return $options;
 	}
 }

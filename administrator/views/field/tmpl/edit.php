@@ -52,7 +52,6 @@ $document->addStyleSheet('components/com_tjfields/assets/css/tjfields.css');
 	});
 </script>
 <?php $document->addScript(JUri::root() . 'administrator/components/com_tjfields/assets/js/field.js'); ?>
-<?php $document->addScript(JUri::root() . 'administrator/components/com_tjfields/assets/js/fields.js'); ?>
 <div class="techjoomla-bootstrap">
 	<form action="<?php echo JRoute::_('index.php?option=com_tjfields&layout=edit&id='.(int) $this->item->id).'&client='.$input->get('client','','STRING'); ?>" method="post" enctype="multipart/form-data" name="adminForm" id="field-form" class="form-validate">
 		<div class="form-horizontal">
