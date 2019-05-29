@@ -14,6 +14,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Language\Text;
+use Joomla\Registry\Registry;
 
 /**
  * Form Field class for the Joomla Platform.
@@ -57,9 +58,11 @@ class JFormFieldRelated extends JFormFieldList
 		$fieldTable = Table::getInstance('field', 'TjfieldsTable', array('dbo', $db));
 		$fieldTable->load(array('name' => $fieldname));
 
+		// Get decoded data object
+		$fieldParams = new Registry($fieldTable->params);
+
 		// UCM fields and fields from which options are to be generated
-		$fieldParams = json_decode($fieldTable->params);
-		$realtedFields = $fieldParams->fieldName;
+		$realtedFields  = $fieldParams->get('fieldName');
 
 		foreach ($realtedFields as $realtedField)
 		{
@@ -74,7 +77,7 @@ class JFormFieldRelated extends JFormFieldList
 			$query->from($db->quoteName('#__tj_ucm_data'));
 			$query->where($db->quoteName('client') . ' = ' . $db->quote($realtedField->client));
 
-			if ($fieldParams->clusterAware == 1)
+			if ($fieldParams->get('clusterAware') == 1)
 			{
 				$jInput = Factory::getApplication()->input;
 				$clusterId = $jInput->get("cluster_id", 0, "INT");
@@ -140,9 +143,11 @@ class JFormFieldRelated extends JFormFieldList
 		$fieldTable = Table::getInstance('field', 'TjfieldsTable', array('dbo', $db));
 		$fieldTable->load(array('name' => $fieldname));
 
+		// Get decoded data object
+		$fieldParams = new Registry($fieldTable->params);
+
 		// UCM fields and fields from which options are to be generated
-		$fieldParams = json_decode($fieldTable->params);
-		$realtedFields = (array) $fieldParams->fieldName;
+		$realtedFields = (array) $fieldParams->get('fieldName');
 
 		if (count($realtedFields) == 1)
 		{
@@ -166,7 +171,8 @@ class JFormFieldRelated extends JFormFieldList
 				}
 			}
 
-			$showAddNewRecordLink = $fieldParams->showAddNewRecordLink;
+			// UCM fields and field value to get
+			$showAddNewRecordLink = $fieldParams->get('showAddNewRecordLink');
 
 			if ($canCreate && !empty($showAddNewRecordLink))
 			{
