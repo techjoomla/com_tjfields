@@ -127,6 +127,26 @@ class JFormFieldCluster extends JFormFieldList
 			}
 		}
 
+		if (!$this->loadExternally)
+		{
+			// Merge any additional options in the XML definition.
+			$options = array_merge(parent::getOptions(), $options);
+		}
+
 		return $options;
+	}
+
+	/**
+	 * Method to get a list of options for a list input externally and not from xml.
+	 *
+	 * @return	array	An array of JHtml options.
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	public function getOptionsExternally()
+	{
+		$this->loadExternally = 1;
+
+		return $this->getOptions();
 	}
 }
