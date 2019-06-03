@@ -174,48 +174,7 @@ class TjfieldsHelper
 
 			if ($fname == 'tjFieldFileField')
 			{
-				foreach ($fvalue as $fieldName => $singleFile)
-				{
-					// Field Data
-					$db    = JFactory::getDbo();
-					$query = $db->getQuery(true);
-					$query->select('* FROM #__tjfields_fields');
-					$query->where('name="' . $fieldName . '"');
-					$db->setQuery($query);
-					$file_field_data = $db->loadObject();
-
-					$insert_obj_file->field_id = $file_field_data->id;
-
-					if (!empty($singleFile))
-					{
-						$filename = $this->uploadFile($singleFile, $insert_obj_file, $file_field_data);
-
-						if ($filename)
-						{
-							$if_edit_file_id        = $this->checkForAlreadyexitsDetails($data, $file_field_data->id);
-
-							$client = explode('.', $insert_obj_file->client);
-
-							$insert_obj_file->value = '/media/' . $client[0] . '/' . $client[1] . '/' . $filename;
-
-							if ($insert_obj_file->value)
-							{
-								if ($if_edit_file_id)
-								{
-									$insert_obj_file->id = $if_edit_file_id;
-									$result = $db->updateObject('#__tjfields_fields_value', $insert_obj_file, 'id');
-								}
-								else
-								{
-									$insert_obj_file->id = '';
-									$result = $db->insertObject('#__tjfields_fields_value', $insert_obj_file, 'id');
-								}
-							}
-
-							$fieldsSubmitted[] = $insert_obj_file->field_id;
-						}
-					}
-				}
+				$this->uploadFileData($fvalue,$data);
 			}
 			else
 			{
@@ -306,6 +265,149 @@ class TjfieldsHelper
 		}
 
 		return true;
+	}
+	/**
+	 * Function to upload files
+	 *
+	 * @param   ARRAY  $fvalue file data
+	 * 
+	 * @param   ARRAY  $data fields data
+	 *
+	 */
+	public  function uploadFileData($fvalue,$data)
+	{
+		$db    = JFactory::getDbo();
+		$insert_obj_file = new stdClass;
+		if (empty($fvalue))
+		{
+			return false;
+		}
+		else
+		{			
+			foreach ($fvalue as $fieldName => $singleFile)
+			{
+				$file_field_data = $this->getFieldData($fieldName);				
+				$insert_obj_file->field_id = $file_field_data->id;
+				if ($file_field_data->id)
+				{
+					if (!empty($singleFile))
+						{
+						if ($singleFile['error'] != 4)
+						{
+							JTable::addIncludePath(JPATH_ADMINISTRATOR . "/components/com_tjfields/tables");
+							JModelLegacy::addIncludePath(JPATH_ADMINISTRATOR . "/components/com_tjfields/models");
+							$fieldModel = JModelLegacy::getInstance('Field', 'TjfieldsModel', array("ignore_request" => 1));
+
+							$fieldId = (int) $file_field_data->id;
+							$fieldItems = $fieldModel->getItem($fieldId);
+							$client = $fieldItems->client;
+							$type = $fieldItems->type;
+
+							if (isset($fieldItems->params['uploadpath']))
+							{
+								$uploadPath = $fieldItems->params['uploadpath'];
+							}
+
+							// Code for file size validation
+							$acceptSize = $fieldItems->params['size'];
+
+							// Upload path
+							$mediaPath = isset($uploadPath) ? $uploadPath : JPATH_SITE . '/' . $type . 's/tjmedia/' . str_replace(".", "/", $client . "/");
+
+							// Code for file type validation
+							$acceptType = $fieldItems->params['accept'];
+
+							// Configs for Media library
+							$config = array();
+
+							if (!empty($acceptType))
+							{
+								$localMime = TJMediaStorageLocal::getInstance();
+
+								$validMIMEArray = explode(',', $acceptType);
+
+								$validtype = array();
+
+								foreach ($validMIMEArray as $mimeType)
+								{
+									$validtype[] = $localMime->getMime(strtolower(str_ireplace('.', '', $mimeType)));
+								}
+
+								$config['type'] = $validtype;
+							}
+
+							if (isset($fieldItems->params['accept']) && !empty($fieldItems->params['accept']))
+							{
+								$allowedTypes = explode(',', $fieldItems->params['accept']);
+
+								foreach ($allowedTypes as $j => $allowedType)
+								{
+									$allowedTypes[$j] = trim(str_replace('.', '', $allowedType));
+								}
+
+								$config['allowedExtension'] = $allowedTypes;
+							}
+
+							$user = JFactory::getUser();
+							$config['uploadPath'] = $mediaPath;
+							$config['size'] = $acceptSize;
+							$config['saveData'] = '0';
+							$config['auth'] = $user->authorise('core.field.addfieldvalue', 'com_tjfields.field.' . $file_field_data->id);
+							$media = TJMediaStorageLocal::getInstance($config);
+							$returnData = $media->upload(array($singleFile));
+							$errors = $media->getErrors();
+
+							if (!empty($errors))
+							{
+								foreach ($errors as $error)
+								{
+									$app->enqueueMessage($error, 'error');
+								}
+							}
+
+							if ($file_field_data->type == 'file')
+							{
+								$htaccessFile = $mediaPath . '/' . $this->htaccess;
+
+								// If the destination directory doesn't exist we need to create it
+								jimport('joomla.filesystem.file');
+
+								if (!JFile::exists($htaccessFile))
+								{
+									jimport('joomla.filesystem.folder');
+									JFolder::create(dirname($htaccessFile));
+									JFile::write($htaccessFile, $this->htaccessFileContent);
+								}
+							}
+
+							if ($returnData[0]['source'])
+							{
+								$existingFileRecordId = $this->checkRecordExistence($data, $file_field_data->id);							
+								$insert_obj_file->value = $returnData[0]['source'];
+								if ($insert_obj_file->value)
+								{
+									if (!empty($existingFileRecordId))
+									{
+										$insert_obj_file->id = $existingFileRecordId;
+									    $db->updateObject('#__tjfields_fields_value', $insert_obj_file, 'id');
+									}
+									else
+									{
+										$insert_obj_file->id = '';
+										$db->insertObject('#__tjfields_fields_value', $insert_obj_file, 'id');
+									}
+								}
+								$fieldsSubmitted[] = $insert_obj_file->field_id;
+							}
+							else
+							{
+								return false;
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 
 	/**
