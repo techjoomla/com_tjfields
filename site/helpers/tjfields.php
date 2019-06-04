@@ -473,10 +473,10 @@ class TjfieldsHelper
 			{
 				if (is_array($newOptionValue))
 				{
-					$optionValueString 	= implode("','", $newOptionValue);
-					$safeString 		= $this->buildSafeInClause($optionValueString);
+					$optionValueString 		= implode("','", $newOptionValue);
+					$optionValueString 		= $this->buildSafeInClause($optionValueString);
 
-					$query->where($db->quoteName('value') . "IN (" . $safeString . ")");
+					$query->where($db->quoteName('value') . "IN (" . $optionValueString . ")");
 				}
 				else
 				{
