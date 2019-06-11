@@ -43,6 +43,7 @@ class JFormFieldRelated extends JFormFieldList
 	{
 		// Load TJ-Fields language file
 		$lang = Factory::getLanguage()->load('com_tjfields', JPATH_ADMINISTRATOR);
+		$jInput = Factory::getApplication()->input;
 
 		$fieldname = preg_replace('/[^a-zA-Z0-9_\-]/', '_', $this->fieldname);
 
@@ -79,13 +80,19 @@ class JFormFieldRelated extends JFormFieldList
 
 			if ($fieldParams->get('clusterAware') == 1)
 			{
-				$jInput = Factory::getApplication()->input;
 				$clusterId = $jInput->get("cluster_id", 0, "INT");
 
 				if (!empty($clusterId))
 				{
 					$query->where($db->quoteName('cluster_id') . ' = ' . $clusterId);
 				}
+			}
+
+			$parentContentId = $jInput->get('id', '', INT);
+
+			if ($fieldParams->get('showParentRecordsOnly') == 1 && !empty($parentContentId))
+			{
+				$query->where($db->quoteName('parent_id') . ' = ' . $parentContentId . ' OR ' . $db->quoteName('id') . ' = ' . $parentContentId);
 			}
 
 			$db->setQuery($query);
