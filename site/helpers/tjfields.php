@@ -174,48 +174,7 @@ class TjfieldsHelper
 
 			if ($fname == 'tjFieldFileField')
 			{
-				foreach ($fvalue as $fieldName => $singleFile)
-				{
-					// Field Data
-					$db    = JFactory::getDbo();
-					$query = $db->getQuery(true);
-					$query->select('* FROM #__tjfields_fields');
-					$query->where('name="' . $fieldName . '"');
-					$db->setQuery($query);
-					$file_field_data = $db->loadObject();
-
-					$insert_obj_file->field_id = $file_field_data->id;
-
-					if (!empty($singleFile))
-					{
-						$filename = $this->uploadFile($singleFile, $insert_obj_file, $file_field_data);
-
-						if ($filename)
-						{
-							$if_edit_file_id        = $this->checkForAlreadyexitsDetails($data, $file_field_data->id);
-
-							$client = explode('.', $insert_obj_file->client);
-
-							$insert_obj_file->value = '/media/' . $client[0] . '/' . $client[1] . '/' . $filename;
-
-							if ($insert_obj_file->value)
-							{
-								if ($if_edit_file_id)
-								{
-									$insert_obj_file->id = $if_edit_file_id;
-									$result = $db->updateObject('#__tjfields_fields_value', $insert_obj_file, 'id');
-								}
-								else
-								{
-									$insert_obj_file->id = '';
-									$result = $db->insertObject('#__tjfields_fields_value', $insert_obj_file, 'id');
-								}
-							}
-
-							$fieldsSubmitted[] = $insert_obj_file->field_id;
-						}
-					}
-				}
+				$this->uploadFileData($fvalue,$data);
 			}
 			else
 			{
@@ -308,6 +267,64 @@ class TjfieldsHelper
 		return true;
 	}
 
+	/**
+	 * Function to uploading file
+	 *
+	 * @param   Array  $fvalue  file
+	 * @param   Array  $data    client, user_id, content_id
+	 *
+	 * @return  true
+	 */
+	public function uploadFileData($fvalue,$data)
+	{
+		foreach ($fvalue as $fieldName => $singleFile)
+		{
+			// Field Data
+			$db    = JFactory::getDbo();
+			$insert_obj_file = new stdClass;
+			$insert_obj_file->content_id = $data['content_id'];
+			$insert_obj_file->user_id    = $data['user_id'];
+			$insert_obj_file->email_id   = '';
+			$insert_obj_file->client     = $data['client'];
+			$query = $db->getQuery(true);
+			$query->select('* FROM #__tjfields_fields');
+			$query->where('name="' . $fieldName . '"');
+			$db->setQuery($query);
+			$file_field_data = $db->loadObject();
+
+			$insert_obj_file->field_id = $file_field_data->id;
+
+			if (!empty($singleFile))
+			{
+				$filename = $this->uploadFile($singleFile, $insert_obj_file, $file_field_data);
+
+				if ($filename)
+				{
+					$if_edit_file_id        = $this->checkForAlreadyexitsDetails($data, $file_field_data->id);
+
+					$client = explode('.', $insert_obj_file->client);
+
+					$insert_obj_file->value = '/media/' . $client[0] . '/' . $client[1] . '/' . $filename;
+
+					if ($insert_obj_file->value)
+					{
+						if ($if_edit_file_id)
+						{
+							$insert_obj_file->id = $if_edit_file_id;
+							$result = $db->updateObject('#__tjfields_fields_value', $insert_obj_file, 'id');
+						}
+						else
+						{
+							$insert_obj_file->id = '';
+							$result = $db->insertObject('#__tjfields_fields_value', $insert_obj_file, 'id');
+						}
+					}
+
+					$fieldsSubmitted[] = $insert_obj_file->field_id;
+				}
+			}
+		}
+	}
 	/**
 	 * Function to get sunsubmitted fields value
 	 *
