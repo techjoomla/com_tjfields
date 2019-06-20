@@ -128,8 +128,8 @@ class TjfieldsModelGroups extends JModelList
 		$query->from('`#__tjfields_groups` AS a');
 
 		// Join over the user field 'created_by'
-		$query->select('created_by.name AS created_by');
-		$query->join('LEFT', '#__users AS created_by ON created_by.id = a.created_by');
+		$query->select('user.name AS created_by_name');
+		$query->join('LEFT', '#__users AS user ON user.id = a.created_by');
 
 		// Filter by client
 		$client = $this->getState('filter.client');

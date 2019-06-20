@@ -677,9 +677,9 @@ class TjfieldsModelField extends JModelAdmin
 				}
 			}
 
-			$parentContentId = $jInput->get('id', '', INT);
+			$parentContentId = $jInput->get('id', 0, 'INT');
 
-			if ($fieldParams->get('showParentRecordsOnly') == 1 && !empty($parentContentId))
+			if ($fieldParams->get('showParentRecordsOnly') == 1)
 			{
 				$query->where($db->quoteName('parent_id') . ' = ' . $parentContentId . ' OR ' . $db->quoteName('id') . ' = ' . $parentContentId);
 			}

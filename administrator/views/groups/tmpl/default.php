@@ -135,7 +135,7 @@ if (!empty($this->extra_sidebar)) {
 					<?php endif; ?>
 
 					<th class='left'>
-					<?php echo JHtml::_('grid.sort',  'COM_TJFIELDS_GROUPS_CREATED_BY', 'a.created_by', $listDirn, $listOrder); ?>
+					<?php echo JHtml::_('grid.sort',  'COM_TJFIELDS_GROUPS_CREATED_BY', 'a.created_by_name', $listDirn, $listOrder); ?>
 					</th>
 					<th class='left'>
 					<?php echo JHtml::_('grid.sort',  'COM_TJFIELDS_GROUPS_NAME', 'a.name', $listDirn, $listOrder); ?>
@@ -209,7 +209,7 @@ if (!empty($this->extra_sidebar)) {
 
 					<td>
 
-						<?php echo $item->created_by; ?>
+						<?php echo $item->created_by_name; ?>
 					</td>
 					<td>
 					<?php if (isset($item->checked_out) && $item->checked_out) : ?>

@@ -43,89 +43,18 @@ class JFormFieldRelated extends JFormFieldList
 	{
 		// Load TJ-Fields language file
 		$lang = Factory::getLanguage()->load('com_tjfields', JPATH_ADMINISTRATOR);
-		$jInput = Factory::getApplication()->input;
 
 		$fieldname = preg_replace('/[^a-zA-Z0-9_\-]/', '_', $this->fieldname);
-
-		$options = array();
-
-		if (!$this->multiple)
-		{
-			$options = array(array('value' => '', "text" => Text::_("JGLOBAL_SELECT_AN_OPTION")));
-		}
 
 		$db = Factory::getDbo();
 		Table::addIncludePath(JPATH_ROOT . '/administrator/components/com_tjfields/tables');
 		$fieldTable = Table::getInstance('field', 'TjfieldsTable', array('dbo', $db));
 		$fieldTable->load(array('name' => $fieldname));
 
-		// Get decoded data object
-		$fieldParams = new Registry($fieldTable->params);
-
-		// UCM fields and fields from which options are to be generated
-		$realtedFields  = $fieldParams->get('fieldName');
-
-		foreach ($realtedFields as $realtedField)
-		{
-			if (empty($realtedField->client) || empty($realtedField->fieldIds))
-			{
-				continue;
-			}
-
-			// Get all of the submitted records ID for given UCM Type
-			$query = $db->getQuery(true);
-			$query->select($db->quoteName(array('id')));
-			$query->from($db->quoteName('#__tj_ucm_data'));
-			$query->where($db->quoteName('client') . ' = ' . $db->quote($realtedField->client));
-
-			if ($fieldParams->get('clusterAware') == 1)
-			{
-				$clusterId = $jInput->get("cluster_id", 0, "INT");
-
-				if (!empty($clusterId))
-				{
-					$query->where($db->quoteName('cluster_id') . ' = ' . $clusterId);
-				}
-			}
-
-			$parentContentId = $jInput->get('id', '', INT);
-
-			if ($fieldParams->get('showParentRecordsOnly') == 1 && !empty($parentContentId))
-			{
-				$query->where($db->quoteName('parent_id') . ' = ' . $parentContentId . ' OR ' . $db->quoteName('id') . ' = ' . $parentContentId);
-			}
-
-			$db->setQuery($query);
-			$result = $db->loadColumn();
-
-			if (!empty($result))
-			{
-				$ucmRecordIds = implode(",", $result);
-				$fieldIds = implode(",", $realtedField->fieldIds);
-
-				// Get field values for the fields configured in related fields for the given UCM Type
-				$query = $db->getQuery(true);
-				$query->select($db->quoteName('ud.id', 'value'));
-				$query->select("GROUP_CONCAT(" . $db->quoteName('fv.value') . " SEPARATOR ' ') AS text");
-				$query->from($db->quoteName('#__tj_ucm_data', 'ud'));
-				$query->join('INNER', $db->qn('#__tjfields_fields_value', 'fv') . ' ON (' . $db->qn('ud.id') . ' = ' . $db->qn('fv.content_id') . ')');
-				$query->where($db->quoteName('field_id') . ' IN( ' . $fieldIds . ')');
-				$query->where($db->quoteName('content_id') . ' IN( ' . $ucmRecordIds . ')');
-				$query->group($db->quoteName('content_id'));
-
-				$db->setQuery($query);
-
-				// Load the results as a list of stdClass objects (see later for more options on retrieving data).
-				$result = $db->loadAssocList();
-			}
-
-			$options = array_merge($options, $result);
-		}
-
-		foreach ($options as $k => $option)
-		{
-			$options[$k]['value'] = htmlspecialchars(trim($option['value']), ENT_COMPAT, 'UTF-8');
-		}
+		// Get object of TJ-Fields field model
+		JLoader::import('components.com_tjfields.models.field', JPATH_ADMINISTRATOR);
+		$tjFieldsModelField = JModelLegacy::getInstance('Field', 'TjfieldsModel');
+		$options = $tjFieldsModelField->getRelatedFieldOptions($fieldTable->id);
 
 		return $options;
 	}
