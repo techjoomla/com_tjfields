@@ -37,9 +37,9 @@ class TjfieldsControllerGroup extends JControllerForm
 	public function apply()
 	{
 		$input = JFactory::getApplication()->input;
-		$post = $input->post;
+		$data = $input->post->get('jform', '', 'ARRAY');
 		$model = $this->getModel('group');
-		$if_saved = $model->save($post);
+		$if_saved = $model->save($data);
 
 		if ($if_saved)
 		{
@@ -67,7 +67,7 @@ class TjfieldsControllerGroup extends JControllerForm
 	{
 		$input = JFactory::getApplication()->input;
 		$task = $input->get('task', '', 'STRING');
-		$post = $input->post;
+		$data = $input->post->get('jform', '', 'ARRAY');
 		$model = $this->getModel('group');
 
 		if ($task == 'apply' or $task == 'save2copy')
@@ -77,7 +77,7 @@ class TjfieldsControllerGroup extends JControllerForm
 			return;
 		}
 
-		$if_saved = $model->save($post);
+		$if_saved = $model->save($data);
 
 		if ($task == 'newsave')
 		{
@@ -108,7 +108,7 @@ class TjfieldsControllerGroup extends JControllerForm
 	public function newsave()
 	{
 		$input = JFactory::getApplication()->input;
-		$data = $input->post;
+		$data = $input->post->get('jform', '', 'ARRAY');
 		$model = $this->getModel('group');
 		$group_id = $model->save($data);
 

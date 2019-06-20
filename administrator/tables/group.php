@@ -24,6 +24,9 @@ class TjfieldsTablegroup extends JTable
 	 */
 	public function __construct(&$db)
 	{
+		$lang = JFactory::getLanguage();
+		$lang->load('com_tjfields', JPATH_ADMINISTRATOR, 'en-GB', true);
+
 		parent::__construct('#__tjfields_groups', 'id', $db);
 	}
 
@@ -73,7 +76,7 @@ class TjfieldsTablegroup extends JTable
 		// Check for duplicate group name
 		$table = JTable::getInstance('Group', 'TjfieldsTable', array('dbo', $db));
 
-		if ($table->load(array('name' => $this->name)) && ($table->id != $this->id || $this->id == 0))
+		if ($table->load(array('name' => $this->name, 'client' => $this->client)) && ($table->id != $this->id || $this->id == 0))
 		{
 			JFactory::getApplication()->enqueueMessage(JText::_('COM_TJFIELDS_GROUP_TITLE_ALREADY_EXISTS'), 'error');
 

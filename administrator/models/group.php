@@ -38,6 +38,8 @@ class TjfieldsModelGroup extends JModelAdmin
 	 */
 	public function getTable($type = 'Group', $prefix = 'TjfieldsTable', $config = array())
 	{
+		JLoader::import('components.com_tjfields.tables.group', JPATH_ADMINISTRATOR);
+
 		return JTable::getInstance($type, $prefix, $config);
 	}
 
@@ -139,10 +141,9 @@ class TjfieldsModelGroup extends JModelAdmin
 	 *
 	 * @since	1.6
 	 */
-	public function save($post)
+	public function save($data)
 	{
 		$table = $this->getTable();
-		$data = $post->get('jform', '', 'ARRAY');
 		$input = JFactory::getApplication()->input;
 		$data['name'] = trim($data['name']);
 		$data['title'] = trim($data['title']);
