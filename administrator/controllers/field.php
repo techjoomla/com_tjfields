@@ -39,6 +39,8 @@ class TjfieldsControllerField extends JControllerForm
 		$app->setUserState('com_tjfields.edit.field.data', "");
 		$data = $input->post->get('jform', '', 'ARRAY');
 		$model = $this->getModel('field');
+		$form = $model->getForm($data);
+		$data = $model->validate($form, $data);
 		$result = $model->save($data);
 
 		if ($result)
@@ -91,6 +93,8 @@ class TjfieldsControllerField extends JControllerForm
 
 		$data = $input->post->get('jform', '', 'ARRAY');
 		$model = $this->getModel('field');
+		$form = $model->getForm($data);
+		$data = $model->validate($form, $data);
 		$result = $model->save($data);
 
 		if ($result)
@@ -122,6 +126,9 @@ class TjfieldsControllerField extends JControllerForm
 		$input = JFactory::getApplication()->input;
 		$data = $input->post->get('jform', '', 'ARRAY');
 		$model = $this->getModel('field');
+		$form = $model->getForm($data);
+		$data = $model->validate($form, $data);
+
 		$field_id = $model->save($data);
 
 		if ($field_id)
