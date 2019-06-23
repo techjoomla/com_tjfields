@@ -67,6 +67,8 @@ class TjfieldsTablegroup extends JTable
 	 */
 	public function check()
 	{
+		$db = JFactory::getDbo();
+
 		// If there is an ordering column and this is a new row then get the next ordering value
 		if (property_exists($this, 'ordering') && $this->id == 0)
 		{

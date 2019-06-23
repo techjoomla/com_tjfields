@@ -39,6 +39,8 @@ class TjfieldsModelField extends JModelAdmin
 	 */
 	public function getTable($type = 'Field', $prefix = 'TjfieldsTable', $config = array())
 	{
+		JLoader::import('components.com_tjfields.tables.field', JPATH_ADMINISTRATOR);
+
 		return JTable::getInstance($type, $prefix, $config);
 	}
 
@@ -55,6 +57,8 @@ class TjfieldsModelField extends JModelAdmin
 	public function getForm($data = array(), $loadData = true)
 	{
 		// Get the form.
+		JForm::addFormPath(JPATH_ADMINISTRATOR . '/components/com_tjfields/models/forms');
+		JForm::addFormPath(JPATH_ADMINISTRATOR . '/components/com_tjfields/models/forms/types/forms');
 		$form = $this->loadForm('com_tjfields.field', 'field', array('control' => 'jform','load_data' => $loadData));
 
 		// Load field params in the field form
@@ -66,6 +70,15 @@ class TjfieldsModelField extends JModelAdmin
 			if (!empty($form) && JFile::exists($path))
 			{
 				$form->loadFile($path, true, '/form/*');
+			}
+		}
+
+		if (!empty($form))
+		{
+			// Dont allow to save radio/single/multi selects without any options
+			if ($data['type'] == 'radio' || $data['type'] == 'single_select' || $data['type'] == 'multi_select' || $data['type'] == 'tjlist')
+			{
+				$form->setFieldAttribute('fieldoption', 'required', true);
 			}
 		}
 
@@ -180,21 +193,14 @@ class TjfieldsModelField extends JModelAdmin
 		$options_filled = array();
 		$table = $this->getTable();
 		$form = $this->getForm($data);
-
-		// Dont allow to save radio/single/multi selects without any options
-		if ($data['type'] == 'radio' || $data['type'] == 'single_select' || $data['type'] == 'multi_select' || $data['type'] == 'tjlist')
-		{
-			$form->setFieldAttribute('fieldoption', 'required', true);
-		}
-
-		$validatedData = $this->validate($form, $data);
+		JTable::addIncludePath(JPATH_ROOT . '/administrator/components/com_tjfields/tables');
 
 		// Sanitize the field data
-		foreach ($validatedData as $k => $validatedFieldData)
+		foreach ($data as $k => $validatedFieldData)
 		{
 			if (!is_array($validatedFieldData))
 			{
-				$validatedData[$k] = htmlspecialchars($validatedFieldData, ENT_COMPAT, 'UTF-8');
+				$data[$k] = htmlspecialchars($validatedFieldData, ENT_COMPAT, 'UTF-8');
 			}
 		}
 
@@ -223,14 +229,8 @@ class TjfieldsModelField extends JModelAdmin
 			// Tweak *important
 			$app->setUserState('com_tjfields.edit.field.id', $data['id']);
 
-			// Redirect back to the edit screen.
-			$id = (int) $app->getUserState('com_tjfields.edit.field.id');
-			$app->redirect(JRoute::_('index.php?option=com_tjfields&view=field&layout=edit&id=' . $id . '&client=' . $data['client'], false));
-
 			return false;
 		}
-
-		$data = $validatedData;
 
 		$input = JFactory::getApplication()->input;
 		$data['label'] = trim($data['label']);

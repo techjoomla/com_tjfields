@@ -175,6 +175,7 @@ class TjfieldsModelGroup extends JModelAdmin
 		if ($table->save($data) === true)
 		{
 			$id = $table->id;
+			$this->setState($this->getName() . '.id', $id);
 
 			return $id;
 		}
