@@ -16,6 +16,7 @@ jimport('joomla.database.table');
 
 $lang = JFactory::getLanguage();
 $lang->load('com_tjfields', JPATH_SITE);
+JLoader::import('components.com_tjfields.helpers.tjfields', JPATH_SITE);
 
 /**
  * Methods supporting a list of regions records.
@@ -125,6 +126,26 @@ trait TjfieldsFilterField
 				if ($user->authorise('core.field.addfieldvalue', 'com_tjfields.group.' . $tjFieldFieldTable->group_id))
 				{
 					$canAdd = $user->authorise('core.field.addfieldvalue', 'com_tjfields.field.' . $tjFieldFieldTable->id);
+
+					// If field type is ucmSubForm then check if the user is allowed to add record in that UCM-Type
+					if ($tjFieldFieldTable->type == 'ucmsubform')
+					{
+						if ($canAdd)
+						{
+							$formSource = json_decode($tjFieldFieldTable->params)->formsource;
+
+							if (!empty($formSource))
+							{
+								$client = str_replace('components/com_tjucm/models/forms/', '', $formSource);
+								$client = 'com_tjucm.' . str_replace('form_extra.xml', '', $client);
+
+								JLoader::import('components.com_tjucm.tables.type', JPATH_ADMINISTRATOR);
+								$ucmTypeTable = JTable::getInstance('Type', 'TjucmTable', array('dbo', $db));
+								$ucmTypeTable->load(array('unique_identifier' => $client));
+								$canAdd = $user->authorise('core.type.createitem', 'com_tjucm.type.' . $ucmTypeTable->id);
+							}
+						}
+					}
 				}
 
 				$canEdit = 0;
@@ -280,14 +301,6 @@ trait TjfieldsFilterField
 			return false;
 		}
 
-		$TjfieldsHelperPath = JPATH_SITE . '/components/com_tjfields/helpers/tjfields.php';
-
-		if (!class_exists('TjfieldsHelper'))
-		{
-			JLoader::register('TjfieldsHelper', $TjfieldsHelperPath);
-			JLoader::load('TjfieldsHelper');
-		}
-
 		$tjFieldsHelper = new TjfieldsHelper;
 
 		$data['content_id']  = $id;
@@ -304,7 +317,9 @@ trait TjfieldsFilterField
 
 				if ($efd->type == 'ucmsubform')
 				{
-					$extra_fields_data_formatted[$efd->name] = $this->getUcmSubFormFieldDataJson($data['content_id'], $efd);
+					JLoader::import('components.com_tjucm.models.itemform', JPATH_SITE);
+					$tjUcmItemFormModel = JModelLegacy::getInstance('ItemForm', 'TjucmModel');
+					$extra_fields_data_formatted[$efd->name] = $tjUcmItemFormModel->getUcmSubFormFieldDataJson($data['content_id'], $efd);
 				}
 			}
 			else
@@ -388,14 +403,6 @@ trait TjfieldsFilterField
 			return false;
 		}
 
-		$TjfieldsHelperPath = JPATH_SITE . '/components/com_tjfields/helpers/tjfields.php';
-
-		if (!class_exists('TjfieldsHelper'))
-		{
-			JLoader::register('TjfieldsHelper', $TjfieldsHelperPath);
-			JLoader::load('TjfieldsHelper');
-		}
-
 		$tjFieldsHelper = new TjfieldsHelper;
 		$data['content_id'] = $id;
 		$extra_fields_data = $tjFieldsHelper->FetchDatavalue($data);
@@ -414,14 +421,6 @@ trait TjfieldsFilterField
 	 */
 	public function saveExtraFields($data)
 	{
-		$TjfieldsHelperPath = JPATH_SITE . '/components/com_tjfields/helpers/tjfields.php';
-
-		if (!class_exists('TjfieldsHelper'))
-		{
-			JLoader::register('TjfieldsHelper', $TjfieldsHelperPath);
-			JLoader::load('TjfieldsHelper');
-		}
-
 		$tjFieldsHelper = new TjfieldsHelper;
 
 		$data['user_id']     = JFactory::getUser()->id;
