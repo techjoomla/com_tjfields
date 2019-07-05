@@ -12,6 +12,7 @@ defined('_JEXEC') or die;
 
 JLoader::import('TjfieldsHelper', JPATH_ADMINISTRATOR . '/components/com_tjfields/helpers');
 jimport('joomla.application.component.controlleradmin');
+JLoader::register('TjControllerHouseKeeping', JPATH_SITE . "/libraries/techjoomla/controller/houseKeeping.php");
 
 /**
  * Fields list controller class.
@@ -20,6 +21,8 @@ jimport('joomla.application.component.controlleradmin');
  */
 class TjfieldsControllerFields extends JControllerAdmin
 {
+	use TjControllerHouseKeeping;
+
 	/**
 	 * Proxy for getModel.
 	 *

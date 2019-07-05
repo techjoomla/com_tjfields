@@ -76,6 +76,9 @@ class TjfieldsViewFields extends JViewLegacy
 		$client          = explode('.', $client);
 		$component_title = '';
 
+		$toolbar = JToolbar::getInstance('toolbar');
+		$toolbar->appendButton('Custom', '<a id="tjHouseKeepingFixDatabasebutton" class="btn btn-default hidden"><span class="icon-refresh"></span>' . JText::_('COM_TJUCM_FIX_DATABASE') . '</a>');
+
 		if (!empty($client))
 		{
 			switch ($client['0'])
