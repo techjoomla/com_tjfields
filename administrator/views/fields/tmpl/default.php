@@ -28,6 +28,7 @@ JText::script('COM_TJFIELD_CONFIRM_DELETE_FIELD', true);
 JText::script('COM_TJFIELDS_FILE_ERROR_MAX_SIZE');
 JText::script('COM_TJFIELD_CONFIRM_DELETE_REFRENCE_DATA', true);
 JHtml::script(JUri::root() . 'administrator/components/com_tjfields/assets/js/tjfields.js');
+JHtml::script(JUri::root() . 'libraries/techjoomla/assets/js/houseKeeping.js');
 
 // Import CSS
 $document = JFactory::getDocument();
@@ -77,6 +78,7 @@ if (!empty($this->extra_sidebar)) {
 		<?php else : ?>
 			<div id="j-main-container">
 		<?php endif;?>
+			<div class="tjBs3">
 			<?php
 				echo LayoutHelper::render(
 					'joomla.searchtools.default',
@@ -208,6 +210,7 @@ if (!empty($this->extra_sidebar)) {
 					<?php endforeach; ?>
 				</tbody>
 			</table>
+		</table>
 		<?php
 		}?>
 			<input type="hidden" name="task" value="" />
