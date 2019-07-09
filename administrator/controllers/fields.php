@@ -33,7 +33,7 @@ class TjfieldsControllerFields extends JControllerAdmin
 	 *
 	 * @return  object
 	 */
-	public function getModel($name = 'field', $prefix = 'TjfieldsModel')
+	public function getModel($name = 'field', $prefix = 'TjfieldsModel', $config = array())
 	{
 		$model = parent::getModel($name, $prefix, array('ignore_request' => true));
 
