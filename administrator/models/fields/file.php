@@ -152,6 +152,13 @@ class JFormFieldFile extends JFormField
 			$html .= '</div>';
 		}
 
+		if (!empty($layoutData['field']->accept))
+		{
+			$html .= '<div class="alert alert-success">';
+			$html .= JText::sprintf('COM_TJFIELDS_ALLOWED_FILE_EXTENSIONS', implode("", explode(".", $layoutData['field']->accept)));
+			$html .= '</div>';
+		}
+
 		return $html;
 	}
 
