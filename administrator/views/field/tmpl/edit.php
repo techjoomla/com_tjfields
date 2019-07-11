@@ -26,7 +26,7 @@ $fullClient =  explode('.',$fullClient);
 $client = $fullClient[0];
 $clientType = $fullClient[1];
 
-$link = JRoute::_('index.php?option=com_tjfields&view=field&layout=edit&id=0&client=' . $input->get('client', '', 'STRING'), false);
+$link = JRoute::_('index.php?option=com_tjfields&task=field.saveFormState&client=' . $input->get('client', '', 'STRING'), false);
 
 // Import helper for declaring language constant
 JLoader::import('TjfieldsHelper', JUri::root().'administrator/components/com_tjfields/helpers/tjfields.php');
