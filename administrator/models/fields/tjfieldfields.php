@@ -95,8 +95,12 @@ class JFormFieldtjfieldfields extends JFormFieldList
 
 		$options = array_merge(parent::getOptions(), $options);
 
+		$view = JFactory::getApplication()->input->get('view', '', 'STRING');
+
+		$onchange = ($view == 'field') ? "show_option_div(this.value);" : "this.form.submit();";
+
 		return JHtml::_('select.genericlist', $options, $this->name,
-		'class="required" onchange="this.form.submit();"', 'value', 'text', $this->value, 'jform_type'
+		'class="required" onchange="' . $onchange . '"', 'value', 'text', $this->value, 'jform_type'
 		);
 	}
 }
