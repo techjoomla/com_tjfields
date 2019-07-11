@@ -34,7 +34,7 @@ JLoader::import('TjfieldsHelper', JUri::root().'administrator/components/com_tjf
 TjfieldsHelper::getLanguageConstant();
 
 // Default path for file upload field
-$fileUploadDefaultPath = JPATH_SITE."/media/";
+$fileUploadDefaultPath = JPATH_SITE. DS . "media" . DS;
 
 // Import CSS
 $document = JFactory::getDocument();
