@@ -53,7 +53,7 @@ $document->addStyleSheet('components/com_tjfields/assets/css/tjfields.css');
 </script>
 <?php $document->addScript(JUri::root() . 'administrator/components/com_tjfields/assets/js/field.js'); ?>
 <div class="techjoomla-bootstrap">
-	<form action="<?php echo JRoute::_('index.php?option=com_tjfields&task=field.saveFormState&id='.(int) $this->item->id).'&client='.$input->get('client','','STRING'); ?>" method="post" enctype="multipart/form-data" name="adminForm" id="field-form" class="form-validate">
+	<form action="<?php echo JRoute::_('index.php?option=com_tjfields&view=field&layout=edit&id='.(int) $this->item->id).'&client='.$input->get('client','','STRING'); ?>" method="post" enctype="multipart/form-data" name="adminForm" id="field-form" class="form-validate">
 		<div class="form-horizontal">
 			<?php echo JHtml::_('bootstrap.startTabSet', 'myTab', array('active' => 'general')); ?>
 			<?php echo JHtml::_('bootstrap.addTab', 'myTab', 'general', JText::_('COM_TJFIELDS_TITLE_FIELD', true)); ?>
