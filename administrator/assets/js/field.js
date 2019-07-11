@@ -188,9 +188,7 @@ Joomla.submitbutton = function(task)
 
 function show_option_div()
 {
-	techjoomla.jQuery('input[name=task]').val('field.saveFormState');
-	techjoomla.jQuery('#field-form').attr('action', editFormlink);
-	document.forms.adminForm.submit();
+	Joomla.submitform('field.saveFormState', document.getElementById('field-form'));
 }
 
 function showOptions()
