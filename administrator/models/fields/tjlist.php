@@ -143,12 +143,15 @@ class JFormFieldTjList extends JFormFieldList
 				// Get array of dropdown values
 				$dropdownVals = array_column($dropdownVals, 'value');
 
-				// Get other/extra values that are not present in dropdown list
-				$otherValues = array_values(array_diff($this->value, $dropdownVals));
-
-				if (!empty($otherValues))
+				if (!empty($this->value))
 				{
-					$this->otherSelectedValue = $otherValues[0];
+					// Get other/extra values that are not present in dropdown list
+					$otherValues = array_values(array_diff($this->value, $dropdownVals));
+
+					if (!empty($otherValues))
+					{
+						$this->otherSelectedValue = $otherValues[0];
+					}
 				}
 			}
 
