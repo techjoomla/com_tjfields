@@ -20,7 +20,7 @@ $field = $displayData['field'];
 
 if ($field->value)
 {
-	// This is working for only form video field, For 
+	// This is working for normal form video field. Needs improvement for video field in subform
 	echo "<a href=" . $field->value . " target='_blank'>" . JText::_("COM_TJUCM_VIDEO_FIELD_VALUE") . "</a>";
 }
 else
