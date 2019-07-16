@@ -36,7 +36,7 @@ jQuery(document).ready(function() {
 			(selectedVal == Joomla.JText._('COM_TJFIELDS_TJLIST_OTHER_OPTION_VALUE'))
 		)
 		{
-			if (jQuery('input[name="' + jQuery(this).attr('name') + '"').length == 0)
+			if (jQuery('input[name="' + jQuery(this).attr('name') + '"]').length == 0)
 			{
 				tjlist.addOtherOption(jQuery(this));
 			}
