@@ -1528,43 +1528,24 @@ class TjfieldsHelper
 		}
 
 		JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_tjfields/tables');
-		$fields_value_table = JTable::getInstance('Fieldsvalue', 'TjfieldsTable');
+		$fieldValueTable = JTable::getInstance('Fieldsvalue', 'TjfieldsTable');
 
-		$fields_value_table->load(array('id' => $data['valueId']));
+		$fieldValueTable->load(array('id' => $data['valueId']));
 
 		$subData = new stdClass;
 		$fieldId = 0;
 
 		if ($data['isSubformField'] == 1)
 		{
-			$subData = json_decode($fields_value_table->value);
-
-			foreach ($subData as $value)
-			{
-				$subformData = (array) $value;
-
-				if (in_array($data['fileName'], $subformData))
-				{
-					$fileUser = $fields_value_table->user_id;
-				}
-			}
-
-			// Check for file field is of subform or ucmsubform
-			if ($data['subformFileFieldId'])
-			{
-				$fieldId = $data['subformFileFieldId'];
-			}
-			else
-			{
-				$fieldId = $fields_value_table->field_id;
-			}
+			$fileUser = $fieldValueTable->user_id;
+			$fieldId = $fieldValueTable->field_id;
 		}
 		else
 		{
-			if ($data['fileName'] === $fields_value_table->value)
+			if ($data['fileName'] === $fieldValueTable->value)
 			{
-				$fileUser = $fields_value_table->user_id;
-				$fieldId = $fields_value_table->field_id;
+				$fileUser = $fieldValueTable->user_id;
+				$fieldId = $fieldValueTable->field_id;
 			}
 		}
 
@@ -1639,7 +1620,7 @@ class TjfieldsHelper
 						$fields_obj->value = '';
 					}
 
-					$fields_obj->id = $fields_value_table->id;
+					$fields_obj->id = $fieldValueTable->id;
 					$db->updateObject('#__tjfields_fields_value', $fields_obj, 'id');
 
 					return true;
