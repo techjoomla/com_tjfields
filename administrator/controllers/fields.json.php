@@ -11,7 +11,6 @@ defined('_JEXEC') or die;
 
 jimport('joomla.filesystem.file');
 
-JLoader::import('filterFields', JPATH_SITE . '/components/com_tjfields');
 use Joomla\CMS\MVC\Controller\FormController;
 
 /**
