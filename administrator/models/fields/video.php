@@ -168,7 +168,6 @@ class JFormFieldVideo extends JFormFieldUrl
 		}
 
 		$html .= $this->addMediaplayer($layoutData);
-		$html .= '</div>';
 
 		return $html;
 	}
