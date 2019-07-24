@@ -16,7 +16,6 @@ if (!key_exists('field', $displayData) || !key_exists('fieldXml', $displayData))
 
 JLoader::import('tjfields', JPATH_SITE . '/components/com_tjfields/helpers/');
 
-$xmlField = $displayData['fieldXml'];
 $field = $displayData['field'];
 $isSubFormField = (isset($displayData['isSubFormField'])) ? $displayData['isSubFormField'] : 0;
 $subFormFileFieldId = (isset($displayData['subFormFileFieldId'])) ? $displayData['subFormFileFieldId'] : 0;
