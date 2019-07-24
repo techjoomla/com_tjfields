@@ -16,7 +16,7 @@ var tjlist = {
 		element.siblings('div.tjfieldTjListOtherText').remove();
 	},
 	getTextBox: function (element) {
-		let inputName     = element.attr('name'),
+		var inputName     = element.attr('name'),
 			inputId       = element.attr('id'),
 			isRequired    = (element.attr('required') != undefined) ? 'required="required"' : '',
 			requiredClass = (isRequired != '') ? 'required' : '';
@@ -28,7 +28,7 @@ var tjlist = {
 jQuery(document).ready(function() {
 	jQuery(document).on("change", ".tjfieldTjList", function () {
 
-		let selectedVal = jQuery(this).val();
+		var selectedVal = jQuery(this).val();
 
 		if (
 			(jQuery.inArray(Joomla.JText._('COM_TJFIELDS_TJLIST_OTHER_OPTION_VALUE'), selectedVal) !== -1)
