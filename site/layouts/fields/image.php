@@ -38,10 +38,11 @@ if ($field->value)
 	$tjFieldHelper = new TjfieldsHelper;
 	$mediaLink = $tjFieldHelper->getMediaUrl($field->value, $extraParamArray);
 	?>
-
-	<img src="<?php echo $mediaLink; ?>" height="<?php echo $field->element->attributes()->height;?>" width="<?php $field->element->attributes()->width;?>" />
-	<a href="<?php echo $mediaLink;?>" class="btn btn-success">
-	<?php echo JText::_("COM_TJFIELDS_FILE_DOWNLOAD");?></a>
+	<div>
+		<img src="<?php echo $mediaLink; ?>" height="<?php echo $field->element->attributes()->height;?>" width="<?php $field->element->attributes()->width;?>" />
+		<a href="<?php echo $mediaLink;?>" class="btn btn-success">
+		<?php echo JText::_("COM_TJFIELDS_FILE_DOWNLOAD");?></a>
+	</div>
 	<?php
 }
 else
