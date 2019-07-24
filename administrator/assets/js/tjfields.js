@@ -103,28 +103,28 @@ jQuery(document).ready(function(){
 
     document.formvalidator.setHandler('filetype', function(value, element) {
 
-        let file_accept = element[0].accept;
-        let accept_array = file_accept.split(",");
-        let uploadedfile = element[0].files[0];
+        var tjfields_file_accept = element[0].accept;
+        var tjfields_accept_array = tjfields_file_accept.split(",");
+        var tjfields_uploadedfile = element[0].files[0];
 
         /* Get uploaded file name */
-        let filename = uploadedfile.name;
+        var tjfields_filename = tjfields_uploadedfile.name;
 
         /* extension of file*/
-        let ext = '.' + filename.split('.').pop().toLowerCase();
+        var tjfields_ext = '.' + tjfields_filename.split('.').pop().toLowerCase();
 
         // Converting to bytes
-        let uploadSize = element[0].size * 1048576;
-        let filesize = element[0].files[0].size;
+        var tjfields_uploadSize = element[0].size * 1048576;
+        var tjfields_filesize = element[0].files[0].size;
 
-        if(uploadSize < filesize)
+        if(tjfields_uploadSize < tjfields_filesize)
         {
         	alert(Joomla.JText._('COM_TJFIELDS_FILE_ERROR_MAX_SIZE'));
 
         	return false;
         }
 
-        if(accept_array.indexOf(ext) === -1)
+        if(tjfields_accept_array.indexOf(tjfields_ext) === -1)
         {
            return false;
         }
@@ -132,8 +132,8 @@ jQuery(document).ready(function(){
         return true;
     });
     document.formvalidator.setHandler('url', function(value) {
-        let regex = /\b(?:(?:https?|ftp):\/\/|www\.)[-a-z0-9+&#\/%?=~_|!:,.;]*[-a-z0-9+&#\/%=~_|]/i;
-        return regex.test(value);
+        var tjfields_url_regex = /\b(?:(?:https?|ftp):\/\/|www\.)[-a-z0-9+&#\/%?=~_|!:,.;]*[-a-z0-9+&#\/%=~_|]/i;
+        return tjfields_url_regex.test(value);
     });
 
     /* It restrict the user for manual input in datepicker field */
@@ -152,12 +152,12 @@ jQuery(document).ready(function(){
 
     /* Code for number field validation */
     document.formvalidator.setHandler('check_number_field', function(value, element) {
-        let enteredValue = parseFloat(value);
-        let maxValue = parseFloat(element[0].max);
-        let minValue = parseFloat(element[0].min);
+        var tjfields_enteredValue = parseFloat(value);
+        var tjfields_maxValue = parseFloat(element[0].max);
+        var tjfields_minValue = parseFloat(element[0].min);
 
-        if (!isNaN(maxValue) || !isNaN(minValue)) {
-            if (maxValue < enteredValue || minValue > enteredValue) {
+        if (!isNaN(tjfields_maxValue) || !isNaN(tjfields_minValue)) {
+            if (tjfields_maxValue < tjfields_enteredValue || tjfields_minValue > tjfields_enteredValue) {
                 alert(Joomla.JText._('COM_TJUCM_FIELDS_VALIDATION_ERROR_NUMBER'));
                 return false;
             }

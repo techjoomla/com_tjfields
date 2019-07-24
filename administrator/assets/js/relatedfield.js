@@ -7,9 +7,9 @@
  */
 var relatedField = {
 	populateFields: function(clientObj) {
-		let client = jQuery(clientObj).val();
-		let clientElementId = jQuery(clientObj).attr('id');
-		let fieldsElementId = clientElementId.replace("client", "fieldIds");
+		var client = jQuery(clientObj).val();
+		var clientElementId = jQuery(clientObj).attr('id');
+		var fieldsElementId = clientElementId.replace("client", "fieldIds");
 
 		jQuery.ajax({
 			url: Joomla.getOptions('system.paths').base + "/index.php?option=com_tjfields&task=fields.getFields&format=json&" + Joomla.getOptions('csrf.token') + "=1",
@@ -24,7 +24,7 @@ var relatedField = {
 
 				if (result.data)
 				{
-					let allowedFieldTypes = ["text", "textarea", "textareacounter", "email", "number"];
+					var allowedFieldTypes = ["text", "textarea", "textareacounter", "email", "number"];
 
 					jQuery.each(result.data, function( index, field) {
 
