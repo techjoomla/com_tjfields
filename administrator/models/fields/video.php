@@ -54,8 +54,6 @@ class JFormFieldVideo extends JFormFieldUrl
 	 */
 	public function __get($name)
 	{
-		require_once JPATH_SITE . '/components/com_tjfields/helpers/tjfields.php';
-
 		switch ($name)
 		{
 			case 'element';
@@ -115,8 +113,6 @@ class JFormFieldVideo extends JFormFieldUrl
 	 */
 	protected function getInput()
 	{
-		require_once JPATH_SITE . '/components/com_tjfields/helpers/tjfields.php';
-
 		$layoutData = $this->getLayoutData();
 
 		// Trim the trailing line in the layout file
@@ -129,31 +125,26 @@ class JFormFieldVideo extends JFormFieldUrl
 
 		if (isset($layoutData['field']->element->attributes()->display_video))
 		{
-				$html .= '<div class="control-group">';
-
-				$html .= '<div class="container">
-							<!-- Trigger the modal with a button -->
-								<button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal_' . $layoutData['field']->id . '">
-								click to show video</button>
-
-								<div class="modal fade" id="myModal_' . $layoutData['field']->id . '" role="dialog">
-									<div class="modal-dialog">
-										<!-- Modal content-->
-											<div class="modal-content">
-												<div class="modal-header">
-											<button type="button" class="close" data-dismiss="modal">&times;</button>
-											<h4 class="modal-title">Video</h4>
+			$html .= '<br>
+					<!-- Trigger the modal with a button -->
+					<button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal_' . $layoutData['field']->id . '">'
+					. JText::_("COM_TJFIELDS_FIELD_VIDEO_PLAY_BUTTON") . '</button>
+					<div class="modal fade" id="myModal_' . $layoutData['field']->id . '" role="dialog">
+						<div class="modal-dialog" style="width:'. ((int)($layoutData['field']->element->attributes()->width)+40) .'px;">
+							<!-- Modal content-->
+							<div class="modal-content">
+								<div class="modal-header">
+									<button type="button" class="close" data-dismiss="modal">&times;</button>
+									<h4 class="modal-title">' . JText::_("COM_TJFIELDS_FIELD_VIDEO_TITLE") . '</h4>
 								</div>
-
 								<div class="modal-body">';
 									$html .= $this->rendervideo($layoutData, $layoutData['value']);
 									$html .= '
 								</div>
-									<div class="modal-footer">
-									<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-default" data-dismiss="modal">' . JText::_("COM_TJFIELDS_FIELD_VIDEO_POP_UP_CLOSE") . '</button>
 								</div>
 							</div>
-						</div>
 						</div>
 					</div>';
 		}
@@ -218,7 +209,7 @@ class JFormFieldVideo extends JFormFieldUrl
 			$autoPlay = 'autoplay';
 		}
 
-		$html .= '
+		$html .= '<br>
 				<video ' . $autoPlay . ' id="player_' . $layoutData['field']->id . '"
 					height="' . $layoutData['field']->element->attributes()->height . '"
 					width="' . $layoutData['field']->element->attributes()->width . '
