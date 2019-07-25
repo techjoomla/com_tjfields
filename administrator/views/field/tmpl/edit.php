@@ -58,8 +58,8 @@ $document->addStyleSheet('components/com_tjfields/assets/css/tjfields.css');
 			<?php echo JHtml::_('bootstrap.startTabSet', 'myTab', array('active' => 'general')); ?>
 			<?php echo JHtml::_('bootstrap.addTab', 'myTab', 'general', JText::_('COM_TJFIELDS_TITLE_FIELD', true)); ?>
 			<div class="row-fluid">
-				<div class="span6 ">
-					<fieldset class="adminform">
+				<div class="span6">
+					<div class="adminform">
 						<legend>
 							<?php
 								echo JText::_('COM_TJFIELDS_BASIC_FIELDS_VALUES');
@@ -130,7 +130,7 @@ $document->addStyleSheet('components/com_tjfields/assets/css/tjfields.css');
 							<?php
 						}
 						?>
-					</fieldset>
+					</div>
 					<div class="fileUploadAlert hide">
 						<span class="alert alert-info alert-help-inline span9 alert_no_margin">
 							<?php
@@ -141,7 +141,7 @@ $document->addStyleSheet('components/com_tjfields/assets/css/tjfields.css');
 					<input type="hidden" name="jform[client]" value="<?php echo $input->get('client','','STRING'); ?>" />
 				</div>
 				<div class="span5 form-horizontal">
-					<fieldset class="adminform form-horizontal">
+					<div class="adminform form-horizontal">
 						<legend>
 							<?php
 								echo JText::_('COM_TJFIELDS_EXTRA_FIELDS_VALUES');
@@ -212,9 +212,9 @@ $document->addStyleSheet('components/com_tjfields/assets/css/tjfields.css');
 								</span>
 							</div>
 						</div>
-					</fieldset>
+					</div>
 				</div>
-				<!--</fieldset>-->
+				<!--</div>-->
 			</div>
 			<?php echo JHtml::_('bootstrap.endTab'); ?>
 			<?php if (JFactory::getUser()->authorise('core.admin','com_tjfields')) : ?>
