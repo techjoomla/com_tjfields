@@ -35,11 +35,23 @@ if ($field->value)
 		$extraParamArray['subFormFileFieldId'] = $subFormFileFieldId;
 	}
 
+	$path = JUri::root() . 'images/tjmedia/';
+
+	$db = JFactory::getDbo();
+	JTable::addIncludePath(JPATH_ROOT . '/administrator/components/com_tjfields/tables');
+	$data->tjFieldFieldTable = JTable::getInstance('field', 'TjfieldsTable', array('dbo', $db));
+	$data->tjFieldFieldTable->load(array('name' => $field->element->attributes()->name));
+
+	if (!empty($data->tjFieldFieldTable))
+	{
+		$path .= str_replace(".", "/", $data->tjFieldFieldTable->get('client') . '/');
+	}
+
 	$tjFieldHelper = new TjfieldsHelper;
 	$mediaLink = $tjFieldHelper->getMediaUrl($field->value, $extraParamArray);
 	?>
 	<div>
-		<img src="<?php echo $mediaLink; ?>" height="<?php echo $field->element->attributes()->height;?>" width="<?php $field->element->attributes()->width;?>" />
+		<img src="<?php echo $path . $field->value; ?>" height="<?php echo $field->element->attributes()->height;?>" width="<?php $field->element->attributes()->width;?>" />
 		<a href="<?php echo $mediaLink;?>" class="btn btn-success">
 		<?php echo JText::_("COM_TJFIELDS_FILE_DOWNLOAD");?></a>
 	</div>
