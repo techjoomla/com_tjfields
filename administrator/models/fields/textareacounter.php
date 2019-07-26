@@ -137,8 +137,8 @@ class JFormFieldTextareacounter extends JFormFieldTextarea
 			jQuery(document).ready(function() {
 
 				jQuery(".tjfieldTextareacounter").each(function() {
-					let usedcharlength = parseInt(jQuery(this).val().length);
-					let maxlength = parseInt(jQuery(this).siblings("span").find(".charscontainer_maxlength").text());
+					var usedcharlength = parseInt(jQuery(this).val().length);
+					var maxlength = parseInt(jQuery(this).siblings("span").find(".charscontainer_maxlength").text());
 					jQuery(this).siblings("span").find(".charscontainer_filled").text(usedcharlength);
 				})
 

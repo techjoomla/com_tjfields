@@ -19,11 +19,11 @@ var ownership = {
 			data: element,
 			dataType:"json",
 			success: function (response) {
-				let selectOption = '';
-				let op = '';
-				let data = response.data;
+				var selectOption = '';
+				var op = '';
+				var data = response.data;
 
-				for(let index = 0; index < data.length; ++index)
+				for(var index = 0; index < data.length; ++index)
 				{
 					selectOption = '';
 					if (element.user_id == data[index].value)
@@ -41,8 +41,8 @@ var ownership = {
 	},
 	/* This function to populate all users in ownership field of tjucm form */
 	setUsers: function (element) {
-		let clusterId = '';
-		let ajaxUrl = this.userUrl;
+		var clusterId = '';
+		var ajaxUrl = this.userUrl;
 
 		element.user_id = jQuery("#ownership_user").val();
 
@@ -64,7 +64,7 @@ var ownership = {
 
 jQuery(document).ready(function() {
 
-	let dataFields = {cluster_id: 0, user_id: 0};
+	var dataFields = {cluster_id: 0, user_id: 0};
 
 	//Get All users for user field
 	ownership.setUsers(dataFields);
@@ -78,8 +78,8 @@ jQuery(document).ready(function() {
 			return e.preventDefault();
 		}
 
-		let dataFields = {cluster_id: jQuery(this).val() , user_id: jQuery("#ownership_user").val()};
-		let ajaxUrl = ownership.clusterUrl;
+		var dataFields = {cluster_id: jQuery(this).val() , user_id: jQuery("#ownership_user").val()};
+		var ajaxUrl = ownership.clusterUrl;
 		//Get All associated users
 		ownership.getUsers(dataFields, ajaxUrl);
 	});
