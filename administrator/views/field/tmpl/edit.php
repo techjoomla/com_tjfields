@@ -130,9 +130,10 @@ $document->addStyleSheet('components/com_tjfields/assets/css/tjfields.css');
 									<div class="controls"><?php echo $field->input; ?></div>
 								<?php } ?>
 								<?php endforeach; ?>
-							<?php endforeach;
+							<?php endforeach; ?>
+							</div><?php
 						} ?> 
-						</div>
+						
 					</div>
 					<div class="fileUploadAlert hide">
 						<span class="alert alert-info alert-help-inline span9 alert_no_margin">
