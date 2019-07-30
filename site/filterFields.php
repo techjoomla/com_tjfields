@@ -121,11 +121,6 @@ trait TjfieldsFilterField
 			{
 				$tjFieldFieldTable->load(array('name' => $field->fieldname));
 
-				if ($data['layout'] == 'default')
-				{
-					$form->setFieldAttribute($field->getAttribute('name'), 'description', '');
-				}
-
 				$canAdd = 0;
 
 				if ($user->authorise('core.field.addfieldvalue', 'com_tjfields.group.' . $tjFieldFieldTable->group_id))
