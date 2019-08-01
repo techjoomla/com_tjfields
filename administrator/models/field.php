@@ -144,16 +144,8 @@ class TjfieldsModelField extends JModelAdmin
 				$query->order('opt.ordering ASC');
 				$db->setQuery($query);
 				$option_name = $db->loadObjectlist();
-
-				if ($option_name)
-				{
-					foreach ($option_name as $key => $option)
-					{
-						$options['options']['options' . $key] = $option;
-					}
-                                       
-					$item->fieldparams = $options;
-				}
+                                      
+				$item->fieldoption = $option_name;
 			}
 		}
 
@@ -340,7 +332,7 @@ class TjfieldsModelField extends JModelAdmin
 		// If the field is inserted.
 		if ($id)
 		{
-			$options = $data['fieldparams']['options'];
+			$options = $data['fieldoption'];
 
 			if ($data['saveOption'] == 1)
 			{

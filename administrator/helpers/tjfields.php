@@ -467,6 +467,7 @@ class TjfieldsHelper extends JHelperContent
 		$query	= $db->getQuery(true);
 		$query->select('id,options,value FROM #__tjfields_options');
 		$query->where('field_id=' . $field_id);
+		$query->order('ordering', 'ASC');
 		$db->setQuery($query);
 		$extra_options = $db->loadObjectlist('id');
 

@@ -121,17 +121,8 @@ $document->addStyleSheet('components/com_tjfields/assets/css/tjfields.css');
 
 						if ($type == 'radio' || $type == 'single_select' || $type == 'multi_select' || $type == 'tjlist')
 						{?>
-						<div class="control-group">
-							<?php foreach ($this->form->getFieldsets('fieldparams') as $name => $fieldSet) : ?>
-								<?php foreach ($this->form->getFieldset($name) as $field) : 
-								if (!$field->hidden)
-								{?>
-									<div class="control-label"><?php echo $field->label; ?></div>
-									<div class="controls"><?php echo $field->input; ?></div>
-								<?php } ?>
-								<?php endforeach; ?>
-							<?php endforeach; ?>
-							</div><?php
+							<div class="control-label"><?php echo $this->form->getLabel('fieldoption'); ?></div>
+							<div class="controls"><?php echo $this->form->getInput('fieldoption'); ?></div><?php
 						} ?> 
 						
 					</div>
