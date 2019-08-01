@@ -83,6 +83,12 @@ class TjfieldsModelField extends JModelAdmin
 					$form->setFieldAttribute('fieldoption', 'required', true);
 				}
 			}
+
+			if ($form->getValue('type') == 'ucmsubform')
+			{
+				$form->setValue('showonlist', null, 0);
+				$form->removeField('showonlist');
+			}
 		}
 
 		if (empty($form))
@@ -144,7 +150,7 @@ class TjfieldsModelField extends JModelAdmin
 				$query->order('opt.ordering ASC');
 				$db->setQuery($query);
 				$option_name = $db->loadObjectlist();
-                                      
+
 				$item->fieldoption = $option_name;
 			}
 		}
@@ -389,6 +395,7 @@ class TjfieldsModelField extends JModelAdmin
 				{
 					// Save option fields.
 					$order = 1;
+
 					foreach ($options as $option)
 					{
 						$obj = new stdClass;
@@ -626,7 +633,7 @@ class TjfieldsModelField extends JModelAdmin
 	/**
 	 * Method to get related field options
 	 *
-	 * @param   Integer  $fieldId   Field Id
+	 * @param   Integer  $fieldId  Field Id
 	 *
 	 * @return  Array
 	 *
