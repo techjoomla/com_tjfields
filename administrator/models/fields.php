@@ -41,7 +41,7 @@ class TjfieldsModelFields extends JModelList
 				'validation_class', 'a.validation_class',
 				'ordering', 'a.ordering',
 				'client', 'a.client',
-				'group_id', 'a.group_id'        
+				'group_id', 'a.group_id'
 			);
 		}
 
@@ -130,12 +130,13 @@ class TjfieldsModelFields extends JModelList
 		// Join over the user field 'created_by'
 		$query->select('created_by.name AS created_by');
 		$query->join('LEFT', '#__users AS created_by ON created_by.id = a.created_by');
-		
+
 		// Filter by group state
 		$groupId = $this->getState('filter.group_id');
+
 		if (is_numeric($groupId))
 		{
-		    $query->where('a.group_id = ' . (int) $groupId);
+			$query->where('a.group_id = ' . (int) $groupId);
 		}
 
 		// Filter by published state
@@ -156,6 +157,14 @@ class TjfieldsModelFields extends JModelList
 		if ($showonlist)
 		{
 			$query->where('a.showonlist = ' . (int) $showonlist);
+		}
+
+		// Filter by filterable fields
+		$showonlist = $this->getState('filter.filterable');
+
+		if ($showonlist)
+		{
+			$query->where('a.filterable = ' . (int) 1);
 		}
 
 		if ($client)
