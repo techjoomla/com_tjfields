@@ -11,12 +11,12 @@ var ownership = {
 	userUrl: Joomla.getOptions('system.paths').base + "/index.php?option=com_tjfields&task=fields.getAllUsers&format=json",
 
 	/* This function to get all users in tjucm via ajax */
-	getUsers: function (element, ajaxUrl) {
-		jQuery('.user-ownership, .chzn-results').empty();
+	getUsers: function (clusterUserData, ajaxUrl, ownershipFieldId) {
+		jQuery('#'+ownershipFieldId+', .chzn-results').empty();
 		jQuery.ajax({
 			url: ajaxUrl,
 			type: 'POST',
-			data: element,
+			data: clusterUserData,
 			dataType:"json",
 			success: function (response) {
 				var selectOption = '';
@@ -26,61 +26,55 @@ var ownership = {
 				for(var index = 0; index < data.length; ++index)
 				{
 					selectOption = '';
-					if (element.user_id == data[index].value)
+					if (clusterUserData.user_id == data[index].value)
 					{
 						selectOption = ' selected="selected" ';
 					}
 					op="<option value='"+data[index].value+"' "+selectOption+" > " + data[index]['text'] + "</option>" ;
-					jQuery('.user-ownership').append(op);
+					jQuery('#'+ownershipFieldId).append(op);
 				}
 
 				/* IMP : to update to chz-done selects*/
-				jQuery(".user-ownership").trigger("liszt:updated");
+				jQuery("#"+ownershipFieldId).trigger("liszt:updated");
 			}
 		});
 	},
 	/* This function to populate all users in ownership field of tjucm form */
-	setUsers: function (element) {
+	setUsers: function (clusterUserData, clusterInputId) {
 		var clusterId = '';
 		var ajaxUrl = this.userUrl;
+		var ownershipFieldId = clusterInputId.replace("clusterclusterid", "ownershipcreatedby");
 
-		element.user_id = jQuery("#ownership_user").val();
+		clusterUserData.user_id = jQuery("#"+ownershipFieldId+"value").val();
 
 		// Check class exists or not
-		if (jQuery(".cluster-ownership").length > 0)
+		if (jQuery("#"+clusterInputId).length > 0)
 		{
-			clusterId = jQuery(".cluster-ownership").val();
+			clusterId = jQuery("#"+clusterInputId).val();
 
-			element.cluster_id = clusterId;
+			clusterUserData.cluster_id = clusterId;
 			ajaxUrl = this.clusterUrl;
 		}
 
-		if ((jQuery.trim(clusterId) != '' && clusterId != 'undefined') || (jQuery(".cluster-ownership").length == 0))
+		if ((jQuery.trim(clusterId) != '' && clusterId != 'undefined') || (jQuery("#"+clusterInputId).length == 0))
 		{
-			this.getUsers(element, ajaxUrl);
+			this.getUsers(clusterUserData, ajaxUrl, ownershipFieldId);
 		}
-	}
-}
-
-jQuery(document).ready(function() {
-
-	var dataFields = {cluster_id: 0, user_id: 0};
-
-	//Get All users for user field
-	ownership.setUsers(dataFields);
-
+	},
 	/* This function to get users based on cluster value in tjucm via ajax */
-	jQuery('.cluster-ownership').change(function(e){
+	updateOwnershipField: function (e){
+		var clusterFieldId = jQuery(e).attr('id');
+		var ownershipFieldId = clusterFieldId.replace("clusterclusterid", "ownershipcreatedby");
 
 		// Check class exists or not
-		if (jQuery(".user-ownership").length == 0)
+		if (jQuery("#"+ownershipFieldId).length == 0)
 		{
 			return e.preventDefault();
 		}
 
-		var dataFields = {cluster_id: jQuery(this).val() , user_id: jQuery("#ownership_user").val()};
+		var dataFields = {cluster_id: jQuery("#"+clusterFieldId).val() , user_id: jQuery("#"+ownershipFieldId+"value").val()};
 		var ajaxUrl = ownership.clusterUrl;
 		//Get All associated users
-		ownership.getUsers(dataFields, ajaxUrl);
-	});
-});
+		ownership.getUsers(dataFields, ajaxUrl, ownershipFieldId);
+	}
+}

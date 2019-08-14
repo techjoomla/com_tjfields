@@ -56,7 +56,7 @@ class JFormFieldOwnerShip extends JFormFieldList
 		$fieldValue = $data['field']->value;
 
 		// Used to keep pre selected user value in 'Ownership' type field
-		echo '<input name="ownership_user" id="ownership_user" type="hidden" value="' . $fieldValue . '" />';
+		echo '<input name="ownership_user" id="' . $this->id . 'value' . '" type="hidden" value="' . $fieldValue . '" />';
 
 		$options = array();
 
