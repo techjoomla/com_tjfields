@@ -13,7 +13,6 @@
 
 		<field name="type" type="tjfieldfields" label="COM_TJFIELDS_FORM_LBL_FIELD_FIELD_TYPE" description="COM_TJFIELDS_FORM_DESC_FIELD_FIELD_TYPE" required="true" multiple="false"/>
 
-		<field name="fieldoption" type="fieldoption" label="COM_TJFIELDS_FORM_LBL_FIELD_OPTION" description="COM_TJFIELDS_FORM_DESC_FIELD_OPTION" />
 
 		<field name="required" type="radio" label="COM_TJFIELDS_FORM_LBL_FIELD_REQUIRED" description="COM_TJFIELDS_FORM_DESC_FIELD_REQUIRED" default="0" required="true" class="btn-group">
 			<option value="1">COM_TJFIELDS_YES</option>
@@ -53,12 +52,41 @@
 
 		<field name="category" type="fieldcategory" multiple="multiple" label="COM_TJFIELDS_FORM_LBL_FIELD_CATEGORY" class="category" description="COM_TJFIELDS_FORM_FIELD_CATEGORY_DESC" />
 
-		<field type="radio" name="showonlist" label="COM_TJFIELDS_FORM_LBL_FIELD_SHOW_IN_LIST_VIEW" description="COM_TJFIELDS_FORM_DESC_FIELD_SHOW_IN_LIST_VIEW" default="1" required="true" class="btn-group">
+		<field type="radio" name="showonlist" label="COM_TJFIELDS_FORM_LBL_FIELD_SHOW_IN_LIST_VIEW" description="COM_TJFIELDS_FORM_DESC_FIELD_SHOW_IN_LIST_VIEW" default="1" class="btn-group">
 			<option value="1">COM_TJFIELDS_YES</option>
 			<option value="0">COM_TJFIELDS_NO</option>
 		</field>
+		<field
+			name="fieldoption"
+			type="subform"
+			label="COM_TJFIELDS_FORM_LBL_FIELD_OPTION"
+			description="PLG_FIELDS_RADIO_PARAMS_OPTIONS_DESC"
+			layout="joomla.form.field.subform.repeatable-table"
+			icon="list"
+			multiple="true"
+			>
+			<form hidden="true" name="list_templates_modal" repeat="true">
+				<field
+					name="optionid"
+					type="text"
+					readonly="true"
+					label="COM_TJFIELDS_FORM_OPTIONS_OPTIONID_LABEL"
+				/>
+				<field
+					name="name"
+					type="text"
+					label="COM_TJFIELDS_FORM_OPTIONS_NAME_LABEL"
+					size="30"
+				/>
+				<field
+					name="value"
+					type="text"
+					label="COM_TJFIELDS_FORM_OPTIONS_VALUE_LABEL"
+					size="30"
+				/>
+			</form>
+		</field>
 	</fieldset>
-
 	<fieldset name="accesscontrol">
 		<field name="asset_id" type="hidden" filter="unset"/>
 		<field name="rules" type="rules" label="JFIELD_RULES_LABEL" translate_label="false" filter="rules" validate="rules" class="inputbox" component="com_tjfields" section="field"/>

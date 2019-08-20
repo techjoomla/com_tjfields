@@ -116,20 +116,15 @@ $document->addStyleSheet('components/com_tjfields/assets/css/tjfields.css');
 								echo $this->form->getInput('options');
 								?>
 						</div>
-
 						<?php
 						$type = $this->form->getValue('type');
 
 						if ($type == 'radio' || $type == 'single_select' || $type == 'multi_select' || $type == 'tjlist')
-						{
-							?>
-							<div class="control-group displaynone" id="option_div" >
-								<div class="control-label"><?php echo $this->form->getLabel('fieldoption'); ?></div>
-								<div class="controls"><?php echo $this->form->getInput('fieldoption'); ?></div>
-							</div>
-							<?php
-						}
-						?>
+						{?>
+							<div class="control-label"><?php echo $this->form->getLabel('fieldoption'); ?></div>
+							<div class="controls"><?php echo $this->form->getInput('fieldoption'); ?></div><?php
+						} ?> 
+						
 					</div>
 					<div class="fileUploadAlert hide">
 						<span class="alert alert-info alert-help-inline span9 alert_no_margin">

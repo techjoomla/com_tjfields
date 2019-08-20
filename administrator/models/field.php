@@ -83,6 +83,12 @@ class TjfieldsModelField extends JModelAdmin
 					$form->setFieldAttribute('fieldoption', 'required', true);
 				}
 			}
+
+			if ($form->getValue('type') == 'ucmsubform')
+			{
+				$form->setValue('showonlist', null, 0);
+				$form->removeField('showonlist');
+			}
 		}
 
 		if (empty($form))
@@ -139,15 +145,13 @@ class TjfieldsModelField extends JModelAdmin
 			{
 				$db = JFactory::getDbo();
 				$query = $db->getQuery(true);
-				$query->select('opt.id,opt.options,opt.value FROM #__tjfields_options as opt');
+				$query->select('opt.id as optionid,opt.options as name,opt.value FROM #__tjfields_options as opt');
 				$query->where('opt.field_id=' . $input->get('id', '', 'INT'));
+				$query->order('opt.ordering ASC');
 				$db->setQuery($query);
 				$option_name = $db->loadObjectlist();
 
-				if ($option_name)
-				{
-					$item->fieldoption = $option_name;
-				}
+				$item->fieldoption = $option_name;
 			}
 		}
 
@@ -334,7 +338,7 @@ class TjfieldsModelField extends JModelAdmin
 		// If the field is inserted.
 		if ($id)
 		{
-			$options = $input->post->get('tjfields', '', 'ARRAY');
+			$options = $data['fieldoption'];
 
 			if ($data['saveOption'] == 1)
 			{
@@ -360,16 +364,16 @@ class TjfieldsModelField extends JModelAdmin
 				foreach ($options as $key => $value)
 				{
 					// Check for empty options
-					if ((!empty($value['optionname']) && $value['optionvalue'] == '') || ($value['optionname'] == '' && !empty($value['optionvalue'])))
+					if ((!empty($value['name']) && $value['value'] == '') || ($value['name'] == '' && !empty($value['value'])))
 					{
 						JFactory::getApplication()->enqueueMessage(JText::_('COM_TJFIELDS_INVALID_OPTION_VALUES'), 'error');
 
 						return $id;
 					}
 
-					if ($value['hiddenoptionid'])
+					if ($value['optionid'])
 					{
-						$options_filled[] = $value['hiddenoptionid'];
+						$options_filled[] = $value['optionid'];
 					}
 				}
 
@@ -390,19 +394,23 @@ class TjfieldsModelField extends JModelAdmin
 				else
 				{
 					// Save option fields.
+					$order = 1;
+
 					foreach ($options as $option)
 					{
 						$obj = new stdClass;
-						$obj->options = htmlspecialchars($option['optionname'], ENT_COMPAT, 'UTF-8');
-						$obj->value = htmlspecialchars($option['optionvalue'], ENT_COMPAT, 'UTF-8');
+						$obj->options = htmlspecialchars($option['name'], ENT_COMPAT, 'UTF-8');
+						$obj->value = htmlspecialchars($option['value'], ENT_COMPAT, 'UTF-8');
 						$obj->field_id = $id;
+						$obj->ordering = $order;
+						$order++;
 
 						// If edit options
-						if (isset($option['hiddenoptionid']) && !empty($option['hiddenoptionid']))
+						if (isset($option['optionid']) && !empty($option['optionid']))
 						{
-							if ($option['optionname'] != '' && $option['optionvalue'] != '')
+							if ($option['name'] != '' && $option['value'] != '')
 							{
-								$obj->id = $option['hiddenoptionid'];
+								$obj->id = $option['optionid'];
 
 								if (!$this->_db->updateObject('#__tjfields_options', $obj, 'id'))
 								{
@@ -414,7 +422,7 @@ class TjfieldsModelField extends JModelAdmin
 						}
 						else
 						{
-							if ($option['optionname'] != '' && $option['optionvalue'] != '')
+							if ($option['name'] != '' && $option['value'] != '')
 							{
 								$obj->id = '';
 
@@ -625,7 +633,7 @@ class TjfieldsModelField extends JModelAdmin
 	/**
 	 * Method to get related field options
 	 *
-	 * @param   Integer  $fieldId   Field Id
+	 * @param   Integer  $fieldId  Field Id
 	 *
 	 * @return  Array
 	 *
