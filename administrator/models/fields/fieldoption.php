@@ -62,8 +62,8 @@ class JFormFieldFieldoption extends JFormField
 			var tjfield_icon_minus = "icon-minus-2 ";
 
 			function tjFieldsOptionChange(currInput){
-				let optionInputs = jQuery(currInput).parent().find("input");
-				let required = 0;
+				var optionInputs = jQuery(currInput).parent().find("input");
+				var required = 0;
 
 				jQuery.each(optionInputs, function(index, value){
 					if (jQuery(value).val() != "")
@@ -77,7 +77,7 @@ class JFormFieldFieldoption extends JFormField
 				if (required == 1)
 				{
 					jQuery.each(optionInputs, function(index, value){
-						let name = jQuery(this).attr("name");
+						var name = jQuery(this).attr("name");
 						
 						if (name.indexOf("hidden") === -1)
 						{

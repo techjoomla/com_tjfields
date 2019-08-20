@@ -9,18 +9,20 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Language\Text;
+
 if (!key_exists('field', $displayData) || !key_exists('fieldXml', $displayData))
 {
 	return;
 }
 
 $field = $displayData['field'];
-$date = JFactory::getDate($field->value);
-$format = str_replace('%', '', $field->format);
 
 if ($field->value)
 {
-	echo $date->format($format);
+	// This is working for normal form video field
+	$languageConstant = "COM_TJFIELDS_VIEW_FIELD_" . strtoupper($field->type);
+	echo "<a href=" . $field->value . " target='_blank'>" . JText::_($languageConstant) . "</a>";
 }
 else
 {

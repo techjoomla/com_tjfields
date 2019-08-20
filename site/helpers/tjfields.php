@@ -394,7 +394,7 @@ class TjfieldsHelper
 					// Check for duplicate entry
 					$existingRecordId = $this->checkRecordExistence($data, $field_data->id);
 
-					if (!empty($fvalue))
+					if (isset($fvalue) && $fvalue !== '')
 					{
 						$fieldParams = json_decode($field_data->params);
 						$multipleValueField = (isset($fieldParams->multiple) && !empty($fieldParams->multiple)) ? 1 : 0;

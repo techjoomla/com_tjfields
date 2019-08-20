@@ -65,8 +65,6 @@ class JFormFieldCluster extends JFormFieldList
 			return $options;
 		}
 
-		$superUser    = $user->authorise('core.admin');
-
 		// Initialize array to store dropdown options
 		$options[] = HTMLHelper::_('select.option', "", Text::_('COM_TJFIELDS_OWNERSHIP_CLUSTER'));
 
@@ -79,44 +77,13 @@ class JFormFieldCluster extends JFormFieldList
 		}
 
 		JLoader::import("/components/com_cluster/includes/cluster", JPATH_ADMINISTRATOR);
-		$ClusterModel = ClusterFactory::model('ClusterUsers', array('ignore_request' => true));
-		$ClusterModel->setState('list.group_by_client_id', 1);
-		$ClusterModel->setState('filter.published', 1);
+		$clusterUserModel = ClusterFactory::model('ClusterUser', array('ignore_request' => true));
+		$clusters = $clusterUserModel->getUsersClusters($user->id);
 
-		if (!$superUser && !$user->authorise('core.manageall.cluster', 'com_cluster'))
+		// Create oprion for each cluster
+		foreach ($clusters as $cluster)
 		{
-			$ClusterModel->setState('filter.user_id', $user->id);
-		}
-
-		// Get all assigned cluster entries
-		$clusters = $ClusterModel->getItems();
-
-		// Get com_subusers component status
-		$subUserExist = ComponentHelper::getComponent('com_subusers', true)->enabled;
-
-		if ($subUserExist)
-		{
-			JLoader::import("/components/com_subusers/includes/rbacl", JPATH_ADMINISTRATOR);
-		}
-
-		if (!empty($clusters))
-		{
-			foreach ($clusters as $cluster)
-			{
-				// Check rbacl component active and normal user is logged-in
-				if ($subUserExist && (!$superUser && !$user->authorise('core.manageall.cluster', 'com_cluster')))
-				{
-					// Check user has permission for mentioned cluster
-					if (RBACL::authorise($user->id, 'com_cluster', 'core.manage.cluster', $cluster->cluster_id))
-					{
-						$options[] = HTMLHelper::_('select.option', $cluster->cluster_id, trim($cluster->name));
-					}
-				}
-				else
-				{
-					$options[] = HTMLHelper::_('select.option', $cluster->cluster_id, trim($cluster->name));
-				}
-			}
+			$options[] = HTMLHelper::_('select.option', $cluster->id, trim($cluster->name));
 		}
 
 		if (!$this->loadExternally)
@@ -158,6 +125,13 @@ class JFormFieldCluster extends JFormFieldList
 			$this->value = $clusterId;
 			$this->readonly = true;
 		}
+
+		// Add script to initialise ownership field
+		$document = JFactory::getDocument();
+		$document->addScriptDeclaration('jQuery(document).ready(function() {
+			var dataFields = {cluster_id: 0, user_id: 0};
+			ownership.setUsers(dataFields, "' . $this->id . '");
+		});');
 
 		return parent::getInput();
 	}
