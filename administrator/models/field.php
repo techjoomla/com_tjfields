@@ -729,4 +729,58 @@ class TjfieldsModelField extends JModelAdmin
 
 		return $options;
 	}
+
+	/**
+	 * Method to delete one or more fields.
+	 *
+	 * @param   array  &$pks  An array of record primary keys.
+	 *
+	 * @return  boolean  True if successful, false if an error occurs.
+	 *
+	 * @since   1.4.2
+	 */
+	public function delete(&$pks)
+	{
+		$db = JFactory::getDbo();
+		$pks = (array) $pks;
+
+		foreach ($pks as $pk)
+		{
+			if (empty($pk))
+			{
+				continue;
+			}
+
+			// Delete options of the field if any exists
+			$query = $db->getQuery(true);
+			$query->delete($db->quoteName('#__tjfields_options'));
+			$query->where($db->quoteName('field_id') . ' = ' . (int) $pk);
+			$db->setQuery($query);
+			$result = $db->execute();
+
+			// Delete fields data from fields value table
+			$query = $db->getQuery(true);
+			$query->delete($db->quoteName('#__tjfields_fields_value'));
+			$query->where($db->quoteName('field_id') . ' = ' . (int) $pk);
+			$db->setQuery($query);
+			$result = $db->execute();
+
+			if ($result)
+			{
+				// Delete field data
+				$status = parent::delete($pk);
+
+				if ($status === false)
+				{
+					return false;
+				}
+			}
+			else
+			{
+				return false;
+			}
+		}
+
+		return true;
+	}
 }

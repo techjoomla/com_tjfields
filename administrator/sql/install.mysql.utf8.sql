@@ -54,13 +54,6 @@ CREATE TABLE IF NOT EXISTS `#__tjfields_options` (
 	PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci AUTO_INCREMENT=1;
 
-CREATE TABLE IF NOT EXISTS `#__tjfields_client_type` (
-	`id` int(11) NOT NULL AUTO_INCREMENT,
-	`client` varchar(255) NOT NULL,
-	`client_type` varchar(255) NOT NULL,
-	PRIMARY KEY (`id`)
-) DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci AUTO_INCREMENT=1;
-
 CREATE TABLE IF NOT EXISTS `#__tjfields_category_mapping` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `field_id` INT(11) NOT NULL,

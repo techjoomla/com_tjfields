@@ -49,6 +49,24 @@ if ($saveOrder)
 $sortFields = $this->getSortFields();
 ?>
 <script type="text/javascript">
+	Joomla.submitbutton = function (task) {
+		if (task == 'fields.delete')
+		{
+			if(confirm("<?php echo JText::_('COM_TJFIELDS_FIELDS_DELETE_CONFIRMATION'); ?>"))
+			{
+				Joomla.submitform(task);
+			}
+			else
+			{
+				return false;
+			}
+		}
+		else
+		{
+			Joomla.submitform(task);	
+		}
+	}
+
 	Joomla.orderTable = function() {
 		table = document.getElementById("sortTable");
 		direction = document.getElementById("directionTable");
