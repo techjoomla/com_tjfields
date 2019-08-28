@@ -126,13 +126,6 @@ class JFormFieldCluster extends JFormFieldList
 			$this->readonly = true;
 		}
 
-		// Add script to initialise ownership field
-		$document = JFactory::getDocument();
-		$document->addScriptDeclaration('jQuery(document).ready(function() {
-			var dataFields = {cluster_id: 0, user_id: 0};
-			ownership.setUsers(dataFields, "' . $this->id . '");
-		});');
-
 		return parent::getInput();
 	}
 }

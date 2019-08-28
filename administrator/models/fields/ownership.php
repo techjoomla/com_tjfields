@@ -41,11 +41,37 @@ class JFormFieldOwnerShip extends JFormFieldList
 	protected function getOptions()
 	{
 		$user = Factory::getUser();
-		$options = array();
+		$clusterAware = $this->getAttribute("clusterAware");
 
+		// If user is not logged in user then dont show any users data
 		if (!$user->id)
 		{
 			return $options;
+		}
+
+		// Initialize array to store dropdown options
+		$options = array();
+		$options[] = HTMLHelper::_('select.option', "", Text::_('COM_TJFIELDS_OWNERSHIP_USER'));
+		$fields = $this->form->getFieldset();
+
+		// Check if cluster field is there in the form
+		$clusterFieldId = str_replace('ownershipcreatedby', 'clusterclusterid', $this->id);
+
+		// If cluster field is not there in the form or if the ownership field is not cluster aware then show list of all users
+		if (!array_key_exists($clusterFieldId, $fields) || !$clusterAware)
+		{
+			JModelLegacy::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_users/models');
+			$userModel = JModelLegacy::getInstance('Users', 'UsersModel', array('ignore_request' => true));
+			$userModel->setState('filter.state', 0);
+			$allUsers = $userModel->getItems();
+
+			if (!empty($allUsers))
+			{
+				foreach ($allUsers as $user)
+				{
+					$options[] = HTMLHelper::_('select.option', $user->id, trim($user->username));
+				}
+			}
 		}
 
 		$doc = Factory::getDocument();
@@ -58,11 +84,45 @@ class JFormFieldOwnerShip extends JFormFieldList
 		// Used to keep pre selected user value in 'Ownership' type field
 		echo '<input name="ownership_user" id="' . $this->id . 'value' . '" type="hidden" value="' . $fieldValue . '" />';
 
-		$options = array();
-
-		// Initialize array to store dropdown options
-		$options[] = HTMLHelper::_('select.option', "", Text::_('COM_TJFIELDS_OWNERSHIP_USER'));
-
 		return $options;
+	}
+
+	/**
+	 * Method to get the field input markup.
+	 *
+	 * @return  string  The field input markup.
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	protected function getInput()
+	{
+		$fields = $this->form->getFieldset();
+		$clusterAware = $this->getAttribute("clusterAware");
+
+		if ($clusterAware)
+		{
+			// Check if cluster field is there in the form
+			$clusterFieldId = str_replace('ownershipcreatedby', 'clusterclusterid', $this->id);
+
+			// If cluster field is not there in the form then show list of all users
+			if (array_key_exists($clusterFieldId, $fields))
+			{
+				// Add script to initialise ownership field
+				$document = JFactory::getDocument();
+				$document->addScriptDeclaration('jQuery(document).ready(function() {
+					var dataFields = {cluster_id: 0, user_id: 0};
+					ownership.setUsers(dataFields, "' . $clusterFieldId . '");
+				});');
+
+				// Add script to update ownership field onchange of cluster field
+				$document->addScriptDeclaration('jQuery(document).ready(function() {
+					jQuery("#' . $clusterFieldId . '").change(function(){
+						ownership.updateOwnershipField(this);
+					});
+				});');
+			}
+		}
+
+		return parent::getInput();
 	}
 }

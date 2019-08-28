@@ -2,7 +2,6 @@
 <form>
 	<fields name="params" label="COM_TJFIELDS_FIELD_BASIC_LABEL">
 		<fieldset name="params">
-			<field name="onchange" type="hidden"/>
 			<field name="validate" type="hidden" default="cluster"/>
 		</fieldset>
 	</fields>
