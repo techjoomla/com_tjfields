@@ -66,7 +66,7 @@ var ownership = {
 		var clusterFieldId = jQuery(e).attr('id');
 		var ownershipFieldId = clusterFieldId.replace("clusterclusterid", "ownershipcreatedby");
 
-		// Check class exists or not
+		// If there is no ownership field in the form then we do not need to update ownership field after cluster onchange event
 		if (jQuery("#"+ownershipFieldId).length == 0)
 		{
 			return e.preventDefault();
