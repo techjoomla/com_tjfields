@@ -692,7 +692,14 @@ class TjfieldsModelField extends JModelAdmin
 
 			if ($fieldParams->get('showParentRecordsOnly') == 1)
 			{
-				$query->where($db->quoteName('parent_id') . ' = ' . $parentContentId . ' OR ' . $db->quoteName('id') . ' = ' . $parentContentId);
+				if (!empty($parentContentId))
+				{
+					$query->where($db->quoteName('parent_id') . ' = ' . $parentContentId . ' OR ' . $db->quoteName('id') . ' = ' . $parentContentId);
+				}
+				else
+				{
+					return false;
+				}
 			}
 
 			$db->setQuery($query);
