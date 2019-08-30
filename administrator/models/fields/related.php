@@ -112,7 +112,9 @@ class JFormFieldRelated extends JFormFieldList
 
 			if ($canCreate && !empty($showAddNewRecordLink))
 			{
-				$masterUcmLink = Route::_('index.php?option=com_tjucm&view=itemform&client=' . $ucmTypeTable->unique_identifier, false);
+				$tjUcmFrontendHelper = new TjucmHelpersTjucm;
+				$itemId = $tjUcmFrontendHelper->getItemId('index.php?option=com_tjucm&view=itemform&client=' . $ucmTypeTable->unique_identifier);
+				$masterUcmLink = Route::_('index.php?option=com_tjucm&view=itemform&Itemid=' . $itemId, false);
 				$html .= "<div><a target='_blank' href='" . $masterUcmLink . "'>" . Text::_("COM_TJFIELDS_FORM_DESC_FIELD_RELATED_ADD_RECORD") . "</a></div>";
 			}
 		}
