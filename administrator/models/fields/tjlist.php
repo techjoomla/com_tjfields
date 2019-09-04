@@ -14,6 +14,7 @@ JFormHelper::loadFieldClass('list');
 
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Factory;
 
 /**
  * Form Field class for the Joomla Platform.
@@ -105,7 +106,9 @@ class JFormFieldTjList extends JFormFieldList
 
 		$html = parent::getInput();
 
-		$doc = JFactory::getDocument();
+		$doc = Factory::getDocument();
+		$doc->addStyleSheet(JUri::root() . 'administrator/components/com_tjfields/assets/css/bootstrap-tagsinput.css');
+		$doc->addScript(JUri::root() . 'administrator/components/com_tjfields/assets/js/bootstrap-tagsinput.min.js');
 		$doc->addScript(JUri::root() . 'administrator/components/com_tjfields/assets/js/tjlist.min.js');
 
 		$options = $this->getOptions();
@@ -202,7 +205,7 @@ class JFormFieldTjList extends JFormFieldList
 	private function getInputBox()
 	{
 		$text = '<div class="tjfieldTjListOtherText"><br/>';
-		$text .= '<input type="text" class=" ' . $this->otherInputClass . '" ' . $this->otherInputRequired . '
+		$text .= '<input data-role="tagsinput" type="text" class=" focus ' . $this->otherInputClass . '" ' . $this->otherInputRequired . '
 					name="' . $this->name . '" id="' . $this->id . '" value="' . $this->otherSelectedValue . '" aria-invalid="false"></div>';
 
 		return $text;
