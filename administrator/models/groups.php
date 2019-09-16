@@ -225,6 +225,10 @@ class TjfieldsModelGroups extends JModelList
 
 					return false;
 				}
+
+				$dispatcher = JDispatcher::getInstance();
+				JPluginHelper::importPlugin('tjfield');
+				$dispatcher->trigger('tjfieldOnAfterFieldGroupChangeState', array($id, $state));
 			}
 		}
 

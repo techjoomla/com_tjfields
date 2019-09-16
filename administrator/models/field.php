@@ -316,6 +316,16 @@ class TjfieldsModelField extends JModelAdmin
 		if ($table->save($data) === true)
 		{
 			$id = $table->id;
+
+			JTable::addIncludePath(JPATH_ROOT . '/administrator/components/com_tjucm/tables');
+			$tjucmTableType = JTable::getInstance('type', 'TjucmTable', array());
+
+			$tjucmTableType->load(array('unique_identifier' => $data['client']));
+
+			$dispatcher = JDispatcher::getInstance();
+			JPluginHelper::importPlugin('tjfield');
+			$isNew = ($data['id'] != 0) ? false : true;
+			$dispatcher->trigger('tjfieldOnAfterFieldSave', array($data, $data['group_id'], $tjucmTableType->id, $isNew));
 		}
 
 		// Check if name feild is unique

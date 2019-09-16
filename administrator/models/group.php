@@ -176,6 +176,12 @@ class TjfieldsModelGroup extends JModelAdmin
 		{
 			$id = $table->id;
 			$this->setState($this->getName() . '.id', $id);
+			$data['fieldGroupId'] = $id;
+
+			$dispatcher = JDispatcher::getInstance();
+			JPluginHelper::importPlugin('tjfield');
+			$isNew = ($data['id'] != 0) ? false : true;
+			$dispatcher->trigger('tjfieldOnAfterFieldGroupSave', array($data, $isNew));
 
 			return $id;
 		}
