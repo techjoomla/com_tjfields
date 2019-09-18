@@ -249,6 +249,14 @@ class TjfieldsModelGroups extends JModelList
 		if (count($id) > 1)
 		{
 			$group_to_delet = implode(',', $id);
+
+			for ($i = 0; $i < count($id); $i++)
+			{
+				$dispatcher = JDispatcher::getInstance();
+				JPluginHelper::importPlugin('tjfield');
+				$dispatcher->trigger('tjfieldOnAfterFieldGroupDelete', $id[$i]);
+			}
+
 			$db = JFactory::getDBO();
 			$query = "DELETE FROM #__tjfields_groups where id IN (" . $group_to_delet . ")";
 			$db->setQuery($query);
@@ -262,6 +270,9 @@ class TjfieldsModelGroups extends JModelList
 		}
 		else
 		{
+				$dispatcher = JDispatcher::getInstance();
+				JPluginHelper::importPlugin('tjfield');
+				$dispatcher->trigger('tjfieldOnAfterFieldGroupDelete', $id);
 				$db = JFactory::getDBO();
 				$query = "DELETE FROM #__tjfields_groups where id =" . $id[0];
 				$db->setQuery($query);

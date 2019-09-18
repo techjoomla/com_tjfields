@@ -79,13 +79,14 @@ class PlgActionlogTjfield extends CMSPlugin
 	 * This method logs who created/edited any field group data
 	 *
 	 * @param   Array    $fieldGroup  Holds the Field Group data
+	 * @param   Integer  $typeId      Id of ucm type.
 	 * @param   Boolean  $isNew       True if a new report is stored.
 	 *
 	 * @return  void
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function tjfieldOnAfterFieldGroupSave($fieldGroup,$isNew)
+	public function tjfieldOnAfterFieldGroupSave($fieldGroup, $typeId, $isNew)
 	{
 		if ($isNew)
 		{
@@ -117,14 +118,24 @@ class PlgActionlogTjfield extends CMSPlugin
 			$action             = 'update';
 		}
 
+		$db = JFactory::getDbo();
+		$query = $db->getQuery(true);
+		$query->select('title');
+		$query->from($db->quoteName('#__tj_ucm_types'));
+		$query->where($db->quoteName('id') . " = " . $db->quote($typeId));
+		$db->setQuery($query);
+		$typeTitle = $db->loadResult();
+
 		$message = array(
-			'action'      => $action,
-			'id'          => $fieldGroup['fieldGroupId'],
-			'title'       => ucfirst($fieldGroup['title']),
-			'itemlink'    => 'index.php?option=com_tjfields&&view=group&layout=edit&id=' . $fieldGroup['fieldGroupId'] . '&client=' . $fieldGroup['client'],
-			'userid'      => $user->id,
-			'username'    => $user->username,
-			'accountlink' => 'index.php?option=com_users&task=user.edit&id=' . $user->id,
+			'action'        => $action,
+			'id'            => $fieldGroup['fieldGroupId'],
+			'title'         => $fieldGroup['title'],
+			'typeTitle'     => $typeTitle,
+			'typeTitlelink' => 'index.php?option=com_tjucm&view=type&layout=edit&id=' . $typeId,
+			'itemlink'      => 'index.php?option=com_tjfields&&view=group&layout=edit&id=' . $fieldGroup['fieldGroupId'] . '&client=' . $fieldGroup['client'],
+			'userid'        => $user->id,
+			'username'      => $user->username,
+			'accountlink'   => 'index.php?option=com_users&task=user.edit&id=' . $user->id,
 		);
 
 		$this->addLog(array($message), $messageLanguageKey, $context, $user->id);
@@ -136,8 +147,8 @@ class PlgActionlogTjfield extends CMSPlugin
 	 * Method is called after field group data is stored in the database.
 	 * This method logs who created/edited any field group data
 	 *
-	 * @param   Array    $pk  Holds the Field Group data
-	 * @param   Boolean  $value       True if a new report is stored.
+	 * @param   Array    $pk     Holds the Field Group data
+	 * @param   Boolean  $value  True if a new report is stored.
 	 *
 	 * @return  void
 	 *
@@ -153,6 +164,7 @@ class PlgActionlogTjfield extends CMSPlugin
 		$context = JFactory::getApplication()->input->get('option');
 
 		$user = JFactory::getUser();
+		$ucmType = $this->getucmType($pk);
 
 		switch ($value)
 		{
@@ -164,6 +176,10 @@ class PlgActionlogTjfield extends CMSPlugin
 				$messageLanguageKey = 'PLG_ACTIONLOG_TJFIELD_FIELD_GROUP_PUBLISHED';
 				$action             = 'publish';
 				break;
+			case -2:
+				$messageLanguageKey = 'PLG_ACTIONLOG_TJFIELD_FIELD_GROUP_TRASHED';
+				$action             = 'trash';
+				break;
 			default:
 				$messageLanguageKey = '';
 				$action             = '';
@@ -174,25 +190,55 @@ class PlgActionlogTjfield extends CMSPlugin
 		$tjfieldsTablegroup->load(array('id' => $pk));
 
 		$message = array(
-				'action'      => $action,
-				'id'          => $tjfieldsTablegroup->id,
-				'title'       => ucfirst($tjfieldsTablegroup->title),
-				'itemlink'    => 'index.php?option=com_tjfields&&view=group&layout=edit&id=' . $tjfieldsTablegroup->id . '&client=' . $tjfieldsTablegroup->client,
-				'userid'      => $user->id,
-				'username'    => $user->username,
-				'accountlink' => 'index.php?option=com_users&task=user.edit&id=' . $user->id,
+				'action'        => $action,
+				'id'            => $tjfieldsTablegroup->id,
+				'title'         => $tjfieldsTablegroup->title,
+				'itemlink'      => 'index.php?option=com_tjfields&&view=group&layout=edit&id=' . $tjfieldsTablegroup->id . '&client=' . $tjfieldsTablegroup->client,
+				'typeTitle'     => $ucmType['title'],
+				'typeTitlelink' => 'index.php?option=com_tjucm&view=type&layout=edit&id=' . $ucmType['id'],
+				'userid'        => $user->id,
+				'username'      => $user->username,
+				'accountlink'   => 'index.php?option=com_users&task=user.edit&id=' . $user->id,
 		);
 
 		$this->addLog(array($message), $messageLanguageKey, $context, $userId);
 	}
 
+	/**
+	 * Method is called after field group is to be deleted.
+	 * This method logs who deleted any field group data
+	 *
+	 * @param   Array  $pk  Holds the Field Group data
+	 *
+	 * @return  void
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	public function tjfieldOnAfterFieldGroupDelete($pk)
+	{
+		$tjfieldsTablegroup = Table::getInstance('group', 'TjfieldsTable', array());
+		$tjfieldsTablegroup->load(array('id' => $pk));
+		$ucmType = $this->getucmType($pk);
 
+		$context = JFactory::getApplication()->input->get('option');
 
+		$user = JFactory::getUser();
+		$messageLanguageKey = 'PLG_ACTIONLOG_TJFIELD_FIELD_GROUP_DELETED';
 
+		$message = array(
+				'action'        => 'delete',
+				'id'            => $tjfieldsTablegroup->id,
+				'title'         => $tjfieldsTablegroup->title,
+				'itemlink'      => 'index.php?option=com_tjfields&&view=group&layout=edit&id=' . $tjfieldsTablegroup->id . '&client=' . $tjfieldsTablegroup->client,
+				'typeTitle'     => $ucmType['title'],
+				'typeTitlelink' => 'index.php?option=com_tjucm&view=type&layout=edit&id=' . $ucmType['id'],
+				'userid'        => $user->id,
+				'username'      => $user->username,
+				'accountlink'   => 'index.php?option=com_users&task=user.edit&id=' . $user->id,
+		);
 
-
-
-
+		$this->addLog(array($message), $messageLanguageKey, $context, $userId);
+	}
 
 	/**
 	 * On saving field data logging method
@@ -200,7 +246,9 @@ class PlgActionlogTjfield extends CMSPlugin
 	 * Method is called after field data is stored in the database.
 	 * This method logs who created/edited any field group data
 	 *
-	 * @param   Array   $field  Holds the Field data
+	 * @param   Array    $field         Holds the Field data
+	 * @param   Array    $fieldGroupID  Holds the Field data
+	 * @param   Array    $typeID        Holds the Field data
 	 * @param   Boolean  $isNew         True if a new report is stored.
 	 *
 	 * @return  void
@@ -231,11 +279,11 @@ class PlgActionlogTjfield extends CMSPlugin
 			$action             = 'update';
 		}
 
-		// User X has created field PQR under type ABC
+		// User X has deleted field PQR under type ABC
 		$message = array(
 			'action'      => $action,
 			'id'          => $field->id,
-			'title'       => ucfirst($field->title),
+			'title'       => $field->title,
 			'type'        => $tjucmTableType->title,
 			'itemlink'    => 'index.php?option=com_tjfield&task=field.edit&id=' . $field->id,
 			'userid'      => $user->id,
@@ -244,6 +292,38 @@ class PlgActionlogTjfield extends CMSPlugin
 		);
 
 		$this->addLog(array($message), $messageLanguageKey, $context, $user->id);
+	}
 
+	/**
+	 * Get ucmType details on the basis on fieldgroup id
+	 *
+	 * @param   Interger  $id  fieldgroup id.
+	 *
+	 * @return  array
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	public function getucmType($id)
+	{
+			$db = JFactory::getDbo();
+			$query = $db->getQuery(true);
+			$query->select('client');
+			$query->from($db->quoteName('#__tjfields_groups'));
+			$query->where($db->quoteName('id') . " = " . $db->quote($id));
+			$db->setQuery($query);
+			$client = $db->loadResult();
+
+			if ($client != null)
+			{
+			$db2 = JFactory::getDbo();
+			$query2 = $db2->getQuery(true);
+			$query2->select(array('id','title'));
+			$query2->from($db2->quoteName('#__tj_ucm_types'));
+			$query2->where($db2->quoteName('unique_identifier') . " = " . $db->quote($client));
+			$db2->setQuery($query2);
+			$type = $db2->loadAssoc();
+
+			return $type;
+			}
 	}
 }

@@ -135,7 +135,7 @@ class TjfieldsModelGroup extends JModelAdmin
 	/**
 	 * Method to save the form data.
 	 *
-	 * @param   array  $post  The form data.
+	 * @param   array  $data  The form data.
 	 *
 	 * @return   mixed		The user id on success, false on failure.
 	 *
@@ -177,11 +177,20 @@ class TjfieldsModelGroup extends JModelAdmin
 			$id = $table->id;
 			$this->setState($this->getName() . '.id', $id);
 			$data['fieldGroupId'] = $id;
+			$client = $data['client'];
+
+			$db = JFactory::getDbo();
+			$query = $db->getQuery(true);
+			$query->select('id');
+			$query->from($db->quoteName('#__tj_ucm_types'));
+			$query->where($db->quoteName('unique_identifier') . " = " . $db->quote($client));
+			$db->setQuery($query);
+			$typeId = $db->loadResult();
 
 			$dispatcher = JDispatcher::getInstance();
 			JPluginHelper::importPlugin('tjfield');
 			$isNew = ($data['id'] != 0) ? false : true;
-			$dispatcher->trigger('tjfieldOnAfterFieldGroupSave', array($data, $isNew));
+			$dispatcher->trigger('tjfieldOnAfterFieldGroupSave', array($data, $typeId, $isNew));
 
 			return $id;
 		}
