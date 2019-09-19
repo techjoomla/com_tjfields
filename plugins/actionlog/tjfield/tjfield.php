@@ -79,7 +79,7 @@ class PlgActionlogTjfield extends CMSPlugin
 	 * This method logs who created/edited any field group data
 	 *
 	 * @param   Array    $fieldGroup  Holds the Field Group data
-	 * @param   Integer  $typeId      Id of ucm type.
+	 * @param   Int      $typeId      Id of ucm type.
 	 * @param   Boolean  $isNew       True if a new report is stored.
 	 *
 	 * @return  void
@@ -147,7 +147,7 @@ class PlgActionlogTjfield extends CMSPlugin
 	 * Method is called after field group data is stored in the database.
 	 * This method logs who created/edited any field group data
 	 *
-	 * @param   Array    $pk     Holds the Field Group data
+	 * @param   Int      $pk     Holds the Field Group data
 	 * @param   Boolean  $value  True if a new report is stored.
 	 *
 	 * @return  void
@@ -189,26 +189,29 @@ class PlgActionlogTjfield extends CMSPlugin
 		$tjfieldsTablegroup = Table::getInstance('group', 'TjfieldsTable', array());
 		$tjfieldsTablegroup->load(array('id' => $pk));
 
-		$message = array(
-				'action'        => $action,
-				'id'            => $tjfieldsTablegroup->id,
-				'title'         => $tjfieldsTablegroup->title,
-				'itemlink'      => 'index.php?option=com_tjfields&&view=group&layout=edit&id=' . $tjfieldsTablegroup->id . '&client=' . $tjfieldsTablegroup->client,
-				'typeTitle'     => $ucmType['title'],
-				'typeLink' => 'index.php?option=com_tjucm&view=type&layout=edit&id=' . $ucmType['id'],
-				'userid'        => $user->id,
-				'username'      => $user->username,
-				'accountlink'   => 'index.php?option=com_users&task=user.edit&id=' . $user->id,
-		);
+		if ($tjfieldsTablegroup != null)
+		{
+			$message = array(
+					'action'        => $action,
+					'id'            => $tjfieldsTablegroup->id,
+					'title'         => $tjfieldsTablegroup->title,
+					'itemlink'      => 'index.php?option=com_tjfields&&view=group&layout=edit&id=' . $tjfieldsTablegroup->id . '&client=' . $tjfieldsTablegroup->client,
+					'typeTitle'     => $ucmType['title'],
+					'typeLink' => 'index.php?option=com_tjucm&view=type&layout=edit&id=' . $ucmType['id'],
+					'userid'        => $user->id,
+					'username'      => $user->username,
+					'accountlink'   => 'index.php?option=com_users&task=user.edit&id=' . $user->id,
+			);
 
-		$this->addLog(array($message), $messageLanguageKey, $context, $userId);
+			$this->addLog(array($message), $messageLanguageKey, $context, $userId);
+		}
 	}
 
 	/**
 	 * Method is called after field group is to be deleted.
 	 * This method logs who deleted any field group data
 	 *
-	 * @param   Array  $pk  Holds the Field Group data
+	 * @param   Int  $pk  Holds the Field Group data
 	 *
 	 * @return  void
 	 *
@@ -216,6 +219,7 @@ class PlgActionlogTjfield extends CMSPlugin
 	 */
 	public function tjfieldOnAfterFieldGroupDelete($pk)
 	{
+		$ucmType = array();
 		$tjfieldsTablegroup = Table::getInstance('group', 'TjfieldsTable', array());
 		$tjfieldsTablegroup->load(array('id' => $pk));
 
@@ -239,7 +243,7 @@ class PlgActionlogTjfield extends CMSPlugin
 				'accountlink'   => 'index.php?option=com_users&task=user.edit&id=' . $user->id,
 		);
 
-		$this->addLog(array($message), $messageLanguageKey, $context, $userId);
+		$this->addLog(array($message), $messageLanguageKey, $context, $user->id);
 	}
 
 	/**
@@ -301,7 +305,7 @@ class PlgActionlogTjfield extends CMSPlugin
 	 * Method is called after field is to be deleted.
 	 * This method logs who deleted any field data
 	 *
-	 * @param   Array  $id  Holds the Field id
+	 * @param   Int  $id  Holds the Field id
 	 *
 	 * @return  void
 	 *
@@ -309,10 +313,14 @@ class PlgActionlogTjfield extends CMSPlugin
 	 */
 	public function tjfieldOnAfterFieldDelete($id)
 	{
+		$ucmType = array();
 		$tjfieldsTable = Table::getInstance('field', 'TjfieldsTable', array());
 		$tjfieldsTable->load(array('id' => $id));
 
-		$client = $tjfieldsTable->client;
+		if ($tjfieldsTable != null)
+		{
+			$client = $tjfieldsTable->client;
+		}
 
 		if ($client != null)
 		{
@@ -334,14 +342,14 @@ class PlgActionlogTjfield extends CMSPlugin
 				'accountlink'   => 'index.php?option=com_users&task=user.edit&id=' . $user->id,
 		);
 
-		$this->addLog(array($message), $messageLanguageKey, $context, $userId);
+		$this->addLog(array($message), $messageLanguageKey, $context, $user->id);
 	}
 
 	/**
 	 * Method is called after field data is stored in the database.
 	 * This method logs who published/unpublished any field data
 	 *
-	 * @param   Array    $pk     Holds the Field data
+	 * @param   Int      $pk     Holds the Field data
 	 * @param   Boolean  $value  True if a new field is stored.
 	 *
 	 * @return  void
@@ -378,7 +386,10 @@ class PlgActionlogTjfield extends CMSPlugin
 		$tjfieldsTable = Table::getInstance('field', 'TjfieldsTable', array());
 		$tjfieldsTable->load(array('id' => $pk));
 
-		$client = $tjfieldsTable->client;
+		if ($tjfieldsTable != null)
+		{
+			$client = $tjfieldsTable->client;
+		}
 
 		if ($client != null)
 		{
@@ -397,13 +408,13 @@ class PlgActionlogTjfield extends CMSPlugin
 				'accountlink'   => 'index.php?option=com_users&task=user.edit&id=' . $user->id,
 		);
 
-		$this->addLog(array($message), $messageLanguageKey, $context, $userId);
+		$this->addLog(array($message), $messageLanguageKey, $context, $user->id);
 	}
 
 	/**
 	 * Get ucmType details on the basis on fieldgroup id
 	 *
-	 * @param   Interger  $id  fieldgroup id.
+	 * @param   Int  $id  fieldgroup id.
 	 *
 	 * @return  array
 	 *
@@ -411,22 +422,20 @@ class PlgActionlogTjfield extends CMSPlugin
 	 */
 	public function getucmType($id)
 	{
-			$db = JFactory::getDbo();
-			$query = $db->getQuery(true);
-			$query->select('client');
-			$query->from($db->quoteName('#__tjfields_groups'));
-			$query->where($db->quoteName('id') . " = " . $db->quote($id));
-			$db->setQuery($query);
-			$client = $db->loadResult();
+		$db = JFactory::getDbo();
+		$query = $db->getQuery(true);
+		$query->select('client');
+		$query->from($db->quoteName('#__tjfields_groups'));
+		$query->where($db->quoteName('id') . " = " . $db->quote($id));
+		$db->setQuery($query);
+		$client = $db->loadResult();
 
-			$type = $this->getUcmTypeByClient($client);
+		if ($client != null)
+		{
+		$type = $this->getUcmTypeByClient($client);
 
-			if ($client)
-			{
-			$type = $this->getUcmTypeByClient($client);
-
-			return $type;
-			}
+		return $type;
+		}
 	}
 
 	/**
