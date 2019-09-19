@@ -250,6 +250,10 @@ class TjfieldsModelFields extends JModelList
 
 					return false;
 				}
+
+				$dispatcher = JDispatcher::getInstance();
+				JPluginHelper::importPlugin('tjfield');
+				$dispatcher->trigger('tjfieldOnAfterFieldChangeState', array($id, $state));
 			}
 		}
 
@@ -269,6 +273,13 @@ class TjfieldsModelFields extends JModelList
 	{
 		if (count($id) >= 1)
 		{
+			for ($i = 0; $i < count($id); $i++)
+			{
+				$dispatcher = JDispatcher::getInstance();
+				JPluginHelper::importPlugin('tjfield');
+				$dispatcher->trigger('tjfieldOnAfterFieldDelete', $id[$i]);
+			}
+
 			$group_to_delet = implode(',', $id);
 			$db             = JFactory::getDBO();
 			$query          = "DELETE FROM #__tjfields_fields where id IN (" . $group_to_delet . ")";
@@ -305,6 +316,10 @@ class TjfieldsModelFields extends JModelList
 		}
 		else
 		{
+			$dispatcher = JDispatcher::getInstance();
+			JPluginHelper::importPlugin('tjfield');
+			$dispatcher->trigger('tjfieldOnAfterFieldDelete', $id);
+
 			$db    = JFactory::getDBO();
 			$query = "DELETE FROM #__tjfields_fields where id =" . $id[0];
 			$db->setQuery($query);

@@ -273,6 +273,7 @@ class TjfieldsModelGroups extends JModelList
 				$dispatcher = JDispatcher::getInstance();
 				JPluginHelper::importPlugin('tjfield');
 				$dispatcher->trigger('tjfieldOnAfterFieldGroupDelete', $id);
+
 				$db = JFactory::getDBO();
 				$query = "DELETE FROM #__tjfields_groups where id =" . $id[0];
 				$db->setQuery($query);
