@@ -203,7 +203,7 @@ class PlgActionlogTjfield extends CMSPlugin
 					'accountlink'   => 'index.php?option=com_users&task=user.edit&id=' . $user->id,
 			);
 
-			$this->addLog(array($message), $messageLanguageKey, $context, $userId);
+			$this->addLog(array($message), $messageLanguageKey, $context, $user->id);
 		}
 	}
 
