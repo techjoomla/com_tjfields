@@ -177,6 +177,7 @@ class TjfieldsModelGroup extends JModelAdmin
 			$id = $table->id;
 			$this->setState($this->getName() . '.id', $id);
 			$data['fieldGroupId'] = $id;
+
 			$client = $data['client'];
 
 			$db = JFactory::getDbo();

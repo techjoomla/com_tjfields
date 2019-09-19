@@ -316,6 +316,8 @@ class TjfieldsModelField extends JModelAdmin
 		if ($table->save($data) === true)
 		{
 			$id = $table->id;
+			$this->setState($this->getName() . '.id', $id);
+			$data['fieldId'] = $id;
 
 			JTable::addIncludePath(JPATH_ROOT . '/administrator/components/com_tjucm/tables');
 			$tjucmTableType = JTable::getInstance('type', 'TjucmTable', array());

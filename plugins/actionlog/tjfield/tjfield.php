@@ -292,7 +292,7 @@ class PlgActionlogTjfield extends CMSPlugin
 			'title'       => $field['title'],
 			'type'        => $tjucmTableType->title,
 			'typelink'    => 'index.php?option=com_tjucm&view=type&layout=edit&id=' . $typeID,
-			'itemlink'    => 'index.php?option=com_tjfields&view=field&layout=edit&id=' . $field['id'],
+			'fieldlink'    => 'index.php?option=com_tjfields&view=field&layout=edit&id=' . $field['fieldId']. '&client=' . $field['client'],
 			'userid'      => $user->id,
 			'username'    => $user->username,
 			'accountlink' => 'index.php?option=com_users&task=user.edit&id=' . $user->id,
