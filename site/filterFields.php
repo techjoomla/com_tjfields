@@ -421,13 +421,30 @@ trait TjfieldsFilterField
 	 */
 	public function saveExtraFields($data)
 	{
+		if (empty($data['client']))
+		{
+			$this->setError(JText::_('COM_TJFIELDS_FORM_SAVE_FAILED_CLIENT_REQUIRED'));
+
+			return false;
+		}
+
+		if (empty($data['content_id']))
+		{
+			$this->setError(JText::_('COM_TJFIELDS_FORM_SAVE_FAILED_CLIENT_REQUIRED'));
+
+			return false;
+		}
+
+		if (empty($data['fieldsvalue']))
+		{
+			$this->setError(JText::_('COM_TJFIELDS_FORM_SAVE_FAILED_CLIENT_REQUIRED'));
+
+			return false;
+		}
+
 		$tjFieldsHelper = new TjfieldsHelper;
 
-		$data['user_id']     = JFactory::getUser()->id;
-
-		$result = $tjFieldsHelper->saveFieldsValue($data);
-
-		return $result;
+		return $tjFieldsHelper->saveFieldsValue($data);
 	}
 
 	/**

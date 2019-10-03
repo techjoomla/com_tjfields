@@ -19,7 +19,7 @@
 			<option value="0">COM_TJFIELDS_NO</option>
 		</field>
 
-		<field name="readonly" type="radio" label="COM_TJFIELDS_FORM_LBL_FIELD_READONLY" description="COM_TJFIELDS_FORM_DESC_FIELD_READONLY" default="0" required="true" class="btn-group">
+		<field name="readonly" type="radio" label="COM_TJFIELDS_FORM_LBL_FIELD_READONLY" description="COM_TJFIELDS_FORM_DESC_FIELD_READONLY" default="0" required="true" class="btn-group" showon="required:0">
 			<option value="1">COM_TJFIELDS_YES</option>
 			<option value="0">COM_TJFIELDS_NO</option>
 		</field>

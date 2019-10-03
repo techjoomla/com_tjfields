@@ -305,6 +305,12 @@ class TjfieldsModelField extends JModelAdmin
 				$data_unique_name = $client . '_' . $data['client_type'] . '_' . $data['type'] . 'createdby';
 			}
 
+			// To store itemcategory type fields in core UCM hence rename the field name
+			if ($data['type'] == 'itemcategory')
+			{
+				$data_unique_name = $client . '_' . $data['client_type'] . '_' . $data['type'] . 'itemcategory';
+			}
+
 			$data['name'] = $data_unique_name;
 		}
 
