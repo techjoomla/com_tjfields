@@ -378,7 +378,7 @@ class Com_TjfieldsInstallerScript
 
 		if (!in_array('showonlist', $field_array))
 		{
-			$query = "ALTER TABLE `#__tjfields_fields` ADD COLUMN `showonlist` tinyint(1) NOT NULL";
+			$query = "ALTER TABLE `#__tjfields_fields` ADD COLUMN `showonlist` tinyint(1) NOT NULL DEFAULT '0'";
 			$db->setQuery($query);
 
 			if (!$db->execute())
