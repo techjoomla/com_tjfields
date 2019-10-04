@@ -371,6 +371,12 @@ class Com_TjfieldsInstallerScript
 			}
 		}
 
+		// Delete sql file if exist as related column is added through script
+		if (JFile::exists(JPATH_SITE . '/administrator/components/com_tjfields/sql/updates/mysql/1.3.1.sql'))
+		{
+			JFile::delete($image);
+		}
+
 		if (!in_array('showonlist', $field_array))
 		{
 			$query = "ALTER TABLE `#__tjfields_fields` ADD COLUMN `showonlist` tinyint(1) NOT NULL";
