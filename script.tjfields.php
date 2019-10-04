@@ -44,6 +44,11 @@ class Com_TjfieldsInstallerScript
 	 */
 	public function preflight($type, $parent)
 	{
+		// Delete sql file if exist as related column is added through script
+		if (JFile::exists(JPATH_SITE . '/administrator/components/com_tjfields/sql/updates/mysql/1.3.1.sql'))
+		{
+			JFile::delete(JPATH_SITE . '/administrator/components/com_tjfields/sql/updates/mysql/1.3.1.sql');
+		}
 	}
 
 	/**

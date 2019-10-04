@@ -421,13 +421,14 @@ trait TjfieldsFilterField
 	 */
 	public function saveExtraFields($data)
 	{
+		if (empty($data['client']) || empty($data['content_id']) || empty($data['fieldsvalue']))
+		{
+			return false;
+		}
+
 		$tjFieldsHelper = new TjfieldsHelper;
 
-		$data['user_id']     = JFactory::getUser()->id;
-
-		$result = $tjFieldsHelper->saveFieldsValue($data);
-
-		return $result;
+		return $tjFieldsHelper->saveFieldsValue($data);
 	}
 
 	/**
