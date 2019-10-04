@@ -345,6 +345,11 @@ class TjfieldsHelper
 			return false;
 		}
 
+		if ($fieldValue == '' && empty($fieldStoredValues))
+		{
+			return false;
+		}
+
 		JLoader::import('components.com_tjfields.tables.fieldsvalue', JPATH_ADMINISTRATOR);
 		$fieldsValueTable = JTable::getInstance('FieldsValue', 'TjfieldsTable', array('dbo', JFactory::getDbo()));
 

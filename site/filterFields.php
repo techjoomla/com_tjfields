@@ -421,24 +421,8 @@ trait TjfieldsFilterField
 	 */
 	public function saveExtraFields($data)
 	{
-		if (empty($data['client']))
+		if (empty($data['client']) || empty($data['content_id']) || empty($data['fieldsvalue']))
 		{
-			$this->setError(JText::_('COM_TJFIELDS_FORM_SAVE_FAILED_CLIENT_REQUIRED'));
-
-			return false;
-		}
-
-		if (empty($data['content_id']))
-		{
-			$this->setError(JText::_('COM_TJFIELDS_FORM_SAVE_FAILED_CLIENT_REQUIRED'));
-
-			return false;
-		}
-
-		if (empty($data['fieldsvalue']))
-		{
-			$this->setError(JText::_('COM_TJFIELDS_FORM_SAVE_FAILED_CLIENT_REQUIRED'));
-
 			return false;
 		}
 
