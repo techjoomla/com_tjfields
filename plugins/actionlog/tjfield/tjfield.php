@@ -156,11 +156,6 @@ class PlgActionlogTjfield extends CMSPlugin
 	 */
 	public function tjfieldOnAfterFieldGroupChangeState($pk, $value)
 	{
-		if (!$this->params->get('logActionForFieldGroupStateChange', 1))
-		{
-			return;
-		}
-
 		$context = JFactory::getApplication()->input->get('option');
 
 		$user = JFactory::getUser();
@@ -195,7 +190,7 @@ class PlgActionlogTjfield extends CMSPlugin
 					'action'        => $action,
 					'id'            => $tjfieldsTablegroup->id,
 					'title'         => $tjfieldsTablegroup->title,
-					'itemlink'      => 'index.php?option=com_tjfields&&view=group&layout=edit&id=' . $tjfieldsTablegroup->id . '&client=' . $tjfieldsTablegroup->client,
+					'itemlink'      => 'index.php?option=com_tjfields&view=group&layout=edit&id=' . $tjfieldsTablegroup->id . '&client=' . $tjfieldsTablegroup->client,
 					'typeTitle'     => $ucmType['title'],
 					'typeLink' => 'index.php?option=com_tjucm&view=type&layout=edit&id=' . $ucmType['id'],
 					'userid'        => $user->id,
@@ -231,7 +226,7 @@ class PlgActionlogTjfield extends CMSPlugin
 		$context = JFactory::getApplication()->input->get('option');
 
 		$user = JFactory::getUser();
-		$messageLanguageKey = 'PLG_ACTIONLOG_TJFIELD_FIELD_DELETED';
+		$messageLanguageKey = 'PLG_ACTIONLOG_TJFIELD_FIELD_GROUP_DELETED';
 
 		$message = array(
 				'action'        => 'delete',
@@ -292,7 +287,7 @@ class PlgActionlogTjfield extends CMSPlugin
 			'title'       => $field['title'],
 			'type'        => $tjucmTableType->title,
 			'typelink'    => 'index.php?option=com_tjucm&view=type&layout=edit&id=' . $typeID,
-			'fieldlink'    => 'index.php?option=com_tjfields&view=field&layout=edit&id=' . $field['fieldId']. '&client=' . $field['client'],
+			'fieldlink'    => 'index.php?option=com_tjfields&view=field&layout=edit&id=' . $field['fieldId'] . '&client=' . $field['client'],
 			'userid'      => $user->id,
 			'username'    => $user->username,
 			'accountlink' => 'index.php?option=com_users&task=user.edit&id=' . $user->id,

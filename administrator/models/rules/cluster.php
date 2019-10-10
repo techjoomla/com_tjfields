@@ -34,20 +34,35 @@ class JFormRuleCluster extends JFormRule
 	 */
 	public function test(SimpleXMLElement $element, $value, $group = null, Registry $input = null, JForm $form = null)
 	{
+		$required = ($element['required'] instanceof SimpleXMLElement) ? $element['required']->__toString() : 'false';
+
+		if ($required == 'true')
+		{
+			if ($value == "" || empty($value))
+			{
+				return false;
+			}
+		}
+
 		// Validate if a user has entered valid cluster id
 		$user = JFactory::getUser();
 		JLoader::import("/components/com_cluster/includes/cluster", JPATH_ADMINISTRATOR);
 		$clusterUserModel = ClusterFactory::model('ClusterUser', array('ignore_request' => true));
 		$clusters = $clusterUserModel->getUsersClusters($user->id);
 
-		foreach ($clusters as $cluster)
+		if ($value != "")
 		{
-			if ($value == $cluster->id)
+			foreach ($clusters as $cluster)
 			{
-				return true;
+				if ($value == $cluster->id)
+				{
+					return true;
+				}
 			}
+
+			return false;
 		}
 
-		return false;
+		return true;
 	}
 }

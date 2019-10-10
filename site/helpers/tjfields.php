@@ -9,6 +9,7 @@
 
 defined('_JEXEC') or die;
 JLoader::import("/techjoomla/media/storage/local", JPATH_LIBRARIES);
+use Joomla\Registry\Registry;
 
 /**
  * Helper class for tjfields
@@ -154,13 +155,451 @@ class TjfieldsHelper
 	}
 
 	/**
+	 * Function to store data in fields_value table
+	 *
+	 * @param   ARRAY  $data  Data to be stored
+	 *
+	 * @return  boolean
+	 */
+	public function saveFieldsValue($data)
+	{
+		if (empty($data['content_id']) || empty($data['client']) || empty($data['fieldsvalue']))
+		{
+			return false;
+		}
+
+		static $tjUcmParentClient;
+		static $tjUcmParentContentId;
+		static $tjUcmSubFormContentId = array('childContentIds' => array());
+
+		if (empty($tjUcmParentClient))
+		{
+			$tjUcmParentClient = $data['client'];
+		}
+
+		if (empty($tjUcmParentContentId))
+		{
+			$tjUcmParentContentId = $data['content_id'];
+		}
+
+		// Get user object
+		$user = JFactory::getUser();
+
+		// Get all the fields of the specified client
+		JLoader::import('components.com_tjfields.models.fields', JPATH_ADMINISTRATOR);
+		$tjFieldsFieldsModel = JModelLegacy::getInstance('Fields', 'TjfieldsModel', array('ignore_request' => true));
+		$tjFieldsFieldsModel->setState('filter.client', $data['client']);
+		$tjFieldsFieldsModel->setState('filter.state', 1);
+		$fields = $tjFieldsFieldsModel->getItems();
+
+		// Get previously stored details in the record
+		$db = JFactory::getDbo();
+		$query = $db->getQuery(true);
+		$query->select('*');
+		$query->from($db->quoteName('#__tjfields_fields_value'));
+		$query->where($db->quoteName('content_id') . ' = ' . (INT) $data['content_id']);
+		$query->where($db->quoteName('client') . ' = ' . $db->quote($data['client']));
+		$db->setQuery($query);
+		$storedValues = $db->loadAssocList();
+
+		foreach ($data['fieldsvalue'] as $fieldName => $fieldValue)
+		{
+			$fieldKey = array_search($fieldName, array_column($fields, 'name'));
+			$field = $fields[$fieldKey];
+
+			$fieldStoredValuesKeys = array_keys(array_column($storedValues, 'field_id'), $field->id);
+			$fieldStoredValues = array();
+
+			foreach ($fieldStoredValuesKeys as $fieldStoredValuesKey)
+			{
+				$fieldStoredValues[] = $storedValues[$fieldStoredValuesKey];
+			}
+
+			// Check if user is authorised to save/edit the field value
+			if (empty($storedValues))
+			{
+				if ($user->authorise('core.field.addfieldvalue', 'com_tjfields.group.' . $field->group_id))
+				{
+					$authorised = $user->authorise('core.field.addfieldvalue', 'com_tjfields.field.' . $field->id);
+				}
+			}
+			else
+			{
+				if ($user->authorise('core.field.editfieldvalue', 'com_tjfields.group.' . $field->group_id))
+				{
+					$authorised = $user->authorise('core.field.editfieldvalue', 'com_tjfields.field.' . $field->id);
+				}
+				else
+				{
+					if ($user->authorise('core.field.editownfieldvalue', 'com_tjfields.group.' . $field->group_id))
+					{
+						if ($user->authorise('core.field.editownfieldvalue', 'com_tjfields.field.' . $field->id) && ($data['created_by'] == $user->id))
+						{
+							$authorised = true;
+						}
+					}
+				}
+			}
+
+			// If not authorised then return false
+			if (empty($authorised))
+			{
+				continue;
+			}
+
+			if ($field->type == 'file' || $field->type == 'image')
+			{
+				$this->saveMediaFieldData($fieldValue, $field->client, $data['content_id'], $field->id, $fieldStoredValues);
+			}
+			elseif ($field->type == 'subform')
+			{
+				$fieldValue = json_encode($fieldValue);
+				$this->saveSingleValuedFieldData($fieldValue, $field->client, $data['content_id'], $field->id, $fieldStoredValues);
+			}
+			elseif ($field->type == 'ucmsubform' && is_array($fieldValue))
+			{
+				if (empty($fieldValue))
+				{
+					continue;
+				}
+
+				if (!defined('TJUCM_PARENT_CLIENT'))
+				{
+					define("TJUCM_PARENT_CLIENT", $data['client']);
+				}
+
+				if (!defined('TJUCM_PARENT_CONTENT_ID'))
+				{
+					define("TJUCM_PARENT_CONTENT_ID", $data['content_id']);
+				}
+
+				$ucmSubformClientTmp = explode('_', str_replace("com_tjucm_", '', array_key_first($fieldValue[array_key_first($fieldValue)])));
+				array_pop($ucmSubformClientTmp);
+				$ucmSubformClient = 'com_tjucm.' . implode('_', $ucmSubformClientTmp);
+
+				$this->saveSingleValuedFieldData($ucmSubformClient, TJUCM_PARENT_CLIENT, TJUCM_PARENT_CONTENT_ID, $field->id, $fieldStoredValues);
+
+				foreach ($fieldValue as $key => $ucmSubformValue)
+				{
+					if (!empty($ucmSubformValue))
+					{
+						$ucmSubformContentIdFieldName = str_replace('.', '_', $ucmSubformClient . "_contentid");
+						$ucmSubformContentIdFieldElementId = 'jform_' . $field->name . '__' . $key . '__' . $ucmSubformContentIdFieldName;
+						$ucmSubFormContentId = (INT) (isset($ucmSubformValue[$ucmSubformContentIdFieldName])) ? $ucmSubformValue[$ucmSubformContentIdFieldName] : 0;
+
+						if (empty($ucmSubFormContentId))
+						{
+							$tjUcmSubFormItemData = array('id' => '', 'parent_id' => $data['content_id'], 'client' => $ucmSubformClient);
+
+							JLoader::import('component.com_tjucm.models.itemform', JPATH_SITE);
+							$tjUcmItemFormModel = JModelLegacy::getInstance('ItemForm', 'TjucmModel');
+							$tjUcmItemFormModel->save($tjUcmSubFormItemData);
+							$ucmSubFormContentId = $tjUcmItemFormModel->getState($tjUcmItemFormModel->getName() . '.id');
+						}
+
+						$tjUcmSubFormContentId['childContentIds'][$ucmSubformContentIdFieldElementId] = (INT) $ucmSubFormContentId;
+						$ucmSubFormData = array();
+						$ucmSubFormData['content_id']  = $ucmSubFormContentId;
+						$ucmSubFormData['client']      = $ucmSubformClient;
+						$ucmSubFormData['fieldsvalue'] = $ucmSubformValue;
+						$ucmSubFormData['created_by']  = JFactory::getUser()->id;
+						$this->saveFieldsValue($ucmSubFormData);
+					}
+				}
+			}
+			elseif (is_array($fieldValue))
+			{
+				$fieldValue = explode(",", $fieldValue[0]);
+
+				$this->saveMultiValuedFieldData($fieldValue, $field->client, $data['content_id'], $field->id, $fieldStoredValues);
+			}
+			else
+			{
+				$this->saveSingleValuedFieldData($fieldValue, $field->client, $data['content_id'], $field->id, $fieldStoredValues);
+			}
+		}
+
+		if (!empty($tjUcmSubFormContentId['childContentIds']))
+		{
+			return $tjUcmSubFormContentId;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Function to store data of single valued field in fields_value table
+	 *
+	 * @param   STRING  $fieldValue         Data to be stored
+	 * @param   STRING  $client             Client to which the data belongs
+	 * @param   INT     $contentId          Record Id to which the data belongs
+	 * @param   INT     $fieldId            Field Id to which the data belongs
+	 * @param   ARRAY   $fieldStoredValues  Previously stored value if any
+	 *
+	 * @return  boolean
+	 */
+	private function saveSingleValuedFieldData($fieldValue, $client, $contentId, $fieldId, $fieldStoredValues = array())
+	{
+		if (empty($contentId) || empty($fieldId) || empty($client))
+		{
+			return false;
+		}
+
+		if ($fieldValue == '' && empty($fieldStoredValues))
+		{
+			return false;
+		}
+
+		JLoader::import('components.com_tjfields.tables.fieldsvalue', JPATH_ADMINISTRATOR);
+		$fieldsValueTable = JTable::getInstance('FieldsValue', 'TjfieldsTable', array('dbo', JFactory::getDbo()));
+
+		// Set currently logged in users id as user_id
+		$fieldsValueTable->user_id = JFactory::getUser()->id;
+
+		// If field value already exists then update the value else insert the field value
+		if (isset($fieldStoredValues[0]) || !empty($fieldStoredValues[0]))
+		{
+			if ($fieldsValueTable->bind($fieldStoredValues[0]))
+			{
+				// If new value for field is not blank then update it else delete it
+				if ($fieldValue != '')
+				{
+					$fieldsValueTable->value = $fieldValue;
+
+					if ($fieldsValueTable->store())
+					{
+						return true;
+					}
+				}
+				else
+				{
+					if ($fieldsValueTable->delete($fieldStoredValues[0]['id']))
+					{
+						return true;
+					}
+				}
+			}
+		}
+		else
+		{
+			$fieldsValueTable->field_id = $fieldId;
+			$fieldsValueTable->content_id = $contentId;
+			$fieldsValueTable->value = $fieldValue;
+			$fieldsValueTable->client = $client;
+
+			if ($fieldsValueTable->store())
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Function to store data of multi valued field in fields_value table
+	 *
+	 * @param   ARRAY   $fieldValue         Data to be stored
+	 * @param   STRING  $client             Client to which the data belongs
+	 * @param   INT     $contentId          Record Id to which the data belongs
+	 * @param   INT     $fieldId            Field Id to which the data belongs
+	 * @param   ARRAY   $fieldStoredValues  Previously stored value if any
+	 *
+	 * @return  boolean
+	 */
+	private function saveMultiValuedFieldData($fieldValue, $client, $contentId, $fieldId, $fieldStoredValues = array())
+	{
+		if (empty($contentId) || empty($fieldId) || empty($client))
+		{
+			return false;
+		}
+
+		$db = JFactory::getDbo();
+		$previouslyStoredValues = array();
+
+		if (!empty($fieldStoredValues))
+		{
+			// Get deleted options
+			$previouslyStoredValues = array_column($fieldStoredValues, 'value');
+			$valuesToDelete = array();
+
+			foreach ($previouslyStoredValues as $previouslyStoredValue)
+			{
+				// Get the unselected options
+				if (!in_array($previouslyStoredValue, $fieldValue))
+				{
+					$valuesToDelete[] = $previouslyStoredValue;
+				}
+			}
+
+			// Delete the unselected options
+			if (!empty($valuesToDelete))
+			{
+				$query = $db->getQuery(true);
+				$conditions = array(
+					$db->quoteName('value') . ' IN (' . implode(',', $db->quote($valuesToDelete)) . ')',
+					$db->quoteName('client') . ' = ' . $db->quote($client),
+					$db->quoteName('field_id') . ' = ' . $fieldId,
+					$db->quoteName('content_id') . ' = ' . $contentId
+				);
+
+				$query->delete($db->quoteName('#__tjfields_fields_value'));
+				$query->where($conditions);
+				$db->setQuery($query);
+				$db->execute();
+			}
+		}
+
+		// Insert record for newly selected options
+		if (!empty($fieldValue))
+		{
+			foreach ($fieldValue as $value)
+			{
+				if (!in_array($value, $previouslyStoredValues))
+				{
+					$status = $this->saveSingleValuedFieldData($value, $client, $contentId, $fieldId);
+
+					if ($status === false)
+					{
+						return false;
+					}
+				}
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * Function to store data of media field in fields_value table
+	 *
+	 * @param   ARRAY   $fieldValue         Data to be stored
+	 * @param   STRING  $client             Client to which the data belongs
+	 * @param   INT     $contentId          Record Id to which the data belongs
+	 * @param   INT     $fieldId            Field Id to which the data belongs
+	 * @param   ARRAY   $fieldStoredValues  Previously stored value if any
+	 *
+	 * @return  boolean
+	 */
+	private function saveMediaFieldData($fieldValue, $client, $contentId, $fieldId, $fieldStoredValues = array())
+	{
+		if (empty($contentId) || empty($fieldId) || empty($client))
+		{
+			return false;
+		}
+
+		if (empty($fieldValue['name']) && empty($fieldValue['tmp_name']) && empty($fieldValue['size']))
+		{
+			return false;
+		}
+
+		JLoader::import('components.com_tjfields.tables.fieldsvalue', JPATH_ADMINISTRATOR);
+		$fieldsValueTable = JTable::getInstance('FieldsValue', 'TjfieldsTable', array('dbo', JFactory::getDbo()));
+
+		JLoader::import('components.com_tjfields.tables.field', JPATH_ADMINISTRATOR);
+		$fieldTable = JTable::getInstance('Field', 'TjfieldsTable', array('dbo', JFactory::getDbo()));
+		$fieldTable->load($fieldId);
+		$fieldParams = new Registry($fieldTable->params);
+
+		// Get media library object
+		$mediaLibObj = TJMediaStorageLocal::getInstance();
+
+		// Configs for Media library
+		$config = array();
+
+		// Configure MIME type for media library
+		$mimeTypes = $fieldParams->get('accept', '');
+
+		if (!empty($mimeTypes))
+		{
+			$mimeTypes = explode(',', $mimeTypes);
+
+			$validMineType = array();
+
+			foreach ($mimeTypes as $mimeType)
+			{
+				$validMineType[] = $mediaLibObj->getMime(strtolower(str_ireplace('.', '', $mimeType)));
+			}
+
+			$config['type'] = $validMineType;
+		}
+
+		// Configure allowed extensions for media library
+		if (!empty($mimeTypes))
+		{
+			$mimeTypes = explode(',', $mimeTypes);
+
+			foreach ($mimeTypes as $j => $allowedType)
+			{
+				$mimeTypes[$j] = trim(str_replace('.', '', $allowedType));
+			}
+
+			$config['allowedExtension'] = $mimeTypes;
+		}
+
+		// Configure media path for the media library
+		$uploadPath = $fieldParams->get('uploadpath', '');
+		$mediaPath = ($uploadPath != '') ? $uploadPath : JPATH_SITE . '/' . $fieldTable->type . 's/tjmedia/' . str_replace(".", "/", $client . "/");
+		$config['uploadPath'] = $mediaPath;
+
+		// Configure size for the media library
+		$config['size'] = $fieldParams->get('size');
+
+		// Configure whether to store the media related data in the media table
+		$config['saveData'] = '0';
+
+		// Configure if user is authorised to add the media
+		$config['auth'] = true;
+
+		$mediaLibObj = TJMediaStorageLocal::getInstance($config);
+		$returnData = $mediaLibObj->upload(array($fieldValue));
+		$errors = $mediaLibObj->getErrors();
+
+		if (!empty($errors))
+		{
+			foreach ($errors as $error)
+			{
+				JFactory::getApplication()->enqueueMessage($error, 'error');
+			}
+
+			return false;
+		}
+
+		// Add htaccess file in the folder where the file is uploaded so that its not accessible through URL
+		if ($fieldTable->type == 'file')
+		{
+			$htaccessFileContent = '<FilesMatch ".*">
+			Order Allow,Deny
+			Deny from All
+			</FilesMatch>';
+			$htaccess = '.htaccess';
+			$htaccessFile = $mediaPath . '/' . $htaccess;
+
+			// If the destination directory doesn't exist we need to create it
+			jimport('joomla.filesystem.file');
+
+			if (!JFile::exists($htaccessFile))
+			{
+				jimport('joomla.filesystem.folder');
+				JFolder::create(dirname($htaccessFile));
+				JFile::write($htaccessFile, $htaccessFileContent);
+			}
+		}
+
+		// Add/Update value of the file field in fields_value table
+		$fieldValue = $returnData[0]['source'];
+
+		return $this->saveSingleValuedFieldData($fieldValue, $client, $contentId, $fieldId, $fieldStoredValues);
+	}
+
+	/**
 	 * Save fields.
 	 *
 	 * @param   array  $data  Post array which content (client, content_id, Fname, Fvalue, u_id)
 	 *
 	 * @return  bool  Returns true if successful, and false otherwise.
 	 */
-	public function saveFieldsValue($data)
+	public function saveFieldsValueTOBEDELETED($data)
 	{
 		if (empty($data))
 		{

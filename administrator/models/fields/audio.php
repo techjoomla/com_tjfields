@@ -134,8 +134,6 @@ class JFormFieldAudio extends JFormFieldVideo
 			$html .= '<br><a target="_blank" href=' . $layoutData['value'] . '> ' . $layoutData['value'] . '</a>';
 		}
 
-		$html .= '</div>';
-
 		$html .= parent::addMediaplayer($layoutData);
 
 		return $html;
