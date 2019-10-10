@@ -249,12 +249,12 @@ class TjfieldsHelper
 
 			if ($field->type == 'file' || $field->type == 'image')
 			{
-				$this->saveMediaFieldData($fieldValue, $field->client, $data['content_id'], $field->id, $fieldStoredValues);
+				$this->saveMediaFieldData($fieldValue, $field->client, $data['content_id'], $field, $fieldStoredValues);
 			}
 			elseif ($field->type == 'subform')
 			{
 				$fieldValue = json_encode($fieldValue);
-				$this->saveSingleValuedFieldData($fieldValue, $field->client, $data['content_id'], $field->id, $fieldStoredValues);
+				$this->saveSingleValuedFieldData($fieldValue, $field->client, $data['content_id'], $field, $fieldStoredValues);
 			}
 			elseif ($field->type == 'ucmsubform' && is_array($fieldValue))
 			{
@@ -277,7 +277,7 @@ class TjfieldsHelper
 				array_pop($ucmSubformClientTmp);
 				$ucmSubformClient = 'com_tjucm.' . implode('_', $ucmSubformClientTmp);
 
-				$this->saveSingleValuedFieldData($ucmSubformClient, TJUCM_PARENT_CLIENT, TJUCM_PARENT_CONTENT_ID, $field->id, $fieldStoredValues);
+				$this->saveSingleValuedFieldData($ucmSubformClient, TJUCM_PARENT_CLIENT, TJUCM_PARENT_CONTENT_ID, $field, $fieldStoredValues);
 
 				foreach ($fieldValue as $key => $ucmSubformValue)
 				{
@@ -309,13 +309,16 @@ class TjfieldsHelper
 			}
 			elseif (is_array($fieldValue))
 			{
-				$fieldValue = explode(",", $fieldValue[0]);
+				if (strpos($fieldValue[0], ','))
+				{
+					$fieldValue = explode(",", $fieldValue[0]);
+				}
 
-				$this->saveMultiValuedFieldData($fieldValue, $field->client, $data['content_id'], $field->id, $fieldStoredValues);
+				$this->saveMultiValuedFieldData($fieldValue, $field->client, $data['content_id'], $field, $fieldStoredValues);
 			}
 			else
 			{
-				$this->saveSingleValuedFieldData($fieldValue, $field->client, $data['content_id'], $field->id, $fieldStoredValues);
+				$this->saveSingleValuedFieldData($fieldValue, $field->client, $data['content_id'], $field, $fieldStoredValues);
 			}
 		}
 
@@ -333,14 +336,14 @@ class TjfieldsHelper
 	 * @param   STRING  $fieldValue         Data to be stored
 	 * @param   STRING  $client             Client to which the data belongs
 	 * @param   INT     $contentId          Record Id to which the data belongs
-	 * @param   INT     $fieldId            Field Id to which the data belongs
+	 * @param   OBJECT  $field              Field table object to which the data belongs
 	 * @param   ARRAY   $fieldStoredValues  Previously stored value if any
 	 *
 	 * @return  boolean
 	 */
-	private function saveSingleValuedFieldData($fieldValue, $client, $contentId, $fieldId, $fieldStoredValues = array())
+	private function saveSingleValuedFieldData($fieldValue, $client, $contentId, $field, $fieldStoredValues = array())
 	{
-		if (empty($contentId) || empty($fieldId) || empty($client))
+		if (empty($contentId) || empty($field->id) || empty($client))
 		{
 			return false;
 		}
@@ -365,11 +368,6 @@ class TjfieldsHelper
 				if ($fieldValue != '')
 				{
 					$fieldsValueTable->value = $fieldValue;
-
-					if ($fieldsValueTable->store())
-					{
-						return true;
-					}
 				}
 				else
 				{
@@ -382,18 +380,26 @@ class TjfieldsHelper
 		}
 		else
 		{
-			$fieldsValueTable->field_id = $fieldId;
+			$fieldsValueTable->field_id = $field->id;
 			$fieldsValueTable->content_id = $contentId;
 			$fieldsValueTable->value = $fieldValue;
 			$fieldsValueTable->client = $client;
+		}
 
-			if ($fieldsValueTable->store())
+		// For single select, multi select and radio field type we need to save option_id as well in fields value table
+		if (in_array($field->type, array('radio', 'tjlist', 'single_select', 'multi_select')))
+		{
+			JLoader::import('components.com_tjfields.tables.option', JPATH_ADMINISTRATOR);
+			$fieldOptionTable = JTable::getInstance('Option', 'TjfieldsTable', array('dbo', JFactory::getDbo()));
+			$fieldOptionTable->load(array('field_id' => $field->id, 'value' => $fieldValue));
+
+			if ($fieldOptionTable->id)
 			{
-				return true;
+				$fieldsValueTable->option_id = $fieldOptionTable->id;
 			}
 		}
 
-		return false;
+		return $fieldsValueTable->store();
 	}
 
 	/**
@@ -402,14 +408,14 @@ class TjfieldsHelper
 	 * @param   ARRAY   $fieldValue         Data to be stored
 	 * @param   STRING  $client             Client to which the data belongs
 	 * @param   INT     $contentId          Record Id to which the data belongs
-	 * @param   INT     $fieldId            Field Id to which the data belongs
+	 * @param   OBJECT  $field              Field table object to which the data belongs
 	 * @param   ARRAY   $fieldStoredValues  Previously stored value if any
 	 *
 	 * @return  boolean
 	 */
-	private function saveMultiValuedFieldData($fieldValue, $client, $contentId, $fieldId, $fieldStoredValues = array())
+	private function saveMultiValuedFieldData($fieldValue, $client, $contentId, $field, $fieldStoredValues = array())
 	{
-		if (empty($contentId) || empty($fieldId) || empty($client))
+		if (empty($contentId) || empty($field->id) || empty($client))
 		{
 			return false;
 		}
@@ -439,7 +445,7 @@ class TjfieldsHelper
 				$conditions = array(
 					$db->quoteName('value') . ' IN (' . implode(',', $db->quote($valuesToDelete)) . ')',
 					$db->quoteName('client') . ' = ' . $db->quote($client),
-					$db->quoteName('field_id') . ' = ' . $fieldId,
+					$db->quoteName('field_id') . ' = ' . $field->id,
 					$db->quoteName('content_id') . ' = ' . $contentId
 				);
 
@@ -457,7 +463,7 @@ class TjfieldsHelper
 			{
 				if (!in_array($value, $previouslyStoredValues))
 				{
-					$status = $this->saveSingleValuedFieldData($value, $client, $contentId, $fieldId);
+					$status = $this->saveSingleValuedFieldData($value, $client, $contentId, $field);
 
 					if ($status === false)
 					{
@@ -476,14 +482,14 @@ class TjfieldsHelper
 	 * @param   ARRAY   $fieldValue         Data to be stored
 	 * @param   STRING  $client             Client to which the data belongs
 	 * @param   INT     $contentId          Record Id to which the data belongs
-	 * @param   INT     $fieldId            Field Id to which the data belongs
+	 * @param   OBJECT  $field              Field table object to which the data belongs
 	 * @param   ARRAY   $fieldStoredValues  Previously stored value if any
 	 *
 	 * @return  boolean
 	 */
-	private function saveMediaFieldData($fieldValue, $client, $contentId, $fieldId, $fieldStoredValues = array())
+	private function saveMediaFieldData($fieldValue, $client, $contentId, $field, $fieldStoredValues = array())
 	{
-		if (empty($contentId) || empty($fieldId) || empty($client))
+		if (empty($contentId) || empty($field->id) || empty($client))
 		{
 			return false;
 		}
@@ -498,7 +504,7 @@ class TjfieldsHelper
 
 		JLoader::import('components.com_tjfields.tables.field', JPATH_ADMINISTRATOR);
 		$fieldTable = JTable::getInstance('Field', 'TjfieldsTable', array('dbo', JFactory::getDbo()));
-		$fieldTable->load($fieldId);
+		$fieldTable->load($field->id);
 		$fieldParams = new Registry($fieldTable->params);
 
 		// Get media library object
@@ -589,7 +595,7 @@ class TjfieldsHelper
 		// Add/Update value of the file field in fields_value table
 		$fieldValue = $returnData[0]['source'];
 
-		return $this->saveSingleValuedFieldData($fieldValue, $client, $contentId, $fieldId, $fieldStoredValues);
+		return $this->saveSingleValuedFieldData($fieldValue, $client, $contentId, $field, $fieldStoredValues);
 	}
 
 	/**
