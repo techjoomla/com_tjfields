@@ -94,6 +94,9 @@ class PlgActionlogTjfield extends CMSPlugin
 			{
 				return;
 			}
+
+			$messageLanguageKey = 'PLG_ACTIONLOG_TJFIELD_FIELD_GROUP_CREATED';
+			$action             = 'add';
 		}
 		else
 		{
@@ -101,22 +104,14 @@ class PlgActionlogTjfield extends CMSPlugin
 			{
 				return;
 			}
+
+			$messageLanguageKey = 'PLG_ACTIONLOG_TJFIELD_FIELD_GROUP_UPDATED';
+			$action             = 'update';
 		}
 
 		$context = JFactory::getApplication()->input->get('option');
 
 		$user = JFactory::getUser();
-
-		if ($isNew)
-		{
-			$messageLanguageKey = 'PLG_ACTIONLOG_TJFIELD_FIELD_GROUP_CREATED';
-			$action             = 'add';
-		}
-		else
-		{
-			$messageLanguageKey = 'PLG_ACTIONLOG_TJFIELD_FIELD_GROUP_UPDATED';
-			$action             = 'update';
-		}
 
 		$db = JFactory::getDbo();
 		$query = $db->getQuery(true);
@@ -156,6 +151,11 @@ class PlgActionlogTjfield extends CMSPlugin
 	 */
 	public function tjfieldOnAfterFieldGroupChangeState($pk, $value)
 	{
+		if (!$this->params->get('logActionForFieldGroupStateChange', 1))
+		{
+			return;
+		}
+
 		$context = JFactory::getApplication()->input->get('option');
 
 		$user = JFactory::getUser();
@@ -214,6 +214,11 @@ class PlgActionlogTjfield extends CMSPlugin
 	 */
 	public function tjfieldOnAfterFieldGroupDelete($pk)
 	{
+		if (!$this->params->get('logActionForFieldGroupDelete', 1))
+		{
+			return;
+		}
+
 		$ucmType = array();
 		$tjfieldsTablegroup = Table::getInstance('group', 'TjfieldsTable', array());
 		$tjfieldsTablegroup->load(array('id' => $pk));
@@ -258,9 +263,25 @@ class PlgActionlogTjfield extends CMSPlugin
 	 */
 	public function tjfieldOnAfterFieldSave($field, $fieldGroupID, $typeID, $isNew)
 	{
-		if (!$this->params->get('logActionForFieldSave', 1))
+		if ($isNew)
 		{
+			if (!$this->params->get('logActionForFieldSave', 1))
+			{
 			return;
+			}
+
+			$messageLanguageKey = 'PLG_ACTIONLOG_TJFIELD_FIELD_CREATED';
+			$action             = 'add';
+		}
+		else
+		{
+			if (!$this->params->get('logActionForFieldUpdate', 1))
+			{
+			return;
+			}
+
+			$messageLanguageKey = 'PLG_ACTIONLOG_TJFIELD_FIELD_UPDATED';
+			$action             = 'update';
 		}
 
 		$context = JFactory::getApplication()->input->get('option');
@@ -268,17 +289,6 @@ class PlgActionlogTjfield extends CMSPlugin
 		$user = JFactory::getUser();
 		$tjucmTableType = Table::getInstance('type', 'TjucmTable', array());
 		$tjucmTableType->load(array('id' => $typeID));
-
-		if ($isNew)
-		{
-			$messageLanguageKey = 'PLG_ACTIONLOG_TJFIELD_FIELD_CREATED';
-			$action             = 'add';
-		}
-		else
-		{
-			$messageLanguageKey = 'PLG_ACTIONLOG_TJFIELD_FIELD_UPDATED';
-			$action             = 'update';
-		}
 
 		// User X has deleted field PQR under type ABC
 		$message = array(
@@ -308,6 +318,11 @@ class PlgActionlogTjfield extends CMSPlugin
 	 */
 	public function tjfieldOnAfterFieldDelete($id)
 	{
+		if (!$this->params->get('logActionForFieldDelete', 1))
+		{
+			return;
+		}
+
 		$ucmType = array();
 		$tjfieldsTable = Table::getInstance('field', 'TjfieldsTable', array());
 		$tjfieldsTable->load(array('id' => $id));
@@ -353,6 +368,11 @@ class PlgActionlogTjfield extends CMSPlugin
 	 */
 	public function tjfieldOnAfterFieldChangeState($pk, $value)
 	{
+		if (!$this->params->get('logActionForFieldStateChange', 1))
+		{
+			return;
+		}
+
 		$context = JFactory::getApplication()->input->get('option');
 
 		$user = JFactory::getUser();
