@@ -17,6 +17,11 @@ if (!key_exists('field', $displayData) || !key_exists('fieldXml', $displayData))
 $xmlField = $displayData['fieldXml'];
 $field = $displayData['field'];
 
+if (!$xmlField instanceof SimpleXMLElement)
+{
+	return;
+}
+
 $xmlOptions = $xmlField->children();
 $options = array();
 
