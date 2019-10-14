@@ -37,22 +37,16 @@ class TjfieldsControllerGroup extends JControllerForm
 	public function apply()
 	{
 		$input = JFactory::getApplication()->input;
-		$extension = $input->get('extension', '', 'STRING');
-		$post = $input->post;
+		$data = $input->post->get('jform', '', 'ARRAY');
 		$model = $this->getModel('group');
-		$if_saved = $model->save($post);
+		$if_saved = $model->save($data);
 
 		if ($if_saved)
 		{
 			$msg = JText::_('COMTJFILEDS_GROUP_CREATED_SUCCESSFULLY');
 			$link = JRoute::_('index.php?option=com_tjfields&view=group&layout=edit', false);
-
 			$link .= '&client=' . $input->get('client', '', 'STRING') . '&id=' . $if_saved;
-
-			if (!empty($extension))
-			{
-				$link .= "&extension=" . $extension;
-			}
+			$this->setRedirect($link, $msg);
 		}
 		else
 		{
@@ -60,14 +54,8 @@ class TjfieldsControllerGroup extends JControllerForm
 			$this->setMessage(JText::plural($msg, 1));
 			$link = JRoute::_('index.php?option=com_tjfields&view=group&layout=edit', false);
 			$link .= '&client=' . $input->get('client', '', 'STRING') . '&id=' . $input->get('id');
-
-			if (!empty($extension))
-			{
-				$link .= "&extension=" . $extension;
-			}
+			$this->setRedirect($link, $msg, 'error');
 		}
-
-		$this->setRedirect($link, $msg);
 	}
 
 	/**
@@ -78,9 +66,8 @@ class TjfieldsControllerGroup extends JControllerForm
 	public function save()
 	{
 		$input = JFactory::getApplication()->input;
-		$extension = $input->get('extension', '', 'STRING');
 		$task = $input->get('task', '', 'STRING');
-		$post = $input->post;
+		$data = $input->post->get('jform', '', 'ARRAY');
 		$model = $this->getModel('group');
 
 		if ($task == 'apply' or $task == 'save2copy')
@@ -90,7 +77,7 @@ class TjfieldsControllerGroup extends JControllerForm
 			return;
 		}
 
-		$if_saved = $model->save($post);
+		$if_saved = $model->save($data);
 
 		if ($task == 'newsave')
 		{
@@ -103,24 +90,14 @@ class TjfieldsControllerGroup extends JControllerForm
 		{
 			$msg = JText::_('COMTJFILEDS_GROUP_CREATED_SUCCESSFULLY');
 			$link = JRoute::_('index.php?option=com_tjfields&view=groups&client=' . $input->get('client', '', 'STRING'), false);
-
-			if (!empty($extension))
-			{
-				$link .= "&extension=" . $extension;
-			}
+			$this->setRedirect($link, $msg);
 		}
 		else
 		{
 			$msg = JText::_('TJFIELDS_ERROR_MSG');
 			$link = JRoute::_('index.php?option=com_tjfields&view=groups&client=' . $input->get('client', '', 'STRING'), false);
-
-			if (!empty($extension))
-			{
-				$link .= "&extension=" . $extension;
-			}
+			$this->setRedirect($link, $msg, 'error');
 		}
-
-		$this->setRedirect($link, $msg);
 	}
 
 	/**
@@ -131,8 +108,7 @@ class TjfieldsControllerGroup extends JControllerForm
 	public function newsave()
 	{
 		$input = JFactory::getApplication()->input;
-		$extension = $input->get('extension', '', 'STRING');
-		$data = $input->post;
+		$data = $input->post->get('jform', '', 'ARRAY');
 		$model = $this->getModel('group');
 		$group_id = $model->save($data);
 
@@ -140,24 +116,14 @@ class TjfieldsControllerGroup extends JControllerForm
 		{
 			$msg = JText::_('COMTJFILEDS_GROUP_CREATED_SUCCESSFULLY');
 			$link = JRoute::_('index.php?option=com_tjfields&view=group&layout=edit&client=' . $input->get('client', '', 'STRING'), false);
-
-			if (!empty($extension))
-			{
-				$link .= "&extension=" . $extension;
-			}
+			$this->setRedirect($link, $msg, 'error');
 		}
 		else
 		{
 			$msg = JText::_('TJFIELDS_ERROR_MSG');
 			$link = JRoute::_('index.php?option=com_tjfields&view=group&layout=edit&client=' . $input->get('client', '', 'STRING'), false);
-
-			if (!empty($extension))
-			{
-				$link .= "&extension=" . $extension;
-			}
+			$this->setRedirect($link, $msg, 'error');
 		}
-
-		$this->setRedirect($link, $msg);
 	}
 
 	/**
@@ -169,14 +135,7 @@ class TjfieldsControllerGroup extends JControllerForm
 	{
 		$input = JFactory::getApplication()->input;
 
-		$extension = $input->get('extension', '', 'STRING');
-
 		$link = JRoute::_('index.php?option=com_tjfields&view=group&layout=edit&client=' . $input->get('client', '', 'STRING'), false);
-
-		if (!empty($extension))
-		{
-			$link .= "&extension=" . $extension;
-		}
 
 		$this->setRedirect($link);
 	}
@@ -196,13 +155,6 @@ class TjfieldsControllerGroup extends JControllerForm
 
 		$link .= '&client=' . $input->get('client', '', 'STRING');
 
-		$extension = $input->get('extension', '', 'STRING');
-
-		if (!empty($extension))
-		{
-			$link .= "&extension=" . $extension;
-		}
-
 		$this->setRedirect($link, $msg);
 	}
 
@@ -215,13 +167,6 @@ class TjfieldsControllerGroup extends JControllerForm
 	{
 		$input = JFactory::getApplication()->input;
 		$link = JRoute::_('index.php?option=com_tjfields&view=groups&client=' . $input->get('client', '', 'STRING'), false);
-
-		$extension = $input->get('extension', '', 'STRING');
-
-		if (!empty($extension))
-		{
-			$link .= "&extension=" . $extension;
-		}
 
 		$this->setRedirect($link, $msg);
 	}

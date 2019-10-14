@@ -10,7 +10,9 @@
 // No direct access.
 defined('_JEXEC') or die;
 
+JLoader::import('TjfieldsHelper', JPATH_ADMINISTRATOR . '/components/com_tjfields/helpers');
 jimport('joomla.application.component.controlleradmin');
+JLoader::register('TjControllerHouseKeeping', JPATH_SITE . "/libraries/techjoomla/controller/houseKeeping.php");
 
 /**
  * Fields list controller class.
@@ -19,6 +21,8 @@ jimport('joomla.application.component.controlleradmin');
  */
 class TjfieldsControllerFields extends JControllerAdmin
 {
+	use TjControllerHouseKeeping;
+
 	/**
 	 * Proxy for getModel.
 	 *
@@ -29,7 +33,7 @@ class TjfieldsControllerFields extends JControllerAdmin
 	 *
 	 * @return  object
 	 */
-	public function getModel($name = 'field', $prefix = 'TjfieldsModel')
+	public function getModel($name = 'field', $prefix = 'TjfieldsModel', $config = array())
 	{
 		$model = parent::getModel($name, $prefix, array('ignore_request' => true));
 
@@ -139,7 +143,7 @@ class TjfieldsControllerFields extends JControllerAdmin
 			}
 		}
 
-		$this->setRedirect('index.php?option=com_tjfields&view=fields&client=' . $client . '&extension=' . $input->get('extension', '', 'STRING'), $msg);
+		$this->setRedirect('index.php?option=com_tjfields&view=fields&client=' . $client, $msg);
 	}
 
 	/**
@@ -195,6 +199,6 @@ class TjfieldsControllerFields extends JControllerAdmin
 		}
 
 		$this->setMessage(JText::plural($ntext, count($cid)));
-		$this->setRedirect('index.php?option=com_tjfields&view=fields&client=' . $client . '&extension=' . $input->get('extension', '', 'STRING'), false);
+		$this->setRedirect('index.php?option=com_tjfields&view=fields&client=' . $client, false);
 	}
 }

@@ -6,18 +6,21 @@
  * @copyright  Copyright (c) 2009-2016 TechJoomla. All rights reserved.
  * @license    GNU General Public License version 2 or later.
  */
+JLoader::import("/techjoomla/media/storage/local", JPATH_LIBRARIES);
+
 
 // No direct access
 defined('_JEXEC') or die;
+use Joomla\String\StringHelper;
 
 /**
- * helper class for tjfields
+ * Helper class for tjfields
  *
  * @package     Tjfields
  * @subpackage  com_tjfields
  * @since       2.2
  */
-class TjfieldsHelper
+class TjfieldsHelper extends JHelperContent
 {
 	/**
 	 * Configure the Linkbar.
@@ -64,28 +67,21 @@ class TjfieldsHelper
 		}
 	}
 
-	/**
-	 * Gets a list of the actions that can be performed.
+	/** Gets a list of the actions that can be performed.
 	 *
-	 * @return	JObject
+	 * @param   string   $component  The component name.
 	 *
-	 * @since	1.6
+	 * @param   string   $section    The access section name.
+	 *
+	 * @param   integer  $id         The item ID.
+	 *
+	 * @return JObject
+	 *
+	 * @since 3.2
 	 */
-	public static function getActions()
+	public static function getActions($component = 'com_tjfields', $section = '', $id = '')
 	{
-		$user = JFactory::getUser();
-		$result	= new JObject;
-
-		$assetName = 'com_tjfields';
-
-		$actions = array(
-			'core.admin', 'core.manage', 'core.create', 'core.edit', 'core.edit.own', 'core.edit.state', 'core.delete'
-		);
-
-		foreach ($actions as $action)
-		{
-			$result->set($action, $user->authorise($action, $assetName));
-		}
+		$result = parent::getActions($component, $section, $id);
 
 		return $result;
 	}
@@ -123,7 +119,7 @@ class TjfieldsHelper
 		$db = JFactory::getDbo();
 		$query	= $db->getQuery(true);
 		$query->update('#__tjfields_fields');
-		$query->set('name="' . $data_same_name . '_' . $id . '"');
+		$query->set('name="' . $data_same_name . '-' . $id . '"');
 
 		$query->where('id=' . $id);
 		$db->setQuery($query);
@@ -150,13 +146,9 @@ class TjfieldsHelper
 	{
 		$client = $data['client'];
 		$input = JFactory::getApplication()->input;
-		$extension = $input->get('extension', '', 'STRING');
 
-		if (empty($extension))
-		{
-			$client = explode(".", $client);
-			$extension = $client[0];
-		}
+		$client = explode(".", $client);
+		$extension = $client[0];
 
 		if (!empty($extension))
 		{
@@ -274,19 +266,42 @@ class TjfieldsHelper
 
 		if (!empty($fields))
 		{
-			$current_group = $fields[0]->group_id;
-			$i = 0;
-			$new_fieldset = $newXML->addChild('fieldset');
-			$new_fieldset->addAttribute('name', $fields[0]->group_name);
+			// Sort fields as per group to generate JForm XML file - start
+			$sortedFieldsArray = array();
+			$sortedGroups = array();
+
+			for ($i = 0; $i < count($fields); $i++)
+			{
+				for ($j = $i; $j < count($fields); $j++)
+				{
+					if (($fields[$i]->group_id == $fields[$j]->group_id) && (!in_array($fields[$i]->group_id, $sortedGroups)))
+					{
+						$sortedFieldsArray[] = $fields[$j];
+					}
+				}
+
+				if (!in_array($fields[$i]->group_id, $sortedGroups))
+				{
+					$sortedGroups[] = $fields[$i]->group_id;
+				}
+			}
+
+			$fields = $sortedFieldsArray;
+
+			// Sort fields as per group to generate JForm XML file - end
+
+			// To store added field groups to the JForm
+			$addedFieldGroups = array();
 
 			foreach ($fields as $f)
 			{
-				// Add fieldset as per group id
-				if ($current_group != $f->group_id)
+				if (!in_array($f->group_id, $addedFieldGroups))
 				{
+					$addedFieldGroups[] = $f->group_id;
 					$new_fieldset = $newXML->addChild('fieldset');
 					$new_fieldset->addAttribute('name', $f->group_name);
-					$current_group = $f->group_id;
+					$new_fieldset->addAttribute('addrulepath', 'administrator/components/com_tjfields/models/rules');
+					$new_fieldset->addAttribute('addfieldpath', 'administrator/components/com_tjfields/models/fields');
 				}
 
 				$f = $this->getOptionData($f);
@@ -334,18 +349,17 @@ class TjfieldsHelper
 					}
 				}
 
-				$default_value = array();
 				$value_string = '';
 
 				// ADD option if present.
 				if (isset($f->extra_options))
 				{
 					// Extra value for only Single select field // && $f->multiple == 'false')
-					if ($f->type == 'list')
+					if ($f->type == 'list' || $f->type == 'tjlist')
 					{
 						$fieldAttribute = json_decode($f->params);
 
-						if ($fieldAttribute->multiple != 'true')
+						if ($fieldAttribute->multiple != 'true' && !$fieldAttribute->multiple)
 						{
 							// Set Default blank Option
 							$option = $field->addChild('option', '- ' . JText::_('COM_TJFIELDS_SELECT_OPTION') . " " . $f->label . ' -');
@@ -357,11 +371,6 @@ class TjfieldsHelper
 					{
 						$option = $field->addChild('option', $f_option->options);
 						$option->addAttribute('value', $f_option->value);
-
-						if ($f_option->default_option == 1)
-						{
-							$default_value[] = $f_option->value;
-						}
 					}
 				}
 			}
@@ -410,7 +419,7 @@ class TjfieldsHelper
 	 */
 	public function getOptionData($data)
 	{
-		if ($data->type == 'radio' || $data->type == 'single_select' || $data->type == 'multi_select')
+		if ($data->type == 'radio' || $data->type == 'single_select' || $data->type == 'multi_select'  || $data->type == 'tjlist')
 		{
 			// For field type single select and multi select field type in xml is 'list'
 			if ($data->type == 'single_select' || $data->type == 'multi_select')
@@ -456,8 +465,9 @@ class TjfieldsHelper
 	{
 		$db = JFactory::getDbo();
 		$query	= $db->getQuery(true);
-		$query->select('id,options,default_option,value FROM #__tjfields_options');
+		$query->select('id,options,value FROM #__tjfields_options');
 		$query->where('field_id=' . $field_id);
+		$query->order('ordering', 'ASC');
 		$db->setQuery($query);
 		$extra_options = $db->loadObjectlist('id');
 
@@ -497,5 +507,152 @@ class TjfieldsHelper
 	public static function getLanguageConstant()
 	{
 		JText::script('COM_TJFIELDS_LABEL_WHITESPACES_NOT_ALLOWED');
+	}
+
+	/**
+	 * tjFileDelete .
+	 *
+	 * @param   Array  $data  file path.
+	 *
+	 * @return boolean|string
+	 *
+	 * @since	1.6
+	 */
+	public function deleteFile($data)
+	{
+		$user = JFactory::getUser();
+
+		if (!$user->id)
+		{
+			return false;
+		}
+
+		JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_tjfields/tables');
+		$fieldsValueTable = JTable::getInstance('Fieldsvalue', 'TjfieldsTable');
+
+		$fieldsValueTable->load(array('id' => $data['valueId']));
+
+		$subData = new stdClass;
+		$fieldId = 0;
+
+		if ($data['isSubformField'] == 1)
+		{
+			$subData = json_decode($fieldsValueTable->value);
+
+			foreach ($subData as $value)
+			{
+				$subformData = (array) $value;
+
+				if (in_array($data['filePath'], $subformData))
+				{
+					$fileUser = $fieldsValueTable->user_id;
+				}
+			}
+
+			// Check for file field is of subform or ucmsubform
+			if ($data['subformFileFieldId'])
+			{
+				$fieldId = $data['subformFileFieldId'];
+			}
+			else
+			{
+				$fieldId = $fieldsValueTable->field_id;
+			}
+		}
+		else
+		{
+			if ($data['filePath'] === $fieldsValueTable->value)
+			{
+				$fileUser = $fieldsValueTable->user_id;
+				$fieldId = $fieldsValueTable->field_id;
+			}
+		}
+
+		$fileExtension = StringHelper::strtolower(StringHelper::substr(strrchr($data['filePath'], "."), 1));
+		$localGetMime = TJMediaStorageLocal::getInstance();
+
+		$ctype = $localGetMime->getMime($fileExtension);
+
+		if (!empty($fileUser))
+		{
+			$canEdit = $user->authorise('core.field.editfieldvalue', 'com_tjfields.field.' . $fieldId);
+
+			$canEditOwn = $user->authorise('core.field.editownfieldvalue', 'com_tjfields.field.' . $fieldId);
+
+			if ($canEdit || (($user->id == $fileUser) && $canEditOwn))
+			{
+				$type = explode('/', $ctype);
+
+				if ($type[0] === 'image')
+				{
+					$deleteData = array();
+					$deleteData[] = JPATH_ROOT . $data['storagePath'] . '/' . $type[0] . '/' . $data['filePath'];
+
+					$deleteData[] = JPATH_ROOT . $data['storagePath'] . '/' . $type[0] . '/S_' . $data['filePath'];
+					$deleteData[] = JPATH_ROOT . $data['storagePath'] . '/' . $type[0] . '/M_' . $data['filePath'];
+					$deleteData[] = JPATH_ROOT . $data['storagePath'] . '/' . $type[0] . '/L_' . $data['filePath'];
+
+					foreach ($deleteData as $image)
+					{
+						if (JFile::exists($image))
+						{
+							JFile::delete($image);
+						}
+					}
+
+					$deleted = 1;
+				}
+				else
+				{
+					if (!JFile::delete(JPATH_ROOT . $data['storagePath'] . '/' . $type[0] . '/' . $data['filePath']))
+					{
+						return false;
+					}
+					else
+					{
+						$deleted = 1;
+					}
+				}
+
+				if ($deleted == 1)
+				{
+					$db = JFactory::getDbo();
+					$fields_obj = new stdClass;
+
+					// Making value object if the field is under subform form subfrom
+					if ($data['isSubformField'] == 1)
+					{
+						foreach ($subData as $subformName => $value)
+						{
+							foreach ($value as $k => $v)
+							{
+								// Finding the particular index and making it null
+								if ($v === $data['filePath'])
+								{
+									$subData->$subformName->$k = '';
+								}
+							}
+						}
+
+						$fields_obj->value = json_encode($subData);
+					}
+					else
+					{
+						$fields_obj->value = '';
+					}
+
+					$fields_obj->id = $fieldsValueTable->id;
+					$db->updateObject('#__tjfields_fields_value', $fields_obj, 'id');
+
+					return true;
+				}
+
+				return false;
+			}
+
+			return false;
+		}
+
+		return false;
 	}
 }

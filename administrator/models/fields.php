@@ -41,7 +41,7 @@ class TjfieldsModelFields extends JModelList
 				'validation_class', 'a.validation_class',
 				'ordering', 'a.ordering',
 				'client', 'a.client',
-				'group_id', 'a.group_id',
+				'group_id', 'a.group_id'
 			);
 		}
 
@@ -58,10 +58,18 @@ class TjfieldsModelFields extends JModelList
 	 *
 	 * @since  1.6
 	 */
-	protected function populateState($ordering = null, $direction = null)
+	protected function populateState($ordering = 'a.id', $direction = 'desc')
 	{
 		// Initialise variables.
 		$app = JFactory::getApplication('administrator');
+
+		// Set client in model state
+		$client = $app->input->get('client', '', 'STRING');
+
+		if (!empty($client))
+		{
+			$this->setState('filter.client', $client);
+		}
 
 		// Load the filter state.
 		$search = $app->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
@@ -78,7 +86,7 @@ class TjfieldsModelFields extends JModelList
 		$this->setState('params', $params);
 
 		// List state information.
-		parent::populateState('a.type', 'asc');
+		parent::populateState($ordering, $direction);
 	}
 
 	/**
@@ -108,9 +116,11 @@ class TjfieldsModelFields extends JModelList
 	 */
 	protected function getListQuery()
 	{
+		// Filter by client (Set state from external view to render client specific fields)
+		$client = $this->getState('filter.client');
+
 		// Create a new query object.
 		$db    = $this->getDbo();
-		$input = jFactory::getApplication()->input;
 		$query = $db->getQuery(true);
 
 		// Select the required fields from the table.
@@ -120,7 +130,14 @@ class TjfieldsModelFields extends JModelList
 		// Join over the user field 'created_by'
 		$query->select('created_by.name AS created_by');
 		$query->join('LEFT', '#__users AS created_by ON created_by.id = a.created_by');
-		$query->where('a.client="' . $input->get('client', '', 'STRING') . '"');
+
+		// Filter by group state
+		$groupId = $this->getState('filter.group_id');
+
+		if (is_numeric($groupId))
+		{
+			$query->where('a.group_id = ' . (int) $groupId);
+		}
 
 		// Filter by published state
 		$published = $this->getState('filter.state');
@@ -142,16 +159,17 @@ class TjfieldsModelFields extends JModelList
 			$query->where('a.showonlist = ' . (int) $showonlist);
 		}
 
-		// Filter by client (Set state from external view to render client specific fields)
-		$client = $this->getState('filter.client');
+		// Filter by filterable fields
+		$showonlist = $this->getState('filter.filterable');
+
+		if ($showonlist)
+		{
+			$query->where('a.filterable = ' . (int) 1);
+		}
 
 		if ($client)
 		{
 			$query->where('a.client = ' . $db->quote($client));
-		}
-		else
-		{
-			$query->where('a.client= ' . $db->quote($input->get('client', '', 'STRING')));
 		}
 
 		// Filter by search in title
@@ -191,11 +209,11 @@ class TjfieldsModelFields extends JModelList
 	}
 
 	/**
-	 * Method GetItems
+	 * Method to get an array of data items.
 	 *
-	 * @return  items
+	 * @return  mixed  An array of data items on success, false on failure.
 	 *
-	 * @since  1.6
+	 * @since   1.6
 	 */
 	public function getItems()
 	{

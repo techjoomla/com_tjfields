@@ -62,7 +62,7 @@ class TjfieldsModelGroups extends JModelList
 	 *
 	 * @since   12.2
 	 */
-	protected function populateState($ordering = null, $direction = null)
+	protected function populateState($ordering = 'a.id', $direction = 'desc')
 	{
 		// Initialise variables.
 		$app = JFactory::getApplication('administrator');
@@ -79,7 +79,7 @@ class TjfieldsModelGroups extends JModelList
 		$this->setState('params', $params);
 
 		// List state information.
-		parent::populateState('a.name', 'asc');
+		parent::populateState($ordering, $direction);
 	}
 
 	/**
@@ -128,8 +128,8 @@ class TjfieldsModelGroups extends JModelList
 		$query->from('`#__tjfields_groups` AS a');
 
 		// Join over the user field 'created_by'
-		$query->select('created_by.name AS created_by');
-		$query->join('LEFT', '#__users AS created_by ON created_by.id = a.created_by');
+		$query->select('user.name AS created_by_name');
+		$query->join('LEFT', '#__users AS user ON user.id = a.created_by');
 
 		// Filter by client
 		$client = $this->getState('filter.client');

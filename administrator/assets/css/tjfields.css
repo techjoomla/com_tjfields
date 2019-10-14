@@ -37,10 +37,14 @@
 {
 	margin-left:0px !important;
 	margin-top:7px !important;
-
 }
 
 .tjfield_container .icon-unfeatured ,.tjfield_container .icon-featured
 {
 	cursor:pointer;
+}
+
+#field-form .subform-repeatable-wrapper
+{
+	max-width: 440px;
 }

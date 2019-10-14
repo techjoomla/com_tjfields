@@ -39,6 +39,24 @@ if ($saveOrder)
 $sortFields = $this->getSortFields();
 ?>
 <script type="text/javascript">
+	Joomla.submitbutton = function (task) {
+		if (task == 'groups.delete')
+		{
+			if(confirm("<?php echo JText::_('COM_TJFIELDS_GROUPS_DELETE_CONFIRMATION'); ?>"))
+			{
+				Joomla.submitform(task);
+			}
+			else
+			{
+				return false;
+			}
+		}
+		else
+		{
+			Joomla.submitform(task);
+		}
+	}
+
 	Joomla.orderTable = function() {
 		table = document.getElementById("sortTable");
 		direction = document.getElementById("directionTable");
@@ -58,7 +76,7 @@ if (!empty($this->extra_sidebar)) {
     $this->sidebar .= $this->extra_sidebar;
 }
 ?>
-
+<form action="<?php echo JRoute::_('index.php?option=com_tjfields&view=groups&client='.$input->get('client','','STRING')); ?>" method="post" name="adminForm" id="adminForm">
 <div class="techjoomla-bootstrap">
 		<?php if(!empty($this->sidebar)): ?>
 		<div id="j-sidebar-container" class="span2">
@@ -68,7 +86,6 @@ if (!empty($this->extra_sidebar)) {
 	<?php else : ?>
 		<div id="j-main-container">
 	<?php endif;?>
-	<form action="<?php echo JRoute::_('index.php?option=com_tjfields&view=groups&client='.$input->get('client','','STRING')); ?>" method="post" name="adminForm" id="adminForm">
 		<div id="filter-bar" class="btn-toolbar">
 			<div class="filter-search btn-group pull-left">
 				<label for="filter_search" class="element-invisible"><?php echo JText::_('JSEARCH_FILTER');?></label>
@@ -136,7 +153,7 @@ if (!empty($this->extra_sidebar)) {
 					<?php endif; ?>
 
 					<th class='left'>
-					<?php echo JHtml::_('grid.sort',  'COM_TJFIELDS_GROUPS_CREATED_BY', 'a.created_by', $listDirn, $listOrder); ?>
+					<?php echo JHtml::_('grid.sort',  'COM_TJFIELDS_GROUPS_CREATED_BY', 'a.created_by_name', $listDirn, $listOrder); ?>
 					</th>
 					<th class='left'>
 					<?php echo JHtml::_('grid.sort',  'COM_TJFIELDS_GROUPS_NAME', 'a.name', $listDirn, $listOrder); ?>
@@ -210,7 +227,7 @@ if (!empty($this->extra_sidebar)) {
 
 					<td>
 
-						<?php echo $item->created_by; ?>
+						<?php echo $item->created_by_name; ?>
 					</td>
 					<td>
 					<?php if (isset($item->checked_out) && $item->checked_out) : ?>

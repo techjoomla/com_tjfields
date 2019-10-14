@@ -38,6 +38,8 @@ class TjfieldsModelGroup extends JModelAdmin
 	 */
 	public function getTable($type = 'Group', $prefix = 'TjfieldsTable', $config = array())
 	{
+		JLoader::import('components.com_tjfields.tables.group', JPATH_ADMINISTRATOR);
+
 		return JTable::getInstance($type, $prefix, $config);
 	}
 
@@ -139,11 +141,18 @@ class TjfieldsModelGroup extends JModelAdmin
 	 *
 	 * @since	1.6
 	 */
-	public function save($post)
+	public function save($data)
 	{
 		$table = $this->getTable();
-		$data = $post->get('jform', '', 'ARRAY');
 		$input = JFactory::getApplication()->input;
+		$data['name'] = trim($data['name']);
+		$data['title'] = trim($data['title']);
+
+		// Set group title as group label
+		if (!empty($data['name']))
+		{
+			$data['title'] = $data['name'];
+		}
 
 		if ($input->get('task') == 'save2copy')
 		{
@@ -166,6 +175,7 @@ class TjfieldsModelGroup extends JModelAdmin
 		if ($table->save($data) === true)
 		{
 			$id = $table->id;
+			$this->setState($this->getName() . '.id', $id);
 
 			return $id;
 		}
@@ -173,5 +183,56 @@ class TjfieldsModelGroup extends JModelAdmin
 		{
 			return false;
 		}
+	}
+
+	/**
+	 * Method to delete one or more field groups.
+	 *
+	 * @param   array  &$pks  An array of record primary keys.
+	 *
+	 * @return  boolean  True if successful, false if an error occurs.
+	 *
+	 * @since   1.4.2
+	 */
+	public function delete(&$pks)
+	{
+		// Load fields and field model
+		JLoader::import('components.com_tjfields.models.fields', JPATH_ADMINISTRATOR);
+		JLoader::import('components.com_tjfields.models.field', JPATH_ADMINISTRATOR);
+
+		$db = JFactory::getDbo();
+		$pks = (array) $pks;
+
+		foreach ($pks as $pk)
+		{
+			if (empty($pk))
+			{
+				continue;
+			}
+
+			// Delete fields in the field group to be deleted
+			$tjFieldsFieldsModel = JModelLegacy::getInstance('Fields', 'TjfieldsModel', array('ignore_request' => true));
+			$tjFieldsFieldsModel->setState("filter.group_id", $pk);
+			$fields = $tjFieldsFieldsModel->getItems();
+
+			foreach ($fields as $field)
+			{
+				$tjFieldsFieldModel = JModelLegacy::getInstance('Field', 'TjfieldsModel', array('ignore_request' => true));
+				$status = $tjFieldsFieldModel->delete($field->id);
+
+				if ($status === false)
+				{
+					return false;
+				}
+			}
+
+			// Delete field group data
+			if (!parent::delete($pk))
+			{
+				return false;
+			}
+		}
+
+		return true;
 	}
 }
