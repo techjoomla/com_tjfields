@@ -40,7 +40,3 @@ if ($field->value)
 	$mediaLink = $tjFieldHelper->getMediaUrl($field->value, $extraParamArray);
 	echo "<a href=" . $mediaLink . ">" . JText::_("COM_TJFIELDS_FILE_DOWNLOAD") . "</a>";
 }
-else
-{
-	echo "-";
-}

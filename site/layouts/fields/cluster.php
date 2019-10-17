@@ -23,7 +23,3 @@ if ($field->value)
 	$cluster = $clusterModel->getItem($field->value);
 	echo $cluster->name;
 }
-else
-{
-	echo "-";
-}

@@ -84,7 +84,7 @@ class TjfieldsModelField extends JModelAdmin
 				}
 			}
 
-			if ($form->getValue('type') == 'ucmsubform')
+			if ($form->getValue('type') == 'ucmsubform' || $form->getValue('type') == 'subform')
 			{
 				$form->setValue('showonlist', null, 0);
 				$form->removeField('showonlist');
@@ -795,5 +795,26 @@ class TjfieldsModelField extends JModelAdmin
 		}
 
 		return true;
+	}
+
+	/**
+	 * Method to get JForm for subform field.
+	 *
+	 * @param   STRING  $name        name of the form
+	 * @param   STRING  $formSource  form source path
+	 * @param   OBJECT  $loadData    data to be loaded
+	 *
+	 * @return  mixed  JForm object if successful, false if an error occurs.
+	 *
+	 * @since   1.4.3
+	 */
+	public function getSubFormFieldForm($name, $formSource, $loadData = array())
+	{
+		if (empty($name) || empty($formSource) || !JFile::exists($formSource))
+		{
+			return false;
+		}
+
+		return $this->loadForm($name, $formSource, array('control' => 'jform','load_data' => $loadData));
 	}
 }

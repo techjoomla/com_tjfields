@@ -23,7 +23,3 @@ if ($field->value)
 {
 	echo $date->format($format);
 }
-else
-{
-	echo "-";
-}
