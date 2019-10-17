@@ -40,7 +40,7 @@ if ($field->value)
 		if (isset($options[$field->value]))
 		{
 			$options[$field->value] = htmlspecialchars($options[$field->value], ENT_COMPAT, 'UTF-8');
-			echo ucfirst($options[$field->value]);
+			echo JText::_(ucfirst($options[$field->value]));
 		}
 	}
 	else
@@ -51,13 +51,9 @@ if ($field->value)
 			if (isset($options[$value]))
 			{
 				$options[$value] = htmlspecialchars($options[$value], ENT_COMPAT, 'UTF-8');
-				echo ucfirst($options[$value]);
+				echo JText::_(ucfirst($options[$value]));
 				echo "<br>";
 			}
 		}
 	}
-}
-else
-{
-	echo "-";
 }

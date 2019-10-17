@@ -23,7 +23,3 @@ if ($field->value)
 	<input type="checkbox" disabled="disabled" value="1" <?php echo $checked;?> />
 	<?php
 }
-else
-{
-	echo "-";
-}

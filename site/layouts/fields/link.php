@@ -24,7 +24,3 @@ if ($field->value)
 	$languageConstant = "COM_TJFIELDS_VIEW_FIELD_" . strtoupper($field->type);
 	echo "<a href=" . $field->value . " target='_blank'>" . JText::_($languageConstant) . "</a>";
 }
-else
-{
-	echo "-";
-}

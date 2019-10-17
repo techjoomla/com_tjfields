@@ -39,7 +39,7 @@ class JFormFieldRelated extends JFormFieldList
 	 *
 	 * @since   3.7.0
 	 */
-	protected function getOptions()
+	public function getOptions()
 	{
 		// Load TJ-Fields language file
 		$lang = Factory::getLanguage()->load('com_tjfields', JPATH_ADMINISTRATOR);
