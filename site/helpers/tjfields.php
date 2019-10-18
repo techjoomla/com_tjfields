@@ -309,7 +309,10 @@ class TjfieldsHelper
 			}
 			elseif (is_array($fieldValue))
 			{
-				$fieldValue = explode(",", $fieldValue[0]);
+				if (strpos(',', $fieldValue[0]))
+				{
+					$fieldValue = explode(",", $fieldValue[0]);
+				}
 
 				$this->saveMultiValuedFieldData($fieldValue, $field->client, $data['content_id'], $field->id, $fieldStoredValues);
 			}
