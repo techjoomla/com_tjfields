@@ -44,32 +44,35 @@ if ($field->value)
 				</div>
 				<div class='col-xs-6'>
 					<?php
-					if ($field->type == 'List' || $field->type == 'Radio')
+					if (isset($subformData[$field->getAttribute('name')]))
 					{
-						$fieldXml = $form->getFieldXml($field->getAttribute('name'));
-						$field->value = $subformData[$field->getAttribute('name')];
-
-						$layout = new JLayoutFile('list', JPATH_ROOT . '/components/com_tjfields/layouts/fields');
-						echo $layout->render(array('fieldXml' => $fieldXml, 'field' => $field));
-					}
-					elseif ($field->type == 'Checkbox')
-					{
-						if ($subformData[$field->getAttribute('name')])
+						if ($field->type == 'List' || $field->type == 'Radio')
 						{
-							?>
-							<input type="checkbox" checked="checked">
-							<?php
+							$fieldXml = $form->getFieldXml($field->getAttribute('name'));
+							$field->value = $subformData[$field->getAttribute('name')];
+
+							$layout = new JLayoutFile('list', JPATH_ROOT . '/components/com_tjfields/layouts/fields');
+							echo $layout->render(array('fieldXml' => $fieldXml, 'field' => $field));
+						}
+						elseif ($field->type == 'Checkbox')
+						{
+							if ($subformData[$field->getAttribute('name')])
+							{
+								?>
+								<input type="checkbox" checked="checked">
+								<?php
+							}
+							else
+							{
+								?>
+								<input type="checkbox">
+								<?php
+							}
 						}
 						else
 						{
-							?>
-							<input type="checkbox">
-							<?php
+							echo $subformData[$field->getAttribute('name')];
 						}
-					}
-					else
-					{
-						echo $subformData[$field->getAttribute('name')];
 					}
 					?>
 				</div>
