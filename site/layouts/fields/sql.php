@@ -24,6 +24,12 @@ if ($value == '')
 }
 
 $options = $field->getOptions();
+
+if (empty($options))
+{
+	return;
+}
+
 $fieldOptions = array();
 
 foreach ($options as $option)
