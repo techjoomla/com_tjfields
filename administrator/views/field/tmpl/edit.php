@@ -33,17 +33,11 @@ JLoader::import('TjfieldsHelper', JUri::root().'administrator/components/com_tjf
 // Call helper function
 TjfieldsHelper::getLanguageConstant();
 
-// Default path for file upload field
-$fileUploadDefaultPath = JPATH_SITE."/media/";
-
 // Import CSS
 $document = JFactory::getDocument();
 $document->addStyleSheet('components/com_tjfields/assets/css/tjfields.css');
 ?>
 <script type="text/javascript">
-	var fileUploadDefaultPath = '<?php echo $fileUploadDefaultPath;?>';
-	var client = '<?php echo $client;?>';
-	var clientType = '<?php echo $clientType;?>';
 	var invalidFormErrorMsg = '<?php echo $this->escape(JText::_('COM_TJFIELDS_INVALID_FORM')); ?>';
 	var editFormlink = '<?php echo $link;?>';
 

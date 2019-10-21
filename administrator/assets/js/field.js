@@ -92,21 +92,8 @@ techjoomla.jQuery( document ).ready(function(){
 	// show the default path for file upload & attach the folder name with respect to name entered for file field
 	if (field_type == 'file')
 	{
-		// folder name should contain only alpahnumeric characters & also remove the underscores and spaces
-		if(field_id==0)
+		if(field_id != 0)
 		{
-			techjoomla.jQuery('#jform_params_uploadpath').val(fileUploadDefaultPath+client+"/");
-			techjoomla.jQuery("#jform_name").keyup(function(){
-				techjoomla.jQuery('#jform_params_uploadpath').val(fileUploadDefaultPath+client+"_"+clientType+"_"+techjoomla.jQuery("#jform_name").val().replace(/[^a-z0-9\s]/gi, '').replace(/[_\s]/g, '')+"/");
-			});
-		}
-		else
-		{
-			if (techjoomla.jQuery('#jform_params_uploadpath').val()=="")
-			{
-				techjoomla.jQuery('#jform_params_uploadpath').val(fileUploadDefaultPath+client+"/"+clientType+"/");
-			}
-
 			// Show current file upload path & notice to admin user in case if he is going to custmozie the file upload path
 			techjoomla.jQuery('#currentUploadPath').html(techjoomla.jQuery('#jform_params_uploadpath').val());
 			var fileUploadhtml = techjoomla.jQuery('.fileUploadAlert').html();
