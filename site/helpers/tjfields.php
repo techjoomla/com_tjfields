@@ -543,7 +543,7 @@ class TjfieldsHelper
 		// Configure media path for the media library
 		$uploadPath = $fieldParams->get('uploadpath', '');
 		$mediaPath = ($uploadPath != '') ? $uploadPath : JPATH_SITE . '/' . $fieldTable->type . 's/tjmedia/' . str_replace(".", "/", $client . "/");
-		$config['uploadPath'] = $mediaPath;
+		$config['uploadPath'] = str_replace('/', DIRECTORY_SEPARATOR, $mediaPath);
 
 		// Configure size for the media library
 		$config['size'] = $fieldParams->get('size');
@@ -731,6 +731,7 @@ class TjfieldsHelper
 
 								// Upload path
 								$mediaPath = ($uploadPath != '') ? $uploadPath : JPATH_SITE . '/' . $type . 's/tjmedia/' . str_replace(".", "/", $client . "/");
+								$mediaPath = str_replace('/', DIRECTORY_SEPARATOR, $mediaPath);
 
 								// Code for file type validation
 								$acceptType = $fieldItems->params['accept'];
@@ -1072,6 +1073,7 @@ class TjfieldsHelper
 
 						// Upload path
 						$mediaPath = ($uploadPath != '') ? $uploadPath : JPATH_SITE . '/' . $type . 's/tjmedia/' . str_replace(".", "/", $client . "/");
+						$mediaPath = str_replace('/', DIRECTORY_SEPARATOR, $mediaPath);
 
 						// Configs for Media library
 						$config = array();
