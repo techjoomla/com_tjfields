@@ -44,6 +44,7 @@ class JFormFieldFileUploadPath extends JFormFieldTextarea
 		if (empty($this->value))
 		{
 			$this->value = JPATH_SITE . '/media/' . $client . '/';
+			$this->value = str_replace('/', DIRECTORY_SEPARATOR, $this->value);
 		}
 
 		$html = parent::getInput();
