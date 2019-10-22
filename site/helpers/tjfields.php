@@ -1973,7 +1973,6 @@ class TjfieldsHelper
 
 		JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_tjfields/tables');
 		$fieldValueTable = JTable::getInstance('Fieldsvalue', 'TjfieldsTable');
-
 		$fieldValueTable->load(array('id' => $data['valueId']));
 
 		$subData = new stdClass;
@@ -2012,7 +2011,6 @@ class TjfieldsHelper
 				{
 					$deleteData = array();
 					$deleteData[] = $data['storagePath'] . '/' . $data['fileName'];
-
 					$deleteData[] = $data['storagePath'] . '/S_' . $data['fileName'];
 					$deleteData[] = $data['storagePath'] . '/M_' . $data['fileName'];
 					$deleteData[] = $data['storagePath'] . '/L_' . $data['fileName'];
@@ -2021,11 +2019,12 @@ class TjfieldsHelper
 					{
 						if (JFile::exists($image))
 						{
-							JFile::delete($image);
+							if (!JFile::delete($image))
+							{
+								return false;
+							}
 						}
 					}
-
-					$deleted = 1;
 				}
 				else
 				{
@@ -2033,44 +2032,9 @@ class TjfieldsHelper
 					{
 						return false;
 					}
-
-					$deleted = 1;
 				}
 
-				if ($deleted == 1)
-				{
-					$db = JFactory::getDbo();
-					$fields_obj = new stdClass;
-
-					// Making value object if the field is under subform form subfrom
-					if ($data['isSubformField'] == 1)
-					{
-						foreach ($subData as $subformName => $value)
-						{
-							foreach ($value as $k => $v)
-							{
-								// Finding the particular index and making it null
-								if ($v === $data['fileName'])
-								{
-									$subData->$subformName->$k = '';
-								}
-							}
-						}
-
-						$fields_obj->value = json_encode($subData);
-					}
-					else
-					{
-						$fields_obj->value = '';
-					}
-
-					$fields_obj->id = $fieldValueTable->id;
-					$db->updateObject('#__tjfields_fields_value', $fields_obj, 'id');
-
-					return true;
-				}
-
-				return false;
+				return $fieldValueTable->delete();
 			}
 
 			return false;

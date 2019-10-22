@@ -234,16 +234,6 @@ class JFormFieldFile extends JFormField
 		$data->fields_value_table = JTable::getInstance('Fieldsvalue', 'TjfieldsTable');
 		$data->fields_value_table->load(array('value' => $layoutData['value']));
 
-		if ($data->isSubformField)
-		{
-			// Getting field value of subform file field using the content_id from url and subform_id which will be the field id
-			$data->fields_value_table->load(array('content_id' => $formValueId, 'field_id' => $data->subformId));
-		}
-		else
-		{
-			$data->fields_value_table->load(array('value' => $layoutData['value']));
-		}
-
 		$extraParamArray = array();
 		$extraParamArray['id'] = $data->fields_value_table->id;
 
