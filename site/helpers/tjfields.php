@@ -450,12 +450,12 @@ class TjfieldsHelper
 	/**
 	 * Get option which are stored in field option table.
 	 *
-	 * @param   array  $field_id      field if
-	 * @param   array  $option_value  option value
+	 * @param   INT     $fieldId      field if
+	 * @param   String  $optionValue  option value
 	 *
 	 * @return array Option for the particular field
 	 */
-	public function getOptions($field_id, $option_value = '')
+	public function getOptions($fieldId, $optionValue = '')
 	{
 		$db    = JFactory::getDbo();
 		$query = $db->getQuery(true);
@@ -463,29 +463,30 @@ class TjfieldsHelper
 		$query = $db->getQuery(true);
 		$query->select($db->quoteName(array('id','options','default_option','value')));
 		$query->from($db->quoteName('#__tjfields_options'));
-		$query->where($db->quoteName('field_id') . '=' . (int) $field_id);
+		$query->where($db->quoteName('field_id') . '=' . (int) $fieldId);
 
-		if ($option_value != '')
+		if ($optionValue != '')
 		{
-			$new_option_value = json_decode($option_value);
+			$newOptionValue = json_decode($optionValue);
 
-			if ($new_option_value != '')
+			if ($newOptionValue != '')
 			{
-				if (is_array($new_option_value))
+				if (is_array($newOptionValue))
 				{
-					$option_value_string = implode("','", $new_option_value);
+					$optionValueString 		= implode("','", $newOptionValue);
+					$optionValueString 		= $this->buildSafeInClause($optionValueString);
 
-					$query->where($db->quoteName('value') . 'IN (' . $db->quote($option_value_string) . ')');
+					$query->where($db->quoteName('value') . "IN (" . $optionValueString . ")");
 				}
 				else
 				{
-					$query->where($db->quoteName('value') . '=' . $db->quote($new_option_value));
+					$query->where($db->quoteName('value') . '=' . $db->quote($newOptionValue));
 				}
 			}
 			else
 			{
 				// Radio.
-				$query->where($db->quoteName('value') . '=' . $db->quote($option_value));
+				$query->where($db->quoteName('value') . '=' . $db->quote($optionValue));
 			}
 		}
 
@@ -498,9 +499,9 @@ class TjfieldsHelper
 	/**
 	 * Get option which are stored in field option table.
 	 *
-	 * @param   array  $client  Get all fields based on client
+	 * @param   String  $client  Get all fields based on client
 	 *
-	 * @return object
+	 * @return  mixed   The return value or null if the query failed.
 	 */
 	public function getUniversalFields($client)
 	{
@@ -870,5 +871,43 @@ class TjfieldsHelper
 			// Return -2 when no filters are selected
 			return '-2';
 		}
+	}
+
+	/**
+	 * Function to build safe query for IN clause
+	 *
+	 * @param   string  $filterString  filter string
+	 *
+	 * @return  string
+	 */
+	public function buildSafeInClause($filterString)
+	{
+		$db = JFactory::getDbo();
+
+		// Check if $filterString is comma separated string.
+		if (strpos($filterString, ',') !== false)
+		{
+			// Remove single and double quotes from string.
+			$filterString = str_replace(array('\'', '"'), '', $filterString);
+
+			// Create an array of string.
+			$filterArray  = explode(',', $filterString);
+
+			// Joomla $db->quote every element of array.
+			$filterArray  = array_map(array($db, 'quote'), $filterArray);
+
+			// Create safe string of array.
+			$filterString = implode(',', $filterArray);
+		}
+		else
+		{
+			// Remove single and double quotes from string.
+			$filterString = str_replace(array('\'', '"'), '', $filterString);
+
+			// Joomla $db->quote $filterString.
+			$filterString = $db->quote($filterString);
+		}
+
+		return $filterString;
 	}
 }
