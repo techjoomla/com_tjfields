@@ -36,11 +36,11 @@
 			<option value="1">COM_TJFIELDS_YES</option>
 			<option value="0">COM_TJFIELDS_NO</option>
 		</field>
-		<field name="fieldoption" type="subform" label="COM_TJFIELDS_FORM_LBL_FIELD_OPTION" description="PLG_FIELDS_RADIO_PARAMS_OPTIONS_DESC" layout="joomla.form.field.subform.repeatable-table" icon="list" multiple="true">
+		<field name="fieldoption" type="subform" label="COM_TJFIELDS_FORM_LBL_FIELD_OPTION" description="PLG_FIELDS_RADIO_PARAMS_OPTIONS_DESC" layout="joomla.form.field.subform.repeatable-table" icon="list" multiple="true" min="1">
 			<form hidden="true" name="list_templates_modal" repeat="true">
 				<field name="optionid" type="text" readonly="true" label="COM_TJFIELDS_FORM_OPTIONS_OPTIONID_LABEL" />
-				<field name="name" type="text" label="COM_TJFIELDS_FORM_OPTIONS_NAME_LABEL" size="30" />
-				<field name="value" type="text" label="COM_TJFIELDS_FORM_OPTIONS_VALUE_LABEL" size="30" />
+				<field name="name" type="text" label="COM_TJFIELDS_FORM_OPTIONS_NAME_LABEL" size="30" required="true"/>
+				<field name="value" type="text" label="COM_TJFIELDS_FORM_OPTIONS_VALUE_LABEL" size="30" required="true"/>
 			</form>
 		</field>
 	</fieldset>
