@@ -39,9 +39,9 @@ class TjfieldsViewFields extends JViewLegacy
 		$input           = JFactory::getApplication()->input;
 		$client          = $input->get('client', '', 'STRING');
 
-		$this->state      = $this->get('State');
 		$this->items      = $this->get('Items');
 		$this->pagination = $this->get('Pagination');
+		$this->state      = $this->get('State');
 
 		// Check for errors.
 		if (count($errors = $this->get('Errors')))
