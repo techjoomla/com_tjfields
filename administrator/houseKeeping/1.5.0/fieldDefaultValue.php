@@ -32,48 +32,65 @@ class TjHouseKeepingFieldDefaultValue extends TjModelHouseKeeping
 	 */
 	public function migrate()
 	{
-		$db = JFactory::getDbo();
-		JLoader::import('components.com_tjfields.tables.option', JPATH_ADMINISTRATOR);
-		$optionTable = Table::getInstance('Option', 'TjfieldsTable', array('dbo', $db));
-		$optionTableColumns = $optionTable->getFields();
+		$result = array();
 
-		// No migration needed if the default_option column is already removed
-		if (!array_key_exists('default_option', $optionTableColumns))
+		try
 		{
-			return true;
-		}
+			$db = JFactory::getDbo();
+			JLoader::import('components.com_tjfields.tables.option', JPATH_ADMINISTRATOR);
+			$optionTable = Table::getInstance('Option', 'TjfieldsTable', array('dbo', $db));
+			$optionTableColumns = $optionTable->getFields();
 
-		$query = $db->getQuery(true);
-		$query->select('*');
-		$query->from($db->quoteName('#__tjfields_options'));
-		$query->where($db->quoteName('default_option') . '=1');
-		$db->setQuery($query);
-		$fieldOptions = $db->loadObjectList();
-
-		if (!empty($fieldOptions))
-		{
-			JLoader::import('components.com_tjfields.tables.field', JPATH_ADMINISTRATOR);
-			$fieldTable = JTable::getInstance('Field', 'TjfieldsTable', array('dbo', $db));
-
-			foreach ($fieldOptions as $fieldOption)
+			// No migration needed if the default_option column is already removed
+			if (!array_key_exists('default_option', $optionTableColumns))
 			{
-				if (!empty($fieldOption->default_option))
+				$result['status']   = true;
+				$result['message']  = "Migration successful";
+
+				return $result;
+			}
+
+			$query = $db->getQuery(true);
+			$query->select('*');
+			$query->from($db->quoteName('#__tjfields_options'));
+			$query->where($db->quoteName('default_option') . '=1');
+			$db->setQuery($query);
+			$fieldOptions = $db->loadObjectList();
+
+			if (!empty($fieldOptions))
+			{
+				JLoader::import('components.com_tjfields.tables.field', JPATH_ADMINISTRATOR);
+				$fieldTable = JTable::getInstance('Field', 'TjfieldsTable', array('dbo', $db));
+
+				foreach ($fieldOptions as $fieldOption)
 				{
-					$fieldTable->load($fieldOption->field_id);
-					$fieldParams = json_decode($fieldTable->params);
-					$fieldParams->default = $fieldOption->value;
-					$fieldTable->params = json_encode($fieldParams);
-					$fieldTable->store();
+					if (!empty($fieldOption->default_option))
+					{
+						$fieldTable->load($fieldOption->field_id);
+						$fieldParams = json_decode($fieldTable->params);
+						$fieldParams->default = $fieldOption->value;
+						$fieldTable->params = json_encode($fieldParams);
+						$fieldTable->store();
+					}
 				}
 			}
+
+			// Drop 'default_option' column from options table
+			$query = $db->getQuery(true);
+			$query = "ALTER TABLE `#__tjfields_options` DROP `default_option`";
+			$db->setQuery($query);
+			$db->execute();
+
+			$result['status']   = true;
+			$result['message']  = "Migration successful";
+		}
+		catch (Exception $e)
+		{
+			$result['err_code'] = '';
+			$result['status']   = false;
+			$result['message']  = $e->getMessage();
 		}
 
-		// Drop 'default_option' column from options table
-		$query = $db->getQuery(true);
-		$query = "ALTER TABLE `#__tjfields_options` DROP `default_option`";
-		$db->setQuery($query);
-		$db->execute();
-
-		return true;
+		return $result;
 	}
 }
