@@ -116,7 +116,7 @@ class TjfieldsControllerGroup extends JControllerForm
 		{
 			$msg = JText::_('COMTJFILEDS_GROUP_CREATED_SUCCESSFULLY');
 			$link = JRoute::_('index.php?option=com_tjfields&view=group&layout=edit&client=' . $input->get('client', '', 'STRING'), false);
-			$this->setRedirect($link, $msg, 'error');
+			$this->setRedirect($link, $msg, 'success');
 		}
 		else
 		{
