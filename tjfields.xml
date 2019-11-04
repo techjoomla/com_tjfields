@@ -7,7 +7,7 @@
 	<copyright>Copyright(C)2012-19 TechJoomla</copyright>
 	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
 	<creationDate>4th Nov 2019</creationDate>
-	<version>1.4.2</version>
+	<version>1.4.3</version>
 	<description>TJFields - Common code for TJ Fields Manager and TJ Geo Manager!</description>
 	<install>
 		<sql>
