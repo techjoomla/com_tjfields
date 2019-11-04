@@ -40,6 +40,11 @@ class TjfieldsViewField extends JViewLegacy
 		$this->item  = $this->get('Item');
 		$this->form  = $this->get('Form');
 
+		if (in_array($this->form->getValue('type'), array('radio', 'single_select', 'multi_select', 'tjlist')))
+		{
+			$this->form->setFieldAttribute('fieldoption', 'required', true);
+		}
+
 		// Check for errors.
 		if (count($errors = $this->get('Errors')))
 		{

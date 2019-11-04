@@ -9,9 +9,7 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
-use Joomla\CMS\Language\Text;
-
-if (!key_exists('field', $displayData) || !key_exists('fieldXml', $displayData))
+if (!key_exists('field', $displayData))
 {
 	return;
 }
@@ -20,10 +18,10 @@ $field = $displayData['field'];
 
 if ($field->value)
 {
-	// This is working for normal form video field. Needs improvement for video field in subform
-	echo "<a href=" . $field->value . " target='_blank'>" . JText::_("COM_TJUCM_VIDEO_FIELD_VALUE") . "</a>";
-}
-else
-{
-	echo "-";
+	$owner = JFactory::getUser($field->value);
+
+	if ($owner->id)
+	{
+		echo $owner->username;
+	}
 }

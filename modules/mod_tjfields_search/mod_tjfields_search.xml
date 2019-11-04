@@ -6,8 +6,8 @@
 	<authorUrl>www.techjoomla.com</authorUrl>
 	<copyright>Copyright(C)2012-16 TechJoomla</copyright>
 	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
-	<creationDate>3 June 2016</creationDate>
-	<version>2.5.5</version>
+	<creationDate>4th Nov 2019</creationDate>
+	<version>1.4.3</version>
 	<description>MOD_TJFIELDS_SEARCH_XML_DESCRIPTION</description>
 	<files>
 		<filename module="mod_tjfields_search">mod_tjfields_search.php</filename>

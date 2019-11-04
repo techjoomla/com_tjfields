@@ -9,18 +9,15 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
-use Joomla\CMS\Language\Text;
-
 if (!key_exists('field', $displayData) || !key_exists('fieldXml', $displayData))
 {
 	return;
 }
 
+$xmlField = $displayData['fieldXml'];
 $field = $displayData['field'];
 
 if ($field->value)
 {
-	// This is working for normal form video field
-	$languageConstant = "COM_TJFIELDS_VIEW_FIELD_" . strtoupper($field->type);
-	echo "<a href=" . $field->value . " target='_blank'>" . JText::_($languageConstant) . "</a>";
+	echo $field->value;
 }

@@ -57,7 +57,3 @@ if ($field->value)
 	</div>
 	<?php
 }
-else
-{
-	echo "-";
-}

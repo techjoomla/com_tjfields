@@ -23,6 +23,7 @@
 			<field name="cols" type="number" default=""
 				label="COM_TJFIELDS_FORM_LBL_FIELD_COLS" description="COM_TJFIELDS_FORM_DESC_FIELD_COLS"
 				size="5" />
+			<field name="filter" type="hidden" default="JComponentHelper::filterText" />
 		</fieldset>
 	</fields>
 </form>

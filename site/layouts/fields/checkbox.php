@@ -17,13 +17,9 @@ if (!key_exists('field', $displayData) || !key_exists('fieldXml', $displayData))
 $xmlField = $displayData['fieldXml'];
 $field = $displayData['field'];
 
-if ($field->value)
+if ($field->value != '')
 {
 	$checked = ($field->value == 1) ? ' checked="checked"' : '';?>
 	<input type="checkbox" disabled="disabled" value="1" <?php echo $checked;?> />
 	<?php
-}
-else
-{
-	echo "-";
 }

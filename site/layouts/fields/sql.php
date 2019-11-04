@@ -23,46 +23,38 @@ if ($value == '')
 	return;
 }
 
-$db        = JFactory::getDbo();
-$value     = (array) $value;
-$condition = '';
+$options = $field->getOptions();
 
-foreach ($value as $v)
+if (empty($options))
 {
-	if (!$v)
+	return;
+}
+
+$fieldOptions = array();
+
+foreach ($options as $option)
+{
+	$option = (object) $option;
+	$fieldOptions[$option->value] = JText::_(ucfirst(htmlspecialchars($option->text, ENT_COMPAT, 'UTF-8')));
+}
+
+if (!is_array($field->value))
+{
+	// If single select
+	if (isset($fieldOptions[$field->value]))
 	{
-		continue;
-	}
-
-	$condition .= ', ' . $db->q($v);
-}
-
-$query = $field->getAttribute('query');
-$keyColumn = $field->getAttribute('key_field');
-$valueColumn = $field->getAttribute('value_field');
-
-// Run the query with a having condition because it supports aliases
-$db->setQuery($query . ' having ' . $keyColumn . ' in (' . trim($condition, ',') . ')');
-
-try
-{
-	$items = $db->loadObjectlist();
-}
-catch (Exception $e)
-{
-	// If the query failed, we fetch all elements
-	$db->setQuery($query);
-	$items = $db->loadObjectlist();
-}
-
-$texts = array();
-
-foreach ($items as $item)
-{
-	if (in_array($item->$keyColumn, $value))
-	{
-		$texts[] = $item->$valueColumn;
+		echo $fieldOptions[$field->value];
 	}
 }
-
-echo htmlentities(implode(', ', $texts));
+else
+{
+	// If multi select
+	foreach ($field->value as $value)
+	{
+		if (isset($fieldOptions[$value]))
+		{
+			echo $fieldOptions[$value];
+			echo "<br>";
+		}
+	}
+}

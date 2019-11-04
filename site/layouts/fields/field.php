@@ -33,7 +33,3 @@ if ($field->value)
 		echo htmlspecialchars($field->value, ENT_COMPAT, 'UTF-8');
 	}
 }
-else
-{
-	echo "-";
-}

@@ -26,7 +26,3 @@ if ($categoryId)
 
 	echo htmlspecialchars($categoryTable->title, ENT_COMPAT, 'UTF-8');
 }
-else
-{
-	echo "-";
-}

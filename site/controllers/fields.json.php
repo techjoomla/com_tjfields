@@ -55,8 +55,9 @@ class TjfieldsControllerFields extends JControllerForm
 		$tjFieldFieldTableParamData = json_decode($fieldData->tjFieldFieldTable->params);
 		$client = $fieldData->tjFieldFieldTable->client;
 		$type = $fieldData->tjFieldFieldTable->type;
-		$uploadPath = $tjFieldFieldTableParamData->uploadpath;
-		$data['storagePath'] = (isset($uploadPath)) ? $uploadPath : JPATH_SITE . '/' . $type . 's/tjmedia/' . str_replace(".", "/", $client . '/');
+		$uploadPath = isset($tjFieldFieldTableParamData->uploadpath) ? $tjFieldFieldTableParamData->uploadpath : '';
+		$data['storagePath'] = ($uploadPath != '') ? $uploadPath : JPATH_SITE . '/' . $type . 's/tjmedia/' . str_replace(".", "/", $client . '/');
+		$data['storagePath'] = str_replace('/', DIRECTORY_SEPARATOR, $data['storagePath']);
 		$data['client'] = $client;
 
 		require_once JPATH_SITE . '/components/com_tjfields/helpers/tjfields.php';
