@@ -1919,7 +1919,7 @@ class TjfieldsHelper
 			// Here, fpht means file encoded path
 			$encodedFileName = base64_encode($fileName);
 			$basePathLink = 'index.php?option=com_tjfields&task=getMediaFile&fpht=';
-			$mediaURLlink = JUri::root() . substr(JRoute::_($basePathLink . $encodedFileName . $extraUrlParams), strlen(JUri::base(true)) + 1);
+			$mediaURLlink = JUri::base() . substr(JRoute::_($basePathLink . $encodedFileName . $extraUrlParams), strlen(JUri::base(true)) + 1);
 
 			return $mediaURLlink;
 		}
