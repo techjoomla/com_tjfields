@@ -58,7 +58,7 @@ class TjfieldsController extends JControllerLegacy
 		$encodedFileName = $jinput->get('fpht', '', 'STRING');
 		$decodedFileName = base64_decode($encodedFileName);
 
-		// Subform File field Id for checking autherization for specific field under subform
+		// Subform File field Id for checking authorization for specific field under subform
 		$subformFileFieldId = $jinput->get('subFormFileFieldId', '', 'INT');
 
 		// Get media storage path
