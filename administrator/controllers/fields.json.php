@@ -30,23 +30,28 @@ class TjfieldsControllerFields extends FormController
 
 	public function deleteFile()
 	{
-		// Check for request forgeries.
-		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
 		$app = JFactory::getApplication();
 		$jinput = $app->input;
 
 		$data = array();
-
-		// Here, fpht means file encoded path
-		$data['filePath'] = base64_decode($jinput->get('filePath', '', 'BASE64'));
+		$data['fileName'] = base64_decode($jinput->get('fileName', '', 'BASE64'));
 		$data['valueId'] = base64_decode($jinput->get('valueId', '', 'BASE64'));
 		$data['subformFileFieldId'] = $jinput->get('subformFileFieldId');
 		$data['isSubformField'] = $jinput->get('isSubformField');
-		$data['client'] = $jinput->get('client', '', 'STRING');
 
-		$client = explode('.', $data['client']);
+		// Get media storage path
+		JLoader::import('components.com_tjfields.models.fields', JPATH_SITE);
+		$fieldsModel     = JModelLegacy::getInstance('Fields', 'TjfieldsModel', array('ignore_request' => true));
+		$fieldData = $fieldsModel->getMediaStoragePath($data['valueId'], $data['subformFileFieldId']);
 
-		$data['storagePath'] = '/media/' . $client[0] . '/' . $client[1];
+		$tjFieldFieldTableParamData = json_decode($fieldData->tjFieldFieldTable->params);
+		$client = $fieldData->tjFieldFieldTable->client;
+		$type = $fieldData->tjFieldFieldTable->type;
+		$uploadPath = isset($tjFieldFieldTableParamData->uploadpath) ? $tjFieldFieldTableParamData->uploadpath : '';
+		$data['storagePath'] = ($uploadPath != '') ? $uploadPath : JPATH_SITE . '/' . $type . 's/tjmedia/' . str_replace(".", "/", $client . '/');
+		$data['storagePath'] = str_replace('/', DIRECTORY_SEPARATOR, $data['storagePath']);
+		$data['client'] = $client;
+
 		require_once JPATH_ADMINISTRATOR . '/components/com_tjfields/helpers/tjfields.php';
 
 		$tjFieldsHelper = new TjfieldsHelper;

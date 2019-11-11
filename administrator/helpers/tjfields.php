@@ -528,50 +528,30 @@ class TjfieldsHelper extends JHelperContent
 		}
 
 		JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_tjfields/tables');
-		$fieldsValueTable = JTable::getInstance('Fieldsvalue', 'TjfieldsTable');
-
-		$fieldsValueTable->load(array('id' => $data['valueId']));
+		$fieldValueTable = JTable::getInstance('Fieldsvalue', 'TjfieldsTable');
+		$fieldValueTable->load(array('id' => $data['valueId']));
 
 		$subData = new stdClass;
 		$fieldId = 0;
 
 		if ($data['isSubformField'] == 1)
 		{
-			$subData = json_decode($fieldsValueTable->value);
-
-			foreach ($subData as $value)
-			{
-				$subformData = (array) $value;
-
-				if (in_array($data['filePath'], $subformData))
-				{
-					$fileUser = $fieldsValueTable->user_id;
-				}
-			}
-
-			// Check for file field is of subform or ucmsubform
-			if ($data['subformFileFieldId'])
-			{
-				$fieldId = $data['subformFileFieldId'];
-			}
-			else
-			{
-				$fieldId = $fieldsValueTable->field_id;
-			}
+			$fileUser = $fieldValueTable->user_id;
+			$fieldId = $fieldValueTable->field_id;
 		}
 		else
 		{
-			if ($data['filePath'] === $fieldsValueTable->value)
+			if ($data['fileName'] === $fieldValueTable->value)
 			{
-				$fileUser = $fieldsValueTable->user_id;
-				$fieldId = $fieldsValueTable->field_id;
+				$fileUser = $fieldValueTable->user_id;
+				$fieldId = $fieldValueTable->field_id;
 			}
 		}
 
-		$fileExtension = StringHelper::strtolower(StringHelper::substr(strrchr($data['filePath'], "."), 1));
+		$file_extension = strtolower(substr(strrchr($data['fileName'], "."), 1));
 		$localGetMime = TJMediaStorageLocal::getInstance();
 
-		$ctype = $localGetMime->getMime($fileExtension);
+		$ctype = $localGetMime->getMime($file_extension);
 
 		if (!empty($fileUser))
 		{
@@ -586,68 +566,31 @@ class TjfieldsHelper extends JHelperContent
 				if ($type[0] === 'image')
 				{
 					$deleteData = array();
-					$deleteData[] = JPATH_ROOT . $data['storagePath'] . '/' . $type[0] . '/' . $data['filePath'];
-
-					$deleteData[] = JPATH_ROOT . $data['storagePath'] . '/' . $type[0] . '/S_' . $data['filePath'];
-					$deleteData[] = JPATH_ROOT . $data['storagePath'] . '/' . $type[0] . '/M_' . $data['filePath'];
-					$deleteData[] = JPATH_ROOT . $data['storagePath'] . '/' . $type[0] . '/L_' . $data['filePath'];
+					$deleteData[] = $data['storagePath'] . '/' . $data['fileName'];
+					$deleteData[] = $data['storagePath'] . '/S_' . $data['fileName'];
+					$deleteData[] = $data['storagePath'] . '/M_' . $data['fileName'];
+					$deleteData[] = $data['storagePath'] . '/L_' . $data['fileName'];
 
 					foreach ($deleteData as $image)
 					{
 						if (JFile::exists($image))
 						{
-							JFile::delete($image);
+							if (!JFile::delete($image))
+							{
+								return false;
+							}
 						}
 					}
-
-					$deleted = 1;
 				}
 				else
 				{
-					if (!JFile::delete(JPATH_ROOT . $data['storagePath'] . '/' . $type[0] . '/' . $data['filePath']))
+					if (!JFile::delete($data['storagePath'] . '/' . $data['fileName']))
 					{
 						return false;
 					}
-					else
-					{
-						$deleted = 1;
-					}
 				}
 
-				if ($deleted == 1)
-				{
-					$db = JFactory::getDbo();
-					$fields_obj = new stdClass;
-
-					// Making value object if the field is under subform form subfrom
-					if ($data['isSubformField'] == 1)
-					{
-						foreach ($subData as $subformName => $value)
-						{
-							foreach ($value as $k => $v)
-							{
-								// Finding the particular index and making it null
-								if ($v === $data['filePath'])
-								{
-									$subData->$subformName->$k = '';
-								}
-							}
-						}
-
-						$fields_obj->value = json_encode($subData);
-					}
-					else
-					{
-						$fields_obj->value = '';
-					}
-
-					$fields_obj->id = $fieldsValueTable->id;
-					$db->updateObject('#__tjfields_fields_value', $fields_obj, 'id');
-
-					return true;
-				}
-
-				return false;
+				return $fieldValueTable->delete();
 			}
 
 			return false;
