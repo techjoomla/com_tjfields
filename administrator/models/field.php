@@ -288,7 +288,7 @@ class TjfieldsModelField extends JModelAdmin
 		if ($data['id'] == 0)
 		{
 			// Escape apostraphe
-			$data_name = trim(preg_replace('/[^A-Za-z0-9\-\']/', '', $data['name']));
+			$data_name = trim(preg_replace('/[^a-zA-Z0-9]/', '', $data['name']));
 			$client = explode('.', $data['client']);
 			$client = $client[0];
 			$data_unique_name = $client . '_' . $data['client_type'] . '_' . $data_name;
