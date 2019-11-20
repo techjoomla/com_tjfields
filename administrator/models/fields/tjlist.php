@@ -14,6 +14,7 @@ JFormHelper::loadFieldClass('list');
 
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Factory;
 
 /**
  * Form Field class for the Joomla Platform.
@@ -105,8 +106,14 @@ class JFormFieldTjList extends JFormFieldList
 
 		$html = parent::getInput();
 
-		$doc = JFactory::getDocument();
+		$doc = Factory::getDocument();
 		$doc->addScript(JUri::root() . 'administrator/components/com_tjfields/assets/js/tjlist.min.js');
+
+		if ($this->multiple)
+		{
+			$doc->addStyleSheet(JUri::root() . 'administrator/components/com_tjfields/assets/css/bootstrap-tagsinput.css');
+			$doc->addScript(JUri::root() . 'administrator/components/com_tjfields/assets/js/bootstrap-tagsinput.min.js');
+		}
 
 		$options = $this->getOptions();
 
@@ -131,7 +138,8 @@ class JFormFieldTjList extends JFormFieldList
 
 				if (empty($valueFromSelectList))
 				{
-					$this->otherSelectedValue = $this->value[0];
+					// Remove prefix values from other text values
+					$this->otherSelectedValue = str_replace($this->type . ':-', '', $this->value[0]);
 				}
 			}
 			elseif ($this->multiple)
@@ -150,7 +158,10 @@ class JFormFieldTjList extends JFormFieldList
 
 					if (!empty($otherValues))
 					{
-						$this->otherSelectedValue = $otherValues[0];
+						$this->otherSelectedValue = implode(',', $otherValues);
+
+						// Remove prefix values from other text values
+						$this->otherSelectedValue = str_replace($this->type . ':-', '', $this->otherSelectedValue);
 					}
 				}
 			}
@@ -202,8 +213,21 @@ class JFormFieldTjList extends JFormFieldList
 	private function getInputBox()
 	{
 		$text = '<div class="tjfieldTjListOtherText"><br/>';
-		$text .= '<input type="text" class=" ' . $this->otherInputClass . '" ' . $this->otherInputRequired . '
-					name="' . $this->name . '" id="' . $this->id . '" value="' . $this->otherSelectedValue . '" aria-invalid="false"></div>';
+
+		// Check multiple select option true or not
+		if ($this->multiple)
+		{
+			// Enable the bootstrap taging input
+			$text .= '<input data-role="tagsinput" type="text" class=" focus ' . $this->otherInputClass . '" ' .
+			$this->otherInputRequired . ' name="' . $this->name . '" id="' . $this->id . '" value="' . $this->otherSelectedValue . '" aria-invalid="false">';
+		}
+		else
+		{
+			$text .= '<input type="text" class=" focus ' . $this->otherInputClass . '" ' . $this->otherInputRequired . '
+			name="' . $this->name . '" id="' . $this->id . '" value="' . $this->otherSelectedValue . '" aria-invalid="false">';
+		}
+
+		$text .= '</div>';
 
 		return $text;
 	}

@@ -6,10 +6,19 @@
  * @license    GNU General Public License version 2, or later
  */
 var tjlist = {
-
 	addOtherOption: function (element) {
 
 		jQuery(tjlist.getTextBox(element)).insertAfter(element.next(".chzn-container"));
+
+		setTimeout(function() {
+			element.siblings('div.tjfieldTjListOtherText').children('.bootstrap-tagsinput').children().focus();
+
+			if (element.attr('multiple') == undefined)
+			{
+				element.siblings('div.tjfieldTjListOtherText').children().focus();
+			}
+
+		}, 100);
 	},
 	removeOtherOption: function (element) {
 
@@ -21,7 +30,22 @@ var tjlist = {
 			isRequired    = (element.attr('required') != undefined) ? 'required="required"' : '',
 			requiredClass = (isRequired != '') ? 'required' : '';
 
-		return '<div class="tjfieldTjListOtherText"><br/><input ' + isRequired + ' type="text" name="' + inputName + '" id="' + inputId + '" value="" class=" ' + requiredClass + '" aria-invalid="false"></div>';
+		if (element.attr('multiple') != undefined)
+		{
+			this.loadTagsinputjs();
+			var tagInput    = (element.attr('multiple') != undefined) ? 'data-role="tagsinput"' : '';
+		}
+
+		return '<div class="tjfieldTjListOtherText"><br/><input ' + tagInput + ' placeholder="' + Joomla.JText._('COM_TJFIELDS_OTHER_VALUE') + '" ' + isRequired + ' type="text" name="' + inputName + '" id="' + inputId + '" value="" class=" focus ' + requiredClass + '" aria-invalid="false"></div>';
+	},
+	loadTagsinputjs: function()
+	{
+	  var head= document.getElementsByTagName('head')[0];
+	  var script= document.createElement('script');
+
+	  // @Todo - Decide right place to store below JS
+	  script.src= Joomla.getOptions('system.paths').base +'/administrator/components/com_tjfields/assets/js/bootstrap-tagsinput.min.js';
+	  head.appendChild(script);
 	}
 }
 
