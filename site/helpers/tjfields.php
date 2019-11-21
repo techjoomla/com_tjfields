@@ -356,7 +356,7 @@ class TjfieldsHelper
 
 					$this->saveMultiValuedFieldData($fieldValue, $field->client, $data['content_id'], $field->id, $fieldStoredValues);
 				}
-				else
+				elseif (!empty($fieldValue))
 				{
 					// Check other option enable for tjlist field
 
