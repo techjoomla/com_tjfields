@@ -21,6 +21,24 @@ use Joomla\CMS\Language\Text;
 class TjfieldsController extends JControllerLegacy
 {
 	/**
+	 * The return URL.
+	 *
+	 * @var    mixed
+	 */
+	protected $returnURL;
+
+	/**
+	 * Constructor
+	 *
+	 */
+	public function __construct()
+	{
+		$this->returnURL = JURI::base();
+
+		parent::__construct();
+	}
+
+	/**
 	 * Method to display a view.
 	 *
 	 * @param   Boolean  $cachable   If true, the view output will be cached
