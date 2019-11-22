@@ -326,31 +326,72 @@ class TjfieldsHelper
 
 				if (is_array($fieldValue))
 				{
-					$fieldVal = array();
-
 					if ($tjListParams->other)
 					{
+						$fieldOtherVal = $fieldOptionsVal = array();
+						$postFieldValueCount = count($fieldValue);
+						$k = 0;
+
 						$otherValues[] = $field->type . 'othervalue';
 
 						foreach ($fieldValue as $key => $listfieldVale)
 						{
-							if (strpos($listfieldVale, ','))
+							$k++;
+
+							// Update the last index element of other options multi values
+							if (strpos($listfieldVale, ',') && $postFieldValueCount > 1 &&  $postFieldValueCount == $k)
 							{
-								$fieldVal = explode(',', $listfieldVale);
+								$fieldOtherVal = explode(',', $listfieldVale);
 
 								// Add prefix for other values for tjlist field
-								$fieldVal = preg_filter('/^/', $field->type . ':-', $fieldVal);
+								$fieldOtherVal = preg_filter('/^/', $field->type . ':-', $fieldOtherVal);
+								unset($fieldValue[$key]);
+							}
+							elseif (strpos($listfieldVale, ','))
+							{
+								// Check its actual option list values
+								$fieldOptionsVal = explode(',', $listfieldVale);
+
+								if ($postFieldValueCount == 1)
+								{
+									$fieldOptionsVal = array_filter(
+										$fieldOptionsVal,
+										function($val)
+										{
+											return $val != 'tjlistothervalue';
+										}
+									);
+								}
+
 								unset($fieldValue[$key]);
 							}
 							elseif (!in_array($listfieldVale, $otherValues))
 							{
+								// Check its other options values not a actual option list values
 								$fieldValue[$key] = $field->type . ':-' . $listfieldVale;
+							}
+							else
+							{
+								$fieldValue = array_filter(
+									$fieldValue,
+									function($val)
+									{
+										return $val != 'tjlistothervalue';
+									}
+								);
 							}
 						}
 
-						if (!empty($fieldVal))
+						// Check other options multiple values exist in array
+						if (!empty($fieldOtherVal))
 						{
-							$fieldValue = array_merge($fieldValue, $fieldVal);
+							$fieldValue = array_merge($fieldValue, $fieldOtherVal);
+						}
+
+						// Check options list value exist in array
+						if (!empty($fieldOptionsVal))
+						{
+							$fieldValue = array_merge($fieldValue, $fieldOptionsVal);
 						}
 					}
 
