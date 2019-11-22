@@ -307,6 +307,68 @@ class TjfieldsHelper
 					}
 				}
 			}
+			elseif ($field->type == 'tjlist')
+			{
+				// Check for Tjlist - start
+				$tjListParams = json_decode($field->params);
+
+				if ($tjListParams->other)
+				{
+					// Get all the fields of the specified client
+					JLoader::import('components.com_tjfields.models.options', JPATH_ADMINISTRATOR);
+					$tjFieldOptionsModel = JModelLegacy::getInstance('Options', 'TjfieldsModel', array('ignore_request' => true));
+					$tjFieldOptionsModel->setState('filter.field_id', $field->id);
+					$optionsValue = $tjFieldOptionsModel->getItems();
+
+					// Get array of dropdown values
+					$otherValues = array_column($optionsValue, 'value');
+				}
+
+				if (is_array($fieldValue))
+				{
+					$fieldVal = array();
+
+					if ($tjListParams->other)
+					{
+						$otherValues[] = $field->type . 'othervalue';
+
+						foreach ($fieldValue as $key => $listfieldVale)
+						{
+							if (strpos($listfieldVale, ','))
+							{
+								$fieldVal = explode(',', $listfieldVale);
+
+								// Add prefix for other values for tjlist field
+								$fieldVal = preg_filter('/^/', $field->type . ':-', $fieldVal);
+								unset($fieldValue[$key]);
+							}
+							elseif (!in_array($listfieldVale, $otherValues))
+							{
+								$fieldValue[$key] = $field->type . ':-' . $listfieldVale;
+							}
+						}
+
+						if (!empty($fieldVal))
+						{
+							$fieldValue = array_merge($fieldValue, $fieldVal);
+						}
+					}
+
+					$this->saveMultiValuedFieldData($fieldValue, $field->client, $data['content_id'], $field->id, $fieldStoredValues);
+				}
+				elseif (!empty($fieldValue))
+				{
+					// Check other option enable for tjlist field
+
+					if ($tjListParams->other && !in_array($fieldValue, $otherValues))
+					{
+						// Add prefix for other values for tjlist field
+						$fieldValue = $field->type . ':-' . $fieldValue;
+					}
+
+					$this->saveSingleValuedFieldData($fieldValue, $field->client, $data['content_id'], $field->id, $fieldStoredValues);
+				}
+			}
 			elseif (is_array($fieldValue))
 			{
 				if (strpos($fieldValue[0], ','))
@@ -1485,15 +1547,17 @@ class TjfieldsHelper
 
 					if (!empty($otherValues))
 					{
-						$tjListOtherObj = new stdClass;
-
-						$tjListOtherObj->options = $otherValues[0];
-						$tjListOtherObj->default_option = '';
-						$tjListOtherObj->value = $otherValues[0];
-
-						$extra_options[] = $tjListOtherObj;
+						foreach ($otherValues as $othervalue)
+						{
+							$tjListOtherObj = new stdClass;
+							$tjListOtherObj->default_option = '';
+							$tjListOtherObj->options = $othervalue;
+							$tjListOtherObj->value = $othervalue;
+							$extra_options[] = $tjListOtherObj;
+						}
 					}
 				}
+
 				// Check for Tjlist - end
 			}
 		}
