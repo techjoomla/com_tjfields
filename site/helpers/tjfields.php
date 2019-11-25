@@ -277,6 +277,17 @@ class TjfieldsHelper
 				array_pop($ucmSubformClientTmp);
 				$ucmSubformClient = 'com_tjucm.' . implode('_', $ucmSubformClientTmp);
 
+				// Load UCM models
+				JLoader::import('components.com_tjucm.models.itemform', JPATH_SITE);
+				JLoader::import('components.com_tjucm.models.items', JPATH_SITE);
+
+				// Get all the records which were previously stored for the ucmsubform field in parent form
+				$tjucmItemsModel = JModelLegacy::getInstance('Items', 'TjucmModel', array('ignore_request' => true));
+				$tjucmItemsModel->setState('parent_id', TJUCM_PARENT_CONTENT_ID);
+				$tjucmItemsModel->setState('ucm.client', $ucmSubformClient);
+				$ucmSubformRecords = $tjucmItemsModel->getItems();
+				$ucmSubformRecordIds = array_column($ucmSubformRecords, 'id');
+
 				$this->saveSingleValuedFieldData($ucmSubformClient, TJUCM_PARENT_CLIENT, TJUCM_PARENT_CONTENT_ID, $field->id, $fieldStoredValues);
 
 				foreach ($fieldValue as $key => $ucmSubformValue)
@@ -291,10 +302,14 @@ class TjfieldsHelper
 						{
 							$tjUcmSubFormItemData = array('id' => '', 'parent_id' => $data['content_id'], 'client' => $ucmSubformClient);
 
-							JLoader::import('component.com_tjucm.models.itemform', JPATH_SITE);
 							$tjUcmItemFormModel = JModelLegacy::getInstance('ItemForm', 'TjucmModel');
 							$tjUcmItemFormModel->save($tjUcmSubFormItemData);
 							$ucmSubFormContentId = $tjUcmItemFormModel->getState($tjUcmItemFormModel->getName() . '.id');
+						}
+
+						if (array_search($ucmSubFormContentId, $ucmSubformRecordIds) !== false)
+						{
+							unset($ucmSubformRecordIds[array_search($ucmSubFormContentId, $ucmSubformRecordIds)]);
 						}
 
 						$tjUcmSubFormContentId['childContentIds'][$ucmSubformContentIdFieldElementId] = (INT) $ucmSubFormContentId;
@@ -305,6 +320,14 @@ class TjfieldsHelper
 						$ucmSubFormData['created_by']  = JFactory::getUser()->id;
 						$this->saveFieldsValue($ucmSubFormData);
 					}
+				}
+
+				// Delete the records which are removed from the ucmsubform
+				$tjUcmItemFormModel = JModelLegacy::getInstance('ItemForm', 'TjucmModel');
+
+				foreach ($ucmSubformRecordIds as $ucmSubformRecordId)
+				{
+					$tjUcmItemFormModel->delete($ucmSubformRecordId);
 				}
 			}
 			elseif ($field->type == 'tjlist')
