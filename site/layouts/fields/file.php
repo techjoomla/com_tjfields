@@ -1,9 +1,10 @@
 <?php
 /**
- * @package	TJ-Fields
- * @author	 TechJoomla <extensions@techjoomla.com>
- * @copyright  Copyright (c) 2009-2019 TechJoomla. All rights reserved.
- * @license	GNU General Public License version 2 or later; see LICENSE.txt
+ * @package     TJ-Fields
+ * @subpackage  Form
+ * author       TechJoomla <extensions@techjoomla.com>
+ * @copyright   Copyright (c) 2009-2019 TechJoomla. All rights reserved.
+ * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
 // No direct access
@@ -38,5 +39,19 @@ if ($field->value)
 
 	$tjFieldHelper = new TjfieldsHelper;
 	$mediaLink = $tjFieldHelper->getMediaUrl($field->value, $extraParamArray);
+
+	// To get the file name from URL
+	$substrString = substr($mediaLink, strlen('fpht=') + strpos($mediaLink, 'fpht='));
+	$substrString = substr($substrString, 0, strpos($substrString, '='));
+
+	// Decode the filename
+	$fileName = base64_decode($substrString);
+
 	echo "<a href=" . $mediaLink . ">" . JText::_("COM_TJFIELDS_FILE_DOWNLOAD") . "</a>";
+
+	// To display the file name if exist and skip the prepended file name value
+	if (!empty($fileName))
+	{
+		echo '<strong class="ml-15"> ' . substr($fileName, strpos($fileName, '_', 12) + 1) . '</strong>';
+	}
 }
