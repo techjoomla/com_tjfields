@@ -12,6 +12,7 @@ defined('_JEXEC') or die;
 jimport('joomla.application.component.modeladmin');
 
 use Joomla\Registry\Registry;
+use Joomla\CMS\Form\FormHelper;
 
 /**
  * Tjfields model.
@@ -691,6 +692,32 @@ class TjfieldsModelField extends JModelAdmin
 				if (!empty($clusterId))
 				{
 					$query->where($db->quoteName('cluster_id') . ' = ' . $clusterId);
+				}
+				else
+				{
+					FormHelper::addFieldPath(JPATH_ADMINISTRATOR . '/components/com_tjfields/models/fields/');
+					$cluster = FormHelper::loadFieldType('cluster', false);
+					$clusterList = $cluster->getOptionsExternally();
+					$usersClusters = array();
+
+					if (!empty($clusterList))
+					{
+						foreach ($clusterList as $clusterList)
+						{
+							if (!empty($clusterList->value))
+							{
+								$usersClusters[] = $clusterList->value;
+							}
+						}
+					}
+
+					// If cluster array empty then we set 0 in whereclause query
+					if (empty($usersClusters))
+					{
+						$usersClusters[] = 0;
+					}
+
+					$query->where($db->quoteName('cluster_id') . ' IN (' . implode(",", $usersClusters) . ')');
 				}
 			}
 
