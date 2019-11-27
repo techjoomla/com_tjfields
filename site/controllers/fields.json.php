@@ -37,7 +37,7 @@ class TjfieldsControllerFields extends JControllerForm
 	public function deleteFile()
 	{
 		// Check for request forgeries.
-		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
+		JSession::checkToken('get') or JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
 		$app = JFactory::getApplication();
 		$jinput = $app->input;
 
