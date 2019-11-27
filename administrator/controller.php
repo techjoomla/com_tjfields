@@ -13,12 +13,15 @@ use Joomla\CMS\Table\Table;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\Controller\BaseController;
+use Joomla\CMS\Uri\Uri;
+
 /**
  * TJ Fields Controller
  *
  * @since  2.5
  */
-class TjfieldsController extends JControllerLegacy
+class TjfieldsController extends BaseController
 {
 	/**
 	 * The return URL.
@@ -33,7 +36,7 @@ class TjfieldsController extends JControllerLegacy
 	 */
 	public function __construct()
 	{
-		$this->returnURL = JURI::base();
+		$this->returnURL = Uri::base();
 
 		parent::__construct();
 	}
@@ -52,8 +55,8 @@ class TjfieldsController extends JControllerLegacy
 	{
 		require_once JPATH_COMPONENT . '/helpers/tjfields.php';
 
-		$view = JFactory::getApplication()->input->getCmd('view', 'fields');
-		JFactory::getApplication()->input->set('view', $view);
+		$view = Factory::getApplication()->input->getCmd('view', 'fields');
+		Factory::getApplication()->input->set('view', $view);
 
 		parent::display($cachable, $urlparams);
 

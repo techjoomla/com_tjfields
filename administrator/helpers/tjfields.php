@@ -12,6 +12,12 @@ JLoader::import("/techjoomla/media/storage/local", JPATH_LIBRARIES);
 // No direct access
 defined('_JEXEC') or die;
 use Joomla\String\StringHelper;
+use Joomla\CMS\Helper\ContentHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Filesystem\Path;
+use Joomla\CMS\Filesystem\File;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Table\Table;
 
 /**
  * Helper class for tjfields
@@ -20,7 +26,7 @@ use Joomla\String\StringHelper;
  * @subpackage  com_tjfields
  * @since       2.2
  */
-class TjfieldsHelper extends JHelperContent
+class TjfieldsHelper extends ContentHelper
 {
 	/**
 	 * Configure the Linkbar.
@@ -31,14 +37,14 @@ class TjfieldsHelper extends JHelperContent
 	 */
 	public static function addSubmenu($view = '')
 	{
-		$input = JFactory::getApplication()->input;
+		$input = Factory::getApplication()->input;
 		$full_client = $input->get('client', '', 'STRING');
 		$full_client = explode('.', $full_client);
 
 		// Eg com_jticketing
 		$component = $full_client[0];
 		$eName = str_replace('com_', '', $component);
-		$file = JPath::clean(JPATH_ADMINISTRATOR . '/components/' . $component . '/helpers/' . $eName . '.php');
+		$file = Path::clean(JPATH_ADMINISTRATOR . '/components/' . $component . '/helpers/' . $eName . '.php');
 
 		if (file_exists($file))
 		{
@@ -51,12 +57,12 @@ class TjfieldsHelper extends JHelperContent
 			{
 				if (is_callable(array($cName, 'addSubmenu')))
 				{
-					$lang = JFactory::getLanguage();
+					$lang = Factory::getLanguage();
 
 					// Loading language file from the administrator/language directory then
 					// Loading language file from the administrator/components/*extension*/language directory
 					$lang->load($component, JPATH_BASE, null, false, false)
-					|| $lang->load($component, JPath::clean(JPATH_ADMINISTRATOR . '/components/' . $component), null, false, false)
+					|| $lang->load($component, Path::clean(JPATH_ADMINISTRATOR . '/components/' . $component), null, false, false)
 					|| $lang->load($component, JPATH_BASE, $lang->getDefault(), false, false)
 					|| $lang->load($component, JPath::clean(JPATH_ADMINISTRATOR . '/components/' . $component), $lang->getDefault(), false, false);
 
@@ -95,7 +101,7 @@ class TjfieldsHelper extends JHelperContent
 	 */
 	public function checkIfUniqueName($data_unique_name)
 	{
-		$db = JFactory::getDbo();
+		$db = Factory::getDbo();
 		$query	= $db->getQuery(true);
 		$query->select('count(name) FROM #__tjfields_fields');
 		$query->where('name="' . $data_unique_name . '"');
@@ -115,8 +121,8 @@ class TjfieldsHelper extends JHelperContent
 	 */
 	public function changeNameIfNotUnique($data_same_name,$id)
 	{
-		$app = JFactory::getApplication();
-		$db = JFactory::getDbo();
+		$app = Factory::getApplication();
+		$db = Factory::getDbo();
 		$query	= $db->getQuery(true);
 		$query->update('#__tjfields_fields');
 		$query->set('name="' . $data_same_name . '-' . $id . '"');
@@ -145,14 +151,14 @@ class TjfieldsHelper extends JHelperContent
 	public function generateXml($data)
 	{
 		$client = $data['client'];
-		$input = JFactory::getApplication()->input;
+		$input = Factory::getApplication()->input;
 
 		$client = explode(".", $client);
 		$extension = $client[0];
 
 		if (!empty($extension))
 		{
-			$db     = JFactory::getDbo();
+			$db     = Factory::getDbo();
 			$query  = "SELECT DISTINCT id as category_id FROM #__categories where extension='" . $extension . "'";
 
 			$db->setQuery($query);
@@ -160,7 +166,7 @@ class TjfieldsHelper extends JHelperContent
 		}
 
 		// For unmapped categorys - start
-		$db     = JFactory::getDbo();
+		$db     = Factory::getDbo();
 		$query  = 'SELECT f.*,g.name as group_name FROM
 		#__tjfields_fields as f
 		LEFT JOIN #__tjfields_groups as g
@@ -186,14 +192,14 @@ class TjfieldsHelper extends JHelperContent
 			$extension . '/models/forms/' .
 			$data['client_type'] . '_extra.xml';
 
-			if (JFile::exists($filePathFrontend))
+			if (File::exists($filePathFrontend))
 			{
-				JFile::delete($filePathFrontend);
+				File::delete($filePathFrontend);
 			}
 
-			if (JFile::exists($filePathBackend))
+			if (File::exists($filePathBackend))
 			{
-				JFile::delete($filePathBackend);
+				File::delete($filePathBackend);
 			}
 		}
 
@@ -203,7 +209,7 @@ class TjfieldsHelper extends JHelperContent
 			foreach ($categorys as $category)
 			{
 				// Join
-				$db     = JFactory::getDbo();
+				$db     = Factory::getDbo();
 				$query  = 'SELECT f.*,g.name as group_name FROM
 				#__tjfields_fields as f
 				LEFT JOIN #__tjfields_groups as g
@@ -362,7 +368,7 @@ class TjfieldsHelper extends JHelperContent
 						if ($fieldAttribute->multiple != 'true' && !$fieldAttribute->multiple)
 						{
 							// Set Default blank Option
-							$option = $field->addChild('option', '- ' . JText::_('COM_TJFIELDS_SELECT_OPTION') . " " . $f->label . ' -');
+							$option = $field->addChild('option', '- ' . Text::_('COM_TJFIELDS_SELECT_OPTION') . " " . $f->label . ' -');
 							$option->addAttribute('value', '');
 						}
 					}
@@ -375,9 +381,9 @@ class TjfieldsHelper extends JHelperContent
 				}
 			}
 
-			if (!JFile::exists($filePathFrontend))
+			if (!File::exists($filePathFrontend))
 			{
-				JFile::write($filePathFrontend, $content);
+				File::write($filePathFrontend, $content);
 			}
 
 			// ->asXML();
@@ -385,9 +391,9 @@ class TjfieldsHelper extends JHelperContent
 
 			$content  = '';
 
-			if (!JFile::exists($filePathBackend))
+			if (!File::exists($filePathBackend))
 			{
-				JFile::write($filePathBackend, $content);
+				File::write($filePathBackend, $content);
 			}
 
 			// ->asXML();
@@ -396,14 +402,14 @@ class TjfieldsHelper extends JHelperContent
 		else
 		{
 			// Delete xml if no field present
-			if (JFile::exists($filePathFrontend))
+			if (File::exists($filePathFrontend))
 			{
-				JFile::delete($filePathFrontend);
+				File::delete($filePathFrontend);
 			}
 
-			if (JFile::exists($filePathBackend))
+			if (File::exists($filePathBackend))
 			{
-				JFile::delete($filePathBackend);
+				File::delete($filePathBackend);
 			}
 		}
 	}
@@ -443,7 +449,7 @@ class TjfieldsHelper extends JHelperContent
 	 */
 	public function getFieldCategoryMapping($field_id)
 	{
-		$db = JFactory::getDbo();
+		$db = Factory::getDbo();
 		$query	= $db->getQuery(true);
 		$query->select('category_id');
 		$query->from('#__tjfields_category_mapping AS cm');
@@ -463,7 +469,7 @@ class TjfieldsHelper extends JHelperContent
 	 */
 	public function getOptions($field_id)
 	{
-		$db = JFactory::getDbo();
+		$db = Factory::getDbo();
 		$query	= $db->getQuery(true);
 		$query->select('id,options,value FROM #__tjfields_options');
 		$query->where('field_id=' . $field_id);
@@ -506,7 +512,7 @@ class TjfieldsHelper extends JHelperContent
 	 */
 	public static function getLanguageConstant()
 	{
-		JText::script('COM_TJFIELDS_LABEL_WHITESPACES_NOT_ALLOWED');
+		Text::script('COM_TJFIELDS_LABEL_WHITESPACES_NOT_ALLOWED');
 	}
 
 	/**
@@ -520,15 +526,15 @@ class TjfieldsHelper extends JHelperContent
 	 */
 	public function deleteFile($data)
 	{
-		$user = JFactory::getUser();
+		$user = Factory::getUser();
 
 		if (!$user->id)
 		{
 			return false;
 		}
 
-		JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_tjfields/tables');
-		$fieldValueTable = JTable::getInstance('Fieldsvalue', 'TjfieldsTable');
+		Table::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_tjfields/tables');
+		$fieldValueTable = Table::getInstance('Fieldsvalue', 'TjfieldsTable');
 		$fieldValueTable->load(array('id' => $data['valueId']));
 
 		$subData = new stdClass;
@@ -573,9 +579,9 @@ class TjfieldsHelper extends JHelperContent
 
 					foreach ($deleteData as $image)
 					{
-						if (JFile::exists($image))
+						if (File::exists($image))
 						{
-							if (!JFile::delete($image))
+							if (!File::delete($image))
 							{
 								return false;
 							}
@@ -584,7 +590,7 @@ class TjfieldsHelper extends JHelperContent
 				}
 				else
 				{
-					if (!JFile::delete($data['storagePath'] . '/' . $data['fileName']))
+					if (!File::delete($data['storagePath'] . '/' . $data['fileName']))
 					{
 						return false;
 					}
