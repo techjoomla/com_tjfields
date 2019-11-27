@@ -277,16 +277,19 @@ class TjfieldsHelper
 				array_pop($ucmSubformClientTmp);
 				$ucmSubformClient = 'com_tjucm.' . implode('_', $ucmSubformClientTmp);
 
-				// Load UCM models
+				// Load UCM itemform model
 				JLoader::import('components.com_tjucm.models.itemform', JPATH_SITE);
-				JLoader::import('components.com_tjucm.models.items', JPATH_SITE);
 
 				// Get all the records which were previously stored for the ucmsubform field in parent form
-				$tjucmItemsModel = JModelLegacy::getInstance('Items', 'TjucmModel', array('ignore_request' => true));
-				$tjucmItemsModel->setState('parent_id', TJUCM_PARENT_CONTENT_ID);
-				$tjucmItemsModel->setState('ucm.client', $ucmSubformClient);
-				$ucmSubformRecords = $tjucmItemsModel->getItems();
-				$ucmSubformRecordIds = (!empty($ucmSubformRecords)) ? array_column($ucmSubformRecords, 'id') : array();
+				$db = JFactory::getDbo();
+				$query = $db->getQuery(true);
+				$query->select('id');
+				$query->from($db->quoteName('#__tj_ucm_data'));
+				$query->where($db->quoteName('parent_id') . '=' . TJUCM_PARENT_CONTENT_ID);
+				$query->where($db->quoteName('client') . '=' . $db->quote($ucmSubformClient));
+				$db->setQuery($query);
+				$ucmSubformRecordIds = $db->loadColumn();
+				$ucmSubformRecordIds = (!empty($ucmSubformRecordIds)) ? $ucmSubformRecordIds : array();
 
 				$this->saveSingleValuedFieldData($ucmSubformClient, TJUCM_PARENT_CLIENT, TJUCM_PARENT_CONTENT_ID, $field->id, $fieldStoredValues);
 
