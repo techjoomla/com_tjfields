@@ -286,7 +286,7 @@ class TjfieldsHelper
 				$tjucmItemsModel->setState('parent_id', TJUCM_PARENT_CONTENT_ID);
 				$tjucmItemsModel->setState('ucm.client', $ucmSubformClient);
 				$ucmSubformRecords = $tjucmItemsModel->getItems();
-				$ucmSubformRecordIds = array_column($ucmSubformRecords, 'id');
+				$ucmSubformRecordIds = (!empty($ucmSubformRecords)) ? array_column($ucmSubformRecords, 'id') : array();
 
 				$this->saveSingleValuedFieldData($ucmSubformClient, TJUCM_PARENT_CLIENT, TJUCM_PARENT_CONTENT_ID, $field->id, $fieldStoredValues);
 
