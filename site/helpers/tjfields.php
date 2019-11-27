@@ -286,7 +286,7 @@ class TjfieldsHelper
 				$tjucmItemsModel->setState('parent_id', TJUCM_PARENT_CONTENT_ID);
 				$tjucmItemsModel->setState('ucm.client', $ucmSubformClient);
 				$ucmSubformRecords = $tjucmItemsModel->getItems();
-				$ucmSubformRecordIds = array_column($ucmSubformRecords, 'id');
+				$ucmSubformRecordIds = (!empty($ucmSubformRecords)) ? array_column($ucmSubformRecords, 'id') : array();
 
 				$this->saveSingleValuedFieldData($ucmSubformClient, TJUCM_PARENT_CLIENT, TJUCM_PARENT_CONTENT_ID, $field->id, $fieldStoredValues);
 
@@ -656,8 +656,6 @@ class TjfieldsHelper
 		// Configure allowed extensions for media library
 		if (!empty($mimeTypes))
 		{
-			$mimeTypes = explode(',', $mimeTypes);
-
 			foreach ($mimeTypes as $j => $allowedType)
 			{
 				$mimeTypes[$j] = trim(str_replace('.', '', $allowedType));
