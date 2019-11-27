@@ -656,8 +656,6 @@ class TjfieldsHelper
 		// Configure allowed extensions for media library
 		if (!empty($mimeTypes))
 		{
-			$mimeTypes = explode(',', $mimeTypes);
-
 			foreach ($mimeTypes as $j => $allowedType)
 			{
 				$mimeTypes[$j] = trim(str_replace('.', '', $allowedType));
