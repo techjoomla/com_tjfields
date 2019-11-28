@@ -70,6 +70,7 @@ class TjfieldsController extends BaseController
 	 */
 	public function getMediaFile()
 	{
+		(JSession::checkToken() or JSession::checkToken('get')) or jexit(JText::_('JINVALID_TOKEN'));
 		JLoader::import("/techjoomla/media/storage/local", JPATH_LIBRARIES);
 		$app = Factory::getApplication();
 		$jinput = $app->input;

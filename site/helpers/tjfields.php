@@ -1927,7 +1927,10 @@ class TjfieldsHelper
 			// Here, fpht means file encoded path
 			$encodedFileName = base64_encode($fileName);
 			$basePathLink = 'index.php?option=com_tjfields&task=getMediaFile&fpht=';
-			$mediaURLlink = Uri::base() . substr(Route::_($basePathLink . $encodedFileName . $extraUrlParams), strlen(Uri::base(true)) + 1);
+			$mediaURL = Uri::base() . substr(Route::_($basePathLink . $encodedFileName . $extraUrlParams), strlen(Uri::base(true)) + 1);
+
+			$csrf = JSession::getFormToken() . '=1';
+			$mediaURLlink = $mediaURL . '&' . $csrf;
 
 			return $mediaURLlink;
 		}
