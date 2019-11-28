@@ -483,7 +483,9 @@ class TjfieldsHelper
 		}
 
 		JLoader::import('components.com_tjfields.tables.fieldsvalue', JPATH_ADMINISTRATOR);
+		JLoader::import('components.com_tjfields.tables.option', JPATH_ADMINISTRATOR);
 		$fieldsValueTable = JTable::getInstance('FieldsValue', 'TjfieldsTable', array('dbo', JFactory::getDbo()));
+		$fieldOptionTable = JTable::getInstance('Option', 'TjfieldsTable', array('dbo', JFactory::getDbo()));
 
 		// Set currently logged in users id as user_id
 		$fieldsValueTable->user_id = JFactory::getUser()->id;
@@ -497,6 +499,12 @@ class TjfieldsHelper
 				if ($fieldValue != '')
 				{
 					$fieldsValueTable->value = $fieldValue;
+					$fieldOptionTable->load(array('field_id' => $fieldId, 'value' => $fieldValue));
+
+					if ($fieldOptionTable->id)
+					{
+						$fieldsValueTable->option_id = $fieldOptionTable->id;
+					}
 
 					if ($fieldsValueTable->store())
 					{
@@ -518,6 +526,13 @@ class TjfieldsHelper
 			$fieldsValueTable->content_id = $contentId;
 			$fieldsValueTable->value = $fieldValue;
 			$fieldsValueTable->client = $client;
+
+			$fieldOptionTable->load(array('field_id' => $fieldId, 'value' => $fieldValue));
+
+			if ($fieldOptionTable->id)
+			{
+				$fieldsValueTable->option_id = $fieldOptionTable->id;
+			}
 
 			if ($fieldsValueTable->store())
 			{
