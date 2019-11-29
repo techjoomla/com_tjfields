@@ -109,12 +109,25 @@ class JFormFieldRelated extends JFormFieldList
 
 			// UCM fields and field value to get
 			$showAddNewRecordLink = $fieldParams->get('showAddNewRecordLink');
+			$clusterAware = $fieldParams->get('clusterAware');
 
 			if ($canCreate && !empty($showAddNewRecordLink))
 			{
 				$tjUcmFrontendHelper = new TjucmHelpersTjucm;
 				$itemId = $tjUcmFrontendHelper->getItemId('index.php?option=com_tjucm&view=itemform&client=' . $ucmTypeTable->unique_identifier);
 				$masterUcmLink = Route::_('index.php?option=com_tjucm&view=itemform&Itemid=' . $itemId, false);
+
+				if ($clusterAware)
+				{
+					$input = JFactory::getApplication()->input;
+					$clusterId = $input->get("cluster_id", 0, "INT");
+
+					if ($clusterId)
+					{
+						$masterUcmLink .= (strpos($masterUcmLink, '?')) ? '&cluster_id=' . $clusterId : '?cluster_id=' . $clusterId;
+					}
+				}
+
 				$html .= "<div><a target='_blank' href='" . $masterUcmLink . "'>" . Text::_("COM_TJFIELDS_FORM_DESC_FIELD_RELATED_ADD_RECORD") . "</a></div>";
 			}
 		}

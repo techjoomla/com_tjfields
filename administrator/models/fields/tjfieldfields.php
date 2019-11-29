@@ -92,6 +92,7 @@ class JFormFieldtjfieldfields extends JFormFieldList
 		}
 
 		$options[] = JHtml::_('select.option', 'ownership', JText::_('COM_TJFIELDS_OWNERSHIP'));
+		$options[] = JHtml::_('select.option', 'color', JText::_('COM_TJFIELDS_COLOR'));
 
 		$options = array_merge(parent::getOptions(), $options);
 

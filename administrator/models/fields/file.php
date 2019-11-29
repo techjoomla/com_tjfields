@@ -142,10 +142,23 @@ class JFormFieldFile extends JFormField
 			$data = $this->buildData($layoutData);
 			$html .= $data->html;
 
+			// To get the file name from URL
+			$substrString = substr($data->mediaLink, strlen('fpht=') + strpos($data->mediaLink, 'fpht='));
+			$substrString = substr($substrString, 0, strpos($substrString, '&'));
+
+			// Decode the filename
+			$fileName = base64_decode($substrString);
+
 			if (!empty($data->mediaLink))
 			{
 				$html .= $this->canDownloadFile($data, $layoutData);
 				$html .= $this->canDeleteFile($data, $layoutData);
+
+				// To display the file name if exist and skip the prepended file name value
+				if (!empty($fileName))
+				{
+					$html .= '<strong class="ml-15"> ' . substr($fileName, strpos($fileName, '_', 12) + 1) . '</strong>';
+				}
 			}
 
 			$html .= '</div>';
