@@ -277,6 +277,20 @@ class TjfieldsHelper
 				array_pop($ucmSubformClientTmp);
 				$ucmSubformClient = 'com_tjucm.' . implode('_', $ucmSubformClientTmp);
 
+				// Load UCM itemform model
+				JLoader::import('components.com_tjucm.models.itemform', JPATH_SITE);
+
+				// Get all the records which were previously stored for the ucmsubform field in parent form
+				$db = JFactory::getDbo();
+				$query = $db->getQuery(true);
+				$query->select('id');
+				$query->from($db->quoteName('#__tj_ucm_data'));
+				$query->where($db->quoteName('parent_id') . '=' . TJUCM_PARENT_CONTENT_ID);
+				$query->where($db->quoteName('client') . '=' . $db->quote($ucmSubformClient));
+				$db->setQuery($query);
+				$ucmSubformRecordIds = $db->loadColumn();
+				$ucmSubformRecordIds = (!empty($ucmSubformRecordIds)) ? $ucmSubformRecordIds : array();
+
 				$this->saveSingleValuedFieldData($ucmSubformClient, TJUCM_PARENT_CLIENT, TJUCM_PARENT_CONTENT_ID, $field->id, $fieldStoredValues);
 
 				foreach ($fieldValue as $key => $ucmSubformValue)
@@ -291,10 +305,14 @@ class TjfieldsHelper
 						{
 							$tjUcmSubFormItemData = array('id' => '', 'parent_id' => $data['content_id'], 'client' => $ucmSubformClient);
 
-							JLoader::import('component.com_tjucm.models.itemform', JPATH_SITE);
 							$tjUcmItemFormModel = JModelLegacy::getInstance('ItemForm', 'TjucmModel');
 							$tjUcmItemFormModel->save($tjUcmSubFormItemData);
 							$ucmSubFormContentId = $tjUcmItemFormModel->getState($tjUcmItemFormModel->getName() . '.id');
+						}
+
+						if (array_search($ucmSubFormContentId, $ucmSubformRecordIds) !== false)
+						{
+							unset($ucmSubformRecordIds[array_search($ucmSubFormContentId, $ucmSubformRecordIds)]);
 						}
 
 						$tjUcmSubFormContentId['childContentIds'][$ucmSubformContentIdFieldElementId] = (INT) $ucmSubFormContentId;
@@ -305,6 +323,117 @@ class TjfieldsHelper
 						$ucmSubFormData['created_by']  = JFactory::getUser()->id;
 						$this->saveFieldsValue($ucmSubFormData);
 					}
+				}
+
+				// Delete the records which are removed from the ucmsubform
+				$tjUcmItemFormModel = JModelLegacy::getInstance('ItemForm', 'TjucmModel');
+
+				foreach ($ucmSubformRecordIds as $ucmSubformRecordId)
+				{
+					$tjUcmItemFormModel->delete($ucmSubformRecordId);
+				}
+			}
+			elseif ($field->type == 'tjlist')
+			{
+				// Check for Tjlist - start
+				$tjListParams = json_decode($field->params);
+
+				if ($tjListParams->other)
+				{
+					// Get all the fields of the specified client
+					JLoader::import('components.com_tjfields.models.options', JPATH_ADMINISTRATOR);
+					$tjFieldOptionsModel = JModelLegacy::getInstance('Options', 'TjfieldsModel', array('ignore_request' => true));
+					$tjFieldOptionsModel->setState('filter.field_id', $field->id);
+					$optionsValue = $tjFieldOptionsModel->getItems();
+
+					// Get array of dropdown values
+					$otherValues = array_column($optionsValue, 'value');
+				}
+
+				if (is_array($fieldValue))
+				{
+					if ($tjListParams->other)
+					{
+						$fieldOtherVal = $fieldOptionsVal = array();
+						$postFieldValueCount = count($fieldValue);
+						$k = 0;
+
+						$otherValues[] = $field->type . 'othervalue';
+
+						foreach ($fieldValue as $key => $listfieldVale)
+						{
+							$k++;
+
+							// Update the last index element of other options multi values
+							if (strpos($listfieldVale, ',') && $postFieldValueCount > 1 &&  $postFieldValueCount == $k)
+							{
+								$fieldOtherVal = explode(',', $listfieldVale);
+
+								// Add prefix for other values for tjlist field
+								$fieldOtherVal = preg_filter('/^/', $field->type . ':-', $fieldOtherVal);
+								unset($fieldValue[$key]);
+							}
+							elseif (strpos($listfieldVale, ','))
+							{
+								// Check its actual option list values
+								$fieldOptionsVal = explode(',', $listfieldVale);
+
+								if ($postFieldValueCount == 1)
+								{
+									$fieldOptionsVal = array_filter(
+										$fieldOptionsVal,
+										function($val)
+										{
+											return $val != 'tjlistothervalue';
+										}
+									);
+								}
+
+								unset($fieldValue[$key]);
+							}
+							elseif (!in_array($listfieldVale, $otherValues))
+							{
+								// Check its other options values not a actual option list values
+								$fieldValue[$key] = $field->type . ':-' . $listfieldVale;
+							}
+							else
+							{
+								$fieldValue = array_filter(
+									$fieldValue,
+									function($val)
+									{
+										return $val != 'tjlistothervalue';
+									}
+								);
+							}
+						}
+
+						// Check other options multiple values exist in array
+						if (!empty($fieldOtherVal))
+						{
+							$fieldValue = array_merge($fieldValue, $fieldOtherVal);
+						}
+
+						// Check options list value exist in array
+						if (!empty($fieldOptionsVal))
+						{
+							$fieldValue = array_merge($fieldValue, $fieldOptionsVal);
+						}
+					}
+
+					$this->saveMultiValuedFieldData($fieldValue, $field->client, $data['content_id'], $field->id, $fieldStoredValues);
+				}
+				elseif (!empty($fieldValue))
+				{
+					// Check other option enable for tjlist field
+
+					if ($tjListParams->other && !in_array($fieldValue, $otherValues))
+					{
+						// Add prefix for other values for tjlist field
+						$fieldValue = $field->type . ':-' . $fieldValue;
+					}
+
+					$this->saveSingleValuedFieldData($fieldValue, $field->client, $data['content_id'], $field->id, $fieldStoredValues);
 				}
 			}
 			elseif (is_array($fieldValue))
@@ -354,7 +483,9 @@ class TjfieldsHelper
 		}
 
 		JLoader::import('components.com_tjfields.tables.fieldsvalue', JPATH_ADMINISTRATOR);
+		JLoader::import('components.com_tjfields.tables.option', JPATH_ADMINISTRATOR);
 		$fieldsValueTable = JTable::getInstance('FieldsValue', 'TjfieldsTable', array('dbo', JFactory::getDbo()));
+		$fieldOptionTable = JTable::getInstance('Option', 'TjfieldsTable', array('dbo', JFactory::getDbo()));
 
 		// Set currently logged in users id as user_id
 		$fieldsValueTable->user_id = JFactory::getUser()->id;
@@ -368,6 +499,12 @@ class TjfieldsHelper
 				if ($fieldValue != '')
 				{
 					$fieldsValueTable->value = $fieldValue;
+					$fieldOptionTable->load(array('field_id' => $fieldId, 'value' => $fieldValue));
+
+					if ($fieldOptionTable->id)
+					{
+						$fieldsValueTable->option_id = $fieldOptionTable->id;
+					}
 
 					if ($fieldsValueTable->store())
 					{
@@ -389,6 +526,13 @@ class TjfieldsHelper
 			$fieldsValueTable->content_id = $contentId;
 			$fieldsValueTable->value = $fieldValue;
 			$fieldsValueTable->client = $client;
+
+			$fieldOptionTable->load(array('field_id' => $fieldId, 'value' => $fieldValue));
+
+			if ($fieldOptionTable->id)
+			{
+				$fieldsValueTable->option_id = $fieldOptionTable->id;
+			}
 
 			if ($fieldsValueTable->store())
 			{
@@ -530,8 +674,6 @@ class TjfieldsHelper
 		// Configure allowed extensions for media library
 		if (!empty($mimeTypes))
 		{
-			$mimeTypes = explode(',', $mimeTypes);
-
 			foreach ($mimeTypes as $j => $allowedType)
 			{
 				$mimeTypes[$j] = trim(str_replace('.', '', $allowedType));
@@ -1485,15 +1627,17 @@ class TjfieldsHelper
 
 					if (!empty($otherValues))
 					{
-						$tjListOtherObj = new stdClass;
-
-						$tjListOtherObj->options = $otherValues[0];
-						$tjListOtherObj->default_option = '';
-						$tjListOtherObj->value = $otherValues[0];
-
-						$extra_options[] = $tjListOtherObj;
+						foreach ($otherValues as $othervalue)
+						{
+							$tjListOtherObj = new stdClass;
+							$tjListOtherObj->default_option = '';
+							$tjListOtherObj->options = $othervalue;
+							$tjListOtherObj->value = $othervalue;
+							$extra_options[] = $tjListOtherObj;
+						}
 					}
 				}
+
 				// Check for Tjlist - end
 			}
 		}
