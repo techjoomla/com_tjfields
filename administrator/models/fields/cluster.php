@@ -83,7 +83,7 @@ class JFormFieldCluster extends JFormFieldList
 		// Create oprion for each cluster
 		foreach ($clusters as $cluster)
 		{
-			$options[] = HTMLHelper::_('select.option', $cluster->id, trim($cluster->name));
+			$options[] = HTMLHelper::_('select.option', $cluster->cluster_id, trim($cluster->name));
 		}
 
 		if (!$this->loadExternally)
@@ -123,7 +123,6 @@ class JFormFieldCluster extends JFormFieldList
 		if (!empty($clusterId))
 		{
 			$this->value = $clusterId;
-			$this->readonly = true;
 		}
 
 		return parent::getInput();
