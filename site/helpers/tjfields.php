@@ -10,6 +10,14 @@
 defined('_JEXEC') or die;
 JLoader::import("/techjoomla/media/storage/local", JPATH_LIBRARIES);
 use Joomla\Registry\Registry;
+use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Filesystem\Folder;
+use Joomla\CMS\Filesystem\File;
+use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Language\Text;
 
 /**
  * Helper class for tjfields
@@ -46,7 +54,7 @@ class TjfieldsHelper
 		$client            = $data['client'];
 		$query_user_string = '';
 
-		$db    = JFactory::getDbo();
+		$db    = Factory::getDbo();
 		$query = $db->getQuery(true);
 		$query->select('fv.field_id, fv.user_id, f.type, fv.value, f.params, f.name, f.label');
 		$query->from($db->qn('#__tjfields_fields_value', 'fv'));
@@ -134,7 +142,7 @@ class TjfieldsHelper
 	 */
 	public function getFieldData($fname = '', $fid = '')
 	{
-		$db    = JFactory::getDbo();
+		$db    = Factory::getDbo();
 		$query = $db->getQuery(true);
 		$query->select($db->quoteName(array('id', 'type', 'name', 'label', 'params')));
 		$query->from($db->quoteName('#__tjfields_fields'));
@@ -183,17 +191,17 @@ class TjfieldsHelper
 		}
 
 		// Get user object
-		$user = JFactory::getUser();
+		$user = Factory::getUser();
 
 		// Get all the fields of the specified client
 		JLoader::import('components.com_tjfields.models.fields', JPATH_ADMINISTRATOR);
-		$tjFieldsFieldsModel = JModelLegacy::getInstance('Fields', 'TjfieldsModel', array('ignore_request' => true));
+		$tjFieldsFieldsModel = BaseDatabaseModel::getInstance('Fields', 'TjfieldsModel', array('ignore_request' => true));
 		$tjFieldsFieldsModel->setState('filter.client', $data['client']);
 		$tjFieldsFieldsModel->setState('filter.state', 1);
 		$fields = $tjFieldsFieldsModel->getItems();
 
 		// Get previously stored details in the record
-		$db = JFactory::getDbo();
+		$db = Factory::getDbo();
 		$query = $db->getQuery(true);
 		$query->select('*');
 		$query->from($db->quoteName('#__tjfields_fields_value'));
@@ -320,7 +328,7 @@ class TjfieldsHelper
 						$ucmSubFormData['content_id']  = $ucmSubFormContentId;
 						$ucmSubFormData['client']      = $ucmSubformClient;
 						$ucmSubFormData['fieldsvalue'] = $ucmSubformValue;
-						$ucmSubFormData['created_by']  = JFactory::getUser()->id;
+						$ucmSubFormData['created_by']  = Factory::getUser()->id;
 						$this->saveFieldsValue($ucmSubFormData);
 					}
 				}
@@ -488,7 +496,7 @@ class TjfieldsHelper
 		$fieldOptionTable = JTable::getInstance('Option', 'TjfieldsTable', array('dbo', JFactory::getDbo()));
 
 		// Set currently logged in users id as user_id
-		$fieldsValueTable->user_id = JFactory::getUser()->id;
+		$fieldsValueTable->user_id = Factory::getUser()->id;
 
 		// If field value already exists then update the value else insert the field value
 		if (isset($fieldStoredValues[0]) || !empty($fieldStoredValues[0]))
@@ -561,7 +569,7 @@ class TjfieldsHelper
 			return false;
 		}
 
-		$db = JFactory::getDbo();
+		$db = Factory::getDbo();
 		$previouslyStoredValues = array();
 
 		if (!empty($fieldStoredValues))
@@ -641,10 +649,10 @@ class TjfieldsHelper
 		}
 
 		JLoader::import('components.com_tjfields.tables.fieldsvalue', JPATH_ADMINISTRATOR);
-		$fieldsValueTable = JTable::getInstance('FieldsValue', 'TjfieldsTable', array('dbo', JFactory::getDbo()));
+		$fieldsValueTable = Table::getInstance('FieldsValue', 'TjfieldsTable', array('dbo', Factory::getDbo()));
 
 		JLoader::import('components.com_tjfields.tables.field', JPATH_ADMINISTRATOR);
-		$fieldTable = JTable::getInstance('Field', 'TjfieldsTable', array('dbo', JFactory::getDbo()));
+		$fieldTable = Table::getInstance('Field', 'TjfieldsTable', array('dbo', Factory::getDbo()));
 		$fieldTable->load($fieldId);
 		$fieldParams = new Registry($fieldTable->params);
 
@@ -704,7 +712,7 @@ class TjfieldsHelper
 		{
 			foreach ($errors as $error)
 			{
-				JFactory::getApplication()->enqueueMessage($error, 'error');
+				Factory::getApplication()->enqueueMessage($error, 'error');
 			}
 
 			return false;
@@ -723,11 +731,11 @@ class TjfieldsHelper
 			// If the destination directory doesn't exist we need to create it
 			jimport('joomla.filesystem.file');
 
-			if (!JFile::exists($htaccessFile))
+			if (!File::exists($htaccessFile))
 			{
 				jimport('joomla.filesystem.folder');
-				JFolder::create(dirname($htaccessFile));
-				JFile::write($htaccessFile, $htaccessFileContent);
+				Folder::create(dirname($htaccessFile));
+				File::write($htaccessFile, $htaccessFileContent);
 			}
 		}
 
@@ -751,7 +759,7 @@ class TjfieldsHelper
 			return false;
 		}
 
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 
 		// Get field Id and field type.
 		$insert_obj = new stdClass;
@@ -831,7 +839,7 @@ class TjfieldsHelper
 			}
 
 			// Field Data
-			$db    = JFactory::getDbo();
+			$db    = Factory::getDbo();
 			$query = $db->getQuery(true);
 			$query->select('*');
 			$query->from($db->quoteName('#__tjfields_fields'));
@@ -852,9 +860,9 @@ class TjfieldsHelper
 						{
 							if ($singleFile['error'] != 4)
 							{
-								JTable::addIncludePath(JPATH_ADMINISTRATOR . "/components/com_tjfields/tables");
-								JModelLegacy::addIncludePath(JPATH_ADMINISTRATOR . "/components/com_tjfields/models");
-								$fieldModel = JModelLegacy::getInstance('Field', 'TjfieldsModel', array("ignore_request" => 1));
+								Table::addIncludePath(JPATH_ADMINISTRATOR . "/components/com_tjfields/tables");
+								BaseDatabaseModel::addIncludePath(JPATH_ADMINISTRATOR . "/components/com_tjfields/models");
+								$fieldModel = BaseDatabaseModel::getInstance('Field', 'TjfieldsModel', array("ignore_request" => 1));
 
 								$fieldId = (int) $file_field_data->id;
 								$fieldItems = $fieldModel->getItem($fieldId);
@@ -909,7 +917,7 @@ class TjfieldsHelper
 									$config['allowedExtension'] = $allowedTypes;
 								}
 
-								$user = JFactory::getUser();
+								$user = Factory::getUser();
 								$config['uploadPath'] = $mediaPath;
 								$config['size'] = $acceptSize;
 								$config['saveData'] = '0';
@@ -933,11 +941,11 @@ class TjfieldsHelper
 									// If the destination directory doesn't exist we need to create it
 									jimport('joomla.filesystem.file');
 
-									if (!JFile::exists($htaccessFile))
+									if (!File::exists($htaccessFile))
 									{
 										jimport('joomla.filesystem.folder');
-										JFolder::create(dirname($htaccessFile));
-										JFile::write($htaccessFile, $this->htaccessFileContent);
+										Folder::create(dirname($htaccessFile));
+										File::write($htaccessFile, $this->htaccessFileContent);
 									}
 								}
 
@@ -1040,7 +1048,7 @@ class TjfieldsHelper
 		// Delete Values of unsubmitted fields
 		foreach ($unsubmittedFields as $unsubmittedField)
 		{
-			$db = JFactory::getDbo();
+			$db = Factory::getDbo();
 
 			// Delete entry if field is deselected
 			$conditions = array(
@@ -1072,7 +1080,7 @@ class TjfieldsHelper
 		if (!empty($content_id) && !empty($client))
 		{
 			// Field Data
-			$db    = JFactory::getDbo();
+			$db    = Factory::getDbo();
 			$query = $db->getQuery(true);
 			$query->select($db->quoteName('field_id'));
 			$query->from($db->quoteName('#__tjfields_fields_value'));
@@ -1104,7 +1112,7 @@ class TjfieldsHelper
 	public function saveSingleSelectFieldValue($postFieldData, $fieldName, $field_data, $updateId = 0)
 	{
 		$currentFieldValue = $postFieldData['fieldsvalue'][$fieldName];
-		$db    = JFactory::getDbo();
+		$db    = Factory::getDbo();
 		$query = $db->getQuery(true);
 
 		$query->select("id")
@@ -1150,8 +1158,8 @@ class TjfieldsHelper
 	public function saveSubformData($postFieldData, $subformFname, $field_data)
 	{
 		// Select all entries for __tjfields_fields_value
-		$app = JFactory::getApplication();
-		$db    = JFactory::getDbo();
+		$app = Factory::getApplication();
+		$db    = Factory::getDbo();
 		$query = $db->getQuery(true);
 		$query->select('*');
 		$query->from('#__tjfields_fields_value');
@@ -1165,9 +1173,9 @@ class TjfieldsHelper
 		$subformField = $newFields[$subformFname];
 
 		// Params from getting subform max size
-		JTable::addIncludePath(JPATH_ADMINISTRATOR . "/components/com_tjfields/tables");
-		JModelLegacy::addIncludePath(JPATH_ADMINISTRATOR . "/components/com_tjfields/models");
-		$fieldModel = JModelLegacy::getInstance('Field', 'TjfieldsModel', array("ignore_request" => 1));
+		Table::addIncludePath(JPATH_ADMINISTRATOR . "/components/com_tjfields/tables");
+		BaseDatabaseModel::addIncludePath(JPATH_ADMINISTRATOR . "/components/com_tjfields/models");
+		$fieldModel = BaseDatabaseModel::getInstance('Field', 'TjfieldsModel', array("ignore_request" => 1));
 
 		$fieldId = (int) $field_data->id;
 		$fieldItems = $fieldModel->getItem($fieldId);
@@ -1192,8 +1200,8 @@ class TjfieldsHelper
 
 						if (!empty($file_field_data))
 						{
-							JModelLegacy::addIncludePath(JPATH_ADMINISTRATOR . "/components/com_tjfields/models");
-							$fieldModel = JModelLegacy::getInstance('Field', 'TjfieldsModel', array("ignore_request" => 1));
+							BaseDatabaseModel::addIncludePath(JPATH_ADMINISTRATOR . "/components/com_tjfields/models");
+							$fieldModel = BaseDatabaseModel::getInstance('Field', 'TjfieldsModel', array("ignore_request" => 1));
 							$fieldId = (int) $file_field_data->id;
 							$fieldItems = $fieldModel->getItem($fieldId);
 							$client = $fieldItems->client;
@@ -1247,7 +1255,7 @@ class TjfieldsHelper
 							$config['allowedExtension'] = $allowedTypes;
 						}
 
-						$user = JFactory::getUser();
+						$user = Factory::getUser();
 						$config['uploadPath'] = $mediaPath;
 						$config['size'] = $acceptSize;
 						$config['saveData'] = '0';
@@ -1275,11 +1283,11 @@ class TjfieldsHelper
 							// If the destination directory doesn't exist we need to create it
 							jimport('joomla.filesystem.file');
 
-							if (!JFile::exists($htaccessFile))
+							if (!File::exists($htaccessFile))
 							{
 								jimport('joomla.filesystem.folder');
-								JFolder::create(dirname($htaccessFile));
-								JFile::write($htaccessFile, $this->htaccessFileContent);
+								Folder::create(dirname($htaccessFile));
+								File::write($htaccessFile, $this->htaccessFileContent);
 							}
 						}
 
@@ -1298,7 +1306,7 @@ class TjfieldsHelper
 				$obj->content_id = $postFieldData['content_id'];
 				$obj->value = json_encode($subformField);
 				$obj->client = $postFieldData['client'];
-				$obj->user_id = JFactory::getUser()->id;
+				$obj->user_id = Factory::getUser()->id;
 
 				$obj->id = $dbFieldValue[0]->id;
 				$db->updateObject('#__tjfields_fields_value', $obj, 'id');
@@ -1311,9 +1319,9 @@ class TjfieldsHelper
 			$obj->content_id = $postFieldData['content_id'];
 			$obj->value = json_encode($subformField);
 			$obj->client = $postFieldData['client'];
-			$obj->user_id = JFactory::getUser()->id;
+			$obj->user_id = Factory::getUser()->id;
 
-			$db = JFactory::getDbo();
+			$db = Factory::getDbo();
 			$db->insertObject('#__tjfields_fields_value', $obj, 'id');
 		}
 
@@ -1332,7 +1340,7 @@ class TjfieldsHelper
 	public function saveMultiselectOptions($postFieldData, $multiselectFname, $field_data)
 	{
 		// Select all entries for __tjfields_fields_value
-		$db    = JFactory::getDbo();
+		$db    = Factory::getDbo();
 		$query = $db->getQuery(true);
 		$query->select('*');
 		$query->from('#__tjfields_fields_value');
@@ -1352,7 +1360,7 @@ class TjfieldsHelper
 
 			if ($tjListParams->multiple && $tjListParams->other)
 			{
-				$otherValKey = array_search(JText::_('COM_TJFIELDS_TJLIST_OTHER_OPTION_VALUE'), $multiselectField);
+				$otherValKey = array_search(Text::_('COM_TJFIELDS_TJLIST_OTHER_OPTION_VALUE'), $multiselectField);
 
 				if (is_numeric($otherValKey))
 				{
@@ -1402,7 +1410,7 @@ class TjfieldsHelper
 					$obj->content_id = $postFieldData['content_id'];
 					$obj->value = $fieldValue;
 					$obj->client = $postFieldData['client'];
-					$obj->user_id = JFactory::getUser()->id;
+					$obj->user_id = Factory::getUser()->id;
 
 					$this->addFieldValueEntry($obj);
 				}
@@ -1418,7 +1426,7 @@ class TjfieldsHelper
 				$obj->content_id = $postFieldData['content_id'];
 				$obj->value = $fieldValue;
 				$obj->client = $postFieldData['client'];
-				$obj->user_id = JFactory::getUser()->id;
+				$obj->user_id = Factory::getUser()->id;
 
 				$this->addFieldValueEntry($obj);
 			}
@@ -1438,7 +1446,7 @@ class TjfieldsHelper
 	{
 		if (!empty($insert_obj))
 		{
-			$db = JFactory::getDbo();
+			$db = Factory::getDbo();
 			$query = $db->getQuery(true);
 
 			$query->select($db->quoteName('id'))
@@ -1453,7 +1461,7 @@ class TjfieldsHelper
 			if (!empty($insert_obj->option_id) || $fieldData->type == 'related' || $fieldData->type == 'tjlist')
 			{
 				// Insert into db
-				$db = JFactory::getDbo();
+				$db = Factory::getDbo();
 				$db->insertObject('#__tjfields_fields_value', $insert_obj, 'id');
 			}
 		}
@@ -1468,7 +1476,7 @@ class TjfieldsHelper
 	 */
 	public function buildSafeInClause($filterString)
 	{
-		$db = JFactory::getDbo();
+		$db = Factory::getDbo();
 
 		// Check if $filterString is comma separated string.
 		if ((strpos($filterString, ',') !== false))
@@ -1508,7 +1516,7 @@ class TjfieldsHelper
 	{
 		if (!empty($fieldValueEntryId))
 		{
-			$db = JFactory::getDbo();
+			$db = Factory::getDbo();
 
 			$query = $db->getQuery(true);
 
@@ -1538,7 +1546,7 @@ class TjfieldsHelper
 		$content_id = (int) $data['content_id'];
 		$client     = $data['client'];
 
-		$db    = JFactory::getDbo();
+		$db    = Factory::getDbo();
 		$query = $db->getQuery(true);
 
 		$query->select($db->quoteName('id'));
@@ -1569,7 +1577,7 @@ class TjfieldsHelper
 	{
 		if ($option_value != '')
 		{
-			$db    = JFactory::getDbo();
+			$db    = Factory::getDbo();
 			$query = $db->getQuery(true);
 
 			$query->select($db->quoteName(array('options','value')));
@@ -1668,7 +1676,7 @@ class TjfieldsHelper
 
 		if (!empty($client))
 		{
-			$db    = JFactory::getDbo();
+			$db    = Factory::getDbo();
 			$query = $db->getQuery(true);
 			$query->select('DISTINCT * FROM #__tjfields_fields AS f');
 			$query->where('NOT EXISTS (select * FROM #__tjfields_category_mapping AS cm where f.id=cm.field_id)');
@@ -1690,7 +1698,7 @@ class TjfieldsHelper
 	 */
 	public function getCategorys($client)
 	{
-		$db    = JFactory::getDbo();
+		$db    = Factory::getDbo();
 		$query = $db->getQuery(true);
 
 		$query->select('*');
@@ -1718,7 +1726,7 @@ class TjfieldsHelper
 
 		if (!empty($client))
 		{
-			$db    = JFactory::getDbo();
+			$db    = Factory::getDbo();
 			$query = $db->getQuery(true);
 			$query->select('DISTINCT fv.option_id, f.id,f.name, f.label,fv.value,fo.options');
 			$query->FROM("#__tjfields_fields AS f");
@@ -1745,7 +1753,7 @@ class TjfieldsHelper
 			// If category related field present
 			if (!empty($category_id) && is_int($category_id))
 			{
-				$db    = JFactory::getDbo();
+				$db    = Factory::getDbo();
 				$queryCat = $db->getQuery(true);
 				$queryCat->select('DISTINCT fv.option_id, f.id,f.name, f.label,fv.value,fo.options');
 				$queryCat->FROM("#__tjfields_fields AS f");
@@ -1790,7 +1798,7 @@ class TjfieldsHelper
 	 */
 	public static function buildFilterModuleQuery()
 	{
-		$jinput  = JFactory::getApplication()->input;
+		$jinput  = Factory::getApplication()->input;
 		$client = $jinput->get("client");
 
 		// Get parameter name in which you are sending category id
@@ -1803,7 +1811,7 @@ class TjfieldsHelper
 			$fields_value_str = implode(',', $fields_value_str);
 		}
 
-		$db    = JFactory::getDbo();
+		$db    = Factory::getDbo();
 		$query = $db->getQuery(true);
 
 		// Selected field value
@@ -1898,7 +1906,7 @@ class TjfieldsHelper
 
 		if (!empty($options))
 		{
-			$db    = JFactory::getDbo();
+			$db    = Factory::getDbo();
 			$query = $db->getQuery(true);
 			$query->select('field_id, GROUP_CONCAT( id ) AS optionsStr ');
 			$query->FROM('#__tjfields_options as fo');
@@ -1919,8 +1927,8 @@ class TjfieldsHelper
 	 */
 	public function getFilterResults()
 	{
-		$db = JFactory::getDbo();
-		$jinput  = JFactory::getApplication()->input;
+		$db = Factory::getDbo();
+		$jinput  = Factory::getApplication()->input;
 
 		// Function will return -1 when no content found according to selected fields in filter
 		$tjfieldIitem_ids = "-1";
@@ -1958,7 +1966,7 @@ class TjfieldsHelper
 	{
 		if (!empty($client))
 		{
-			$db    = JFactory::getDbo();
+			$db    = Factory::getDbo();
 			$query = $db->getQuery(true);
 			$query->select('name');
 			$query->from('#__tjfields_fields');
@@ -1985,7 +1993,7 @@ class TjfieldsHelper
 	{
 		if (!empty($filePath))
 		{
-			$db    = JFactory::getDbo();
+			$db    = Factory::getDbo();
 			$query = $db->getQuery(true);
 			$query->select($db->quoteName('id'));
 			$query->from($db->quoteName('#__tjfields_fields_value'));
@@ -2012,7 +2020,7 @@ class TjfieldsHelper
 	{
 		if (!empty($mediaId))
 		{
-			$db = JFactory::getDbo();
+			$db = Factory::getDbo();
 			$query = $db->getQuery(true);
 			$query->select($db->quoteName('value'));
 			$query->from($db->quoteName('#__tjfields_fields_value'));
@@ -2051,8 +2059,8 @@ class TjfieldsHelper
 
 				// Get client & add extraURL params which are needed to download the media
 				$data = new stdClass;
-				JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_tjfields/tables');
-				$data->fields_value_table = JTable::getInstance('Fieldsvalue', 'TjfieldsTable');
+				Table::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_tjfields/tables');
+				$data->fields_value_table = Table::getInstance('Fieldsvalue', 'TjfieldsTable');
 
 				if (isset($extraUrlParamsArray['subFormFileFieldId']))
 				{
@@ -2063,7 +2071,10 @@ class TjfieldsHelper
 			// Here, fpht means file encoded path
 			$encodedFileName = base64_encode($fileName);
 			$basePathLink = 'index.php?option=com_tjfields&task=getMediaFile&fpht=';
-			$mediaURLlink = JUri::root() . substr(JRoute::_($basePathLink . $encodedFileName . $extraUrlParams), strlen(JUri::base(true)) + 1);
+			$mediaURL = Uri::base() . substr(Route::_($basePathLink . $encodedFileName . $extraUrlParams), strlen(Uri::base(true)) + 1);
+
+			$csrf = JSession::getFormToken() . '=1';
+			$mediaURLlink = $mediaURL . '&' . $csrf;
 
 			return $mediaURLlink;
 		}
@@ -2108,15 +2119,15 @@ class TjfieldsHelper
 	 */
 	public function deleteFile($data)
 	{
-		$user = JFactory::getUser();
+		$user = Factory::getUser();
 
 		if (!$user->id)
 		{
 			return false;
 		}
 
-		JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_tjfields/tables');
-		$fieldValueTable = JTable::getInstance('Fieldsvalue', 'TjfieldsTable');
+		Table::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_tjfields/tables');
+		$fieldValueTable = Table::getInstance('Fieldsvalue', 'TjfieldsTable');
 		$fieldValueTable->load(array('id' => $data['valueId']));
 
 		$subData = new stdClass;
@@ -2161,9 +2172,9 @@ class TjfieldsHelper
 
 					foreach ($deleteData as $image)
 					{
-						if (JFile::exists($image))
+						if (File::exists($image))
 						{
-							if (!JFile::delete($image))
+							if (!File::delete($image))
 							{
 								return false;
 							}
@@ -2172,7 +2183,7 @@ class TjfieldsHelper
 				}
 				else
 				{
-					if (!JFile::delete($data['storagePath'] . '/' . $data['fileName']))
+					if (!File::delete($data['storagePath'] . '/' . $data['fileName']))
 					{
 						return false;
 					}
@@ -2195,7 +2206,7 @@ class TjfieldsHelper
 	 */
 	public static function getLanguageConstantForJs()
 	{
-		JText::script('COM_TJFIELDS_FILE_DELETE_CONFIRM');
-		JText::script('COM_TJFIELDS_FILE_ERROR_MAX_SIZE');
+		Text::script('COM_TJFIELDS_FILE_DELETE_CONFIRM');
+		Text::script('COM_TJFIELDS_FILE_ERROR_MAX_SIZE');
 	}
 }
