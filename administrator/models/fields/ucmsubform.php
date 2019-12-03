@@ -11,8 +11,7 @@ defined('JPATH_PLATFORM') or die;
 
 jimport('joomla.filesystem.path');
 
-
-JLoader::register('JFormFieldSubform', JPATH_BASE . '/libraries/joomla/form/fields/subform.php');
+JLoader::register('JFormFieldSubform', JPATH_SITE . '/libraries/joomla/form/fields/subform.php');
 
 /**
  * The Field to load the form inside current form
