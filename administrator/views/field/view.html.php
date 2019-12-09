@@ -81,7 +81,7 @@ class TjfieldsViewField extends JViewLegacy
 		$client          = $input->get('client');
 		$extention = explode('.', $client);
 		$canDo           = TjfieldsHelper::getActions($extention[0], 'field');
-		$component_title = JText::_('COM_TJFIELDS_TITLE_COMPONENT');
+		//$component_title = JText::_('COM_TJFIELDS_TITLE_COMPONENT');
 
 		if ($isNew)
 		{
@@ -94,11 +94,11 @@ class TjfieldsViewField extends JViewLegacy
 
 		if (JVERSION >= '3.0')
 		{
-			JToolbarHelper::title($component_title . $viewTitle, 'pencil-2');
+			JToolbarHelper::title($viewTitle, 'pencil-2');
 		}
 		else
 		{
-			JToolbarHelper::title($component_title . $viewTitle, 'field.png');
+			JToolbarHelper::title($viewTitle, 'field.png');
 		}
 
 		// If not checked out, can save the item.
