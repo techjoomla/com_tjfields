@@ -10,6 +10,8 @@
 defined('JPATH_PLATFORM') or die;
 JLoader::import('components.com_tjfields.models.fields.file', JPATH_ADMINISTRATOR);
 
+use Joomla\CMS\HTML\HTMLHelper;
+
 /**
  * Form Field Image class
  * Supports a multi line area for entry of plain text with count char
@@ -144,6 +146,18 @@ class JFormFieldImage extends JFormFieldFile
 	{
 		$layoutData = $this->getLayoutData();
 		$html = $this->getRenderer($this->layout)->render($layoutData);
+
+		if ($this->size)
+		{
+			$sizes = array();
+			$sizes[] = HTMLHelper::_('number.bytes', ini_get('post_max_size'), '');
+			$sizes[] = HTMLHelper::_('number.bytes', ini_get('upload_max_filesize'), '');
+			$sizes[] = $this->size * 1024 * 1024;
+
+			$maxSize = HTMLHelper::_('number.bytes', min($sizes));
+			$fileMaxSize = '<strong>' . $maxSize . '</strong>';
+			$html = str_replace(substr($html, strpos($html, '<strong>'), strpos($html, '</strong>')), $fileMaxSize, $html);
+		}
 
 		// Load backend language file
 		$lang = JFactory::getLanguage();
