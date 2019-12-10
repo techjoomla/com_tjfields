@@ -81,26 +81,31 @@ class TjfieldsViewField extends JViewLegacy
 		$client          = $input->get('client');
 		$extention = explode('.', $client);
 		$canDo           = TjfieldsHelper::getActions($extention[0], 'field');
-		//$component_title = JText::_('COM_TJFIELDS_TITLE_COMPONENT');
+		
+		$component_title = '';
 
-		if ($isNew)
+		if (!empty($client))
 		{
-			$viewTitle = JText::_('COM_TJFIELDS_ADD_FIELD');
-		}
-		else
-		{
-			$viewTitle = JText::_('COM_TJFIELDS_EDIT_FIELD');
+			
+			$client = explode('.', $client);
+			
+			switch ($client['0'])
+			{
+				case 'com_jticketing' :
+					$component_title = JText::_('COM_JTICKETING_COMPONENT');
+					break;
+				case 'com_tjlms':
+					$component_title = JText::_('COM_TJLMS_COMPONENT');
+					break;
+				case 'com_tjucm':
+					$component_title= JText::_('COM_TJUCM_COMPONENT');
+			}
 		}
 
-		if (JVERSION >= '3.0')
-		{
-			JToolbarHelper::title($viewTitle, 'pencil-2');
-		}
-		else
-		{
-			JToolbarHelper::title($viewTitle, 'field.png');
-		}
-
+		JToolbarHelper::title($component_title.": ".
+			JText::_('COM_TJFIELDS_PAGE_'  . ($checkedOut ? 'VIEW_FIELD' : ($isNew ? 'ADD_FIELD' : 'EDIT_FIELD'))),
+			'pencil-2 article-add'
+		);
 		// If not checked out, can save the item.
 		if (!$checkedOut && ($canDo->get('core.edit') || ($canDo->get('core.create'))))
 		{

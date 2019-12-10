@@ -95,20 +95,16 @@ class TjfieldsViewFields extends JViewLegacy
 					$lang->load('com_tjlms', JPATH_ADMINISTRATOR, 'en-GB', true);
 
 					break;
+				case 'com_tjucm':
+					$component_title= JText::_('COM_TJUCM_COMPONENT');
+					break;
 			}
 		}
 
 		$state = $this->get('State');
 		$canDo = TjfieldsHelper::getActions($client[0], 'field');
 
-		if (JVERSION >= '3.0')
-		{
-			JToolBarHelper::title($component_title . JText::_('COM_TJFIELDS_TITLE_FIELDS'), 'list');
-		}
-		else
-		{
-			JToolBarHelper::title($component_title . JText::_('COM_TJFIELDS_TITLE_FIELDS'), 'fields.png');
-		}
+		JToolBarHelper::title($component_title .": ". JText::_('COM_TJFIELDS_TITLE_FIELD'), 'list');
 
 		// Check if the form exists before showing the add/edit buttons
 		$formPath = JPATH_COMPONENT_ADMINISTRATOR . '/views/field';
