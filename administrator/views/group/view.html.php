@@ -76,6 +76,7 @@ class TjfieldsViewGroup extends JViewLegacy
 		}
 
 		$component_title = '';
+		//$component_title = JText::_('COM_TJFIELDS_TITLE_COMPONENT');
 
 		if (!empty($client))
 		{
@@ -99,6 +100,7 @@ class TjfieldsViewGroup extends JViewLegacy
 			JText::_('COM_TJFIELDS_PAGE_'  . ($checkedOut ? 'VIEW_GROUP' : ($isNew ? 'ADD_GROUP' : 'EDIT_GROUP'))),
 			'pencil-2 article-add'
 		);
+
 
 
 		$canDo = TjfieldsHelper::getActions($client['0'], 'group');
