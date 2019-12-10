@@ -75,38 +75,35 @@ class TjfieldsViewGroup extends JViewLegacy
 			$checkedOut = false;
 		}
 
-		$component_title = JText::_('COM_TJFIELDS_TITLE_COMPONENT');
+		$component_title = '';
 
 		if (!empty($client))
 		{
+			
 			$client = explode('.', $client);
-
-			if ($client['0'] == 'com_jticketing')
+			
+			switch ($client['0'])
 			{
-				$component_title = JText::_('COM_JTICKETING_COMPONENT');
+				case 'com_jticketing' :
+					$component_title = JText::_('COM_JTICKETING_COMPONENT');
+					break;
+				case 'com_tjlms':
+					$component_title = JText::_('COM_TJLMS_COMPONENT');
+					break;
+				case 'com_tjucm':
+					$component_title= JText::_('COM_TJUCM_COMPONENT');
 			}
 		}
 
-		$canDo           = TjfieldsHelper::getActions($client['0'], 'group');
+		JToolbarHelper::title($component_title.": ".
+			JText::_('COM_TJFIELDS_PAGE_'  . ($checkedOut ? 'VIEW_GROUP' : ($isNew ? 'ADD_GROUP' : 'EDIT_GROUP'))),
+			'pencil-2 article-add'
+		);
 
-		if ($isNew)
-		{
-			$viewTitle = JText::_('COM_TJFIELDS_ADD_GROUP');
-		}
-		else
-		{
-			$viewTitle = JText::_('COM_TJFIELDS_EDIT_GROUP');
-		}
 
-		if (JVERSION >= '3.0')
-		{
-			JToolbarHelper::title($component_title . $viewTitle, 'pencil-2');
-		}
-		else
-		{
-			JToolbarHelper::title($component_title . $viewTitle, 'group.png');
-		}
+		$canDo = TjfieldsHelper::getActions($client['0'], 'group');
 
+		
 		// If not checked out, can save the item.
 		if (!$checkedOut && ($canDo->get('core.edit') || ($canDo->get('core.create'))))
 		{

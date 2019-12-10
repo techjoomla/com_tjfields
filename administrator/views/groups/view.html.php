@@ -74,8 +74,9 @@ class TjfieldsViewGroups extends JViewLegacy
 
 		if (!empty($client))
 		{
+			
 			$client = explode('.', $client);
-
+			
 			switch ($client['0'])
 			{
 				case 'com_jticketing' :
@@ -84,6 +85,8 @@ class TjfieldsViewGroups extends JViewLegacy
 				case 'com_tjlms':
 					$component_title = JText::_('COM_TJLMS_COMPONENT');
 					break;
+				case 'com_tjucm':
+					$component_title= JText::_('COM_TJUCM_COMPONENT');
 			}
 		}
 
@@ -96,7 +99,7 @@ class TjfieldsViewGroups extends JViewLegacy
 		$tjfieldsHelper = new TjfieldsHelper();
 
 		$canDo = $tjfieldsHelper->getActions($client[0], 'group');
-		JToolBarHelper::title($component_title . JText::_('COM_TJFIELDS_TITLE_GROUPS'), 'list.png');
+		JToolBarHelper::title($component_title .": ". JText::_('COM_TJFIELDS_TITLE_GROUPS'), 'list.png');
 
 		// Check if the form exists before showing the add/edit buttons
 		$formPath = JPATH_COMPONENT_ADMINISTRATOR . '/views/group';
