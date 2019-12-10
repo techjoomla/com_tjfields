@@ -75,7 +75,6 @@ class TjfieldsViewGroup extends JViewLegacy
 			$checkedOut = false;
 		}
 
-		$component_title = '';
 		//$component_title = JText::_('COM_TJFIELDS_TITLE_COMPONENT');
 
 		if (!empty($client))
@@ -102,6 +101,14 @@ class TjfieldsViewGroup extends JViewLegacy
 		);
 
 
+		if (JVERSION >= '3.0')
+		{
+			JToolbarHelper::title($viewTitle, 'pencil-2');
+		}
+		else
+		{
+			JToolbarHelper::title($viewTitle, 'group.png');
+		}
 
 		$canDo = TjfieldsHelper::getActions($client['0'], 'group');
 
