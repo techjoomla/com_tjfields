@@ -11,6 +11,8 @@ JLoader::import("/techjoomla/media/storage/local", JPATH_LIBRARIES);
 
 defined('JPATH_PLATFORM') or die;
 
+use Joomla\CMS\HTML\HTMLHelper;
+
 /**
  * Form Field class for the Joomla Platform.
  * Provides an input field for files
@@ -129,6 +131,18 @@ class JFormFieldFile extends JFormField
 	{
 		$layoutData = $this->getLayoutData();
 		$html = $this->getRenderer($this->layout)->render($layoutData);
+
+		if ($this->size)
+		{
+			$sizes = array();
+			$sizes[] = HTMLHelper::_('number.bytes', ini_get('post_max_size'), '');
+			$sizes[] = HTMLHelper::_('number.bytes', ini_get('upload_max_filesize'), '');
+			$sizes[] = $this->size * 1024 * 1024;
+
+			$maxSize = HTMLHelper::_('number.bytes', min($sizes));
+			$fileMaxSize = '<strong>' . $maxSize . '</strong>';
+			$html = str_replace(substr($html, strpos($html, '<strong>'), strpos($html, '</strong>')), $fileMaxSize, $html);
+		}
 
 		// Load backend language file
 		$lang = JFactory::getLanguage();
