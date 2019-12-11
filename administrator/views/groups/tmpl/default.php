@@ -10,6 +10,8 @@
 // no direct access
 defined('_JEXEC') or die;
 
+use \Joomla\CMS\Layout\LayoutHelper;
+
 JHtml::addIncludePath(JPATH_COMPONENT.'/helpers/html');
 if(JVERSION >= '3.0')
 {
@@ -70,31 +72,18 @@ $sortFields = $this->getSortFields();
 	}
 </script>
 
-<?php
-//Joomla Component Creator code to allow adding non select list filters
-if (!empty($this->extra_sidebar)) {
-    $this->sidebar .= $this->extra_sidebar;
-}
-?>
 <form action="<?php echo JRoute::_('index.php?option=com_tjfields&view=groups&client='.$input->get('client','','STRING')); ?>" method="post" name="adminForm" id="adminForm">
-<div class="techjoomla-bootstrap">
-		<?php if(!empty($this->sidebar)): ?>
-		<div id="j-sidebar-container" class="span2">
-			<?php echo $this->sidebar; ?>
-		</div>
-		<div id="j-main-container" class="span10">
-	<?php else : ?>
-		<div id="j-main-container">
-	<?php endif;?>
-		<div id="filter-bar" class="btn-toolbar">
-			<div class="filter-search btn-group pull-left">
-				<label for="filter_search" class="element-invisible"><?php echo JText::_('JSEARCH_FILTER');?></label>
-				<input type="text" name="filter_search" id="filter_search" placeholder="<?php echo JText::_('JSEARCH_FILTER'); ?>" value="<?php echo $this->escape($this->state->get('filter.search')); ?>" title="<?php echo JText::_('JSEARCH_FILTER'); ?>" />
-			</div>
-			<div class="btn-group pull-left">
-				<button class="btn hasTooltip" type="submit" title="<?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?>"><i class="icon-search"></i></button>
-				<button class="btn hasTooltip" type="button" title="<?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?>" onclick="document.id('filter_search').value='';this.form.submit();"><i class="icon-remove"></i></button>
-			</div>
+	<div class="techjoomla-bootstrap">
+		<?php if (!empty($this->sidebar)): ?>
+			<div id="j-sidebar-container" class="span2"><?php echo $this->sidebar; ?></div>
+				<div id="j-main-container" class="span10">
+			<?php else : ?>
+				<div id="j-main-container">
+		<?php endif; ?>
+			<div class="tjBs3">
+				<div class="btn-group pull-left">
+					<?php echo LayoutHelper::render('joomla.searchtools.default', array('view' => $this)); ?>
+				</div>
 
 			<?php if(JVERSION >= '3.0'):?>
 
