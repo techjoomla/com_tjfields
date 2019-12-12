@@ -84,9 +84,7 @@ $sortFields = $this->getSortFields();
 				<div class="btn-group pull-left">
 					<?php echo LayoutHelper::render('joomla.searchtools.default', array('view' => $this)); ?>
 				</div>
-
-			<?php if(JVERSION >= '3.0'):?>
-
+				<?php if(JVERSION >= '3.0'):?>
 				<div class="btn-group pull-right hidden-phone">
 					<label for="limit" class="element-invisible"><?php echo JText::_('JFIELD_PLG_SEARCH_SEARCHLIMIT_DESC');?></label>
 					<?php echo $this->pagination->getLimitBox(); ?>
@@ -103,15 +101,13 @@ $sortFields = $this->getSortFields();
 
 				<div class="btn-group pull-right">
 					<label for="sortTable" class="element-invisible"><?php echo JText::_('JGLOBAL_SORT_BY');?></label>
-					<select name="sortTable" id="sortTable" class="input-medium" onchange="Joomla.orderTable()">
-						<option value=""><?php echo JText::_('JGLOBAL_SORT_BY');?></option>
+						<select name="sortTable" id="sortTable" class="input-medium" onchange="Joomla.orderTable()">
+							<option value=""><?php echo JText::_('JGLOBAL_SORT_BY');?></option>
 						<?php echo JHtml::_('select.options', $sortFields, 'value', 'text', $listOrder);?>
-					</select>
+						</select>
 				</div>
-
-			<?php endif;?>
-
-		</div>
+					<?php endif;?>
+			</div>
 			<div class="clearfix"> </div>
 			<?php
 			if (empty($this->items))
@@ -150,9 +146,6 @@ $sortFields = $this->getSortFields();
 					<th class='left'>
 					<?php echo JHtml::_('grid.sort',  'COM_TJFIELDS_GROUPS_CLIENT', 'a.client', $listDirn, $listOrder); ?>
 					</th>
-
-
-
 					<?php if (isset($this->items[0]->id)): ?>
 						<th width="1%" class="nowrap center hidden-phone">
 							<?php echo JHtml::_('grid.sort', 'JGRID_HEADING_ID', 'a.id', $listDirn, $listOrder); ?>
@@ -233,8 +226,6 @@ $sortFields = $this->getSortFields();
 
 						<?php echo $item->client; ?>
 					</td>
-
-
 
 					<?php if (isset($this->items[0]->id)): ?>
 						<td class="center hidden-phone">
