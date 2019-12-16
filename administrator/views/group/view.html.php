@@ -100,15 +100,6 @@ class TjfieldsViewGroup extends JViewLegacy
 			'pencil-2 article-add'
 		);
 
-		if (JVERSION >= '3.0')
-		{
-			JToolbarHelper::title($viewTitle, 'pencil-2');
-		}
-		else
-		{
-			JToolbarHelper::title($viewTitle, 'group.png');
-		}
-
 		$canDo = TjfieldsHelper::getActions($client['0'], 'group');
 
 		// If not checked out, can save the item.
