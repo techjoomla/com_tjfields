@@ -158,7 +158,12 @@ class JFormFieldFile extends JFormField
 
 			// To get the file name from URL
 			$substrString = substr($data->mediaLink, strlen('fpht=') + strpos($data->mediaLink, 'fpht='));
-			$substrString = substr($substrString, 0, strpos($substrString, '&'));
+
+			// Check string having '&' character or not, to get correct file name decoded value
+			if (strpos($substrString, '&'))
+			{
+				$substrString = substr($substrString, 0, strpos($substrString, '&'));
+			}
 
 			// Decode the filename
 			$fileName = base64_decode($substrString);
