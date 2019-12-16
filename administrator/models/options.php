@@ -67,6 +67,8 @@ class TjfieldsModelOptions extends JModelList
 			$query->where('a.field_id = ' . (int) $fieldId);
 		}
 
+		$query->order($db->qn($db->escape($this->getState('list.ordering', 'a.options'))) . ' ' . $db->escape($this->getState('list.direction', 'ASC')));
+
 		return $query;
 	}
 

@@ -39,6 +39,8 @@ class TjfieldsViewGroups extends JViewLegacy
 		$this->state      = $this->get('State');
 		$this->items      = $this->get('Items');
 		$this->pagination = $this->get('Pagination');
+		$this->filterForm = $this->get('FilterForm');
+        	$this->activeFilters = $this->get('ActiveFilters');
 
 		// Check for errors.
 		if (count($errors = $this->get('Errors')))
@@ -152,17 +154,7 @@ class TjfieldsViewGroups extends JViewLegacy
 			JToolBarHelper::preferences('com_tjfields');
 		}
 
-		$this->extra_sidebar = '';
-
-		if (JVERSION >= '3.0')
-		{
-			// Set sidebar action - New in 3.0
-			$filter_state = $this->state->get('filter.state');
-			$pub_text = JText::_('JOPTION_SELECT_PUBLISHED');
-			$publish_opt = JHtml::_('select.options', JHtml::_('jgrid.publishedOptions'), "value", "text", $filter_state, true);
-			JHtmlSidebar::setAction('index.php?option=com_tjfields&view=groups');
-			JHtmlSidebar::addFilter($pub_text, 'filter_published', $publish_opt);
-		}
+		
 	}
 
 	/**

@@ -54,7 +54,7 @@ class JFormRuleCluster extends JFormRule
 		{
 			foreach ($clusters as $cluster)
 			{
-				if ($value == $cluster->id)
+				if ($value == $cluster->cluster_id)
 				{
 					return true;
 				}
