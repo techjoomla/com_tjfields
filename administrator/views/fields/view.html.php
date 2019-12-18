@@ -77,7 +77,9 @@ class TjfieldsViewFields extends JViewLegacy
 		$component_title = '';
 
 		$toolbar = JToolbar::getInstance('toolbar');
-		$toolbar->appendButton('Custom', '<a id="tjHouseKeepingFixDatabasebutton" class="btn btn-default hidden"><span class="icon-refresh"></span>' . JText::_('COM_TJFIELDS_FIX_DATABASE') . '</a>');
+		$toolbar->appendButton('Custom',
+		'<a id = "tjHouseKeepingFixDatabasebutton" class="btn btn-default hidden">
+		<span class = "icon-refresh"></span>' . JText::_('COM_TJFIELDS_FIX_DATABASE') . '</a>');
 
 		if (!empty($client))
 		{
@@ -96,7 +98,7 @@ class TjfieldsViewFields extends JViewLegacy
 
 					break;
 				case 'com_tjucm':
-					$component_title= JText::_('COM_TJUCM_COMPONENT');
+					$component_title = JText::_('COM_TJUCM_COMPONENT');
 					break;
 			}
 		}
@@ -104,7 +106,7 @@ class TjfieldsViewFields extends JViewLegacy
 		$state = $this->get('State');
 		$canDo = TjfieldsHelper::getActions($client[0], 'field');
 
-		JToolBarHelper::title($component_title .": ". JText::_('COM_TJFIELDS_TITLE_FIELD'), 'list');
+		JToolBarHelper::title($component_title . ": " . JText::_('COM_TJFIELDS_TITLE_FIELD'), 'list');
 
 		// Check if the form exists before showing the add/edit buttons
 		$formPath = JPATH_COMPONENT_ADMINISTRATOR . '/views/field';

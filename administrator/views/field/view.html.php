@@ -81,14 +81,13 @@ class TjfieldsViewField extends JViewLegacy
 		$client          = $input->get('client');
 		$extention = explode('.', $client);
 		$canDo           = TjfieldsHelper::getActions($extention[0], 'field');
-		
+
 		$component_title = '';
 
 		if (!empty($client))
 		{
-			
 			$client = explode('.', $client);
-			
+
 			switch ($client['0'])
 			{
 				case 'com_jticketing' :
@@ -98,14 +97,16 @@ class TjfieldsViewField extends JViewLegacy
 					$component_title = JText::_('COM_TJLMS_COMPONENT');
 					break;
 				case 'com_tjucm':
-					$component_title= JText::_('COM_TJUCM_COMPONENT');
+					$component_title = JText::_('COM_TJUCM_COMPONENT');
 			}
 		}
 
-		JToolbarHelper::title($component_title.": ".
-			JText::_('COM_TJFIELDS_PAGE_'  . ($checkedOut ? 'VIEW_FIELD' : ($isNew ? 'ADD_FIELD' : 'EDIT_FIELD'))),
+		JToolbarHelper::title(
+			$component_title . ": " .
+			JText::_('COM_TJFIELDS_PAGE_' . ($checkedOut ? 'VIEW_FIELD' : ($isNew ? 'ADD_FIELD' : 'EDIT_FIELD'))),
 			'pencil-2 article-add'
 		);
+
 		// If not checked out, can save the item.
 		if (!$checkedOut && ($canDo->get('core.edit') || ($canDo->get('core.create'))))
 		{
