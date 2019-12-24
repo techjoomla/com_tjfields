@@ -72,8 +72,8 @@ class JFormFieldformsourcefield extends JFormField
 			$options[] = JHtml::_('select.option', $filePathFrontend, $form->title);
 		}
 
-		return JHtml::_('select.genericlist', $options, $this->name, 'class="inputbox required"',
-		'value', 'text', $this->value, $this->options['control'] . $this->name
+		return JHtml::_('select.genericlist', $options, $this->name,  'class="inputbox required"',
+		'value', 'text', $this->value, $this->options['control'] . $this->id, $this->options['control'] . $this->name
 		);
 	}
 }
