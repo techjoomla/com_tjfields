@@ -2,9 +2,9 @@
 <form>
 	<fields name="params" label="COM_TJFIELDS_FIELD_BASIC_LABEL">
 		<fieldset name="params">
-			<field name="format" type="text" default="%Y-%m-%d"
+			<field name="format" type="text"  class="validate-calendar"  required="true" default="%Y-%m-%d"
 				label="COM_TJFIELDS_FORM_LBL_FIELD_FORMAT" description="COM_TJFIELDS_FORM_DESC_FIELD_FORMAT"
-				size="20" />
+				size="20"/>
 			<field name="showtime" type="radio" default="false"
 				label="COM_TJFIELDS_FORM_LBL_CALENDAR_FIELD_SHOWTIME" description="COM_TJFIELDS_FORM_DESC_CALENDAR_FIELD_SHOWTIME">
 				<option value="true">JYES</option>

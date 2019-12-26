@@ -79,6 +79,11 @@ jQuery(document).ready(function(){
         }
         return true;
     });
+   document.formvalidator.setHandler('calender', function(value) {
+      regex=/^\d{4}-\d{2}-\d{2}$/;
+      return regex.test(value);
+   });
+});
 
     document.formvalidator.setHandler('filetype', function(value, element) {
 
