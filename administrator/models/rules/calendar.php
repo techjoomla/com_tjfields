@@ -13,7 +13,7 @@ defined('_JEXEC') or die;
 /**
  * JFormRule for com_tjucm to validate calendar field
  *
- * @since  1.2.4
+ * @since  1.4.5
  */
 
 class JFormRuleCalendar extends JFormRule
