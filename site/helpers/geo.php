@@ -432,17 +432,17 @@ class TjGeoHelper
 	{
 		$this->_db = JFactory::getDbo();
 		$query     = $this->_db->getQuery(true);
-		$query->select("id, city,city_jtext");
-		$query->from('#__tj_city');
-		$query->where('country_id=' . $this->_db->quote($countryId));
-		$query->order($this->_db->escape($orderingCol . ' ASC'));
+		$query->select($this->_db->qn(array('id', 'city', 'city_jtext')));
+		$query->from($this->_db->qn('#__tj_city'));
+		$query->where($this->_db->qn('#__tj_city.country_id') . ' = ' . (int) $countryId);
+		$query->order($this->_db->qn('#__tj_city.' . $orderingCol) . ' ASC');
 
 		if ($component_nm)
 		{
-			$query->where($component_nm . "=1");
+			$query->where($this->_db->qn('#__tj_city.' . $component_nm) . ' = 1');
 		}
 
-		$this->_db->setQuery((string) $query);
+		$this->_db->setQuery($query);
 		$cityList = $this->_db->loadAssocList();
 
 		foreach ($cityList as $key => $city)
