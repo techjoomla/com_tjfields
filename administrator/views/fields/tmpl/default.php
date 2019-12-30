@@ -134,6 +134,9 @@ if (!empty($this->extra_sidebar)) {
 						<?php echo JHtml::_('grid.sort',  'COM_TJFIELDS_FIELDS_LABEL', 'a.label', $listDirn, $listOrder); ?>
 						</th>
 						<th class='left'>
+						<?php echo JHtml::_('grid.sort',  'COM_TJFIELDS_FIELDS_NAME', 'a.name', $listDirn, $listOrder); ?>
+						</th>
+						<th class='left'>
 						<?php echo JHtml::_('grid.sort',  'COM_TJFIELDS_FIELDS_FIELD_TYPE', 'a.type', $listDirn, $listOrder); ?>
 						</th>
 
@@ -213,6 +216,9 @@ if (!empty($this->extra_sidebar)) {
 							<?php echo $this->escape($item->label); ?>
 						<?php endif; ?>
 						</td>
+					<td>
+						<?php echo $this->escape($item->name); ?>
+					</td>
 					<td>
 						<?php echo $item->type; ?>
 					</td>

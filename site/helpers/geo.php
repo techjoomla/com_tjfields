@@ -48,6 +48,7 @@ class TjGeoHelper
 		$this->_tjlang = JFactory::getLanguage();
 		$this->_tjlang->load('tjgeo.countries', JPATH_SITE, null, false, true);
 		$this->_tjlang->load('tjgeo.regions', JPATH_SITE, null, false, true);
+		$this->_tjlang->load('tjgeo.cities', JPATH_SITE, null, false, true);
 		$this->_db = JFactory::getDbo();
 	}
 
@@ -413,6 +414,71 @@ class TjGeoHelper
 		else
 		{
 			return false;
+		}
+	}
+
+	/**
+	 * Gives city list according.( field city gives you city name in current language) .
+	 *
+	 * @param   string  $countryId     id of country
+	 * @param   string  $component_nm  name of component
+	 * @param   string  $orderingCol   order by table column eg region
+	 *
+	 * @return  citylist
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	public function getCityList($countryId, $component_nm = "", $orderingCol = "city")
+	{
+		$this->_db = JFactory::getDbo();
+		$query     = $this->_db->getQuery(true);
+		$query->select($this->_db->qn(array('id', 'city', 'city_jtext')));
+		$query->from($this->_db->qn('#__tj_city'));
+		$query->where($this->_db->qn('#__tj_city.country_id') . ' = ' . (int) $countryId);
+		$query->order($this->_db->qn('#__tj_city.' . $orderingCol) . ' ASC');
+
+		if ($component_nm)
+		{
+			$query->where($this->_db->qn('#__tj_city.' . $component_nm) . ' = 1');
+		}
+
+		$this->_db->setQuery($query);
+		$cityList = $this->_db->loadAssocList();
+
+		foreach ($cityList as $key => $city)
+		{
+			if ($city['city_jtext'])
+			{
+				$jtext = $this->getCityJText($city['city_jtext']);
+
+				if ($jtext)
+				{
+					$cityList[$key]['city'] = $jtext;
+				}
+			}
+		}
+
+		return $cityList;
+	}
+
+	/**
+	 * Method gives city name in current  language if exist.
+	 *
+	 * @param   string  $jtext  Jtext constant for city .
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 *
+	 * @return   city name;
+	 */
+	public function getCityJText($jtext)
+	{
+		if ($this->_tjlang->hasKey(strtoupper($jtext)))
+		{
+			return JText::_($jtext, true);
+		}
+		elseif ($jtext !== '')
+		{
+			return null;
 		}
 	}
 }
