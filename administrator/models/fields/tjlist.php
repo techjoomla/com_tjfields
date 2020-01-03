@@ -132,7 +132,7 @@ class JFormFieldTjList extends JFormFieldList
 				$valueFromSelectList = array_filter(
 					$options,
 					function ($e) {
-						return $e->value == $this->value[0];
+						return $e->value == (is_array($this->value)) ? $this->value[0] : $this->value;
 					}
 				);
 
