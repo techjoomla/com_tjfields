@@ -52,16 +52,17 @@ if ($field->value)
 	// To display the file name if exist and skip the prepended file name value
 	if (!empty($fileName))
 	{
-		$fileTitle=substr($fileName, strpos($fileName, '_', 12) + 1);
-		$fileTitleString=explode(".",$fileTitle);
-		$displayTitle=substr("$fileTitleString[1]", 0, 3);
-		if($displayTitle== "png")
+		$fileTitle = substr($fileName, strpos($fileName, '_', 12) + 1);
+		$fileTitleString = explode(".", $fileTitle);
+		$displayTitle = substr("$fileTitleString[1]", 0, 3);
+
+		if ($displayTitle == "png")
 		{
-			echo '<strong class="ml-15"> ' . $fileTitleString[0].".png " . '</strong>';
+			echo '<strong class = "ml-15"> ' . $fileTitleString[0] . ".png " . '</strong>';
 		}
 		else
 		{
-			echo '<strong class="ml-15"> '.$fileTitle .'</strong>';
+			echo '<strong class = "ml-15"> ' . $fileTitle . '</strong>';
 		}
 	}
 }
