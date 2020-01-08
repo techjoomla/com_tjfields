@@ -7,13 +7,13 @@
  * @author      TechJoomla <extensions@techjoomla.com> - http://www.techjoomla.com
  */
 
-// no direct access
+/* no direct access */
 defined('_JEXEC') or die;
 
-JHtml::addIncludePath(JPATH_COMPONENT.'/helpers/html');
+JHtml::addIncludePath(JPATH_COMPONENT . '/helpers/html');
 use Joomla\CMS\Layout\LayoutHelper;
 
-if(JVERSION >= '3.0')
+if (JVERSION >= '3.0')
 {
 	JHtml::_('bootstrap.tooltip');
 	JHtml::_('formbehavior.chosen', 'select');
@@ -33,19 +33,21 @@ JHtml::script(JUri::root() . 'libraries/techjoomla/assets/js/houseKeeping.js');
 // Import CSS
 $document = JFactory::getDocument();
 $document->addStyleSheet('components/com_tjfields/assets/css/tjfields.css');
-$input=jFactory::getApplication()->input;
+$input = jFactory::getApplication()->input;
 $user	= JFactory::getUser();
 $userId	= $user->get('id');
 $listOrder	= $this->state->get('list.ordering');
 $listDirn	= $this->state->get('list.direction');
 $canOrder	= $user->authorise('core.edit.state', 'com_tjfields');
-//print_r($canOrder); die();
+
 $saveOrder	= $listOrder == 'a.ordering';
+
 if ($saveOrder)
 {
 	$saveOrderingUrl = 'index.php?option=com_tjfields&task=fields.saveOrderAjax&tmpl=component';
 	JHtml::_('sortablelist.sortable', 'fieldList', 'adminForm', strtolower($listDirn), $saveOrderingUrl);
 }
+
 $sortFields = $this->getSortFields();
 ?>
 <script type="text/javascript">
@@ -63,7 +65,7 @@ $sortFields = $this->getSortFields();
 		}
 		else
 		{
-			Joomla.submitform(task);	
+			Joomla.submitform(task);
 		}
 	}
 
@@ -81,12 +83,12 @@ $sortFields = $this->getSortFields();
 </script>
 
 <?php
-//Joomla Component Creator code to allow adding non select list filters
+/* Joomla Component Creator code to allow adding non select list filters */
 if (!empty($this->extra_sidebar)) {
-    $this->sidebar .= $this->extra_sidebar;
+	$this->sidebar .= $this->extra_sidebar;
 }
 ?>
-<form action="<?php echo JRoute::_('index.php?option=com_tjfields&view=fields&client='.$input->get('client','','STRING')); ?>" method="post" name="adminForm" id="adminForm">
+<form action="<?php echo JRoute::_('index.php?option=com_tjfields&view=fields&client=' . $input->get('client','','STRING')); ?>" method="post" name="adminForm" id="adminForm">
 	<div class="techjoomla-bootstrap">
 		<?php if(!empty($this->sidebar)): ?>
 			<div id="j-sidebar-container" class="span2">
@@ -120,10 +122,12 @@ if (!empty($this->extra_sidebar)) {
 							<th width="1%" class="nowrap center hidden-phone">
 								<?php echo JHtml::_('grid.sort', '<i class="icon-menu-2"></i>', 'a.ordering', $listDirn, $listOrder, null, 'asc', 'JGRID_HEADING_ORDERING'); ?>
 							</th>
+
 						<?php endif; ?>
 							<th width="1%" class="hidden-phone">
 								<input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
 							</th>
+
 						<?php if (isset($this->items[0]->state)): ?>
 							<th width="1%" class="nowrap center">
 								<?php echo JHtml::_('grid.sort', 'JSTATUS', 'a.state', $listDirn, $listOrder); ?>
@@ -133,9 +137,7 @@ if (!empty($this->extra_sidebar)) {
 						<th class='left'>
 						<?php echo JHtml::_('grid.sort',  'COM_TJFIELDS_FIELDS_LABEL', 'a.label', $listDirn, $listOrder); ?>
 						</th>
-						<th class='left'>
-						<?php echo JHtml::_('grid.sort',  'COM_TJFIELDS_FIELDS_NAME', 'a.name', $listDirn, $listOrder); ?>
-						</th>
+
 						<th class='left'>
 						<?php echo JHtml::_('grid.sort',  'COM_TJFIELDS_FIELDS_FIELD_TYPE', 'a.type', $listDirn, $listOrder); ?>
 						</th>
@@ -144,7 +146,7 @@ if (!empty($this->extra_sidebar)) {
 						<?php echo JHtml::_('grid.sort',  'COM_TJFIELDS_FIELDS_CLIENT', 'a.client', $listDirn, $listOrder); ?>
 						</th>
 
-						<?php if (isset($this->items[0]->id)): ?>
+						<?php echo"" ;if (isset($this->items[0]->id)): ?>
 							<th width="1%" class="nowrap center hidden-phone">
 								<?php echo JHtml::_('grid.sort', 'JGRID_HEADING_ID', 'a.id', $listDirn, $listOrder); ?>
 							</th>
@@ -216,27 +218,24 @@ if (!empty($this->extra_sidebar)) {
 							<?php echo $this->escape($item->label); ?>
 						<?php endif; ?>
 						</td>
-					<td>
-						<?php echo $this->escape($item->name); ?>
-					</td>
-					<td>
-						<?php echo $item->type; ?>
-					</td>
-					<td>
-						<?php echo $item->client; ?>
-					</td>
-					<?php if (isset($this->items[0]->id)): ?>
+						<td>
+							<?php echo $item->type; ?>
+						</td>
+						<td>
+							<?php echo $item->client; ?>
+						</td>
+						<?php if (isset($this->items[0]->id)): ?>
 						<td class="center hidden-phone">
 							<?php echo (int) $item->id; ?>
 						</td>
-					<?php endif; ?>
+						<?php endif; ?>
 					</tr>
 					<?php endforeach; ?>
 				</tbody>
 			</table>
 		</table>
 		<?php
-		}?>
+			}?>
 			<input type="hidden" name="task" value="" />
 			<input type="hidden" name="boxchecked" value="0" />
 			<input type="hidden" name="filter_order" value="<?php echo $listOrder; ?>" />
