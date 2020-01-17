@@ -526,6 +526,7 @@ class TjfieldsHelper
 					);
 			$query->where($db->quoteName('f.client') . '=' . $db->quote($client));
 			$query->where($db->quoteName('f.state') . '=1');
+			$query->order('f.ordering DESC');
 			$db->setQuery($query);
 			$universalFields = $db->loadObjectlist();
 		}
