@@ -184,7 +184,7 @@ class TjfieldsModelFields extends JModelList
 			else
 			{
 				$search = $db->Quote('%' . $db->escape($search, true) . '%');
-				$query->where('( a.type LIKE ' . $search . ' OR a.label LIKE ' . $search . ' )');
+				$query->where('(a.label LIKE ' . $search . ' )');
 			}
 		}
 
