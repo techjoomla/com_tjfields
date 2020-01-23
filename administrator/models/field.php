@@ -261,7 +261,7 @@ class TjfieldsModelField extends JModelAdmin
 			// Create a new query object.
 			$query = $db->getQuery(true);
 
-			$query->select($db->quoteName('a.*'));
+			$query->select('a.*');
 			$query->from($db->quoteName('#__tjfields_fields', 'a'));
 			$query->where($db->quoteName('a.label') . ' LIKE ' . $db->quote($name . '%'));
 			$query->where($db->quoteName('a.client') . ' LIKE ' . $db->quote($data['client'] . '%'));
