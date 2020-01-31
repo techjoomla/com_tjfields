@@ -369,7 +369,7 @@ class TjfieldsHelper extends ContentHelper
 						{
 							// Set Default blank Option
 							$option = $field->addChild('option', '- ' . Text::_('COM_TJFIELDS_SELECT_OPTION') . " " . $f->label . ' -');
-							$option->addAttribute('value', '');
+							$option->addAttribute('value', '0');
 						}
 					}
 
