@@ -127,7 +127,7 @@ class JFormFieldTjList extends JFormFieldList
 				$this->otherInputRequired = 'required="required"';
 			}
 
-			if (!$this->multiple)
+			if (!$this->multiple && !empty($this->value))
 			{
 				$valueFromSelectList = array_filter(
 					$options,
@@ -136,7 +136,7 @@ class JFormFieldTjList extends JFormFieldList
 					}
 				);
 
-				if (empty($valueFromSelectList))
+				if (!empty($valueFromSelectList))
 				{
 					// Remove prefix values from other text values
 					$this->otherSelectedValue = str_replace($this->type . ':-', '', $this->value[0]);
