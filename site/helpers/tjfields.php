@@ -507,6 +507,9 @@ class TjfieldsHelper
 				if ($fieldValue != '')
 				{
 					$fieldsValueTable->value = $fieldValue;
+
+					// Set option_id default zero
+					$fieldsValueTable->option_id = 0;
 					$fieldOptionTable->load(array('field_id' => $fieldId, 'value' => $fieldValue));
 
 					if ($fieldOptionTable->id)
@@ -534,6 +537,9 @@ class TjfieldsHelper
 			$fieldsValueTable->content_id = $contentId;
 			$fieldsValueTable->value = $fieldValue;
 			$fieldsValueTable->client = $client;
+
+			// Set option_id default zero
+			$fieldsValueTable->option_id = 0;
 
 			$fieldOptionTable->load(array('field_id' => $fieldId, 'value' => $fieldValue));
 
