@@ -109,11 +109,11 @@ class TjfieldsHelper
 				$fieldParams = json_decode($fdata->params);
 				$multipleValueField = (isset($fieldParams->multiple) && !empty($fieldParams->multiple)) ? 1 : 0;
 
-				if ($fdata->type == 'single_select' || $fdata->type == 'multi_select' || $fdata->type == 'radio' || $fdata->type == 'tjlist')
+				if ($fdata->type == 'single_select' || $fdata->type == 'radio')
 				{
 					$fdata->value = $this->getOptions($fdata->field_id, json_encode($fdata->value));
 				}
-				elseif ($fdata->type == 'related' && $multipleValueField)
+				elseif ($fdata->type == "multi_select" || (($fdata->type == "related" || $fdata->type == "tjlist") && $multipleValueField))
 				{
 					$values = array();
 
