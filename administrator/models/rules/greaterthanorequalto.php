@@ -42,11 +42,22 @@ class JFormRuleGreaterThanOrEqualTo extends JFormRule
 			return false;
 		}
 
-		$test = $input->get($field);
+		$input = JFactory::getApplication()->input;
+		$recordId = $input->get('recordid', '', 'INT');
 
-		if (isset($group) && $group !== '')
+		$test = '';
+
+		if ($recordId)
 		{
-			$test = $input->get($group . '.' . $field);
+			$db = JFactory::getDbo();
+			$query = $db->getQuery(true);
+			$query->select($db->quoteName('fv.value'));
+			$query->from($db->quoteName('#__tjfields_fields_value', 'fv'));
+			$query->join('INNER', $db->quoteName('#__tjfields_fields', 'f') . ' ON ' . $db->quoteName('f.id') . ' = ' . $db->quoteName('fv.field_id'));
+			$query->where($db->quoteName('fv.content_id') . ' = ' . $recordId);
+			$query->where($db->quoteName('f.name') . ' = ' . $db->quote($field));
+			$db->setQuery($query);
+			$test = $db->loadresult();
 		}
 
 		// Test the two values against each other.
