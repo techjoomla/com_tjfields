@@ -477,7 +477,6 @@ class TjfieldsHelper extends ContentHelper
 		$db->setQuery($query);
 		$extra_options = $db->loadObjectlist('id');
 
-		// Print_r($extra_options); die('asdasd');
 		return $extra_options;
 	}
 
