@@ -373,30 +373,12 @@ class TjfieldsHelper
 							$k++;
 
 							// Update the last index element of other options multi values
-							if (strpos($listfieldVale, ',') && $postFieldValueCount > 1 &&  $postFieldValueCount == $k)
+							if (in_array($field->type . 'othervalue', $fieldValue) && $postFieldValueCount > 1 &&  $postFieldValueCount == $k)
 							{
 								$fieldOtherVal = explode(',', $listfieldVale);
 
 								// Add prefix for other values for tjlist field
 								$fieldOtherVal = preg_filter('/^/', $field->type . ':-', $fieldOtherVal);
-								unset($fieldValue[$key]);
-							}
-							elseif (strpos($listfieldVale, ','))
-							{
-								// Check its actual option list values
-								$fieldOptionsVal = explode(',', $listfieldVale);
-
-								if ($postFieldValueCount == 1)
-								{
-									$fieldOptionsVal = array_filter(
-										$fieldOptionsVal,
-										function($val)
-										{
-											return $val != 'tjlistothervalue';
-										}
-									);
-								}
-
 								unset($fieldValue[$key]);
 							}
 							elseif (!in_array($listfieldVale, $otherValues))
@@ -446,9 +428,12 @@ class TjfieldsHelper
 			}
 			elseif (is_array($fieldValue))
 			{
-				if (strpos($fieldValue[0], ','))
+				if ($field->type != 'multi_select' && $field->type != 'single_select')
 				{
-					$fieldValue = explode(',', $fieldValue[0]);
+					if (strpos($fieldValue[0], ','))
+					{
+						$fieldValue = explode(',', $fieldValue[0]);
+					}
 				}
 
 				$this->saveMultiValuedFieldData($fieldValue, $field->client, $data['content_id'], $field->id, $fieldStoredValues);
@@ -507,6 +492,9 @@ class TjfieldsHelper
 				if ($fieldValue != '')
 				{
 					$fieldsValueTable->value = $fieldValue;
+
+					// Set option_id default zero
+					$fieldsValueTable->option_id = 0;
 					$fieldOptionTable->load(array('field_id' => $fieldId, 'value' => $fieldValue));
 
 					if ($fieldOptionTable->id)
@@ -534,6 +522,9 @@ class TjfieldsHelper
 			$fieldsValueTable->content_id = $contentId;
 			$fieldsValueTable->value = $fieldValue;
 			$fieldsValueTable->client = $client;
+
+			// Set option_id default zero
+			$fieldsValueTable->option_id = 0;
 
 			$fieldOptionTable->load(array('field_id' => $fieldId, 'value' => $fieldValue));
 

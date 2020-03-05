@@ -73,7 +73,7 @@ class JFormFieldformsourcefield extends JFormField
 		}
 
 		return JHtml::_('select.genericlist', $options, $this->name, 'class="inputbox required"',
-		'value', 'text', $this->value, $this->options['control'] . $this->name
+		'value', 'text', $this->value, $this->id, $this->name
 		);
 	}
 }
