@@ -2,13 +2,13 @@
 <form>
 	<fields name="params" label="COM_TJFIELDS_FIELD_BASIC_LABEL">
 		<fieldset name="params">
-			<field name="minrating" type="text" label="COM_TJFIELDS_FORM_LBL_RATING_MIN_RATING" description="COM_TJFIELDS_FORM_DESC_RATING_MIN_RATING" required="true"/>
-			<field name="maxrating" type="text" label="COM_TJFIELDS_FORM_LBL_RATING_MAX_RATING" description="COM_TJFIELDS_FORM_DESC_RATING_MAX_RATING" required="true" />
-			<field name="ratingstep" type="text" label="COM_TJFIELDS_FORM_LBL_RATING_RATING_STEP" description="COM_TJFIELDS_FORM_DESC_RATING_RATING_STEP"/>
+			<field name="minrating" type="number" label="COM_TJFIELDS_FORM_LBL_RATING_MIN_RATING" description="COM_TJFIELDS_FORM_DESC_RATING_MIN_RATING" required="true"/>
+			<field name="maxrating" type="number" label="COM_TJFIELDS_FORM_LBL_RATING_MAX_RATING" description="COM_TJFIELDS_FORM_DESC_RATING_MAX_RATING" required="true" />
+			<field name="ratingstep" type="number" label="COM_TJFIELDS_FORM_LBL_RATING_RATING_STEP" description="COM_TJFIELDS_FORM_DESC_RATING_RATING_STEP"/>
 			<field name="ratingstyle" type="list" label="COM_TJFIELDS_FORM_LBL_RATING_RATING_STYLE" description="COM_TJFIELDS_FORM_DESC_RATING_RATING_STYLE">
 				<option value="">COM_TJFIELDS_FORM_DESC_RATING_OPTION</option>
-				<option value="star">star</option>
-				<option value="heart">heart</option>
+				<option value="star">COM_TJFIELDS_FORM_RATING_OPTION_STAR</option>
+				<option value="heart">COM_TJFIELDS_FORM_RATING_OPTION_HEART</option>
 			</field>
 		</fieldset>
 	</fields>

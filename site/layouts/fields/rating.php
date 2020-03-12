@@ -2,7 +2,7 @@
 /**
  * @package	TJ-Fields
  * @author	 TechJoomla <extensions@techjoomla.com>
- * @copyright  Copyright (c) 2009-2019 TechJoomla. All rights reserved.
+ * @copyright  Copyright (c) 2009-2020 TechJoomla. All rights reserved.
  * @license	GNU General Public License version 2 or later; see LICENSE.txt
  */
 

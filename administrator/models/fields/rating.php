@@ -70,6 +70,7 @@ class JFormFieldRating extends JFormFieldRadio
 		$html = '';
 		$html .= '<fieldset id="' . $this->id . '" class=" rating ' . $this->ratingstyle . '">';
 
+		// Display rating as per min and max range
 		for ($rating = $this->maxrating; $rating >= $this->minrating; $rating--)
 		{
 			$checked = '';
@@ -79,21 +80,25 @@ class JFormFieldRating extends JFormFieldRadio
 				$checked = 'checked="checked"';
 			}
 
+			// Dislay Full Star
 			$html .= '<input type="radio" id="' . $this->id . $rating . '" name="' . $this->name . '" value="' . $rating . '"' . $checked .
 			' /><label class = "full" for="' . $this->id . $rating . '" title="' . $rating . $this->ratingstyle . '"></label>';
 
 			if ($this->ratingstep)
 			{
+				// Calculate Half star or heart value
 				$halfRating = ($this->ratingstep) / (2);
 				$ratingValue = $rating - $halfRating;
 
 				$checked = '';
 
+				// Display half rating value
 				if ($ratingValue == $this->value)
 				{
 					$checked = 'checked="checked"';
 				}
 
+				// Display Half star
 				$html .= '<input type="radio" id="' . $this->id . $ratingValue . '" name="' . $this->name . '" value="' . $ratingValue .
 				'"' . $checked . ' /><label class = "half" for="' . $this->id . $ratingValue . '" title="' . $ratingValue . $this->ratingstyle . '"></label>';
 			}
