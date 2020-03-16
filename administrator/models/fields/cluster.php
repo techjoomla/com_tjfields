@@ -48,6 +48,53 @@ class JFormFieldCluster extends JFormFieldList
 	protected $value = '';
 
 	/**
+	 * Method to attach a JForm object to the field.
+	 *
+	 * @param   SimpleXMLElement  $element  The SimpleXMLElement object representing the `<field>` tag for the form field object.
+	 * @param   mixed             $value    The form field value to validate.
+	 * @param   string            $group    The field name group control value. This acts as as an array container for the field.
+	 *                                      For example if the field has name="foo" and the group value is set to "bar" then the
+	 *                                      full field name would end up being "bar[foo]".
+	 *
+	 * @return  boolean  True on success.
+	 *
+	 * @see     JFormField::setup()
+	 * @since   DEPLOY_VERSION
+	 */
+	public function setup(SimpleXMLElement $element, $value, $group = null)
+	{
+		$return = parent::setup($element, $value, $group);
+
+		// If the field is required and we have only one option to select then dont need to how the option
+		if ($this->required)
+		{
+			$optionCount = 0;
+			$optionValue = "";
+
+			foreach ($this->options as $option)
+			{
+				if ($option->value)
+				{
+					$optionValue = $option->value;
+					$optionCount++;
+				}
+			}
+
+			if ($optionCount == 1)
+			{
+				$this->hidden = true;
+				$this->value = $optionValue;
+				$this->default = $optionValue;
+
+				// Render the field as hidden if only one option to select
+				echo "<input type='hidden' name='" . $this->name . "' id='" . $this->id ."' value='" . $this->value . "' />";
+			}
+		}
+
+		return $return;
+	}
+
+	/**
 	 * Method to get a list of options for cluster field.
 	 *
 	 * @return array An array of JHtml options.
