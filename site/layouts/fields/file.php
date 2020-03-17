@@ -41,11 +41,11 @@ if ($field->value)
 	$mediaLink = $tjFieldHelper->getMediaUrl($field->value, $extraParamArray);
 
 	// To get the file name from URL
-	$substrString = substr($mediaLink, strlen('fpht=') + strpos($mediaLink, 'fpht='));
-	$substrString = substr($substrString, 0, strpos($substrString, '='));
+	$urlObj = new JUri($mediaLink);
+	$encodedFileName = $urlObj->getVar('fpht');
 
 	// Decode the filename
-	$fileName = base64_decode($substrString);
+	$fileName = ($encodedFileName) ? base64_decode($encodedFileName) : '';
 
 	echo "<a href=" . $mediaLink . ">" . JText::_("COM_TJFIELDS_FILE_DOWNLOAD") . "</a>";
 
@@ -53,16 +53,7 @@ if ($field->value)
 	if (!empty($fileName))
 	{
 		$fileTitle = substr($fileName, strpos($fileName, '_', 12) + 1);
-		$fileTitleString = explode(".", $fileTitle);
-		$displayTitle = substr("$fileTitleString[1]", 0, 3);
 
-		if ($displayTitle == "png")
-		{
-			echo '<strong class = "ml-15"> ' . $fileTitleString[0] . ".png " . '</strong>';
-		}
-		else
-		{
-			echo '<strong class = "ml-15"> ' . $fileTitle . '</strong>';
-		}
+		echo '<div><strong class = "ml-15"> ' . $fileTitle . '</strong></div>';
 	}
 }

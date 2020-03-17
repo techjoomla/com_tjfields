@@ -82,12 +82,12 @@ class JFormFieldCluster extends JFormFieldList
 
 			if ($optionCount == 1)
 			{
-				$this->hidden = true;
+				//$this->hidden = true;
 				$this->value = $optionValue;
 				$this->default = $optionValue;
 
 				// Render the field as hidden if only one option to select
-				echo "<input type='hidden' name='" . $this->name . "' id='" . $this->id ."' value='" . $this->value . "' />";
+				//echo "<input type='hidden' name='" . $this->name . "' id='" . $this->id ."' value='" . $this->value . "' />";
 			}
 		}
 
@@ -123,14 +123,34 @@ class JFormFieldCluster extends JFormFieldList
 			return $options;
 		}
 
+		JLoader::import("/components/com_subusers/includes/rbacl", JPATH_ADMINISTRATOR);
 		JLoader::import("/components/com_cluster/includes/cluster", JPATH_ADMINISTRATOR);
-		$clusterUserModel = ClusterFactory::model('ClusterUser', array('ignore_request' => true));
-		$clusters = $clusterUserModel->getUsersClusters($user->id);
+		$clustersModel = ClusterFactory::model('Clusters', array('ignore_request' => true));
+		$clusters = $clustersModel->getItems();
+		$usersClusters = array();
+
+		if (!empty($clusters))
+		{
+			foreach ($clusters as $clusterList)
+			{
+				if (RBACL::check(JFactory::getUser()->id, 'com_cluster', 'core.edititem', $clusterList->id) || RBACL::check(JFactory::getUser()->id, 'com_cluster', 'core.editallitem'))
+				{
+					if (!empty($clusterList->id))
+					{
+						$clusterObj = new stdclass;
+						$clusterObj->text = $clusterList->name;
+						$clusterObj->value = $clusterList->id;
+
+						$usersClusters[] = $clusterObj;
+					}
+				}
+			}
+		}
 
 		// Create oprion for each cluster
-		foreach ($clusters as $cluster)
+		foreach ($usersClusters as $cluster)
 		{
-			$options[] = HTMLHelper::_('select.option', $cluster->cluster_id, trim($cluster->name));
+			$options[] = HTMLHelper::_('select.option', $cluster->value, trim($cluster->text));
 		}
 
 		if (!$this->loadExternally)
