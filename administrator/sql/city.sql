@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS `#__tj_city` (
 -- Dumping data for table `#__tj_city`
 --
 
-INSERT INTO `#__tj_city` (`id`, `city`, `country_id`, `region_id`, `city_jtext`, `zip`, `ordering`, `com_jgive`, `com_jticketing`, `com_quick2cart`, `com_socialads`, `com_tjlms`, `com_tjvendors`) VALUES
+INSERT IGNORE INTO `#__tj_city` (`id`, `city`, `country_id`, `region_id`, `city_jtext`, `zip`, `ordering`, `com_jgive`, `com_jticketing`, `com_quick2cart`, `com_socialads`, `com_tjlms`, `com_tjvendors`) VALUES
 (2, 'les Escaldes', 5, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (3, 'Andorra la Vella', 5, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (4, 'Umm al Qaywayn', 221, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
@@ -935,7 +935,8 @@ INSERT INTO `#__tj_city` (`id`, `city`, `country_id`, `region_id`, `city_jtext`,
 (908, 'Pazardzhik', 33, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (909, 'Panagyurishte', 33, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (910, 'Nova Zagora', 33, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
-(911, 'Montana', 33, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
+(911, 'Montana', 33, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1);
+INSERT INTO `#__tj_city` (`id`, `city`, `country_id`, `region_id`, `city_jtext`, `zip`, `ordering`, `com_jgive`, `com_jticketing`, `com_quick2cart`, `com_socialads`, `com_tjlms`, `com_tjvendors`) VALUES
 (912, 'Lovech', 33, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (913, 'Lom', 33, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (914, 'Kyustendil', 33, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
@@ -1807,7 +1808,8 @@ INSERT INTO `#__tj_city` (`id`, `city`, `country_id`, `region_id`, `city_jtext`,
 (1780, 'Ivoti', 30, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (1781, 'Ituverava', 30, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (1782, 'Iturama', 30, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
-(1783, 'Itupeva', 30, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
+(1783, 'Itupeva', 30, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1);
+INSERT INTO `#__tj_city` (`id`, `city`, `country_id`, `region_id`, `city_jtext`, `zip`, `ordering`, `com_jgive`, `com_jticketing`, `com_quick2cart`, `com_socialads`, `com_tjlms`, `com_tjvendors`) VALUES
 (1784, 'Itumbiara', 30, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (1785, 'Ituiutaba', 30, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (1786, 'Itubera', 30, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
@@ -2689,7 +2691,8 @@ INSERT INTO `#__tj_city` (`id`, `city`, `country_id`, `region_id`, `city_jtext`,
 (2662, 'Zuerich (Kreis 3) / Sihlfeld', 204, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (2663, 'Zuerich (Kreis 6) / Unterstrass', 204, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (2664, 'Zuerich (Kreis 9) / Albisrieden', 204, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
-(2665, 'Zuerich (Kreis 9) / Altstetten', 204, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
+(2665, 'Zuerich (Kreis 9) / Altstetten', 204, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1);
+INSERT INTO `#__tj_city` (`id`, `city`, `country_id`, `region_id`, `city_jtext`, `zip`, `ordering`, `com_jgive`, `com_jticketing`, `com_quick2cart`, `com_socialads`, `com_tjlms`, `com_tjvendors`) VALUES
 (2666, 'Stadt Winterthur (Kreis 1)', 204, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (2667, 'Zuerich (Kreis 12)', 204, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (2668, 'Seen (Kreis 3)', 204, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
@@ -3603,7 +3606,8 @@ INSERT INTO `#__tj_city` (`id`, `city`, `country_id`, `region_id`, `city_jtext`,
 (3576, 'Lingyuan', 44, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (3577, 'Lingdong', 44, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (3578, 'Liaozhong', 44, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
-(3579, 'Liaoyuan', 44, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
+(3579, 'Liaoyuan', 44, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1);
+INSERT INTO `#__tj_city` (`id`, `city`, `country_id`, `region_id`, `city_jtext`, `zip`, `ordering`, `com_jgive`, `com_jticketing`, `com_quick2cart`, `com_socialads`, `com_tjlms`, `com_tjvendors`) VALUES
 (3580, 'Liaoyang', 44, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (3581, 'Lanxi', 44, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (3582, 'Langxiang', 44, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
@@ -4493,7 +4497,8 @@ INSERT INTO `#__tj_city` (`id`, `city`, `country_id`, `region_id`, `city_jtext`,
 (4466, 'Ottobrunn', 81, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (4467, 'Osterholz-Scharmbeck', 81, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (4468, 'Osnabruck', 81, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
-(4469, 'Oschersleben', 81, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
+(4469, 'Oschersleben', 81, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1);
+INSERT INTO `#__tj_city` (`id`, `city`, `country_id`, `region_id`, `city_jtext`, `zip`, `ordering`, `com_jgive`, `com_jticketing`, `com_quick2cart`, `com_socialads`, `com_tjlms`, `com_tjvendors`) VALUES
 (4470, 'Oschatz', 81, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (4471, 'Oranienburg', 81, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (4472, 'Opladen', 81, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
@@ -5370,7 +5375,8 @@ INSERT INTO `#__tj_city` (`id`, `city`, `country_id`, `region_id`, `city_jtext`,
 (5343, 'Freha', 3, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (5344, 'Feraoun', 3, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (5345, 'Es Senia', 3, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
-(5346, 'El Malah', 3, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
+(5346, 'El Malah', 3, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1);
+INSERT INTO `#__tj_city` (`id`, `city`, `country_id`, `region_id`, `city_jtext`, `zip`, `ordering`, `com_jgive`, `com_jticketing`, `com_quick2cart`, `com_socialads`, `com_tjlms`, `com_tjvendors`) VALUES
 (5347, 'El Kseur', 3, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (5348, 'El Khroub', 3, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (5349, 'El Kala', 3, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
@@ -6239,7 +6245,8 @@ INSERT INTO `#__tj_city` (`id`, `city`, `country_id`, `region_id`, `city_jtext`,
 (6212, 'Mek''ele', 68, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (6213, 'Maych''ew', 68, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (6214, 'Korem', 68, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
-(6215, 'K''olito', 68, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
+(6215, 'K''olito', 68, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1);
+INSERT INTO `#__tj_city` (`id`, `city`, `country_id`, `region_id`, `city_jtext`, `zip`, `ordering`, `com_jgive`, `com_jticketing`, `com_quick2cart`, `com_socialads`, `com_tjlms`, `com_tjvendors`) VALUES
 (6216, 'Kibre Mengist', 68, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (6217, 'Kemise', 68, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (6218, 'Kombolcha', 68, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
@@ -7111,7 +7118,8 @@ INSERT INTO `#__tj_city` (`id`, `city`, `country_id`, `region_id`, `city_jtext`,
 (7084, 'Selby', 222, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (7085, 'Seaham', 222, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (7086, 'Seaford', 222, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
-(7087, 'Scunthorpe', 222, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
+(7087, 'Scunthorpe', 222, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1);
+INSERT INTO `#__tj_city` (`id`, `city`, `country_id`, `region_id`, `city_jtext`, `zip`, `ordering`, `com_jgive`, `com_jticketing`, `com_quick2cart`, `com_socialads`, `com_tjlms`, `com_tjvendors`) VALUES
 (7088, 'Scarborough', 222, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (7089, 'Sandown', 222, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (7090, 'Sandbach', 222, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
@@ -7991,7 +7999,8 @@ INSERT INTO `#__tj_city` (`id`, `city`, `country_id`, `region_id`, `city_jtext`,
 (7964, 'Thomazeau', 93, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (7965, 'Saint-Raphael', 93, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (7966, 'Saint-Marc', 93, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
-(7967, 'Port-au-Prince', 93, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
+(7967, 'Port-au-Prince', 93, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1);
+INSERT INTO `#__tj_city` (`id`, `city`, `country_id`, `region_id`, `city_jtext`, `zip`, `ordering`, `com_jgive`, `com_jticketing`, `com_quick2cart`, `com_socialads`, `com_tjlms`, `com_tjvendors`) VALUES
 (7968, 'Petit Goave', 93, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (7969, 'Petionville', 93, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (7970, 'Miragoane', 93, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
@@ -8879,7 +8888,8 @@ INSERT INTO `#__tj_city` (`id`, `city`, `country_id`, `region_id`, `city_jtext`,
 (8852, 'Sirsi', 99, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (8853, 'Sirsaganj', 99, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (8854, 'Sirsa', 99, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
-(8855, 'Sironj', 99, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
+(8855, 'Sironj', 99, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1);
+INSERT INTO `#__tj_city` (`id`, `city`, `country_id`, `region_id`, `city_jtext`, `zip`, `ordering`, `com_jgive`, `com_jticketing`, `com_quick2cart`, `com_socialads`, `com_tjlms`, `com_tjvendors`) VALUES
 (8856, 'Sirohi', 99, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (8857, 'Sirkazhi', 99, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (8858, 'Sirhind', 99, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
@@ -9786,7 +9796,8 @@ INSERT INTO `#__tj_city` (`id`, `city`, `country_id`, `region_id`, `city_jtext`,
 (9759, 'Kinwat', 99, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (9760, 'Kichha', 99, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (9761, 'Khutar', 99, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
-(9762, 'Khurja', 99, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
+(9762, 'Khurja', 99, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1);
+INSERT INTO `#__tj_city` (`id`, `city`, `country_id`, `region_id`, `city_jtext`, `zip`, `ordering`, `com_jgive`, `com_jticketing`, `com_quick2cart`, `com_socialads`, `com_tjlms`, `com_tjvendors`) VALUES
 (9763, 'Khurda', 99, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (9764, 'Khurai', 99, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (9765, 'Khunti', 99, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
@@ -10682,7 +10693,8 @@ INSERT INTO `#__tj_city` (`id`, `city`, `country_id`, `region_id`, `city_jtext`,
 (10655, 'Bareilly', 99, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (10656, 'Bardoli', 99, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (10657, 'Barddhaman', 99, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
-(10658, 'Bar Bigha', 99, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
+(10658, 'Bar Bigha', 99, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1);
+INSERT INTO `#__tj_city` (`id`, `city`, `country_id`, `region_id`, `city_jtext`, `zip`, `ordering`, `com_jgive`, `com_jticketing`, `com_quick2cart`, `com_socialads`, `com_tjlms`, `com_tjvendors`) VALUES
 (10659, 'Baraut', 99, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (10660, 'Barauli', 99, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (10661, 'Barasat', 99, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
@@ -11548,7 +11560,8 @@ INSERT INTO `#__tj_city` (`id`, `city`, `country_id`, `region_id`, `city_jtext`,
 (11521, 'Osimo', 105, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (11522, 'Orvieto', 105, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (11523, 'Ortona', 105, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
-(11524, 'Orta Nova', 105, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
+(11524, 'Orta Nova', 105, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1);
+INSERT INTO `#__tj_city` (`id`, `city`, `country_id`, `region_id`, `city_jtext`, `zip`, `ordering`, `com_jgive`, `com_jticketing`, `com_quick2cart`, `com_socialads`, `com_tjlms`, `com_tjvendors`) VALUES
 (11525, 'Oria', 105, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (11526, 'Orbassano', 105, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (11527, 'Omegna', 105, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
@@ -12420,7 +12433,8 @@ INSERT INTO `#__tj_city` (`id`, `city`, `country_id`, `region_id`, `city_jtext`,
 (12393, 'Hino', 107, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (12394, 'Himi', 107, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (12395, 'Himeji', 107, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
-(12396, 'Hikone', 107, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
+(12396, 'Hikone', 107, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1);
+INSERT INTO `#__tj_city` (`id`, `city`, `country_id`, `region_id`, `city_jtext`, `zip`, `ordering`, `com_jgive`, `com_jticketing`, `com_quick2cart`, `com_socialads`, `com_tjlms`, `com_tjvendors`) VALUES
 (12397, 'Hiji', 107, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (12398, 'Hekinan', 107, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (12399, 'Hayama', 107, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
@@ -13300,7 +13314,8 @@ INSERT INTO `#__tj_city` (`id`, `city`, `country_id`, `region_id`, `city_jtext`,
 (13273, 'Khemisset', 144, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (13274, 'Ahfir', 144, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (13275, 'Agadir', 144, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
-(13276, 'Skhirat', 144, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
+(13276, 'Skhirat', 144, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1);
+INSERT INTO `#__tj_city` (`id`, `city`, `country_id`, `region_id`, `city_jtext`, `zip`, `ordering`, `com_jgive`, `com_jticketing`, `com_quick2cart`, `com_socialads`, `com_tjlms`, `com_tjvendors`) VALUES
 (13277, 'Boujniba', 144, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (13278, 'Monte-Carlo', 141, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (13279, 'Monaco', 141, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
@@ -14129,7 +14144,8 @@ INSERT INTO `#__tj_city` (`id`, `city`, `country_id`, `region_id`, `city_jtext`,
 (14102, 'Kuala Terengganu', 129, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (14103, 'Marang', 129, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (14104, 'Tampin', 129, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
-(14105, 'Alor Gajah', 129, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
+(14105, 'Alor Gajah', 129, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1);
+INSERT INTO `#__tj_city` (`id`, `city`, `country_id`, `region_id`, `city_jtext`, `zip`, `ordering`, `com_jgive`, `com_jticketing`, `com_quick2cart`, `com_socialads`, `com_tjlms`, `com_tjvendors`) VALUES
 (14106, 'Kampung Ayer Keroh', 129, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (14107, 'Sungai Udang', 129, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (14108, 'Melaka', 129, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
@@ -15001,7 +15017,8 @@ INSERT INTO `#__tj_city` (`id`, `city`, `country_id`, `region_id`, `city_jtext`,
 (14974, 'Chepen', 167, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (14975, 'Chachapoyas', 167, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (14976, 'Catacaos', 167, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
-(14977, 'Cajamarca', 167, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
+(14977, 'Cajamarca', 167, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1);
+INSERT INTO `#__tj_city` (`id`, `city`, `country_id`, `region_id`, `city_jtext`, `zip`, `ordering`, `com_jgive`, `com_jticketing`, `com_quick2cart`, `com_socialads`, `com_tjlms`, `com_tjvendors`) VALUES
 (14978, 'Bellavista', 167, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (14979, 'Bagua Grande', 167, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (14980, 'La Breita', 167, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
@@ -15873,7 +15890,8 @@ INSERT INTO `#__tj_city` (`id`, `city`, `country_id`, `region_id`, `city_jtext`,
 (15846, 'Nowy Dwor Mazowiecki', 170, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (15847, 'Nisko', 170, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (15848, 'Mragowo', 170, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
-(15849, 'Mlawa', 170, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
+(15849, 'Mlawa', 170, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1);
+INSERT INTO `#__tj_city` (`id`, `city`, `country_id`, `region_id`, `city_jtext`, `zip`, `ordering`, `com_jgive`, `com_jticketing`, `com_quick2cart`, `com_socialads`, `com_tjlms`, `com_tjvendors`) VALUES
 (15850, 'Minsk Mazowiecki', 170, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (15851, 'Milanowek', 170, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (15852, 'Mielec', 170, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
@@ -16734,7 +16752,8 @@ INSERT INTO `#__tj_city` (`id`, `city`, `country_id`, `region_id`, `city_jtext`,
 (16707, 'Rodniki', 176, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (16708, 'Revda', 176, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (16709, 'Reutov', 176, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
-(16710, 'Razumnoye', 176, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
+(16710, 'Razumnoye', 176, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1);
+INSERT INTO `#__tj_city` (`id`, `city`, `country_id`, `region_id`, `city_jtext`, `zip`, `ordering`, `com_jgive`, `com_jticketing`, `com_quick2cart`, `com_socialads`, `com_tjlms`, `com_tjvendors`) VALUES
 (16711, 'Rayevskiy', 176, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (16712, 'Rasskazovo', 176, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (16713, 'Pyatigorsk', 176, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
@@ -17592,7 +17611,8 @@ INSERT INTO `#__tj_city` (`id`, `city`, `country_id`, `region_id`, `city_jtext`,
 (17564, 'Varnamo', 203, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (17565, 'Varberg', 203, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (17566, 'Vanersborg', 203, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
-(17567, 'Vallentuna', 203, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
+(17567, 'Vallentuna', 203, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1);
+INSERT INTO `#__tj_city` (`id`, `city`, `country_id`, `region_id`, `city_jtext`, `zip`, `ordering`, `com_jgive`, `com_jticketing`, `com_quick2cart`, `com_socialads`, `com_tjlms`, `com_tjvendors`) VALUES
 (17568, 'Uppsala', 203, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (17569, 'Upplands Vaesby', 203, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (17570, 'Uddevalla', 203, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
@@ -18460,7 +18480,8 @@ INSERT INTO `#__tj_city` (`id`, `city`, `country_id`, `region_id`, `city_jtext`,
 (18432, 'Darende', 215, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (18433, 'Cumra', 215, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (18434, 'Cumaovasi', 215, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
-(18435, 'Hakkari', 215, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
+(18435, 'Hakkari', 215, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1);
+INSERT INTO `#__tj_city` (`id`, `city`, `country_id`, `region_id`, `city_jtext`, `zip`, `ordering`, `com_jgive`, `com_jticketing`, `com_quick2cart`, `com_socialads`, `com_tjlms`, `com_tjvendors`) VALUES
 (18436, 'Cizre', 215, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (18437, 'Cine', 215, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (18438, 'Ceylanpinar', 215, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
@@ -19330,7 +19351,8 @@ INSERT INTO `#__tj_city` (`id`, `city`, `country_id`, `region_id`, `city_jtext`,
 (19302, 'Hollywood', 223, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (19303, 'Homestead', 223, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (19304, 'Immokalee', 223, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
-(19305, 'Iona', 223, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
+(19305, 'Iona', 223, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1);
+INSERT INTO `#__tj_city` (`id`, `city`, `country_id`, `region_id`, `city_jtext`, `zip`, `ordering`, `com_jgive`, `com_jticketing`, `com_quick2cart`, `com_socialads`, `com_tjlms`, `com_tjvendors`) VALUES
 (19306, 'Ives Estates', 223, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (19307, 'Jacksonville', 223, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (19308, 'Jacksonville Beach', 223, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
@@ -20181,7 +20203,8 @@ INSERT INTO `#__tj_city` (`id`, `city`, `country_id`, `region_id`, `city_jtext`,
 (20153, 'Rockwall', 223, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (20154, 'Rosenberg', 223, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (20155, 'Round Rock', 223, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
-(20156, 'Rowlett', 223, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
+(20156, 'Rowlett', 223, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1);
+INSERT INTO `#__tj_city` (`id`, `city`, `country_id`, `region_id`, `city_jtext`, `zip`, `ordering`, `com_jgive`, `com_jticketing`, `com_quick2cart`, `com_socialads`, `com_tjlms`, `com_tjvendors`) VALUES
 (20157, 'Sachse', 223, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (20158, 'Saginaw', 223, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (20159, 'San Antonio', 223, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
@@ -21036,7 +21059,8 @@ INSERT INTO `#__tj_city` (`id`, `city`, `country_id`, `region_id`, `city_jtext`,
 (21008, 'Medford', 223, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (21009, 'Melville', 223, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (21010, 'Merrick', 223, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
-(21011, 'Middletown', 223, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
+(21011, 'Middletown', 223, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1);
+INSERT INTO `#__tj_city` (`id`, `city`, `country_id`, `region_id`, `city_jtext`, `zip`, `ordering`, `com_jgive`, `com_jticketing`, `com_quick2cart`, `com_socialads`, `com_tjlms`, `com_tjvendors`) VALUES
 (21012, 'Mineola', 223, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (21013, 'Monsey', 223, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (21014, 'Mount Vernon', 223, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
@@ -21890,7 +21914,8 @@ INSERT INTO `#__tj_city` (`id`, `city`, `country_id`, `region_id`, `city_jtext`,
 (21862, 'Sherwood', 223, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (21863, 'Springfield', 223, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (21864, 'Tigard', 223, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
-(21865, 'Troutdale', 223, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
+(21865, 'Troutdale', 223, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1);
+INSERT INTO `#__tj_city` (`id`, `city`, `country_id`, `region_id`, `city_jtext`, `zip`, `ordering`, `com_jgive`, `com_jticketing`, `com_quick2cart`, `com_socialads`, `com_tjlms`, `com_tjvendors`) VALUES
 (21866, 'Tualatin', 223, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (21867, 'West Linn', 223, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
 (21868, 'Wilsonville', 223, 0, NULL, NULL, 0, 1, 1, 1, 1, 1, 1),
