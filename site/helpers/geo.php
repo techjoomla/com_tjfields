@@ -480,4 +480,45 @@ class TjGeoHelper
 			return false;
 		}
 	}
+	
+	/**
+	 * Method gives city name ( for current language if exist) from  city Id.
+	 *
+	 * @param   string  $cityId  id of city
+	 *
+	 * @return  string  City Name
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	public function getCityNameFromId($cityId)
+	{
+		$db    = JFactory::getDbo();
+		$query = $db->getQuery(true);
+		$query->select($db->quoteName(array('city','city_jtext')));
+		$query->from($db->quoteName('#__tj_city'));
+
+		if ($cityId)
+		{
+			$query->where($db->quoteName('id') . '=' . (int) $cityId);
+		}
+
+		$db->setQuery($query);
+		$res = $db->loadObject();
+
+		// Get jtext value.
+		if (!empty($res->city_jtext))
+		{
+			$jtext = $this->getCityJText($res->city_jtext);
+
+			if ($jtext)
+			{
+				return $jtext;
+			}
+		}
+
+		if (!empty($res->city))
+		{
+			return $res->city;
+		}
+	}
 }
