@@ -79,6 +79,7 @@ class JFormFieldtjfieldfields extends JFormFieldList
 		$options[] = JHtml::_('select.option', 'itemcategory', JText::_('COM_TJFIELDS_ITEM_CATEGORY'));
 		$options[] = JHtml::_('select.option', 'number', JText::_('COM_TJFIELDS_NUMBER'));
 		$options[] = JHtml::_('select.option', 'hidden', JText::_('COM_TJFIELDS_HIDDEN'));
+		$options[] = JHtml::_('select.option', 'rating', JText::_('COM_TJFIELDS_RATING'));
 
 		if ($installUcm === 1)
 		{
