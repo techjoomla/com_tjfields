@@ -10,18 +10,18 @@
 
 defined('_JEXEC') or die( 'Restricted access');
 jimport('joomla.plugin.plugin');
-
+use Joomla\CMS\Factory;
 /**
  * Base Class for api plugin
  *
- * @package     JGive
+ * @package     Tjfields
  * @subpackage  component
  * @since       __DEPLOY_VERSION__
  */
 class PlgAPITjfields extends ApiPlugin
 {
 	/**
-	 * JGive api plugin to load com_api classes
+	 * Tjfields api plugin to load com_api classes
 	 *
 	 * @param   string  $subject  The object to observe
 	 * @param   array   $config   An optional associative array of configuration settings.
@@ -34,7 +34,7 @@ class PlgAPITjfields extends ApiPlugin
 		ApiResource::addIncludePath(dirname(__FILE__) . '/tjfields');
 
 		// Load language files
-		$lang = JFactory::getLanguage();
+		$lang = Factory::getLanguage();
 		$lang->load('plg_api_tjfields', JPATH_ADMINISTRATOR, '', true);
 		$lang->load('com_tjfields', JPATH_SITE, '', true);
 	}
