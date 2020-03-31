@@ -13,6 +13,8 @@ jimport('joomla.plugin.plugin');
 
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+
 /**
  * Class for getting Countries
  *
@@ -31,7 +33,6 @@ class TjfieldsApiResourceCountries extends ApiResource
 	 */
 	public function get()
 	{
-		$user = Factory::getUser();
 		$input    = Factory::getApplication()->input;
 		$result = new stdClass;
 		$result->results = array();

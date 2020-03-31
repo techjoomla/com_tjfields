@@ -33,7 +33,6 @@ class TjfieldsApiResourceCities extends ApiResource
 	 */
 	public function get()
 	{
-		$user = Factory::getUser();
 		$input    = Factory::getApplication()->input;
 		$id = $input->getInt('country_id', 0);
 		$result = new stdClass;
