@@ -9,7 +9,6 @@
  */
 
 defined('_JEXEC') or die;
-jimport('joomla.plugin.plugin');
 
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Factory;
@@ -31,22 +30,22 @@ class TjfieldsApiResourceCountries extends ApiResource
 	 *
 	 * @since   _DEPLOY_VERSION_
 	 */
-	public function get()
+	public function post()
 	{
-		$input    = Factory::getApplication()->input;
-		$result = new stdClass;
+		$input           = Factory::getApplication()->input;
+		$result          = new stdClass;
 		$result->results = array();
 
 		$limitstart = $input->get('limitstart', 0, 'INT');
-		$limit = $input->get('limit', 0, 'INT');
+		$limit      = $input->get('limit', 0, 'INT');
 
 		BaseDatabaseModel::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_tjfields/models');
-		$countriesModel = BaseDatabaseModel::getInstance('Countries', 'TjfieldsModel', array('ignore_request' => true));
+		$countriesModel  = BaseDatabaseModel::getInstance('Countries', 'TjfieldsModel', array('ignore_request' => true));
 		$countriesModel->setState('filter.search', $input->get('search', '', 'STRING'));
 		$countriesModel->setState('list.start', $limitstart);
 		$countriesModel->setState('list.limit', $limit);
-		$this->items = $countriesModel->getItems();
-		$result->total = $countriesModel->getTotal();
+		$this->items     = $countriesModel->getItems();
+		$result->total   = $countriesModel->getTotal();
 
 		if (empty($this->items))
 		{

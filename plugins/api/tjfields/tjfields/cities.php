@@ -9,7 +9,6 @@
  */
 
 defined('_JEXEC') or die;
-jimport('joomla.plugin.plugin');
 
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Factory;
@@ -31,11 +30,11 @@ class TjfieldsApiResourceCities extends ApiResource
 	 *
 	 * @since   _DEPLOY_VERSION_
 	 */
-	public function get()
+	public function post()
 	{
-		$input    = Factory::getApplication()->input;
-		$id = $input->getInt('country_id', 0);
-		$result = new stdClass;
+		$input           = Factory::getApplication()->input;
+		$id              = $input->getInt('country_id', 0);
+		$result          = new stdClass;
 		$result->results = array();
 
 		if (empty($id))
@@ -44,15 +43,15 @@ class TjfieldsApiResourceCities extends ApiResource
 		}
 
 		$limitstart = $input->get('limitstart', 0, 'INT');
-		$limit = $input->get('limit', 0, 'INT');
+		$limit      = $input->get('limit', 0, 'INT');
 
 		BaseDatabaseModel::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_tjfields/models');
-		$cities = BaseDatabaseModel::getInstance('Cities', 'TjfieldsModel', array('ignore_request' => true));
+		$cities          = BaseDatabaseModel::getInstance('Cities', 'TjfieldsModel', array('ignore_request' => true));
 		$cities->setState('filter.country', $id);
 		$cities->setState('filter.search', $input->get('search', '', 'STRING'));
 		$cities->setState('list.start', $limitstart);
 		$cities->setState('list.limit', $limit);
-		$this->items = $cities->getItems();
+		$this->items     = $cities->getItems();
 
 		if (empty($this->items))
 		{
@@ -62,7 +61,7 @@ class TjfieldsApiResourceCities extends ApiResource
 			return;
 		}
 
-		$result->total = $cities->getTotal();
+		$result->total   = $cities->getTotal();
 		$result->results = $this->items;
 		$this->plugin->setResponse($result);
 	}

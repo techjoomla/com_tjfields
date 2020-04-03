@@ -9,7 +9,7 @@
  */
 
 defined('_JEXEC') or die( 'Restricted access');
-jimport('joomla.plugin.plugin');
+
 use Joomla\CMS\Factory;
 /**
  * Base Class for api plugin
