@@ -39,6 +39,9 @@ class com_tjfieldsInstallerScript
 		'plugins'=>array(
 			'privacy'=>array(
 				'tjfields'=>1,
+			),
+			'api' => array(
+				'tjfields' => 1
 			)
 		)
 	);
@@ -53,6 +56,9 @@ class com_tjfieldsInstallerScript
 		'plugins'=>array(
 			'privacy'=>array(
 				'tjfields'=>1
+			),
+			'api' => array(
+				'tjfields' => 1
 			)
 		)
 	);
