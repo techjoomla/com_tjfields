@@ -360,6 +360,12 @@ class TjfieldsHelper
 
 				if (is_array($fieldValue))
 				{
+					// TODO:- To save data of tjlist in case of auto save - eliminate if possible
+					if (strpos($fieldValue[0], ','))
+					{
+						$fieldValue = explode(',', $fieldValue[0]);
+					}
+
 					if ($tjListParams->other)
 					{
 						$fieldOtherVal = $fieldOptionsVal = array();
@@ -416,7 +422,6 @@ class TjfieldsHelper
 				elseif (!empty($fieldValue))
 				{
 					// Check other option enable for tjlist field
-
 					if ($tjListParams->other && !in_array($fieldValue, $otherValues))
 					{
 						// Add prefix for other values for tjlist field
@@ -428,14 +433,6 @@ class TjfieldsHelper
 			}
 			elseif (is_array($fieldValue))
 			{
-				if ($field->type != 'multi_select' && $field->type != 'single_select')
-				{
-					if (strpos($fieldValue[0], ','))
-					{
-						$fieldValue = explode(',', $fieldValue[0]);
-					}
-				}
-
 				$this->saveMultiValuedFieldData($fieldValue, $field->client, $data['content_id'], $field->id, $fieldStoredValues);
 			}
 			else
