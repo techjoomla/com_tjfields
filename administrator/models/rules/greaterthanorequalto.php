@@ -11,13 +11,14 @@ defined('_JEXEC') or die;
 
 use Joomla\Registry\Registry;
 use Joomla\String\StringHelper;
+use Joomla\CMS\Form\Rule\NumberRule;
 
 /**
  * JFormRule for com_tjfields to make sure the email address is not blocked.
  *
  * @since  1.6
  */
-class JFormRuleGreaterThanOrEqualTo extends JFormRule
+class JFormRuleGreaterThanOrEqualTo extends NumberRule
 {
 	/**
 	 * Method to test for value of the field greater than the given field
@@ -34,6 +35,12 @@ class JFormRuleGreaterThanOrEqualTo extends JFormRule
 	 */
 	public function test(SimpleXMLElement $element, $value, $group = null, Registry $input = null, JForm $form = null)
 	{
+		// Check the basic validations
+		if (!parent::test($element, $value, $group, $input, $form))
+		{
+			return false;
+		}
+
 		$field = (string) $element['field'];
 
 		// Check that a validation field is set.

@@ -47,13 +47,11 @@ if ($field->value)
 	// Decode the filename
 	$fileName = ($encodedFileName) ? base64_decode($encodedFileName) : '';
 
-	echo "<a href=" . $mediaLink . ">" . JText::_("COM_TJFIELDS_FILE_DOWNLOAD") . "</a>";
-
 	// To display the file name if exist and skip the prepended file name value
 	if (!empty($fileName))
 	{
 		$fileTitle = substr($fileName, strpos($fileName, '_', 12) + 1);
 
-		echo '<div><strong class = "ml-15"> ' . $fileTitle . '</strong></div>';
+		echo "<div><strong class='ml-15'><a href=" . $mediaLink . ">" . $fileTitle . "</a></strong></div>";
 	}
 }
