@@ -12,7 +12,7 @@
 				<option value="0">JNO</option>
 				<option value="1">JYES</option>
 			</field>
-			<field name="validate" type="list" default="" label="COM_TJFIELDS_FORM_LBL_FIELD_COMPARE_WITH_FIELD_LOGIC" description="COM_TJFIELDS_FORM_DESC_FIELD_COMPARE_WITH_FIELD_LOGIC" showon="compare:1">
+			<field name="validate" type="list" default="number" label="COM_TJFIELDS_FORM_LBL_FIELD_COMPARE_WITH_FIELD_LOGIC" description="COM_TJFIELDS_FORM_DESC_FIELD_COMPARE_WITH_FIELD_LOGIC" showon="compare:1">
 				<option value="">COM_TJFIELDS_FORM_DESC_FIELD_COMPARE_WITH_FIELD_LOGIC</option>
 				<option value="greaterthan">COM_TJFIELDS_FORM_FIELD_COMPARE_WITH_FIELD_LOGIC_GREATER</option>
 				<option value="greaterthanorequalto">COM_TJFIELDS_FORM_FIELD_COMPARE_WITH_FIELD_LOGIC_GREATER_THAN_OR_EQUAL</option>
