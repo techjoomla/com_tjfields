@@ -52,7 +52,17 @@ if ($field->value)
 	else
 	{
 		HTMLHelper::script('media/com_tjfields/js/ui/file.js');
-		$mediaLink = base64_encode($mediaLink);
+		$extension = end(explode('.', $fileTitle));
+
+		if (in_array($extension, array('ppt', 'pptx', 'doc', 'docx', 'xls', 'xlsx', 'pps', 'ppsx')))
+		{
+			$mediaLink = 'https://view.officeapps.live.com/op/embed.aspx?src=' . $mediaLink;
+		}
+		else
+		{
+			$mediaLink = 'https://docs.google.com/gview?url=' . $mediaLink . '&embedded=true';
+		}
+
 		echo '<div><strong class="ml-15"><a onclick="tjFieldsFileField.previewMedia(\'' . $mediaLink . '\');">' . $fileTitle . '</a></strong></div>';
 	}
 }
