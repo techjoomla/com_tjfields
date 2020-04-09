@@ -23,7 +23,8 @@ $xmlField = $displayData['fieldXml'];
 $field = $displayData['field'];
 $isSubFormField = (isset($displayData['isSubFormField'])) ? $displayData['isSubFormField'] : 0;
 $subFormFileFieldId = (isset($displayData['subFormFileFieldId'])) ? $displayData['subFormFileFieldId'] : 0;
-$renderer = $xmlField['renderer']->__toString();
+
+$renderer = ($xmlField['renderer'] instanceof SimpleXMLElement) ? $xmlField['renderer']->__toString() : 'download';
 
 if ($field->value)
 {
