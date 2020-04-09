@@ -709,21 +709,23 @@ class TjfieldsHelper
 		// Add htaccess file in the folder where the file is uploaded so that its not accessible through URL
 		if ($fieldTable->type == 'file')
 		{
-			$htaccessFileContent = '<FilesMatch ".*">
-			Order Allow,Deny
-			Deny from All
-			</FilesMatch>';
-			$htaccess = '.htaccess';
-			$htaccessFile = $mediaPath . '/' . $htaccess;
+			$htaccessFile = $mediaPath . '/' . $this->htaccess;
 
-			// If the destination directory doesn't exist we need to create it
-			jimport('joomla.filesystem.file');
-
-			if (!File::exists($htaccessFile))
+			if ($fieldParams->get('renderer', 'download') == 'download')
 			{
-				jimport('joomla.filesystem.folder');
-				Folder::create(dirname($htaccessFile));
-				File::write($htaccessFile, $htaccessFileContent);
+				if (!File::exists($htaccessFile))
+				{
+					Folder::create(dirname($htaccessFile));
+					File::write($htaccessFile, $this->htaccessFileContent);
+				}
+			}
+			else
+			{
+				if (File::exists($htaccessFile))
+				{
+					// Rename the .htaccess file if the renderer is preview
+					File::move($htaccessFile, $htaccessFile . '.txt');
+				}
 			}
 		}
 
@@ -2034,35 +2036,51 @@ class TjfieldsHelper
 	 *
 	 * @since   3.2
 	 */
-	public function getMediaUrl($fileName, $extraUrlParamsArray = '')
+	public function getMediaUrl($fileName, $extraUrlParamsArray = array(), $renderer = 'download')
 	{
 		if (!empty($fileName))
 		{
-			$extraUrlParams = '';
-
-			// If url extra param is present
-			if (!empty($extraUrlParamsArray))
+			if ($renderer == 'download')
 			{
-				$extraUrlParams = "&id=" . $extraUrlParamsArray['id'];
+				$extraUrlParams = '';
 
-				// Get client & add extraURL params which are needed to download the media
-				$data = new stdClass;
-				Table::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_tjfields/tables');
-				$data->fields_value_table = Table::getInstance('Fieldsvalue', 'TjfieldsTable');
-
-				if (isset($extraUrlParamsArray['subFormFileFieldId']))
+				// If url extra param is present
+				if (!empty($extraUrlParamsArray))
 				{
-					$extraUrlParams .= "&subFormFileFieldId=" . $extraUrlParamsArray['subFormFileFieldId'];
+					$extraUrlParams = "&id=" . $extraUrlParamsArray['id'];
+
+					if (isset($extraUrlParamsArray['subFormFileFieldId']))
+					{
+						$extraUrlParams .= "&subFormFileFieldId=" . $extraUrlParamsArray['subFormFileFieldId'];
+					}
+				}
+
+				// Here, fpht means file encoded path
+				$encodedFileName = base64_encode($fileName);
+				$basePathLink = 'index.php?option=com_tjfields&task=getMediaFile&fpht=';
+				$mediaURL = Uri::base() . substr(Route::_($basePathLink . $encodedFileName . $extraUrlParams), strlen(Uri::base(true)) + 1);
+
+				$csrf = JSession::getFormToken() . '=1';
+				$mediaURLlink = $mediaURL . '&' . $csrf;
+			}
+			else
+			{
+				Table::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_tjfields/tables');
+				$fieldsValueTable = Table::getInstance('Fieldsvalue', 'TjfieldsTable');
+				$fieldsValueTable->load(array('value' => $fileName));
+
+				if ($fieldsValueTable->id)
+				{
+					$fieldTable = Table::getInstance('Field', 'TjfieldsTable');
+					$fieldTable->load($fieldsValueTable->field_id);
+
+					$fieldParams = json_decode($fieldTable->params);
+					$uploadPath = $fieldParams->uploadpath;
+
+					$mediaURLlink = $uploadPath . '/' . $fileName;
+					$mediaURLlink = str_replace(JPATH_SITE, JUri::root(), $mediaURLlink);
 				}
 			}
-
-			// Here, fpht means file encoded path
-			$encodedFileName = base64_encode($fileName);
-			$basePathLink = 'index.php?option=com_tjfields&task=getMediaFile&fpht=';
-			$mediaURL = Uri::base() . substr(Route::_($basePathLink . $encodedFileName . $extraUrlParams), strlen(Uri::base(true)) + 1);
-
-			$csrf = JSession::getFormToken() . '=1';
-			$mediaURLlink = $mediaURL . '&' . $csrf;
 
 			return $mediaURLlink;
 		}

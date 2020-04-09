@@ -13,6 +13,8 @@ jimport('joomla.application.component.modeladmin');
 
 use Joomla\Registry\Registry;
 use Joomla\CMS\Form\FormHelper;
+use Joomla\CMS\Filesystem\File;
+use Joomla\CMS\Filesystem\Folder;
 
 /**
  * Tjfields model.
@@ -26,6 +28,13 @@ class TjfieldsModelField extends JModelAdmin
 	 * @since	1.6
 	 */
 	protected $text_prefix = 'COM_TJFIELDS';
+
+	protected $htaccessFileContent = '<FilesMatch ".*">
+		Order Allow,Deny
+		Deny from All
+	</FilesMatch>';
+
+	protected $htaccess = '.htaccess';
 
 	/**
 	 * Returns a reference to the a Table object, always creating it.
@@ -68,7 +77,7 @@ class TjfieldsModelField extends JModelAdmin
 			$path = JPATH_SITE . '/administrator/components/com_tjfields/models/forms/types/forms/' . $data['type'] . '.xml';
 
 			// If category XML esists then add global fields XML in current JForm object else create new object of Global Fields
-			if (!empty($form) && JFile::exists($path))
+			if (!empty($form) && File::exists($path))
 			{
 				$form->loadFile($path, true, '/form/*');
 			}
@@ -318,6 +327,27 @@ class TjfieldsModelField extends JModelAdmin
 		// Remove extra value which are not needed to save in the fields table
 		$TjfieldsHelper = new TjfieldsHelper;
 		$data['params']['accept'] = preg_replace('/\s+/', '', $data['params']['accept']);
+
+		// Rename the .htaccess file if the file renderer is changed to preview
+		$htaccessFile = $data['params']['uploadpath'] . '/' . $this->htaccess;
+
+		if ($data['params']['renderer'] == 'preview')
+		{
+			if (File::exists($htaccessFile))
+			{
+				// Rename the .htaccess file if the renderer is preview
+				File::move($htaccessFile, $htaccessFile . '.txt');
+			}
+		}
+		else
+		{
+			if (!File::exists($htaccessFile))
+			{
+				Folder::create(dirname($htaccessFile));
+				File::write($htaccessFile, $this->htaccessFileContent);
+			}
+		}
+
 		$data['params'] = json_encode($data['params']);
 
 		if ($table->save($data) === true)
@@ -837,7 +867,7 @@ class TjfieldsModelField extends JModelAdmin
 	 */
 	public function getSubFormFieldForm($name, $formSource, $loadData = array())
 	{
-		if (empty($name) || empty($formSource) || !JFile::exists($formSource))
+		if (empty($name) || empty($formSource) || !File::exists($formSource))
 		{
 			return false;
 		}

@@ -39,6 +39,7 @@
 	</files>
 	<media destination="com_tjfields" folder="media">
 		<folder>vendors</folder>
+		<folder>js</folder>
 	</media>
 	<languages folder="site_language">
 		<language tag="en-GB">en-GB/en-GB.com_tjfields.ini</language>

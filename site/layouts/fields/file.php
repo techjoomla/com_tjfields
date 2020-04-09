@@ -9,6 +9,8 @@
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
+use Joomla\CMS\HTML\HTMLHelper;
+JHtml::_('behavior.modal');
 
 if (!key_exists('field', $displayData) || !key_exists('fieldXml', $displayData))
 {
@@ -21,6 +23,7 @@ $xmlField = $displayData['fieldXml'];
 $field = $displayData['field'];
 $isSubFormField = (isset($displayData['isSubFormField'])) ? $displayData['isSubFormField'] : 0;
 $subFormFileFieldId = (isset($displayData['subFormFileFieldId'])) ? $displayData['subFormFileFieldId'] : 0;
+$renderer = $xmlField['renderer']->__toString();
 
 if ($field->value)
 {
@@ -38,20 +41,17 @@ if ($field->value)
 	}
 
 	$tjFieldHelper = new TjfieldsHelper;
-	$mediaLink = $tjFieldHelper->getMediaUrl($field->value, $extraParamArray);
+	$mediaLink = $tjFieldHelper->getMediaUrl($field->value, $extraParamArray, $renderer);
+	$fileTitle = substr($field->value, strpos($field->value, '_', 12) + 1);
 
-	// To get the file name from URL
-	$urlObj = new JUri($mediaLink);
-	$encodedFileName = $urlObj->getVar('fpht');
-
-	// Decode the filename
-	$fileName = ($encodedFileName) ? base64_decode($encodedFileName) : '';
-
-	// To display the file name if exist and skip the prepended file name value
-	if (!empty($fileName))
+	if ($renderer == 'download')
 	{
-		$fileTitle = substr($fileName, strpos($fileName, '_', 12) + 1);
-
 		echo "<div><strong class='ml-15'><a href=" . $mediaLink . ">" . $fileTitle . "</a></strong></div>";
+	}
+	else
+	{
+		HTMLHelper::script('media/com_tjfields/js/ui/file.js');
+		$mediaLink = base64_encode($mediaLink);
+		echo '<div><strong class="ml-15"><a onclick="tjFieldsFileField.previewMedia(\'' . $mediaLink . '\');">' . $fileTitle . '</a></strong></div>';
 	}
 }
