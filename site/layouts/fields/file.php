@@ -52,11 +52,15 @@ if ($field->value)
 	else
 	{
 		HTMLHelper::script('media/com_tjfields/js/ui/file.js');
-		$extension = end(explode('.', $fileTitle));
+		$extension = strtolower(end(explode('.', $fileTitle)));
 
 		if (in_array($extension, array('ppt', 'pptx', 'doc', 'docx', 'xls', 'xlsx', 'pps', 'ppsx')))
 		{
 			$mediaLink = 'https://view.officeapps.live.com/op/embed.aspx?src=' . $mediaLink;
+		}
+		elseif (in_array($extension, array('png', 'jpeg', 'jpg', 'gif')))
+		{
+			$mediaLink = $mediaLink;
 		}
 		else
 		{
