@@ -67,6 +67,6 @@ if ($field->value)
 			$mediaLink = 'https://docs.google.com/gview?url=' . $mediaLink . '&embedded=true';
 		}
 
-		echo '<div><strong class="ml-15"><a onclick="tjFieldsFileField.previewMedia(\'' . $mediaLink . '\');">' . $fileTitle . '</a></strong></div>';
+		echo '<div><strong class="ml-15"><a style="cursor:pointer;" onclick="tjFieldsFileField.previewMedia(\'' . $mediaLink . '\');">' . $fileTitle . '</a></strong></div>';
 	}
 }

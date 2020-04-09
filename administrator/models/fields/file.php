@@ -174,28 +174,10 @@ class JFormFieldFile extends JFormField
 			$data = $this->buildData($layoutData);
 			$html .= $data->html;
 
-			// To get the file name from URL
-			$substrString = substr($data->mediaLink, strlen('fpht=') + strpos($data->mediaLink, 'fpht='));
-
-			// Check string having '&' character or not, to get correct file name decoded value
-			if (strpos($substrString, '&'))
-			{
-				$substrString = substr($substrString, 0, strpos($substrString, '&'));
-			}
-
-			// Decode the filename
-			$fileName = base64_decode($substrString);
-
 			if (!empty($data->mediaLink))
 			{
 				$html .= $this->canDownloadFile($data, $layoutData);
 				$html .= $this->canDeleteFile($data, $layoutData);
-
-				// To display the file name if exist and skip the prepended file name value
-				if (!empty($fileName))
-				{
-					$html .= '<strong class="ml-15"> ' . substr($fileName, strpos($fileName, '_', 12) + 1) . '</strong>';
-				}
 			}
 
 			$html .= '</div>';
@@ -269,7 +251,6 @@ class JFormFieldFile extends JFormField
 
 		$fileInfo = new SplFileInfo($layoutData["value"]);
 		$data->extension = $fileInfo->getExtension();
-		$data->mediaLink = $tjFieldHelper->getMediaUrl($layoutData["value"]);
 
 		// Access based actions
 		$data->user = JFactory::getUser();
@@ -293,7 +274,18 @@ class JFormFieldFile extends JFormField
 			$extraParamArray['subFormFileFieldId'] = $data->subFormFileFieldId;
 		}
 
-		$data->mediaLink = $tjFieldHelper->getMediaUrl($layoutData["value"], $extraParamArray);
+		// Get configured renderer for the file field
+		if ($layoutData['field']->element['renderer'] instanceof SimpleXMLElement)
+		{
+			$renderer = $layoutData['field']->element['renderer']->__toString();
+		}
+		else
+		{
+			$renderer = 'download';
+		}
+
+		$data->mediaLink = $tjFieldHelper->getMediaUrl($layoutData["value"], $extraParamArray, $renderer);
+		$data->renderer = $renderer;
 
 		return $data;
 	}
@@ -308,7 +300,7 @@ class JFormFieldFile extends JFormField
 	 *
 	 * @since    1.5
 	 */
-	protected function canDownloadFile($data,$layoutData)
+	protected function canDownloadFile($data, $layoutData)
 	{
 		$canView = 0;
 		$canDownload = 0;
@@ -335,7 +327,34 @@ class JFormFieldFile extends JFormField
 
 		if ($canView || $canDownload)
 		{
-			$downloadFile .= '<div> <a href="' . $data->mediaLink . '">' . JText::_("COM_TJFIELDS_FILE_DOWNLOAD") . '</a>';
+			$renderer = $data->renderer;
+			$fileTitle = substr($data->fields_value_table->value, strpos($data->fields_value_table->value, '_', 12) + 1);
+
+			if ($renderer == 'download')
+			{
+				$downloadFile .= '<div> <a href="' . $data->mediaLink . '">' . $fileTitle . '</a>';
+			}
+			else
+			{
+				HTMLHelper::_('behavior.modal');
+				HTMLHelper::script('media/com_tjfields/js/ui/file.js');
+				$extension = $data->extension;
+
+				if (in_array($extension, array('ppt', 'pptx', 'doc', 'docx', 'xls', 'xlsx', 'pps', 'ppsx')))
+				{
+					$mediaLink = 'https://view.officeapps.live.com/op/embed.aspx?src=' . $data->mediaLink;
+				}
+				elseif (in_array($extension, array('png', 'jpeg', 'jpg', 'gif')))
+				{
+					$mediaLink = $data->mediaLink;
+				}
+				else
+				{
+					$mediaLink = 'https://docs.google.com/gview?url=' . $data->mediaLink . '&embedded=true';
+				}
+
+				$downloadFile = '<strong><a style="cursor:pointer;" onclick="tjFieldsFileField.previewMedia(\'' . $mediaLink . '\');">' . $fileTitle . '</a></strong>';
+			}
 		}
 
 		return $downloadFile;
@@ -376,11 +395,11 @@ class JFormFieldFile extends JFormField
 
 		if (!empty($data->mediaLink) && ($canEdit || $canEditOwn) && $layoutData['required'] == '' && $data->fields_value_table->id)
 		{
-			$deleteFiledata .= ' <span class="btn btn-remove"> <a id="remove_' . $layoutData["id"] . '" href="javascript:void(0);"
+			$deleteFiledata .= '<span class="btn btn-remove"> <a id="remove_' . $layoutData["id"] . '" href="javascript:void(0);"
 				onclick="deleteFile(\'' . base64_encode($layoutData["value"]) . '\',
 				 \'' . $layoutData["id"] . '\', \'' . base64_encode($data->fields_value_table->id) . '\',
-				  \'' . $data->subFormFileFieldId . '\',\'' . $data->isSubformField . '\');">'
-				. JText::_("COM_TJFIELDS_FILE_DELETE") . '</a> </span>';
+				  \'' . $data->subFormFileFieldId . '\',\'' . $data->isSubformField . '\');"><strong>'
+				. JText::_("COM_TJFIELDS_FILE_DELETE") . '</strong></a> </span>';
 		}
 
 		return $deleteFiledata;
