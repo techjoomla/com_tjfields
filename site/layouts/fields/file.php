@@ -10,6 +10,7 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 use Joomla\CMS\HTML\HTMLHelper;
+JHtml::_('behavior.modal');
 
 if (!key_exists('field', $displayData) || !key_exists('fieldXml', $displayData))
 {
@@ -51,6 +52,6 @@ if ($field->value)
 	{
 		HTMLHelper::script('media/com_tjfields/js/ui/file.js');
 		$mediaLink = base64_encode($mediaLink);
-		echo '<div><strong class="ml-15"><a href="#" onclick="tjFieldsFileField.previewMedia(\'' . $mediaLink . '\');">' . $fileTitle . '</a></strong></div>';
+		echo '<div><strong class="ml-15"><a onclick="tjFieldsFileField.previewMedia(\'' . $mediaLink . '\');">' . $fileTitle . '</a></strong></div>';
 	}
 }
