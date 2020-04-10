@@ -172,6 +172,7 @@ class JFormFieldFile extends JFormField
 				</script>
 			<?php
 			$data = $this->buildData($layoutData);
+			$html .= '<div class="control-group">';
 			$html .= $data->html;
 
 			if (!empty($data->mediaLink))
@@ -180,7 +181,6 @@ class JFormFieldFile extends JFormField
 				$html .= $this->canDeleteFile($data, $layoutData);
 			}
 
-			$html .= '</div>';
 			$html .= '</div>';
 		}
 
@@ -247,7 +247,6 @@ class JFormFieldFile extends JFormField
 
 		$data->html = '<input fileFieldId="' . $layoutData["id"] . '" type="hidden" name="'
 		. $layoutData["name"] . '"' . 'id="' . $layoutData["id"] . '"' . 'value="' . $layoutData["value"] . '" />';
-		$data->html .= '<div class="control-group">';
 
 		$fileInfo = new SplFileInfo($layoutData["value"]);
 		$data->extension = $fileInfo->getExtension();
@@ -332,7 +331,7 @@ class JFormFieldFile extends JFormField
 
 			if ($renderer == 'download')
 			{
-				$downloadFile .= '<div> <a href="' . $data->mediaLink . '">' . $fileTitle . '</a>';
+				$downloadFile .= '<strong><a href="' . $data->mediaLink . '">' . $fileTitle . '</a></strong>';
 			}
 			else
 			{
