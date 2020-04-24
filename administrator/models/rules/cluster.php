@@ -50,11 +50,17 @@ class JFormRuleCluster extends JFormRule
 		$clusters = $clustersModel->getItems();
 		$usersClusters = array();
 
+		// Get UCM type ID
+		$client = "com_tjucm." . str_replace("_clusterclusterid", "", str_replace("com_tjucm_", "", $element['name']->__toString()));
+		JLoader::import('components.com_tjucm.tables.type', JPATH_ADMINISTRATOR);
+		$typeTable = JTable::getInstance('Type', 'TjucmTable', array('dbo', JFactory::getDbo()));
+		$typeTable->load(array("unique_identifier" => $client));
+
 		if (!empty($clusters))
 		{
 			foreach ($clusters as $clusterList)
 			{
-				if (RBACL::check(JFactory::getUser()->id, 'com_cluster', 'core.edititem', $clusterList->id) || RBACL::check(JFactory::getUser()->id, 'com_cluster', 'core.editallitem'))
+				if (RBACL::check(JFactory::getUser()->id, 'com_cluster', 'core.edititem.' . $typeTable->id, $clusterList->id) || RBACL::check(JFactory::getUser()->id, 'com_cluster', 'core.editallitem.' . $typeTable->id))
 				{
 					if (!empty($clusterList->id))
 					{
