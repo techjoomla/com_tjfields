@@ -174,9 +174,6 @@ class JFormFieldImage extends JFormFieldFile
 				$html .= $this->canDownloadFile($data, $layoutData);
 				$html .= $this->canDeleteFile($data, $layoutData);
 			}
-
-				$html .= '</div>';
-				$html .= '</div>';
 		}
 
 		return $html;
