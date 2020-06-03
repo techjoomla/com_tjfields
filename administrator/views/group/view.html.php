@@ -75,7 +75,7 @@ class TjfieldsViewGroup extends JViewLegacy
 			$checkedOut = false;
 		}
 
-		// $component_title = JText::_('COM_TJFIELDS_TITLE_COMPONENT');
+		$component_title = JText::_('COM_TJFIELDS_TITLE_COMPONENT');
 
 		if (!empty($client))
 		{
@@ -100,7 +100,23 @@ class TjfieldsViewGroup extends JViewLegacy
 			'pencil-2 article-add'
 		);
 
-		$canDo = TjfieldsHelper::getActions($client['0'], 'group');
+		if ($isNew)
+		{
+			$viewTitle = JText::_('COM_TJFIELDS_ADD_GROUP');
+		}
+		else
+		{
+			$viewTitle = JText::_('COM_TJFIELDS_EDIT_GROUP');
+		}
+
+		if (JVERSION >= '3.0')
+		{
+			JToolbarHelper::title($viewTitle, 'pencil-2');
+		}
+		else
+		{
+			JToolbarHelper::title($viewTitle, 'group.png');
+		}
 
 		// If not checked out, can save the item.
 		if (!$checkedOut && ($canDo->get('core.edit') || ($canDo->get('core.create'))))
