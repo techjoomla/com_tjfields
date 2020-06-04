@@ -209,20 +209,6 @@ class TjfieldsModelFields extends JModelList
 	}
 
 	/**
-	 * Method to get an array of data items.
-	 *
-	 * @return  mixed  An array of data items on success, false on failure.
-	 *
-	 * @since   1.6
-	 */
-	public function getItems()
-	{
-		$items = parent::getItems();
-
-		return $items;
-	}
-
-	/**
 	 * Method To plublish and unpublish groups..
 	 *
 	 * @param   Integer  $items  Id

@@ -433,6 +433,12 @@ class TjfieldsHelper
 			}
 			elseif (is_array($fieldValue))
 			{
+				// TODO:- To save data of multiselect in case of auto save - eliminate if possible
+				if (strpos($fieldValue[0], ','))
+				{
+					$fieldValue = explode(',', $fieldValue[0]);
+				}
+
 				$this->saveMultiValuedFieldData($fieldValue, $field->client, $data['content_id'], $field->id, $fieldStoredValues);
 			}
 			else
