@@ -363,7 +363,13 @@ class TjfieldsHelper
 					// TODO:- To save data of tjlist in case of auto save - eliminate if possible
 					if (strpos($fieldValue[0], ','))
 					{
+						$tmpFieldValue = $fieldValue;
 						$fieldValue = explode(',', $fieldValue[0]);
+
+						if (isset($tmpFieldValue[1]))
+						{
+							$fieldValue[] = $tmpFieldValue[1];
+						}
 					}
 
 					if ($tjListParams->other)
