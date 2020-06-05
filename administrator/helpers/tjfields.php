@@ -365,7 +365,7 @@ class TjfieldsHelper extends ContentHelper
 					{
 						$fieldAttribute = json_decode($f->params);
 
-						if ($fieldAttribute->multiple != 'true' && !$fieldAttribute->multiple)
+						if (isset($fieldAttribute->multiple) && $fieldAttribute->multiple != 'true' && !$fieldAttribute->multiple)
 						{
 							// Set Default blank Option
 							$option = $field->addChild('option', '- ' . Text::_('COM_TJFIELDS_SELECT_OPTION') . " " . $f->label . ' -');
@@ -493,6 +493,7 @@ class TjfieldsHelper extends ContentHelper
 
 		// Remove the blank array element
 		$jsarray_removed_blank_element = array_filter($jsarray);
+		$jsarray_final = array();
 
 		foreach ($jsarray_removed_blank_element as $eachjs)
 		{
