@@ -42,11 +42,11 @@ if ($field->value)
 		if (isset($options[$field->value]))
 		{
 			$options[$field->value] = htmlspecialchars($options[$field->value], ENT_COMPAT, 'UTF-8');
-			echo Text::_(ucfirst($options[$field->value]));
+			echo Text::_($options[$field->value]);
 		}
 		elseif ($field->value != Text::_('COM_TJFIELDS_TJLIST_OTHER_OPTION_VALUE'))
 		{
-			echo Text::_(ucfirst(str_replace($field->type . ':-', '', $field->value)));
+			echo Text::_(str_replace($field->type . ':-', '', $field->value));
 			echo "<br>";
 		}
 	}
@@ -58,12 +58,12 @@ if ($field->value)
 			if (isset($options[$value]))
 			{
 				$options[$value] = htmlspecialchars($options[$value], ENT_COMPAT, 'UTF-8');
-				echo Text::_(ucfirst($options[$value]));
+				echo Text::_($options[$value]);
 				echo "<br>";
 			}
 			elseif ($value != Text::_('COM_TJFIELDS_TJLIST_OTHER_OPTION_VALUE'))
 			{
-				echo Text::_(ucfirst(str_replace($field->type . ':-', '', $value)));
+				echo Text::_(str_replace($field->type . ':-', '', $value));
 				echo "<br>";
 			}
 		}

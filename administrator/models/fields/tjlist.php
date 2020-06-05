@@ -137,8 +137,20 @@ class JFormFieldTjList extends JFormFieldList
 			// Check value exist
 			if (!empty($this->value))
 			{
+				$otherValues = array();
+
 				// Get other/extra values that are not present in dropdown list
-				$otherValues = array_values(array_diff($this->value, $dropdownVals));
+				if (is_array($this->value))
+				{
+					$otherValues = array_values(array_diff($this->value, $dropdownVals));
+				}
+				else
+				{
+					if (!in_array($this->value, $dropdownVals))
+					{
+						$otherValues[] = $this->value;
+					}
+				}
 
 				if (!empty($otherValues))
 				{

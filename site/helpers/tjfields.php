@@ -363,7 +363,13 @@ class TjfieldsHelper
 					// TODO:- To save data of tjlist in case of auto save - eliminate if possible
 					if (strpos($fieldValue[0], ','))
 					{
+						$tmpFieldValue = $fieldValue;
 						$fieldValue = explode(',', $fieldValue[0]);
+
+						if (isset($tmpFieldValue[1]))
+						{
+							$fieldValue[] = $tmpFieldValue[1];
+						}
 					}
 
 					if ($tjListParams->other)
@@ -433,6 +439,12 @@ class TjfieldsHelper
 			}
 			elseif (is_array($fieldValue))
 			{
+				// TODO:- To save data of multiselect in case of auto save - eliminate if possible
+				if (strpos($fieldValue[0], ','))
+				{
+					$fieldValue = explode(',', $fieldValue[0]);
+				}
+
 				$this->saveMultiValuedFieldData($fieldValue, $field->client, $data['content_id'], $field->id, $fieldStoredValues);
 			}
 			else
