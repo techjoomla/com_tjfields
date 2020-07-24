@@ -28,7 +28,7 @@ jQuery(document).ready(function(){
 				if (result.data) {
 					var element = jQuery("input[fileFieldId='" + fieldId + "']");
 					element.val('');
-					element.next().remove('div.control-group');
+					element.parent().remove('div.control-group');
 				}
 			}
 		});
