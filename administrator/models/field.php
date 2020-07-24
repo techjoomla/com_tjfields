@@ -93,12 +93,6 @@ class TjfieldsModelField extends JModelAdmin
 					$form->setFieldAttribute('fieldoption', 'required', true);
 				}
 			}
-
-			if ($form->getValue('type') == 'ucmsubform' || $form->getValue('type') == 'subform')
-			{
-				$form->setValue('showonlist', null, 0);
-				$form->removeField('showonlist');
-			}
 		}
 
 		if (empty($form))
