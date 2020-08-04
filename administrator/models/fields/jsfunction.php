@@ -52,8 +52,7 @@ class JFormFieldJsfunction extends JFormField
 		//remove the blank array element
 		$jsarray_removed_blank_element = array_filter($jsarray);
 
-		$count = array($this->value);
-		$countjs = count($count);
+		$countjs = count($jsarray);
 
 		if(empty($this->value))
 		$countjs = 0;
