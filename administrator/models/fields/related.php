@@ -132,6 +132,17 @@ class JFormFieldRelated extends JFormFieldList
 			}
 		}
 
+		$document = JFactory::getDocument();
+
+		$document->addScript(JUri::root() . 'media/com_tjucm/js/ui/itemform.min.js');
+
+		$document->addScriptDeclaration('jQuery(document).ready(function() {
+			jQuery("#jform_' . $this->fieldname . '_chzn").click(function(){
+				tjUcmItemForm.getRelatedFieldOptions("' . $this->fieldname . '", "' . $fieldTable->id . '");
+			});
+		});');
+
+
 		return $html;
 	}
 }
