@@ -15,6 +15,7 @@ use Joomla\CMS\Table\Table;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Language\Text;
 use Joomla\Registry\Registry;
+use Joomla\CMS\HTML\HTMLHelper;
 
 /**
  * Form Field class for the Joomla Platform.
@@ -132,16 +133,18 @@ class JFormFieldRelated extends JFormFieldList
 			}
 		}
 
-		$document = JFactory::getDocument();
+		if ($fieldParams['showAddNewRecordLink'])
+		{
+			$document = JFactory::getDocument();
 
-		$document->addScript(JUri::root() . 'media/com_tjucm/js/ui/itemform.min.js');
+			$document->addScript(JUri::root() . 'media/com_tjucm/js/ui/itemform.min.js');
 
-		$document->addScriptDeclaration('jQuery(document).ready(function() {
-			jQuery("#jform_' . $this->fieldname . '_chzn").click(function(){
-				tjUcmItemForm.getRelatedFieldOptions("' . $this->fieldname . '", "' . $fieldTable->id . '");
-			});
-		});');
-
+			$document->addScriptDeclaration('jQuery(document).ready(function() {
+				jQuery("#jform_' . $this->fieldname . '_chzn").click(function(){
+					tjUcmItemForm.getRelatedFieldOptions("' . $this->fieldname . '", "' . $fieldTable->id . '");
+				});
+			});');
+		}
 
 		return $html;
 	}
