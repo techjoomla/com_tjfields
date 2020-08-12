@@ -133,15 +133,15 @@ class JFormFieldRelated extends JFormFieldList
 			}
 		}
 
-		if ($fieldParams['showAddNewRecordLink'])
+		if ($fieldParams['showAddNewRecordLink'] && $this->id && $fieldTable->id)
 		{
 			$document = JFactory::getDocument();
 
 			$document->addScript(JUri::root() . 'media/com_tjucm/js/ui/itemform.min.js');
 
 			$document->addScriptDeclaration('jQuery(document).ready(function() {
-				jQuery("#jform_' . $this->fieldname . '_chzn").click(function(){
-					tjUcmItemForm.getRelatedFieldOptions("' . $this->fieldname . '", "' . $fieldTable->id . '");
+				jQuery("#'.$this->id.'_chzn").click(function(){
+					tjUcmItemForm.getRelatedFieldOptions("' . $this->id . '", "' . $fieldTable->id . '");
 				});
 			});');
 		}
