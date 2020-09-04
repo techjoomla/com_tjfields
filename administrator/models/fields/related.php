@@ -15,6 +15,7 @@ use Joomla\CMS\Table\Table;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Language\Text;
 use Joomla\Registry\Registry;
+use Joomla\CMS\HTML\HTMLHelper;
 
 /**
  * Form Field class for the Joomla Platform.
@@ -130,6 +131,19 @@ class JFormFieldRelated extends JFormFieldList
 
 				$html .= "<div><a target='_blank' href='" . $masterUcmLink . "'>" . Text::_("COM_TJFIELDS_FORM_DESC_FIELD_RELATED_ADD_RECORD") . "</a></div>";
 			}
+		}
+
+		if ($fieldParams['showAddNewRecordLink'] && $this->id && $fieldTable->id)
+		{
+			$document = JFactory::getDocument();
+
+			$document->addScript(JUri::root() . 'media/com_tjucm/js/ui/itemform.min.js');
+
+			$document->addScriptDeclaration('jQuery(document).ready(function() {
+				jQuery("#'.$this->id.'_chzn").click(function(){
+					tjUcmItemForm.getRelatedFieldOptions("' . $this->id . '", "' . $fieldTable->id . '");
+				});
+			});');
 		}
 
 		return $html;
