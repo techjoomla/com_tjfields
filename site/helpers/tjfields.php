@@ -276,11 +276,6 @@ class TjfieldsHelper
 					define("TJUCM_PARENT_CLIENT", $data['client']);
 				}
 
-				if (!defined('TJUCM_PARENT_CONTENT_ID'))
-				{
-					define("TJUCM_PARENT_CONTENT_ID", $data['content_id']);
-				}
-
 				$ucmSubformClientTmp = explode('_', str_replace("com_tjucm_", '', array_key_first($fieldValue[array_key_first($fieldValue)])));
 				array_pop($ucmSubformClientTmp);
 				$ucmSubformClient = 'com_tjucm.' . implode('_', $ucmSubformClientTmp);
@@ -293,13 +288,13 @@ class TjfieldsHelper
 				$query = $db->getQuery(true);
 				$query->select('id');
 				$query->from($db->quoteName('#__tj_ucm_data'));
-				$query->where($db->quoteName('parent_id') . '=' . TJUCM_PARENT_CONTENT_ID);
+				$query->where($db->quoteName('parent_id') . '=' . $data['content_id']);
 				$query->where($db->quoteName('client') . '=' . $db->quote($ucmSubformClient));
 				$db->setQuery($query);
 				$ucmSubformRecordIds = $db->loadColumn();
 				$ucmSubformRecordIds = (!empty($ucmSubformRecordIds)) ? $ucmSubformRecordIds : array();
 
-				$this->saveSingleValuedFieldData($ucmSubformClient, TJUCM_PARENT_CLIENT, TJUCM_PARENT_CONTENT_ID, $field->id, $fieldStoredValues);
+				$this->saveSingleValuedFieldData($ucmSubformClient, TJUCM_PARENT_CLIENT, $data['content_id'], $field->id, $fieldStoredValues);
 
 				foreach ($fieldValue as $key => $ucmSubformValue)
 				{
@@ -311,8 +306,7 @@ class TjfieldsHelper
 
 						if (empty($ucmSubFormContentId))
 						{
-							$tjUcmSubFormItemData = array('id' => '', 'parent_id' => $data['content_id'], 'client' => $ucmSubformClient);
-
+							$tjUcmSubFormItemData = array('id' => '', 'parent_id' => $data['content_id'], 'client' => $ucmSubformClient, 'created_by' => $data['user_id']);
 							$tjUcmItemFormModel = JModelLegacy::getInstance('ItemForm', 'TjucmModel');
 							$tjUcmItemFormModel->save($tjUcmSubFormItemData);
 							$ucmSubFormContentId = $tjUcmItemFormModel->getState($tjUcmItemFormModel->getName() . '.id');
@@ -2043,6 +2037,7 @@ class TjfieldsHelper
 	 *
 	 * @param   STRING  $fileName             media file path
 	 * @param   ARRAY   $extraUrlParamsArray  extra url params
+	 * @param   ARRAY   $renderer             extra url params
 	 *
 	 * @return  string|boolean  True on success.
 	 *
