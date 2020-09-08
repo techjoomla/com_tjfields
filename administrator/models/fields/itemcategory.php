@@ -44,9 +44,19 @@ class JFormFieldItemCategory extends JFormFieldCategory
 	 */
 	protected function getOptions()
 	{
-		$app    = Factory::getApplication();
-		$jinput = $app->input;
-		$client = $jinput->get('client', '', "STRING");
+		if ($this->element['name'] instanceof SimpleXMLElement)
+		{
+			$client = str_replace('_itemcategoryitemcategory', '', $this->element['name']->__toString());
+			$client = 'com_tjucm.' . str_replace('com_tjucm_', '', $client);
+		}
+
+		$app = Factory::getApplication();
+
+		if (empty($client))
+		{
+			$jinput = $app->input;
+			$client = $jinput->get('client', '', "STRING");
+		}
 
 		if (empty($client))
 		{

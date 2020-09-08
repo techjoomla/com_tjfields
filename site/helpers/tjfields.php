@@ -428,6 +428,11 @@ class TjfieldsHelper
 						$fieldValue = $field->type . ':-' . $fieldValue;
 					}
 
+					if ($fieldValue == 'tjlist:-tjlistothervalue')
+					{
+						$fieldValue = 'tjlist:-';
+					}
+
 					$this->saveSingleValuedFieldData($fieldValue, $field->client, $data['content_id'], $field->id, $fieldStoredValues);
 				}
 			}
