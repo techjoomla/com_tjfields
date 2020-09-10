@@ -166,13 +166,15 @@ class JFormFieldImage extends JFormFieldFile
 		if (!empty($layoutData["value"]))
 		{
 			$data = parent::buildData($layoutData);
-			$html .= $data->html;
 
 			if (!empty($data->mediaLink))
 			{
+				$html .= '<div class="control-group">';
+				$html .= $data->html;
 				$html .= $this->renderImage($data, $layoutData);
 				$html .= $this->canDownloadFile($data, $layoutData);
 				$html .= $this->canDeleteFile($data, $layoutData);
+				$html .= '</div>';
 			}
 		}
 
@@ -199,6 +201,6 @@ class JFormFieldImage extends JFormFieldFile
 		}
 
 		return '<img src="' . $path . $layoutData['value'] . '" height=
-		"' . $layoutData['field']->element->attributes()->height . '"width="' . $layoutData['field']->element->attributes()->width . '" ></img>';
+		"' . $layoutData['field']->element->attributes()->height . '"width="' . $layoutData['field']->element->attributes()->width . '" ></img><br>';
 	}
 }
