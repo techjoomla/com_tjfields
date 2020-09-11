@@ -16,10 +16,9 @@ if (!key_exists('field', $displayData) || !key_exists('fieldXml', $displayData))
 }
 
 $field = $displayData['field'];
-$date = JFactory::getDate($field->value);
 $format = str_replace('%', '', $field->format);
 
 if ($field->value)
 {
-	echo $date->format($format);
+	echo JHtml::date($field->value, $format);
 }

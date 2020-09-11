@@ -148,9 +148,6 @@ class JFormFieldFile extends JFormField
 		$lang = JFactory::getLanguage();
 		$lang->load('com_tjfields', JPATH_SITE);
 
-		// Add constant to the JS
-		JText::script('COM_TJFIELDS_FILE_DELETE_CONFIRM');
-
 		if (!empty($layoutData["value"]))
 		{
 			$data = $this->buildData($layoutData);
@@ -390,6 +387,9 @@ class JFormFieldFile extends JFormField
 		}
 
 		$deleteFiledata = '';
+
+		// Add constant to the JS
+		JText::script('COM_TJFIELDS_FILE_DELETE_CONFIRM');
 
 		if (!empty($data->mediaLink) && ($canEdit || $canEditOwn) && $layoutData['required'] == '' && $data->fields_value_table->id)
 		{
