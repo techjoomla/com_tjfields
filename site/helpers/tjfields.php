@@ -419,13 +419,18 @@ class TjfieldsHelper
 
 					$this->saveMultiValuedFieldData($fieldValue, $field->client, $data['content_id'], $field->id, $fieldStoredValues);
 				}
-				elseif (!empty($fieldValue))
+				else
 				{
 					// Check other option enable for tjlist field
 					if ($tjListParams->other && !in_array($fieldValue, $otherValues))
 					{
 						// Add prefix for other values for tjlist field
 						$fieldValue = $field->type . ':-' . $fieldValue;
+					}
+
+					if ($fieldValue == 'tjlist:-tjlistothervalue')
+					{
+						$fieldValue = 'tjlist:-';
 					}
 
 					$this->saveSingleValuedFieldData($fieldValue, $field->client, $data['content_id'], $field->id, $fieldStoredValues);

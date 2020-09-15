@@ -148,29 +148,8 @@ class JFormFieldFile extends JFormField
 		$lang = JFactory::getLanguage();
 		$lang->load('com_tjfields', JPATH_SITE);
 
-		// Add constant to the JS
-		JText::script('COM_TJFIELDS_FILE_DELETE_CONFIRM');
-
 		if (!empty($layoutData["value"]))
 		{
-			?>
-				<script type="text/javascript">
-					jQuery(document).ready(function ()
-					{
-						var fieldValue = "<?php echo $layoutData["value"]; ?>";
-						var AttrRequired = jQuery('#<?php echo $layoutData["id"];?>').attr('required');
-
-						if (typeof AttrRequired !== typeof undefined && AttrRequired !== false)
-						{
-							if (fieldValue)
-							{
-								jQuery('#<?php echo $layoutData["id"];?>').removeAttr("required");
-								jQuery('#<?php echo $layoutData["id"];?>').removeClass("required");
-							}
-						}
-					});
-				</script>
-			<?php
 			$data = $this->buildData($layoutData);
 			$html .= '<div class="control-group">';
 			$html .= $data->html;
@@ -244,7 +223,24 @@ class JFormFieldFile extends JFormField
 			// File Field Id under subform
 			$data->subFormFileFieldId = $fileFieldData->id;
 		}
+		?>
+		<script type="text/javascript">
+			jQuery(document).ready(function ()
+			{
+				var fieldValue = "<?php echo $layoutData["value"]; ?>";
+				var AttrRequired = jQuery('#<?php echo $layoutData["id"];?>').attr('required');
 
+				if (typeof AttrRequired !== typeof undefined && AttrRequired !== false)
+				{
+					if (fieldValue)
+					{
+						jQuery('#<?php echo $layoutData["id"];?>').removeAttr("required");
+						jQuery('#<?php echo $layoutData["id"];?>').removeClass("required");
+					}
+				}
+			});
+		</script>
+		<?php
 		$data->html = '<input fileFieldId="' . $layoutData["id"] . '" type="hidden" name="'
 		. $layoutData["name"] . '"' . 'id="' . $layoutData["id"] . '"' . 'value="' . $layoutData["value"] . '" />';
 
@@ -391,6 +387,9 @@ class JFormFieldFile extends JFormField
 		}
 
 		$deleteFiledata = '';
+
+		// Add constant to the JS
+		JText::script('COM_TJFIELDS_FILE_DELETE_CONFIRM');
 
 		if (!empty($data->mediaLink) && ($canEdit || $canEditOwn) && $layoutData['required'] == '' && $data->fields_value_table->id)
 		{

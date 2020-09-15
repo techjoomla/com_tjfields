@@ -20,6 +20,11 @@ $xmlField = $displayData['fieldXml'];
 $field = $displayData['field'];
 $formSource = $field->formsource;
 
+if (!is_array($field->value))
+{
+	$field->setValue(json_decode($field->value));
+}
+
 if ($field->value)
 {
 	foreach ($field->value as $name => $subformData)
@@ -32,6 +37,11 @@ if ($field->value)
 		<?php
 		foreach ($form->getFieldsets() as $fieldSet)
 		{
+			if ($fieldSet->name == 'params')
+			{
+				continue;
+			}
+
 			$fieldSet = $form->getFieldset($fieldSet->name);
 
 			foreach ($fieldSet as $field)

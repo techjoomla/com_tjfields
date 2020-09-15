@@ -95,9 +95,12 @@ class TjfieldsTableRegion extends JTable
 		{
 			$actions = array();
 
-			foreach ($jaccess->getData() as $group => $allow)
+			if ($jaccess != null)
 			{
-				$actions[$group] = ((bool) $allow);
+				foreach ($jaccess->getData() as $group => $allow)
+				{
+					$actions[$group] = ((bool) $allow);
+				}
 			}
 
 			$rules[$action] = $actions;
