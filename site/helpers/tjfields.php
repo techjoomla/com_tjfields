@@ -637,6 +637,31 @@ class TjfieldsHelper
 			return false;
 		}
 
+		if (isset($fieldValue['copy']))
+		{
+			$fileFieldValue = round(microtime(true)) . "_" . JUserHelper::genRandomPassword(5) . "_" . $fieldValue['value'];
+			$filePath = JPATH_SITE . '/' . $fieldValue['type'] . 's/tjmedia/' . str_replace(".", "/", $fieldValue['sourceClient'] . "/");
+			$targetfilePath = JPATH_SITE . '/' . $fieldValue['type'] . 's/tjmedia/' . str_replace(".", "/", $client . "/");
+			$sourceFilePath = ($fieldValue['sourceFieldUploadPath'] != '') ? $fieldValue['sourceFieldUploadPath'] : $filePath;
+			$destinationFilePath = ($fieldValue['destFieldUploadPath'] != '') ? $fieldValue['destFieldUploadPath'] : $filePath;
+
+			if (copy($sourceFilePath . $fieldValue['value'], $destinationFilePath . $fileFieldValue))
+			{
+				JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_tjfields/tables');
+				$fielValuedTable = JTable::getInstance('fieldsvalue', 'TjfieldsTable');
+				$fielValuedTable->field_id = $fieldId;
+				$fielValuedTable->content_id = $contentId;
+				$fielValuedTable->value = $fileFieldValue;
+				$fielValuedTable->user_id = $fieldValue['user_id'];
+				$fielValuedTable->client = $client;
+
+				if ($fielValuedTable->store())
+				{
+					return true;
+				}
+			}
+		}
+
 		if (empty($fieldValue['name']) && empty($fieldValue['tmp_name']) && empty($fieldValue['size']))
 		{
 			return false;
