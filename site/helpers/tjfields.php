@@ -650,7 +650,7 @@ class TjfieldsHelper
 			$sourceFilePath = ($fieldValue['sourceFieldUploadPath'] != '') ? $fieldValue['sourceFieldUploadPath'] : $filePath;
 			$destinationFilePath = ($fieldValue['destFieldUploadPath'] != '') ? $fieldValue['destFieldUploadPath'] : $filePath;
 
-			if (copy($sourceFilePath . $fieldValue['value'], $destinationFilePath . $fileFieldValue))
+			if (JFile::copy($sourceFilePath . $fieldValue['value'], $destinationFilePath . $fileFieldValue))
 			{
 				JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_tjfields/tables');
 				$fielValuedTable = JTable::getInstance('fieldsvalue', 'TjfieldsTable');
