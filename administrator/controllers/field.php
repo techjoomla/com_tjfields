@@ -74,6 +74,9 @@ class TjfieldsControllerField extends JControllerForm
 	 */
 	public function save($key = null, $urlVar = null)
 	{
+		// Check for request forgeries.
+		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
+
 		$input = JFactory::getApplication()->input;
 		$task = $input->get('task', '', 'STRING');
 
