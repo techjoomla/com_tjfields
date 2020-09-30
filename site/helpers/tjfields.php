@@ -214,6 +214,7 @@ class TjfieldsHelper
 		{
 			$fieldKey = array_search($fieldName, array_column($fields, 'name'));
 			$field = $fields[$fieldKey];
+			$fieldParams = new Registry($field->params);
 
 			$fieldStoredValuesKeys = array_keys(array_column($storedValues, 'field_id'), $field->id);
 			$fieldStoredValues = array();
@@ -435,6 +436,55 @@ class TjfieldsHelper
 
 					$this->saveSingleValuedFieldData($fieldValue, $field->client, $data['content_id'], $field->id, $fieldStoredValues);
 				}
+			}
+			elseif ($field->type == 'related' && $fieldParams->get('showParentRecordsOnly', '', 'INT'))
+			{
+				// This is special case to handle the copy of related fields data in copy item feature
+				$jInput = JFactory::getApplication()->input;
+				$tempId = $jInput->get('id', '', 'STRING');
+				$jInput->set('id', $data['content_id']);
+
+				JLoader::import('components.com_tjfields.models.field', JPATH_ADMINISTRATOR);
+				$tjFieldsFieldModel = BaseDatabaseModel::getInstance('Field', 'TjfieldsModel', array('ignore_request' => true));
+				$relatedFieldOptions = $tjFieldsFieldModel->getRelatedFieldOptions($field->id);
+				$jInput->set('id', $tempId);
+
+				$relatedFieldOptionTmp = array();
+
+				foreach ($relatedFieldOptions as $relatedFieldOption)
+				{
+					$relatedFieldOptionTmp[$relatedFieldOption['value']] = $relatedFieldOption['text'];
+				}
+
+				if (!is_array($fieldValue))
+				{
+					$fieldValue = array($fieldValue);
+				}
+
+				foreach ($fieldValue as $k => $fv)
+				{
+					if (!in_array($fv, $relatedFieldOptionValues))
+					{
+						$relatedFieldDataSources = $fieldParams->get('fieldName');
+
+						foreach ($relatedFieldDataSources as $relatedFieldDataSource)
+						{
+							$db = JFactory::getDbo();
+							$query = $db->getQuery(true);
+							$query->select("GROUP_CONCAT(" . $db->quoteName('value') . " SEPARATOR ' ') AS combo_value");
+							$query->from($db->quoteName('#__tjfields_fields_value'));
+							$query->where($db->quoteName('field_id') . ' IN (' . implode(", ", $relatedFieldDataSource->fieldIds) . ')');
+							$query->where($db->quoteName('content_id') . ' = ' . $fv);
+							$query->where($db->quoteName('client') . ' = ' . $db->quote($relatedFieldDataSource->client));
+							$db->setQuery($query);
+
+							$relatedValue = $db->loadResult();
+							$fieldValue[$k] = array_search($relatedValue, $relatedFieldOptionTmp);
+						}
+					}
+				}
+
+				$this->saveMultiValuedFieldData($fieldValue, $field->client, $data['content_id'], $field->id, $fieldStoredValues);
 			}
 			elseif (is_array($fieldValue))
 			{
