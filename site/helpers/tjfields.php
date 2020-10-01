@@ -176,19 +176,8 @@ class TjfieldsHelper
 			return false;
 		}
 
-		static $tjUcmParentClient;
-		static $tjUcmParentContentId;
+		$tjUcmParentContentId = isset($data['parent_content_id']) ? $data['parent_content_id'] : $data['content_id'];
 		static $tjUcmSubFormContentId = array('childContentIds' => array());
-
-		if (empty($tjUcmParentClient))
-		{
-			$tjUcmParentClient = $data['client'];
-		}
-
-		if (empty($tjUcmParentContentId))
-		{
-			$tjUcmParentContentId = $data['content_id'];
-		}
 
 		// Get user object
 		$user = Factory::getUser();
@@ -320,10 +309,11 @@ class TjfieldsHelper
 
 						$tjUcmSubFormContentId['childContentIds'][$ucmSubformContentIdFieldElementId] = (INT) $ucmSubFormContentId;
 						$ucmSubFormData = array();
-						$ucmSubFormData['content_id']  = $ucmSubFormContentId;
-						$ucmSubFormData['client']      = $ucmSubformClient;
-						$ucmSubFormData['fieldsvalue'] = $ucmSubformValue;
-						$ucmSubFormData['created_by']  = Factory::getUser()->id;
+						$ucmSubFormData['parent_content_id'] = $data['content_id'];
+						$ucmSubFormData['content_id']        = $ucmSubFormContentId;
+						$ucmSubFormData['client']            = $ucmSubformClient;
+						$ucmSubFormData['fieldsvalue']       = $ucmSubformValue;
+						$ucmSubFormData['created_by']        = Factory::getUser()->id;
 						$this->saveFieldsValue($ucmSubFormData);
 					}
 				}
