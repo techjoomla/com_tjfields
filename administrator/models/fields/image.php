@@ -10,6 +10,8 @@
 defined('JPATH_PLATFORM') or die;
 JLoader::import('components.com_tjfields.models.fields.file', JPATH_ADMINISTRATOR);
 
+use Joomla\CMS\HTML\HTMLHelper;
+
 /**
  * Form Field Image class
  * Supports a multi line area for entry of plain text with count char
@@ -145,6 +147,18 @@ class JFormFieldImage extends JFormFieldFile
 		$layoutData = $this->getLayoutData();
 		$html = $this->getRenderer($this->layout)->render($layoutData);
 
+		if ($this->size)
+		{
+			$sizes = array();
+			$sizes[] = HTMLHelper::_('number.bytes', ini_get('post_max_size'), '');
+			$sizes[] = HTMLHelper::_('number.bytes', ini_get('upload_max_filesize'), '');
+			$sizes[] = $this->size * 1024 * 1024;
+
+			$maxSize = HTMLHelper::_('number.bytes', min($sizes));
+			$fileMaxSize = '<strong>' . $maxSize . '</strong>';
+			$html = str_replace(substr($html, strpos($html, '<strong>'), strpos($html, '</strong>')), $fileMaxSize, $html);
+		}
+
 		// Load backend language file
 		$lang = JFactory::getLanguage();
 		$lang->load('com_tjfields', JPATH_SITE);
@@ -152,17 +166,16 @@ class JFormFieldImage extends JFormFieldFile
 		if (!empty($layoutData["value"]))
 		{
 			$data = parent::buildData($layoutData);
-			$html .= $data->html;
 
 			if (!empty($data->mediaLink))
 			{
+				$html .= '<div class="control-group">';
+				$html .= $data->html;
 				$html .= $this->renderImage($data, $layoutData);
 				$html .= $this->canDownloadFile($data, $layoutData);
 				$html .= $this->canDeleteFile($data, $layoutData);
+				$html .= '</div>';
 			}
-
-				$html .= '</div>';
-				$html .= '</div>';
 		}
 
 		return $html;
@@ -188,6 +201,6 @@ class JFormFieldImage extends JFormFieldFile
 		}
 
 		return '<img src="' . $path . $layoutData['value'] . '" height=
-		"' . $layoutData['field']->element->attributes()->height . '"width="' . $layoutData['field']->element->attributes()->width . '" ></img>';
+		"' . $layoutData['field']->element->attributes()->height . '"width="' . $layoutData['field']->element->attributes()->width . '" ></img><br>';
 	}
 }

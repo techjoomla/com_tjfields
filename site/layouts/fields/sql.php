@@ -35,7 +35,7 @@ $fieldOptions = array();
 foreach ($options as $option)
 {
 	$option = (object) $option;
-	$fieldOptions[$option->value] = JText::_(ucfirst(htmlspecialchars($option->text, ENT_COMPAT, 'UTF-8')));
+	$fieldOptions[$option->value] = JText::_(htmlspecialchars($option->text, ENT_COMPAT, 'UTF-8'));
 }
 
 if (!is_array($field->value))

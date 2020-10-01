@@ -55,7 +55,7 @@ class TjfieldsModelOptions extends JModelList
 		$query = $db->getQuery(true);
 
 		// Select the required fields from the table.
-		$query->select($db->quoteName('*'));
+		$query->select('*');
 		$query->select($db->quoteName(array('id', 'field_id', 'options', 'value')));
 		$query->from('`#__tjfields_options` AS a');
 
@@ -66,6 +66,8 @@ class TjfieldsModelOptions extends JModelList
 		{
 			$query->where('a.field_id = ' . (int) $fieldId);
 		}
+
+		$query->order($db->qn($db->escape($this->getState('list.ordering', 'a.options'))) . ' ' . $db->escape($this->getState('list.direction', 'ASC')));
 
 		return $query;
 	}

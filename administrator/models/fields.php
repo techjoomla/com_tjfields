@@ -184,7 +184,7 @@ class TjfieldsModelFields extends JModelList
 			else
 			{
 				$search = $db->Quote('%' . $db->escape($search, true) . '%');
-				$query->where('( a.label LIKE ' . $search . ' )');
+				$query->where('(a.label LIKE ' . $search . ' )');
 			}
 		}
 
@@ -206,20 +206,6 @@ class TjfieldsModelFields extends JModelList
 		}
 
 		return $query;
-	}
-
-	/**
-	 * Method to get an array of data items.
-	 *
-	 * @return  mixed  An array of data items on success, false on failure.
-	 *
-	 * @since   1.6
-	 */
-	public function getItems()
-	{
-		$items = parent::getItems();
-
-		return $items;
 	}
 
 	/**

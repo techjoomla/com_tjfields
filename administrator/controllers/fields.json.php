@@ -12,6 +12,11 @@ defined('_JEXEC') or die;
 jimport('joomla.filesystem.file');
 
 use Joomla\CMS\MVC\Controller\FormController;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Response\JsonResponse;
+use Joomla\CMS\Session\Session;
+use Joomla\CMS\Factory;
 
 /**
  * Item controller class.
@@ -31,29 +36,36 @@ class TjfieldsControllerFields extends FormController
 	public function deleteFile()
 	{
 		// Check for request forgeries.
-		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
-		$app = JFactory::getApplication();
+		Session::checkToken('get') or Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
+		$app = Factory::getApplication();
 		$jinput = $app->input;
 
 		$data = array();
-
-		// Here, fpht means file encoded path
-		$data['filePath'] = base64_decode($jinput->get('filePath', '', 'BASE64'));
+		$data['fileName'] = base64_decode($jinput->get('fileName', '', 'BASE64'));
 		$data['valueId'] = base64_decode($jinput->get('valueId', '', 'BASE64'));
 		$data['subformFileFieldId'] = $jinput->get('subformFileFieldId');
 		$data['isSubformField'] = $jinput->get('isSubformField');
-		$data['client'] = $jinput->get('client', '', 'STRING');
 
-		$client = explode('.', $data['client']);
+		// Get media storage path
+		JLoader::import('components.com_tjfields.models.fields', JPATH_SITE);
+		$fieldsModel     = BaseDatabaseModel::getInstance('Fields', 'TjfieldsModel', array('ignore_request' => true));
+		$fieldData = $fieldsModel->getMediaStoragePath($data['valueId'], $data['subformFileFieldId']);
 
-		$data['storagePath'] = '/media/' . $client[0] . '/' . $client[1];
+		$tjFieldFieldTableParamData = json_decode($fieldData->tjFieldFieldTable->params);
+		$client = $fieldData->tjFieldFieldTable->client;
+		$type = $fieldData->tjFieldFieldTable->type;
+		$uploadPath = isset($tjFieldFieldTableParamData->uploadpath) ? $tjFieldFieldTableParamData->uploadpath : '';
+		$data['storagePath'] = ($uploadPath != '') ? $uploadPath : JPATH_SITE . '/' . $type . 's/tjmedia/' . str_replace(".", "/", $client . '/');
+		$data['storagePath'] = str_replace('/', DIRECTORY_SEPARATOR, $data['storagePath']);
+		$data['client'] = $client;
+
 		require_once JPATH_ADMINISTRATOR . '/components/com_tjfields/helpers/tjfields.php';
 
 		$tjFieldsHelper = new TjfieldsHelper;
 		$returnValue = $tjFieldsHelper->deleteFile($data);
-		$msg = $returnValue ? JText::_('COM_TJFIELDS_FILE_DELETE_SUCCESS') : JText::_('COM_TJFIELDS_FILE_DELETE_ERROR');
+		$msg = $returnValue ? Text::_('COM_TJFIELDS_FILE_DELETE_SUCCESS') : Text::_('COM_TJFIELDS_FILE_DELETE_ERROR');
 
-		echo new JResponseJson($returnValue, $msg);
+		echo new JsonResponse($returnValue, $msg);
 	}
 
 	/**
@@ -66,9 +78,9 @@ class TjfieldsControllerFields extends FormController
 	public function getFields()
 	{
 		// Check for request forgeries.
-		(JSession::checkToken() or JSession::checkToken('get')) or jexit(JText::_('JINVALID_TOKEN'));
+		(Session::checkToken() or Session::checkToken('get')) or jexit(Text::_('JINVALID_TOKEN'));
 
-		$app = JFactory::getApplication('administrator');
+		$app = Factory::getApplication('administrator');
 		$client = $app->input->get('client', '', 'STRING');
 
 		$fieldsModel = parent::getModel("Fields", "TjfieldsModel", array('ignore_request' => true));
@@ -82,6 +94,6 @@ class TjfieldsControllerFields extends FormController
 
 		$result = $fieldsModel->getItems();
 
-		echo new JResponseJson($result);
+		echo new JsonResponse($result);
 	}
 }

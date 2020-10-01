@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS `#__tjfields_fields` (
 	`required` varchar(255) NOT NULL,
 	`readonly` int(11) NOT NULL DEFAULT '0',
 	`created_by` int(11) NOT NULL,
-	`description` varchar(255) NOT NULL,
+	`description` text NOT NULL,
 	`js_function` text NOT NULL,
 	`validation_class` text NOT NULL,
 	`ordering` int(11) NOT NULL,
@@ -31,7 +31,9 @@ CREATE TABLE IF NOT EXISTS `#__tjfields_fields_value` (
 	`user_id` int(11) NOT NULL,
 	`email_id` varchar(255) NOT NULL,
 	`client` varchar(255) NOT NULL COMMENT 'client(eg com_jticketing.event)',
-	PRIMARY KEY (`id`)
+	PRIMARY KEY (`id`),
+	KEY `field_id` (`field_id`),
+	KEY `content_id` (`content_id`)
 ) DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci AUTO_INCREMENT=1;
 
 CREATE TABLE IF NOT EXISTS `#__tjfields_groups` (

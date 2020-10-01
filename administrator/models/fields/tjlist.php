@@ -127,42 +127,37 @@ class JFormFieldTjList extends JFormFieldList
 				$this->otherInputRequired = 'required="required"';
 			}
 
-			if (!$this->multiple)
+			// Convert array of objects to array of array
+			$dropdownVals = json_encode($options);
+			$dropdownVals = json_decode($dropdownVals, true);
+
+			// Get array of dropdown values
+			$dropdownVals = array_column($dropdownVals, 'value');
+
+			// Check value exist
+			if (!empty($this->value))
 			{
-				$valueFromSelectList = array_filter(
-					$options,
-					function ($e) {
-						return $e->value == $this->value[0];
-					}
-				);
+				$otherValues = array();
 
-				if (empty($valueFromSelectList))
+				// Get other/extra values that are not present in dropdown list
+				if (is_array($this->value))
 				{
-					// Remove prefix values from other text values
-					$this->otherSelectedValue = str_replace($this->type . ':-', '', $this->value[0]);
-				}
-			}
-			elseif ($this->multiple)
-			{
-				// Convert array of objects to array of array
-				$dropdownVals = json_encode($options);
-				$dropdownVals = json_decode($dropdownVals, true);
-
-				// Get array of dropdown values
-				$dropdownVals = array_column($dropdownVals, 'value');
-
-				if (!empty($this->value))
-				{
-					// Get other/extra values that are not present in dropdown list
 					$otherValues = array_values(array_diff($this->value, $dropdownVals));
-
-					if (!empty($otherValues))
+				}
+				else
+				{
+					if (!in_array($this->value, $dropdownVals))
 					{
-						$this->otherSelectedValue = implode(',', $otherValues);
-
-						// Remove prefix values from other text values
-						$this->otherSelectedValue = str_replace($this->type . ':-', '', $this->otherSelectedValue);
+						$otherValues[] = $this->value;
 					}
+				}
+
+				if (!empty($otherValues))
+				{
+					$this->otherSelectedValue = implode(',', $otherValues);
+
+					// Remove prefix values from other text values
+					$this->otherSelectedValue = str_replace($this->type . ':-', '', $this->otherSelectedValue);
 				}
 			}
 

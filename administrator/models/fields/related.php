@@ -15,6 +15,7 @@ use Joomla\CMS\Table\Table;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Language\Text;
 use Joomla\Registry\Registry;
+use Joomla\CMS\HTML\HTMLHelper;
 
 /**
  * Form Field class for the Joomla Platform.
@@ -69,12 +70,12 @@ class JFormFieldRelated extends JFormFieldList
 	 */
 	protected function getInput()
 	{
-		$html = parent::getInput();
-
+		$html      = parent::getInput();
 		$fieldname = preg_replace('/[^a-zA-Z0-9_\-]/', '_', $this->fieldname);
+		$user      = Factory::getUser();
+		$input     = JFactory::getApplication()->input;
+		$db        = Factory::getDbo();
 
-		$user = Factory::getUser();
-		$db = Factory::getDbo();
 		Table::addIncludePath(JPATH_ROOT . '/administrator/components/com_tjfields/tables');
 		$fieldTable = Table::getInstance('field', 'TjfieldsTable', array('dbo', $db));
 		$fieldTable->load(array('name' => $fieldname));
@@ -119,7 +120,6 @@ class JFormFieldRelated extends JFormFieldList
 
 				if ($clusterAware)
 				{
-					$input = JFactory::getApplication()->input;
 					$clusterId = $input->get("cluster_id", 0, "INT");
 
 					if ($clusterId)
@@ -130,6 +130,20 @@ class JFormFieldRelated extends JFormFieldList
 
 				$html .= "<div><a target='_blank' href='" . $masterUcmLink . "'>" . Text::_("COM_TJFIELDS_FORM_DESC_FIELD_RELATED_ADD_RECORD") . "</a></div>";
 			}
+		}
+
+		if ($fieldParams['showAddNewRecordLink'] && $this->id && $fieldTable->id)
+		{
+			$clusterId = $input->get("cluster_id", 0, "INT");
+			$document  = JFactory::getDocument();
+
+			$document->addScript(JUri::root() . 'media/com_tjucm/js/ui/itemform.min.js');
+
+			$document->addScriptDeclaration('jQuery(document).ready(function() {
+				jQuery("#' . $this->id . '_chzn").click(function(){
+					tjUcmItemForm.getRelatedFieldOptions("' . $this->id . '", "' . $fieldTable->id . '", "' . $clusterId . '");
+				});
+			});');
 		}
 
 		return $html;

@@ -13,7 +13,7 @@ jQuery(document).ready(function(){
 		}
 
 		jQuery.ajax({
-			url: Joomla.getOptions('system.paths').base + "/index.php?option=com_tjfields&task=fields.deleteFile&format=json",
+			url: Joomla.getOptions('system.paths').base + "/index.php?option=com_tjfields&task=fields.deleteFile&format=json&" + Joomla.getOptions('csrf.token') + '=1',
 			type: 'POST',
 			data:{
                 fileName: fileName,
@@ -28,7 +28,7 @@ jQuery(document).ready(function(){
 				if (result.data) {
 					var element = jQuery("input[fileFieldId='" + fieldId + "']");
 					element.val('');
-					element.next().remove('div.control-group');
+					element.parent().remove('div.control-group');
 				}
 			}
 		});

@@ -44,17 +44,41 @@ class JFormRuleCluster extends JFormRule
 			}
 		}
 
-		// Validate if a user has entered valid cluster id
-		$user = JFactory::getUser();
+		JLoader::import("/components/com_subusers/includes/rbacl", JPATH_ADMINISTRATOR);
 		JLoader::import("/components/com_cluster/includes/cluster", JPATH_ADMINISTRATOR);
-		$clusterUserModel = ClusterFactory::model('ClusterUser', array('ignore_request' => true));
-		$clusters = $clusterUserModel->getUsersClusters($user->id);
+		$clustersModel = ClusterFactory::model('Clusters', array('ignore_request' => true));
+		$clusters = $clustersModel->getItems();
+		$usersClusters = array();
+
+		// Get UCM type ID
+		$client = "com_tjucm." . str_replace("_clusterclusterid", "", str_replace("com_tjucm_", "", $element['name']->__toString()));
+		JLoader::import('components.com_tjucm.tables.type', JPATH_ADMINISTRATOR);
+		$typeTable = JTable::getInstance('Type', 'TjucmTable', array('dbo', JFactory::getDbo()));
+		$typeTable->load(array("unique_identifier" => $client));
+
+		if (!empty($clusters))
+		{
+			foreach ($clusters as $clusterList)
+			{
+				if (RBACL::check(JFactory::getUser()->id, 'com_cluster', 'core.edititem.' . $typeTable->id, $clusterList->id) || RBACL::check(JFactory::getUser()->id, 'com_cluster', 'core.editallitem.' . $typeTable->id))
+				{
+					if (!empty($clusterList->id))
+					{
+						$clusterObj = new stdclass;
+						$clusterObj->text = $clusterList->name;
+						$clusterObj->value = $clusterList->id;
+
+						$usersClusters[] = $clusterObj;
+					}
+				}
+			}
+		}
 
 		if ($value != "")
 		{
-			foreach ($clusters as $cluster)
+			foreach ($usersClusters as $cluster)
 			{
-				if ($value == $cluster->id)
+				if ($value == $cluster->value)
 				{
 					return true;
 				}
