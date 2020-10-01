@@ -442,7 +442,7 @@ class TjfieldsHelper
 				// This is special case to handle the copy of related fields data in copy item feature
 				$jInput = JFactory::getApplication()->input;
 				$tempId = $jInput->get('id', '', 'STRING');
-				$jInput->set('id', $data['content_id']);
+				$jInput->set('id', $tjUcmParentContentId);
 
 				JLoader::import('components.com_tjfields.models.field', JPATH_ADMINISTRATOR);
 				$tjFieldsFieldModel = BaseDatabaseModel::getInstance('Field', 'TjfieldsModel', array('ignore_request' => true));
@@ -463,7 +463,7 @@ class TjfieldsHelper
 
 				foreach ($fieldValue as $k => $fv)
 				{
-					if (!in_array($fv, $relatedFieldOptionValues))
+					if (!empty($fv) && !in_array($fv, $relatedFieldOptionValues))
 					{
 						$relatedFieldDataSources = $fieldParams->get('fieldName');
 
