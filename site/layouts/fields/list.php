@@ -53,18 +53,44 @@ if ($field->value)
 	else
 	{
 		// If multi select
-		foreach ($field->value as $value)
+		$savedValues = $field->value;
+
+		foreach ($options as $optionValue => $optionText)
 		{
-			if (isset($options[$value]))
+			if (in_array($optionValue, $savedValues))
 			{
-				$options[$value] = htmlspecialchars($options[$value], ENT_COMPAT, 'UTF-8');
-				echo Text::_($options[$value]);
-				echo "<br>";
+				// If multi select
+				foreach ($savedValues as $k => $value)
+				{
+					if ($optionValue == $value)
+					{
+						unset($savedValues[$k]);
+						echo Text::_(htmlspecialchars($optionValue, ENT_COMPAT, 'UTF-8'));
+						echo "<br>";
+					}
+				}
 			}
-			elseif ($value != Text::_('COM_TJFIELDS_TJLIST_OTHER_OPTION_VALUE'))
+		}
+
+		if (!empty($savedValues))
+		{
+			foreach ($savedValues as $savedValue)
 			{
-				echo Text::_(str_replace($field->type . ':-', '', $value));
-				echo "<br>";
+				if ($savedValue != Text::_('COM_TJFIELDS_TJLIST_OTHER_OPTION_VALUE'))
+				{
+					$savedValue = str_replace($field->type . ':-', '', $savedValue);
+
+					if (!empty($savedValue))
+					{
+						$savedValue = explode(',', $savedValue);
+
+						foreach ($savedValue as $value)
+						{
+							echo Text::_(htmlspecialchars($value, ENT_COMPAT, 'UTF-8'));
+							echo "<br>";
+						}
+					}
+				}
 			}
 		}
 	}
