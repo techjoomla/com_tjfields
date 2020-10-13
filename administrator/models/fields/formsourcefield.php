@@ -47,7 +47,7 @@ class JFormFieldformsourcefield extends JFormField
 
 		$query->select($db->quoteName(array('id', 'title', 'unique_identifier')));
 		$query->from($db->quoteName('#__tj_ucm_types'));
-		$query->where($db->quoteName('params') . ' LIKE ' . $db->quote('%"is_subform":"1"%'));
+		$query->where('(' . $db->quoteName('params') . ' LIKE ' . $db->quote('%"is_subform":"1"%') . ' OR ' . $db->quoteName('params') . ' LIKE ' . $db->quote('%"is_subform":1%') . ')');
 
 		if (!empty($currentClient))
 		{
