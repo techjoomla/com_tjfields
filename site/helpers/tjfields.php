@@ -184,8 +184,7 @@ class TjfieldsHelper
 			$data['parent_content_id'] = $ucmDataTable->parent_id;
 		}
 
-		$tjUcmParentContentId = isset($data['parent_content_id']) ? $data['parent_content_id'] : $data['content_id'];
-
+		$tjUcmParentContentId  = isset($data['parent_content_id']) ? $data['parent_content_id'] : $data['content_id'];
 		$tjUcmSubFormContentId = array('childContentIds' => array());
 
 		// Get user object
