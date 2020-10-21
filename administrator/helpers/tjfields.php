@@ -368,7 +368,7 @@ class TjfieldsHelper extends ContentHelper
 						if (isset($fieldAttribute->multiple) && $fieldAttribute->multiple != 'true' && !$fieldAttribute->multiple)
 						{
 							// Set Default blank Option
-							$option = $field->addChild('option', '- ' . Text::_('COM_TJFIELDS_SELECT_OPTION') . " " . $f->label . ' -');
+							$option = $field->addChild('option', Text::_('COM_TJFIELDS_SINGLE_SELECT_OPTION'));
 							$option->addAttribute('value', '');
 						}
 					}
