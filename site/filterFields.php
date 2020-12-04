@@ -183,7 +183,7 @@ trait TjfieldsFilterField
 					}
 					else
 					{
-						if ($canAdd)
+						if ($canAdd || $canView)
 						{
 							if (!empty($extraData[$tjFieldFieldTable->id]))
 							{
