@@ -14,6 +14,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Table\Table;
 use Joomla\Registry\Registry;
 use Joomla\CMS\Access\Access;
+use Joomla\CMS\Language\Text;
 use Joomla\Utilities\ArrayHelper;
 /**
  * JTable class for Country.
@@ -64,9 +65,9 @@ class TjfieldsTablecountry extends Table
 
 		if (! Factory::getUser()->authorise('core.admin', 'com_tjfields.country.' . $array['id']))
 		{
-			$actions = Access::getActionsFromData('com_tjfields', 'country');
+			$actions         = Access::getActionsFromData('com_tjfields', 'country');
 			$default_actions = Factory::getACL()->getAssetRules('com_tjfields.country.' . $array['id'])->getData();
-			$array_jaccess = array();
+			$array_jaccess   = array();
 
 			foreach ($actions as $action)
 			{
@@ -137,8 +138,8 @@ class TjfieldsTablecountry extends Table
 		// Start code validations
 		$db = Factory::getDbo();
 		$query = $db->getQuery(true);
-		$query->select('id');
-		$query->select('country_3_code');
+		$query->select($db->qn('id'));
+		$query->select($db->qn('country_3_code'));
 		$query->where($db->qn('country_3_code') . ' = ' . $db->quote($this->country_3_code));
 		$query->where($db->qn('id') . ' != ' . (int) $this->id);
 		$db->setQuery($query);
@@ -146,15 +147,15 @@ class TjfieldsTablecountry extends Table
 
 		if ($result)
 		{
-			$this->setError(JText::_('COM_TJFIELDS_COUNTRY_CODE_3_EXISTS'));
+			$this->setError(Text::_('COM_TJFIELDS_COUNTRY_CODE_3_EXISTS'));
 
 			return false;
 		}
 		else
 		{
 			$query = $db->getQuery(true);
-			$query->select('id');
-			$query->select('country_code');
+			$query->select($db->qn('id'));
+			$query->select($db->qn('country_code'));
 			$query->from($db->qn('#__tj_country'));
 			$query->where($db->qn('country_code') . ' = ' . $db->quote($this->country_code));
 			$query->where($db->qn('id') . ' != ' . (int) $this->id);
@@ -163,7 +164,7 @@ class TjfieldsTablecountry extends Table
 
 			if ($result)
 			{
-				$this->setError(JText::_('COM_TJFIELDS_COUNTRY_CODE_EXISTS'));
+				$this->setError(Text::_('COM_TJFIELDS_COUNTRY_CODE_EXISTS'));
 
 				return false;
 			}
@@ -188,14 +189,12 @@ class TjfieldsTablecountry extends Table
 	public function publish ($pks = null, $state = 1, $userId = 0)
 	{
 		$client = Factory::getApplication()->input->get('client', '', 'STRING');
-
-		// Initialise variables.
-		$k = $this->_tbl_key;
+		$k      = $this->_tbl_key;
 
 		// Sanitize input.
 		ArrayHelper::toInteger($pks);
 		$userId = (int) $userId;
-		$state = (int) $state;
+		$state  = (int) $state;
 
 		// If there are no primary keys set check to see if the instance key is
 		// set.
@@ -203,14 +202,12 @@ class TjfieldsTablecountry extends Table
 		{
 			if ($this->$k)
 			{
-				$pks = array(
-					$this->$k
-				);
+				$pks = array($this->$k);
 			}
 			// Nothing to set publishing state on, return false.
 			else
 			{
-				$this->setError(JText::_('JLIB_DATABASE_ERROR_NO_ROWS_SELECTED'));
+				$this->setError(Text::_('JLIB_DATABASE_ERROR_NO_ROWS_SELECTED'));
 
 				return false;
 			}
@@ -347,8 +344,8 @@ class TjfieldsTablecountry extends Table
 	{
 		$db = Factory::getDbo();
 		$query = $db->getQuery(true);
-		$query->select('id');
-		$query->select('country_3_code');
+		$query->select($db->qn('id'));
+		$query->select($db->qn('country_3_code'));
 		$query->from($db->qn('#__tj_country'));
 		$query->where($db->qn('country_3_code') . ' = ' . $db->quote($this->country_3_code));
 		$query->where($db->qn('id') . ' != ' . (int) $this->id);
@@ -357,15 +354,15 @@ class TjfieldsTablecountry extends Table
 
 		if ($result)
 		{
-			$this->setError(JText::_('COM_TJFIELDS_COUNTRY_CODE_3_EXISTS'));
+			$this->setError(Text::_('COM_TJFIELDS_COUNTRY_CODE_3_EXISTS'));
 
 			return false;
 		}
 		else
 		{
 			$query = $db->getQuery(true);
-			$query->select('id');
-			$query->select('country_code');
+			$query->select($db->qn('id'));
+			$query->select($db->qn('country_code'));
 			$query->from($db->qn('#__tj_country'));
 			$query->where($db->qn('country_code') . ' = ' . $db->quote($this->country_code));
 			$query->where($db->qn('id') . ' != ' . (int) $this->id);
@@ -374,7 +371,7 @@ class TjfieldsTablecountry extends Table
 
 			if ($result)
 			{
-				$this->setError(JText::_('COM_TJFIELDS_COUNTRY_CODE_EXISTS'));
+				$this->setError(Text::_('COM_TJFIELDS_COUNTRY_CODE_EXISTS'));
 
 				return false;
 			}

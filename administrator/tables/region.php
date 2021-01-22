@@ -14,6 +14,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Table\Table;
 use Joomla\Registry\Registry;
 use Joomla\CMS\Access\Access;
+use Joomla\CMS\Language\Text;
 use Joomla\Utilities\ArrayHelper;
 
 /**
@@ -140,8 +141,8 @@ class TjfieldsTableRegion extends Table
 
 		// Check for 3 digit code
 		$query = $db->getQuery(true);
-		$query->select('id');
-		$query->select('region_3_code');
+		$query->select($db->qn('id'));
+		$query->select($db->qn('region_3_code'));
 		$query->from($db->qn('#__tj_region'));
 		$query->where($db->qn('region_3_code') . ' = ' . $db->quote($this->region_3_code));
 		$query->where($db->qn('id') . ' != ' . (int) $this->id);
@@ -151,15 +152,15 @@ class TjfieldsTableRegion extends Table
 
 		if ($result)
 		{
-			$this->setError(JText::_('COM_TJFIELDS_REGION_CODE_3_EXISTS'));
+			$this->setError(Text::_('COM_TJFIELDS_REGION_CODE_3_EXISTS'));
 
 			return false;
 		}
 		else
 		{
 			$query = $db->getQuery(true);
-			$query->select('id');
-			$query->select('region_code');
+			$query->select($db->qn('id'));
+			$query->select($db->qn('region_code'));
 			$query->from($db->qn('#__tj_region'));
 			$query->where($db->qn('region_code') . ' = ' . $db->quote($this->region_code));
 			$query->where($db->qn('id') . ' != ' . (int) $this->id);
@@ -169,7 +170,7 @@ class TjfieldsTableRegion extends Table
 
 			if ($result)
 			{
-				$this->setError(JText::_('COM_TJFIELDS_REGION_CODE_EXISTS'));
+				$this->setError(Text::_('COM_TJFIELDS_REGION_CODE_EXISTS'));
 
 				return false;
 			}
@@ -214,7 +215,7 @@ class TjfieldsTableRegion extends Table
 			// Nothing to set publishing state on, return false.
 			else
 			{
-				$this->setError(JText::_('JLIB_DATABASE_ERROR_NO_ROWS_SELECTED'));
+				$this->setError(Text::_('JLIB_DATABASE_ERROR_NO_ROWS_SELECTED'));
 
 				return false;
 			}

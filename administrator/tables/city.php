@@ -14,6 +14,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Table\Table;
 use Joomla\Registry\Registry;
 use Joomla\CMS\Access\Access;
+use Joomla\CMS\Language\Text;
 use Joomla\Utilities\ArrayHelper;
 
 /**
@@ -172,7 +173,7 @@ class TjfieldsTableCity extends Table
 			// Nothing to set publishing state on, return false.
 			else
 			{
-				$this->setError(JText::_('JLIB_DATABASE_ERROR_NO_ROWS_SELECTED'));
+				$this->setError(Text::_('JLIB_DATABASE_ERROR_NO_ROWS_SELECTED'));
 
 				return false;
 			}
@@ -308,10 +309,10 @@ class TjfieldsTableCity extends Table
 		$db  = Factory::getDbo();
 		$query = $db->getQuery(true);
 
-		$query->select('id');
-		$query->select('city');
-		$query->select('country_id');
-		$query->select('region_id');
+		$query->select($db->qn('id'));
+		$query->select($db->qn('city'));
+		$query->select($db->qn('country_id'));
+		$query->select($db->qn('region_id'));
 		$query->from($db->qn('#__tj_city'));
 		$query->where($db->qn('city') . ' = ' . $db->quote($this->city));
 		$query->where($db->qn('id') . ' != ' . (int) $this->id);
