@@ -10,6 +10,12 @@
 // No direct access
 defined('_JEXEC') or die();
 
+use Joomla\CMS\Factory;
+use Joomla\CMS\Table\Table;
+use Joomla\Registry\Registry;
+use Joomla\CMS\Access\Access;
+use Joomla\Utilities\ArrayHelper;
+
 /**
  * JTable class for City.
  *
@@ -17,7 +23,7 @@ defined('_JEXEC') or die();
  * @subpackage  com_tjfields
  * @since       2.2
  */
-class TjfieldsTableCity extends JTable
+class TjfieldsTableCity extends Table
 {
 	/**
 	 * Constructor
@@ -45,27 +51,30 @@ class TjfieldsTableCity extends JTable
 	{
 		if (isset($array['params']) && is_array($array['params']))
 		{
-			$registry = new JRegistry;
+			$registry = new Registry;
 			$registry->loadArray($array['params']);
 			$array['params'] = (string) $registry;
 		}
 
 		if (isset($array['metadata']) && is_array($array['metadata']))
 		{
-			$registry = new JRegistry;
+			$registry = new Registry;
 			$registry->loadArray($array['metadata']);
 			$array['metadata'] = (string) $registry;
 		}
 
-		if (! JFactory::getUser()->authorise('core.admin', 'com_tjfields.city.' . $array['id']))
+		if (! Factory::getUser()->authorise('core.admin', 'com_tjfields.city.' . $array['id']))
 		{
-			$actions = JFactory::getACL()->getActions('com_tjfields', 'city');
-			$default_actions = JFactory::getACL()->getAssetRules('com_tjfields.city.' . $array['id'])->getData();
-			$array_jaccess = array();
+			$actions         = Access::getActionsFromData('com_tjfields', 'city');
+			$default_actions = Factory::getACL()->getAssetRules('com_tjfields.city.' . $array['id'])->getData();
+			$array_jaccess   = array();
 
 			foreach ($actions as $action)
 			{
-				$array_jaccess[$action->name] = $default_actions[$action->name];
+				if (array_key_exists($action->name, $default_actions))
+				{
+					$array_jaccess[$action->name] = $default_actions[$action->name];
+				}
 			}
 
 			$array['rules'] = $this->JAccessRulestoArray($array_jaccess);
@@ -144,15 +153,13 @@ class TjfieldsTableCity extends JTable
 	 */
 	public function publish ($pks = null, $state = 1, $userId = 0)
 	{
-		$client = JFactory::getApplication()->input->get('client', '', 'STRING');
-
-		// Initialise variables.
-		$k = $this->_tbl_key;
+		$client = Factory::getApplication()->input->get('client', '', 'STRING');
+		$k      = $this->_tbl_key;
 
 		// Sanitize input.
-		JArrayHelper::toInteger($pks);
+		ArrayHelper::toInteger($pks);
 		$userId = (int) $userId;
-		$state = (int) $state;
+		$state  = (int) $state;
 
 		// If there are no primary keys set check to see if the instance key is
 		// set.
@@ -160,9 +167,7 @@ class TjfieldsTableCity extends JTable
 		{
 			if ($this->$k)
 			{
-				$pks = array(
-						$this->$k
-				);
+				$pks = array($this->$k);
 			}
 			// Nothing to set publishing state on, return false.
 			else
@@ -190,12 +195,14 @@ class TjfieldsTableCity extends JTable
 		$this->_db->setQuery(
 				'UPDATE `' . $this->_tbl . '`' . ' SET `' . $client . '` = ' . (int) $state . ' WHERE (' . $where . ')' . $checkin
 			);
-		$this->_db->query();
 
-		// Check for a database error.
-		if ($this->_db->getErrorNum())
+		try
 		{
-			$this->setError($this->_db->getErrorMsg());
+			$this->_db->execute();
+		}
+		catch (\RuntimeException $e)
+		{
+			$this->setError($e->getMessage());
 
 			return false;
 		}
@@ -232,12 +239,6 @@ class TjfieldsTableCity extends JTable
 	protected function _getAssetName ()
 	{
 		$k = $this->_tbl_key;
-// 		$client = explode('.', $this->client);
-
-// 		if (!empty($client[0]))
-// 		{
-// 			return $client[0] . '.city.' . (int) $this->$k;
-// 		}
 
 		return 'com_tjfields.city.' . (int) $this->$k;
 	}
@@ -259,23 +260,11 @@ class TjfieldsTableCity extends JTable
 	protected function _getAssetParentId (JTable $table = null, $id = null)
 	{
 		// We will retrieve the parent-asset from the Asset-table
-		$assetParent = JTable::getInstance('Asset');
+		$assetParent = Table::getInstance('Asset');
 
 		// Default: if no asset-parent can be found we take the global asset
 		$assetParentId = $assetParent->getRootId();
-
-// 		$client = explode('.',$this->client);
-
-// 		if (!empty($client[0]))
-// 		{
-// 			// The item has the component as asset-parent
-// 			$assetParent->loadByName($client[0]);
-// 		}
-// 		else
-// 		{
-			// The item does not get the client
-			$assetParent->loadByName('com_tjfields');
-// 		}
+		$assetParent->loadByName('com_tjfields');
 
 		// Return the found asset-parent-id
 		if ($assetParent->id)
@@ -302,10 +291,6 @@ class TjfieldsTableCity extends JTable
 		$this->load($pk);
 		$result = parent::delete($pk);
 
-		if ($result)
-		{
-		}
-
 		return $result;
 	}
 
@@ -319,17 +304,19 @@ class TjfieldsTableCity extends JTable
 	 */
 	public function checkDuplicateCity ()
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
+		$db  = Factory::getDbo();
+		$query = $db->getQuery(true);
 
-		// Start city validations
-		$db = JFactory::getDbo();
-
-		$query = "SELECT id, city, country_id, region_id
-		 FROM #__tj_city
-		 WHERE city = " . $db->quote($this->city) . "
-		 AND id != " . (int) $this->id . "
-		 AND country_id = " . (int) $this->country_id . "
-		 AND region_id = " . (int) $this->region_id;
+		$query->select('id');
+		$query->select('city');
+		$query->select('country_id');
+		$query->select('region_id');
+		$query->from($db->qn('#__tj_city'));
+		$query->where($db->qn('city') . ' = ' . $db->quote($this->city));
+		$query->where($db->qn('id') . ' != ' . (int) $this->id);
+		$query->where($db->qn('country_id') . ' = ' . (int) $this->country_id);
+		$query->where($db->qn('region_id') . ' = ' . (int) $this->region_id);
 		$db->setQuery($query);
 		$result = intval($db->loadResult());
 
