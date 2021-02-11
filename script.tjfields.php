@@ -659,7 +659,7 @@ class Com_TjfieldsInstallerScript
 		}
 		else
 		{
-			$newColumns = array('id', 'country', 'country_3_code', 'country_code', 'country_jtext', 'ordering');
+			$newColumns = array('id', 'country', 'country_3_code', 'country_code', 'country_dial_code', 'country_jtext', 'ordering');
 			$oldColumns = $this->getColumns('#__tj_country');
 
 			$dropTableFlag = 0;
