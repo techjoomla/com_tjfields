@@ -1,10 +1,9 @@
 <?php
 /**
- * @package     Joomla.Platform
- * @subpackage  Form
- *
- * @copyright   Copyright (C) 2005 - 2016 Open Source Matters, Inc. All rights reserved.
- * @license     GNU General Public License version 2 or later; see LICENSE
+ * @package    Tjfields
+ * @author     Techjoomla <extensions@techjoomla.com>
+ * @copyright  Copyright (c) 2009-2021 TechJoomla. All rights reserved.
+ * @license    GNU General Public License version 2 or later.
  */
 
 JLoader::import("/techjoomla/media/storage/local", JPATH_LIBRARIES);
@@ -12,15 +11,16 @@ JLoader::import("/techjoomla/media/storage/local", JPATH_LIBRARIES);
 defined('JPATH_PLATFORM') or die;
 
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Factory;
 
 JLoader::import('components.com_tjfields.models.fields.file', JPATH_ADMINISTRATOR);
 
 /**
- * Form Field class for the Joomla Platform.
+ * Form Field class for the image capture field.
  * Provides an input field for files
  *
  * @link   http://www.w3.org/TR/html-markup/input.file.html#input.file
- * @since  11.1
+ * @since  __DEPLOY_VERSION__
  */
 class JFormFieldCaptureImage extends JFormFieldFile
 {
@@ -28,7 +28,7 @@ class JFormFieldCaptureImage extends JFormFieldFile
 	 * The form field type.
 	 *
 	 * @var    string
-	 * @since  11.1
+	 * @since  __DEPLOY_VERSION__
 	 */
 	protected $type = 'Captureimage';
 
@@ -36,7 +36,7 @@ class JFormFieldCaptureImage extends JFormFieldFile
 	 * The accepted Captureimage type list.
 	 *
 	 * @var    mixed
-	 * @since  3.2
+	 * @since  __DEPLOY_VERSION__
 	 */
 	protected $accept;
 
@@ -44,7 +44,7 @@ class JFormFieldCaptureImage extends JFormFieldFile
 	 * Name of the layout being used to render the field
 	 *
 	 * @var    string
-	 * @since  3.6
+	 * @since  __DEPLOY_VERSION__
 	 */
 	protected $layout = 'joomla.form.field.file';
 
@@ -55,7 +55,7 @@ class JFormFieldCaptureImage extends JFormFieldFile
 	 *
 	 * @return  mixed  The property value or null.
 	 *
-	 * @since   3.2
+	 * @since   __DEPLOY_VERSION__
 	 */
 	public function __get($name)
 	{
@@ -78,7 +78,7 @@ class JFormFieldCaptureImage extends JFormFieldFile
 	 *
 	 * @return  void
 	 *
-	 * @since   3.2
+	 * @since   __DEPLOY_VERSION__
 	 */
 	public function __set($name, $value)
 	{
@@ -86,9 +86,6 @@ class JFormFieldCaptureImage extends JFormFieldFile
 		{
 			case 'accept':
 				$this->accept = (string) $value;
-				break;
-			case 'capture':
-				$this->capture = !empty($value) ? true : false;
 				break;
 			default:
 				parent::__set($name, $value);
@@ -107,7 +104,7 @@ class JFormFieldCaptureImage extends JFormFieldFile
 	 * @return  boolean  True on success.
 	 *
 	 * @see     JFormField::setup()
-	 * @since   3.2
+	 * @since   __DEPLOY_VERSION__
 	 */
 	public function setup(SimpleXMLElement $element, $value, $group = null)
 	{
@@ -116,7 +113,6 @@ class JFormFieldCaptureImage extends JFormFieldFile
 		if ($return)
 		{
 			$this->accept = (string) $this->element['accept'];
-			$this->capture = (string) $this->element['capture'];
 		}
 
 		return $return;
@@ -131,20 +127,19 @@ class JFormFieldCaptureImage extends JFormFieldFile
 	 *
 	 * @note    The field does not include an upload mechanism.
 	 * @see     JFormFieldMedia
-	 * @since   11.1
+	 * @since   __DEPLOY_VERSION__
 	 */
 	protected function getInput()
 	{
-		$doc = JFactory::getDocument();
-		$doc->addScript(JUri::root() . 'media/com_tjfields/vendors/webcamjs/webcam.min.js');
-		$doc->addScript(JUri::root() . 'administrator/components/com_tjfields/assets/js/captureimage.min.js');
+		HTMLHelper::script('media/com_tjfields/vendors/webcamjs/webcam.min.js');
+		HTMLHelper::script('administrator/components/com_tjfields/assets/js/captureimage.min.js');
 
 		$layoutData = $this->getLayoutData();
 
 		$height = isset($layoutData['field']->element->attributes()->height) ? $layoutData['field']->element->attributes()->height : 240;
 		$width = isset($layoutData['field']->element->attributes()->width) ? $layoutData['field']->element->attributes()->width : 320;
 
-		JFactory::getDocument()->addScriptDeclaration("
+		Factory::getDocument()->addScriptDeclaration("
 			if (typeof userAgentIsMobile !== 'undefined')
 			{
 				var userAgentIsMobile = false;
@@ -159,7 +154,7 @@ class JFormFieldCaptureImage extends JFormFieldFile
 		$html .= "<input type='hidden' id='" . $this->id . "__camera_width' value='" . $width . "'>";
 
 		// Load backend language file
-		$lang = JFactory::getLanguage();
+		$lang = Factory::getLanguage();
 		$lang->load('com_tjfields', JPATH_SITE);
 
 		$displayTakePictureButton = (!empty($this->value)) ? 'style="display:none;"' : '';
