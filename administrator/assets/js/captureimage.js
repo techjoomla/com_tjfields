@@ -8,14 +8,14 @@ jQuery(document).ready(function() {
 	}
 
 	/* Initialise camera on page load by clicking a hidden button - the button is used in case of mobile devices as we cant activate camera on page load on mobile devices*/
-	jQuery.each(jQuery("#item-form").find(jQuery("input[onClick^='set_camera(']")), function(key, value) {
+	jQuery.each(jQuery(document).find(jQuery("input[onClick^='set_camera(']")), function(key, value) {
 		if (jQuery('#' + jQuery(value).attr('id').replace('take_another', '_hasvalue')).val() == '0') {
 			jQuery(value).click();
 		}
 	});
 
 	/* Hide button to capture image on mobile device as this is done via mobile interface*/
-	jQuery.each(jQuery("#item-form").find(jQuery("input[id^='_take_snapshot']")), function(key, value) {
+	jQuery.each(jQuery(document).find(jQuery("input[id^='_take_snapshot']")), function(key, value) {
 		if (userAgentIsMobile) {
 			document.getElementById(jQuery(value).attr('id')).style = 'display:none;';
 		}
