@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS `#__tj_country` (
 -- Dumping data for table `#__tj_country`
 --
 
-INSERT INTO `#__tj_country` (`id`, `country`, `country_3_code`, `country_code`, `country_dial_code`, `country_jtext`, `ordering`, `com_jgive`, `com_jticketing`, `com_quick2cart`, `com_socialads`, `com_tjlms`, `com_tjvendors`) VALUES
+INSERT IGNORE INTO `#__tj_country` (`id`, `country`, `country_3_code`, `country_code`, `country_dial_code`, `country_jtext`, `ordering`, `com_jgive`, `com_jticketing`, `com_quick2cart`, `com_socialads`, `com_tjlms`, `com_tjvendors`) VALUES
 (1, 'Afghanistan', 'AFG', 'AF', '93', 'TJ_GEO_COUNTRY_AFGHANISTAN', 1, 1, 1, 1, 1, 1, 1),
 (2, 'Albania', 'ALB', 'AL', '335', 'TJ_GEO_COUNTRY_ALBANIA', 2, 1, 1, 1, 1, 1, 1),
 (3, 'Algeria', 'DZA', 'DZ', '213', 'TJ_GEO_COUNTRY_ALGERIA', 3, 1, 1, 1, 1, 1, 1),
