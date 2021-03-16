@@ -139,6 +139,16 @@ class JFormFieldCaptureImage extends JFormFieldFile
 		$height = isset($layoutData['field']->element->attributes()->height) ? $layoutData['field']->element->attributes()->height : 240;
 		$width = isset($layoutData['field']->element->attributes()->width) ? $layoutData['field']->element->attributes()->width : 320;
 
+<<<<<<< HEAD
+=======
+		Factory::getDocument()->addScriptDeclaration("
+			if (typeof userAgentIsMobile !== 'undefined')
+			{
+				var userAgentIsMobile = false;
+			}
+		");
+
+>>>>>>> 92cf40a6cda5ca64d0efbe2b35ffcea7de32a7aa
 		$required = ($this->required) ? "required='required'" : "";
 		$hasValue = (!empty($this->value)) ? '1' : '0';
 		$html = "<input type='hidden' $required name='" . $this->name . "' id='" . $this->id . "'>";
@@ -154,14 +164,20 @@ class JFormFieldCaptureImage extends JFormFieldFile
 		$displayTakeAnotherButton = (!empty($this->value)) ? '' : 'style="display:none;"';
 		$displayCapturedImgDiv = (!empty($this->value)) ? 'style="display:none;"' : '';
 		$displayUsePictureButton = (!empty($this->value)) ? 'style="display:none;"' : '';
+<<<<<<< HEAD
 		$displayCameraSwitchButton = (!empty($this->value)) ? 'style="display:none;"' : '';
+=======
+>>>>>>> 92cf40a6cda5ca64d0efbe2b35ffcea7de32a7aa
 
 		$html .= '<div id="' . $this->id . '_capture_img' . '"></div>';
 		$html .= '<div  ' . $displayCapturedImgDiv . ' id="' . $this->id . '_captured_img' . '"><img /></div>';
 		$html .= '<br>';
 		$html .= '<input ' . $displayTakePictureButton . ' type="button" id="' . $this->id . '_take_snapshot' . '" value="' . JText::_("COM_TJFIELDS_FILE_CAPTURE_IMAGE_TAKE_PHOTO") . '" onClick="' . "take_snapshot('" . $this->id . "')" . '">';
 		$html .= '<input ' . $displayUsePictureButton . ' type="button" id="' . $this->id . '_use' . '" value="' . JText::_("COM_TJFIELDS_FILE_USE_CAPTURED_IMAGE") . '" onClick="' . "use_snapshot('" . $this->id . "')" . '">';
+<<<<<<< HEAD
 		$html .= '<input ' . $displayCameraSwitchButton . ' type="button" id="' . $this->id . '_switch_camera' . '" value="' . JText::_("COM_TJFIELDS_FILE_SWITCH_CAMERA") . '" onClick="' . "switch_camera('" . $this->id . "')" . '">';
+=======
+>>>>>>> 92cf40a6cda5ca64d0efbe2b35ffcea7de32a7aa
 		$html .= '<input ' . $displayTakeAnotherButton . ' type="button" id="' . $this->id . '_take_another' . '" value="' . JText::_("COM_TJFIELDS_FILE_CAPTURE_IMAGE_TAKE_ANOTHER") . '" onClick="' . "set_camera('" . $this->id . "')" . '">';
 		$html .= '<br><br>';
 
