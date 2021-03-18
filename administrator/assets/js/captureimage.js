@@ -172,6 +172,8 @@ function switch_camera(thisId) {
 	{
 		cameraFacingMode = (cameraFacingMode == 'user') ? 'environment' : 'user';
 
+		Webcam.reset();
+
 		Webcam.set({
 			width: document.getElementById(thisId + '__camera_width').value,
 			height: document.getElementById(thisId + '__camera_height').value,
