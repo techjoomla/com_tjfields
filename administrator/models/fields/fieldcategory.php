@@ -34,7 +34,7 @@ class JFormFieldFieldcategory extends JFormField
 	{
 		$this->value = $this->getSelectedCategories();
 
-		return $this->fetchElement($this->name, $this->value, $this->element, $this->options['control']);
+		return $this->fetchElement($this->name, $this->value, $this->element, isset($this->options['control']));
 	}
 
 	/**
