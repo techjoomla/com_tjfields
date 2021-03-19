@@ -69,11 +69,14 @@ class TjfieldsTablecountry extends Table
 			$default_actions = Factory::getACL()->getAssetRules('com_tjfields.country.' . $array['id'])->getData();
 			$array_jaccess   = array();
 
-			foreach ($actions as $action)
+			if (is_array($actions) || is_object($actions))
 			{
-				if (array_key_exists($action->name, $default_actions))
+				foreach ($actions as $action)
 				{
-					$array_jaccess[$action->name] = $default_actions[$action->name];
+					if (array_key_exists($action->name, $default_actions))
+					{
+						$array_jaccess[$action->name] = $default_actions[$action->name];
+					}
 				}
 			}
 

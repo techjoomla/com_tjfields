@@ -39,7 +39,9 @@ class JFormFieldCustomfield extends JFormField
 		switch($this->name)
 		{
 			case 'jform[group_id]':
-				return $this->fetchGroupid($this->name,$this->value,$this->element,$this->options['control']);
+				$controlName = (isset($this->options['control'])) ? $this->options['control'] : '';
+
+				return $this->fetchGroupid($this->name,$this->value,$this->element, $controlName);
 			break;
 
 			/*case 'jform[client_type]':

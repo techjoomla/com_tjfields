@@ -323,7 +323,13 @@ class JFormFieldFile extends JFormField
 		if ($canView || $canDownload)
 		{
 			$renderer = $data->renderer;
-			$fileTitle = substr($data->fields_value_table->value, strpos($data->fields_value_table->value, '_', 12) + 1);
+			$fileTitle = '';
+
+			if ($data->fields_value_table->value)
+			{
+				$fileTitle = substr($data->fields_value_table->value, strpos($data->fields_value_table->value, '_', 12) + 1);
+			}
+			
 
 			if ($renderer == 'download')
 			{
