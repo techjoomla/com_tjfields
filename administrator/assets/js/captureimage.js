@@ -104,7 +104,7 @@ jQuery(document).ready(function() {
 function take_snapshot(thisId) {
 	Webcam.snap(function(data_uri) {
 		document.getElementById(thisId + '_capture_img').style = 'display:none';
-		document.getElementById(thisId + '_captured_img').style = '';
+		jQuery("#"+thisId + '_captured_img').attr('style', 'width:'+document.getElementById(thisId + '__camera_width').value+'px;height:'+document.getElementById(thisId + '__camera_height').value+'px;');
 		jQuery('#' + thisId + '_captured_img').find("img").attr("src", data_uri);
 		jQuery('#' + thisId).val(jQuery('#' + thisId + '_captured_img').find("img").attr("src")).trigger('change');
 		document.getElementById(thisId + '_take_snapshot').style = 'display:none;';
@@ -117,7 +117,7 @@ function take_snapshot(thisId) {
 function use_snapshot(thisId) {
 	Webcam.snap(function(data_uri) {
 		document.getElementById(thisId + '_capture_img').style = 'display:none';
-		document.getElementById(thisId + '_captured_img').style = '';
+		jQuery("#"+thisId + '_captured_img').attr('style', 'width:'+document.getElementById(thisId + '__camera_width').value+'px;height:'+document.getElementById(thisId + '__camera_height').value+'px;');
 		jQuery('#' + thisId + '_captured_img').find("img").attr("src", data_uri);
 		Webcam.reset();
 
@@ -157,9 +157,12 @@ function set_camera(thisId) {
 	/* WebcamJs code to initialise camera - used for mobile devices*/
 	Webcam.set({
 		width: document.getElementById(thisId + '__camera_width').value,
-		height: document.getElementById(thisId + '__camera_height').value,
+        height: document.getElementById(thisId + '__camera_height').value,
+        dest_width: document.getElementById(thisId + '__camera_width').value*2,
+		dest_height: document.getElementById(thisId + '__camera_height').value*2,
+		flip_horiz: true,
 		image_format: 'jpeg',
-		jpeg_quality: 180
+		jpeg_quality: 100
 	});
 
 	/* WebcamJs code to attach camera outupt to a div on the page*/
@@ -177,8 +180,11 @@ function switch_camera(thisId) {
 		Webcam.set({
 			width: document.getElementById(thisId + '__camera_width').value,
 			height: document.getElementById(thisId + '__camera_height').value,
+			dest_width: document.getElementById(thisId + '__camera_width').value*2,
+			dest_height: document.getElementById(thisId + '__camera_height').value*2,
+			flip_horiz: true,
 			image_format: 'jpeg',
-			jpeg_quality: 180,
+			jpeg_quality: 100,
 			constraints: {
 				facingMode: cameraFacingMode
 			}
