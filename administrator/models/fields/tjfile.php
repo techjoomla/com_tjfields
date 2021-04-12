@@ -20,7 +20,7 @@ use Joomla\CMS\HTML\HTMLHelper;
  * @link   http://www.w3.org/TR/html-markup/input.file.html#input.file
  * @since  11.1
  */
-class JFormFieldFile extends JFormField
+class JFormFieldTjFile extends JFormField
 {
 	/**
 	 * The form field type.
