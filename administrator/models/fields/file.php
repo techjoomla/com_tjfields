@@ -241,8 +241,7 @@ class JFormFieldFile extends JFormField
 			});
 		</script>
 		<?php
-		$data->html = '<input fileFieldId="' . $layoutData["id"] . '" type="hidden" name="'
-		. $layoutData["name"] . '"' . 'id="' . $layoutData["id"] . '"' . 'value="' . $layoutData["value"] . '" />';
+		$data->html = '<input fileFieldId="' . $layoutData["id"] . '" type="hidden" value="' . $layoutData["value"] . '" />';
 
 		$fileInfo = new SplFileInfo($layoutData["value"]);
 		$data->extension = $fileInfo->getExtension();
