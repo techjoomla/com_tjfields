@@ -717,6 +717,8 @@ class TjfieldsHelper
 
 				return $this->saveSingleValuedFieldData($fileName, $client, $contentId, $fieldId, $fieldStoredValues);
 			}
+
+			return true;
 		}
 
 		// Get media library object
