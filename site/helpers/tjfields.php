@@ -706,13 +706,17 @@ class TjfieldsHelper
 				$mediaPath = ($uploadPath != '') ? $uploadPath : JPATH_SITE . '/' . $fieldTable->type . 's/tjmedia/' . str_replace(".", "/", $client . "/");
 				$folderPath = str_replace('/', DIRECTORY_SEPARATOR, $mediaPath);
 
+				// If folder is not present create it
+				if (!Folder::exists($folderPath))
+				{
+					Folder::create($folderPath);
+				}
+
 				$file = $folderPath . $fileName;
 				file_put_contents($file, $imageBase64);
 
 				return $this->saveSingleValuedFieldData($fileName, $client, $contentId, $fieldId, $fieldStoredValues);
 			}
-
-			return true;
 		}
 
 		// Get media library object
