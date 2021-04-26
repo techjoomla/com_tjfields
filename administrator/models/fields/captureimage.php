@@ -141,7 +141,8 @@ class JFormFieldCaptureImage extends JFormFieldFile
 
 		$required = ($this->required) ? "required='required'" : "";
 		$hasValue = (!empty($this->value)) ? '1' : '0';
-		$html = "<input type='hidden' $required name='" . $this->name . "' id='" . $this->id . "'>";
+
+		$html = "<input type='hidden' $required name='" . $this->name . "' id='" . $this->id . "' value='" . $this->value . "'>";
 		$html .= "<input type='hidden' id='" . $this->id . "__hasvalue' value='" . $hasValue . "'>";
 		$html .= "<input type='hidden' id='" . $this->id . "__camera_height' value='" . $height . "'>";
 		$html .= "<input type='hidden' id='" . $this->id . "__camera_width' value='" . $width . "'>";
