@@ -353,7 +353,17 @@ class JFormFieldFile extends JFormField
 					$mediaLink = 'https://docs.google.com/gview?url=' . $data->mediaLink . '&embedded=true';
 				}
 
-				$downloadFile = '<strong><a style="cursor:pointer;" onclick="tjFieldsFileField.previewMedia(\'' . $mediaLink . '\');">' . $fileTitle . '</a></strong>';
+				$imageData = getimagesize($data->mediaLink);
+				$widthHeight = "";
+			
+				if (strpos($imageData['mime'], 'image') !== false)
+				{
+					$imageData[0] += 20;
+					$imageData[1] += 20;
+					$widthHeight  = ", " . $imageData[0] . ", " . $imageData[1];
+				}
+
+				$downloadFile = '<strong><a style="cursor:pointer;" onclick="tjFieldsFileField.previewMedia(\'' . $mediaLink . '\'' . $widthHeight . ');">' . $fileTitle . '</a></strong>';
 			}
 		}
 
