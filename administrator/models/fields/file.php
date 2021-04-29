@@ -358,8 +358,6 @@ class JFormFieldFile extends JFormField
 			
 				if (strpos($imageData['mime'], 'image') !== false)
 				{
-					$imageData[0] += 20;
-					$imageData[1] += 20;
 					$widthHeight  = ", " . $imageData[0] . ", " . $imageData[1];
 				}
 
