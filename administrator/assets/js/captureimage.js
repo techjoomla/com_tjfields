@@ -45,13 +45,11 @@ jQuery(document).ready(function() {
 		/* Update the id of elements used in field when a new group of field is added for subform */
 		jQuery.each(jQuery(row).find(jQuery("input[id^='" + likeName + "']")), function(key, value) {
 			jQuery(value).attr('id', jQuery(value).attr('id').replace("X__", subFormFieldCount + '__'));
-			jQuery(value).attr('name', jQuery(value).attr('id').replace("X__", subFormFieldCount + '__'));
 		});
 
 		/* Update the id of elements used in field when a new group of field is added for subform */
 		jQuery.each(jQuery(row).find(jQuery("div[id^='" + likeName + "']")), function(key, value) {
 			jQuery(value).attr('id', jQuery(value).attr('id').replace("X__", subFormFieldCount + '__'));
-			jQuery(value).attr('name', jQuery(value).attr('id').replace("X__", subFormFieldCount + '__'));
 		});
 
 		/* Initialise camera on page load by clicking a hidden button - the button is used in case of mobile devices as we cant activate camera on page load on mobile devices*/
