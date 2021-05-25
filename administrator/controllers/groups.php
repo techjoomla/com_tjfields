@@ -22,7 +22,7 @@ class TjfieldsControllerGroups extends JControllerAdmin
 	 * Proxy for getModel.
 	 * @since	1.6
 	 */
-	public function getModel($name = 'group', $prefix = 'TjfieldsModel')
+	public function getModel($name = 'group', $prefix = 'TjfieldsModel', $config = array('ignore_request' => true))
 	{
 		$model = parent::getModel($name, $prefix, array('ignore_request' => true));
 		return $model;
