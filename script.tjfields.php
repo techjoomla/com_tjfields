@@ -206,7 +206,7 @@ class Com_TjfieldsInstallerScript
 							}
 
 							$db->setQuery($sql);
-							$db->query();
+							$db->execute();
 
 							// B. Change the ordering of back-end modules to 1 + max ordering
 							if ($folder == 'admin')
@@ -224,7 +224,7 @@ class Com_TjfieldsInstallerScript
 									->set($db->qn('ordering') . ' = ' . $db->q($position))
 									->where($db->qn('module') . ' = ' . $db->q('mod_' . $module));
 								$db->setQuery($query);
-								$db->query();
+								$db->execute();
 							}
 
 							// C. Link to all pages
@@ -705,7 +705,7 @@ class Com_TjfieldsInstallerScript
 								->set($db->qn($component) . ' = "0"')
 								->where($db->qn('id') . ' IN (' . $countryList . ')');
 							$db->setQuery($query);
-							$db->query();
+							$db->execute();
 						}
 					}
 				}
@@ -869,7 +869,7 @@ class Com_TjfieldsInstallerScript
 		$query = "RENAME TABLE `" . $table . "` TO `" . $newTable . "`";
 		$db->setQuery($query);
 
-		if ($db->query())
+		if ($db->execute())
 		{
 			return $newTable;
 		}
@@ -916,7 +916,7 @@ class Com_TjfieldsInstallerScript
 					{
 						$db->setQuery($query);
 
-						if (!$db->query())
+						if (!$db->execute())
 						{
 							JError::raiseWarning(1, JText::sprintf('JLIB_INSTALLER_ERROR_SQL_ERROR', $db->stderr(true)));
 
