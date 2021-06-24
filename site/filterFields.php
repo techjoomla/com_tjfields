@@ -10,6 +10,8 @@
 // No direct access
 defined('_JEXEC') or die();
 
+use Joomla\CMS\Filesystem\File;
+
 jimport('joomla.application.component.modellist');
 jimport('joomla.filesystem.file');
 jimport('joomla.database.table');
@@ -78,7 +80,10 @@ trait TjfieldsFilterField
 		$formName = $data['client'] . "_extra" . $category;
 
 		// Get the form.
-		$form = $this->loadForm($formName, $filePath, array('control' => 'jform', 'load_data' => $loadData), true);
+		if (File::exists($filePath))
+		{
+			$form = $this->loadForm($formName, $filePath, array('control' => 'jform', 'load_data' => $loadData), true);
+		}
 
 		// If category is specified then check if global fields are created and load respective XML
 		if (!empty($category))
@@ -88,16 +93,22 @@ trait TjfieldsFilterField
 			// If category XML esists then add global fields XML in current JForm object else create new object of Global Fields
 			if (!empty($form))
 			{
-				$form->loadFile($path, true, '/form/*');
+				if (File::exists($path))
+				{
+					$form->loadFile($path, true, '/form/*');
+				}
 			}
 			else
 			{
-				$formName = $data['client'] . "_extra";
-				$form = $this->loadForm($formName, $path, array('control' => 'jform', 'load_data' => $loadData), true);
+				if (File::exists($path))
+				{
+					$formName = $data['client'] . "_extra";
+					$form = $this->loadForm($formName, $path, array('control' => 'jform', 'load_data' => $loadData), true);
+				}
 			}
 		}
 
-		if (empty($form))
+		if (!($form instanceof Joomla\CMS\Form\Form))
 		{
 			return false;
 		}
