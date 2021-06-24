@@ -11,10 +11,10 @@ JLoader::import("/techjoomla/media/storage/local", JPATH_LIBRARIES);
 
 // No direct access
 defined('_JEXEC') or die;
+use Joomla\CMS\Filesystem\Path;
 use Joomla\String\StringHelper;
 use Joomla\CMS\Helper\ContentHelper;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Filesystem\Path;
 use Joomla\CMS\Filesystem\File;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Table\Table;
@@ -64,7 +64,7 @@ class TjfieldsHelper extends ContentHelper
 					$lang->load($component, JPATH_BASE, null, false, false)
 					|| $lang->load($component, Path::clean(JPATH_ADMINISTRATOR . '/components/' . $component), null, false, false)
 					|| $lang->load($component, JPATH_BASE, $lang->getDefault(), false, false)
-					|| $lang->load($component, JPath::clean(JPATH_ADMINISTRATOR . '/components/' . $component), $lang->getDefault(), false, false);
+					|| $lang->load($component, Path::clean(JPATH_ADMINISTRATOR . '/components/' . $component), $lang->getDefault(), false, false);
 
 					// Call_user_func(array($cName, 'addSubmenu'), 'categories' . (isset($section) ? '.' . $section : ''));
 					call_user_func(array($cName, 'addSubmenu'), $view . (isset($section) ? '.' . $section : ''));

@@ -8,6 +8,9 @@
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Layout\FileLayout;
 
 if (!key_exists('field', $displayData) || !key_exists('fieldXml', $displayData))
 {
@@ -30,7 +33,7 @@ if ($field->value)
 	foreach ($field->value as $name => $subformData)
 	{
 		$subformData = (array) $subformData;
-		$tjFieldsFieldModel = JModelLegacy::getInstance('Field', 'TjfieldsModel');
+		$tjFieldsFieldModel = BaseDatabaseModel::getInstance('Field', 'TjfieldsModel');
 		$form = $tjFieldsFieldModel->getSubFormFieldForm($name, $formSource);
 		?>
 		<div class="row">
@@ -49,7 +52,7 @@ if ($field->value)
 				?>
 				<div class="col-xs-6">
 					<?php
-					echo JText::_($field->getAttribute('label'));
+					echo Text::_($field->getAttribute('label'));
 					?>
 				</div>
 				<div class='col-xs-6'>
@@ -61,7 +64,7 @@ if ($field->value)
 							$fieldXml = $form->getFieldXml($field->getAttribute('name'));
 							$field->value = $subformData[$field->getAttribute('name')];
 
-							$layout = new JLayoutFile('list', JPATH_ROOT . '/components/com_tjfields/layouts/fields');
+							$layout = new FileLayout('list', JPATH_ROOT . '/components/com_tjfields/layouts/fields');
 							echo $layout->render(array('fieldXml' => $fieldXml, 'field' => $field));
 						}
 						elseif ($field->type == 'Checkbox')

@@ -7,6 +7,9 @@
  * @license    GNU General Public License version 2 or later.
  */
 defined('_JEXEC') or die;
+use Joomla\CMS\MVC\Model\ListModel;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Component\ComponentHelper;
 
 jimport('joomla.application.component.modellist');
 
@@ -15,7 +18,7 @@ jimport('joomla.application.component.modellist');
  *
  * @since  2.5
  */
-class TjfieldsModelFields extends JModelList
+class TjfieldsModelFields extends ListModel
 {
 	/**
 	 * Constructor.
@@ -61,7 +64,7 @@ class TjfieldsModelFields extends JModelList
 	protected function populateState($ordering = 'a.id', $direction = 'desc')
 	{
 		// Initialise variables.
-		$app = JFactory::getApplication('administrator');
+		$app = Factory::getApplication('administrator');
 
 		// Set client in model state
 		$client = $app->input->get('client', '', 'STRING');
@@ -82,7 +85,7 @@ class TjfieldsModelFields extends JModelList
 		$this->setState('filter.type', $app->getUserStateFromRequest($this->context . '.filter.type', 'filter_field_type', '', 'string'));
 
 		// Load the parameters.
-		$params = JComponentHelper::getParams('com_tjfields');
+		$params = ComponentHelper::getParams('com_tjfields');
 		$this->setState('params', $params);
 
 		// List state information.
@@ -220,13 +223,13 @@ class TjfieldsModelFields extends JModelList
 	 */
 	public function setItemState($items, $state)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		if (is_array($items))
 		{
 			foreach ($items as $id)
 			{
-				$db    = JFactory::getDBO();
+				$db    = Factory::getDBO();
 				$query = "UPDATE  #__tjfields_fields SET state = $state where id=" . $id;
 				$db->setQuery($query);
 
@@ -256,7 +259,7 @@ class TjfieldsModelFields extends JModelList
 		if (count($id) >= 1)
 		{
 			$group_to_delet = implode(',', $id);
-			$db             = JFactory::getDBO();
+			$db             = Factory::getDBO();
 			$query          = "DELETE FROM #__tjfields_fields where id IN (" . $group_to_delet . ")";
 			$db->setQuery($query);
 
@@ -291,7 +294,7 @@ class TjfieldsModelFields extends JModelList
 		}
 		else
 		{
-			$db    = JFactory::getDBO();
+			$db    = Factory::getDBO();
 			$query = "DELETE FROM #__tjfields_fields where id =" . $id[0];
 			$db->setQuery($query);
 

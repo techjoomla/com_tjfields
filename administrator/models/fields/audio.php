@@ -9,6 +9,8 @@
 
 defined('JPATH_PLATFORM') or die;
 
+use Joomla\CMS\Form\FormField;
+
 JLoader::import('components.com_tjfields.models.fields.video', JPATH_ADMINISTRATOR);
 
 /**
@@ -17,7 +19,7 @@ JLoader::import('components.com_tjfields.models.fields.video', JPATH_ADMINISTRAT
  *
  * @since  DEPLOY_VERSION
  */
-class JFormFieldAudio extends JFormFieldVideo
+class FormFieldAudio extends FormFieldVideo
 {
 	/**
 	 * The form field type.

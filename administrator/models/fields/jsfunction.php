@@ -11,6 +11,9 @@
 
 defined('JPATH_BASE') or die;
 
+use Joomla\CMS\Form\FormField;
+use Joomla\CMS\Language\Text;
+
 jimport('joomla.html.html');
 jimport('joomla.form.formfield');
 
@@ -22,7 +25,7 @@ jimport('joomla.form.formfield');
 /**
  * Supports an HTML select list of categories
  */
-class JFormFieldJsfunction extends JFormField
+class FormFieldJsfunction extends FormField
 {
 
 	protected $type = 'text';
@@ -115,13 +118,13 @@ class JFormFieldJsfunction extends JFormField
 						$html.='<div class="com_tjfields_add_button span2">
 														<button class="btn btn-small btn-success" type="button" id="add_js"
 														onclick="addClonejsOption(\'com_tjfields_js__repeating_block\',\'com_tjfields_js__repeating_block\');"
-														title='.JText::_("COM_TJFIELDS_ADD_BUTTON").'>
+														title='.Text::_("COM_TJFIELDS_ADD_BUTTON").'>
 															<i class="'.$this->tjfield_icon_plus.'"></i>
 														</button>
 										</div>
 					<div style="clear:both"></div>
 					<span class="span9 alert alert-info alert-help-inline">
-								 '.JText::_("COM_TJFIELDS_JS_NOTE").'
+								 '.Text::_("COM_TJFIELDS_JS_NOTE").'
 							</span>';
 		$html.= '</div>
 
@@ -154,7 +157,7 @@ function addClonejsOption(rId,rClass)
 
 				var removeButton="<div id='remove_btn_js__div"+pre+"' class='com_tjfields_remove_button span2'>";
 				removeButton+="<button class='btn btn-small btn-danger' type='button' id='remove_js"+pre+"'";
-				removeButton+="onclick=\"removeClone('com_tjfields_js__repeating_block"+pre+"','remove_btn_js__div"+pre+"');\" title=\"<?php echo JText::_('COM_TJFIELDS_REMOVE_TOOLTIP');?>\" >";
+				removeButton+="onclick=\"removeClone('com_tjfields_js__repeating_block"+pre+"','remove_btn_js__div"+pre+"');\" title=\"<?php echo Text::_('COM_TJFIELDS_REMOVE_TOOLTIP');?>\" >";
 				removeButton+="<i class=\""+tjfield_icon_minus+"\"></i></button>";
 				removeButton+="</div>";
 

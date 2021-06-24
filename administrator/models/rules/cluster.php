@@ -9,6 +9,9 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Form\FormRule;
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Factory;
 use Joomla\Registry\Registry;
 use Joomla\String\StringHelper;
 
@@ -17,7 +20,7 @@ use Joomla\String\StringHelper;
  *
  * @since  1.6
  */
-class JFormRuleCluster extends JFormRule
+class FormRuleCluster extends FormRule
 {
 	/**
 	 * Method to test for banned email addresses
@@ -32,7 +35,7 @@ class JFormRuleCluster extends JFormRule
 	 *
 	 * @return  boolean  True if the value is valid, false otherwise.
 	 */
-	public function test(SimpleXMLElement $element, $value, $group = null, Registry $input = null, JForm $form = null)
+	public function test(SimpleXMLElement $element, $value, $group = null, Registry $input = null, Form $form = null)
 	{
 		$required = ($element['required'] instanceof SimpleXMLElement) ? $element['required']->__toString() : 'false';
 
@@ -53,14 +56,14 @@ class JFormRuleCluster extends JFormRule
 		// Get UCM type ID
 		$client = "com_tjucm." . str_replace("_clusterclusterid", "", str_replace("com_tjucm_", "", $element['name']->__toString()));
 		JLoader::import('components.com_tjucm.tables.type', JPATH_ADMINISTRATOR);
-		$typeTable = JTable::getInstance('Type', 'TjucmTable', array('dbo', JFactory::getDbo()));
+		$typeTable = Table::getInstance('Type', 'TjucmTable', array('dbo', Factory::getDbo()));
 		$typeTable->load(array("unique_identifier" => $client));
 
 		if (!empty($clusters))
 		{
 			foreach ($clusters as $clusterList)
 			{
-				if (RBACL::check(JFactory::getUser()->id, 'com_cluster', 'core.edititem.' . $typeTable->id, $clusterList->id) || RBACL::check(JFactory::getUser()->id, 'com_cluster', 'core.editallitem.' . $typeTable->id))
+				if (RBACL::check(Factory::getUser()->id, 'com_cluster', 'core.edititem.' . $typeTable->id, $clusterList->id) || RBACL::check(Factory::getUser()->id, 'com_cluster', 'core.editallitem.' . $typeTable->id))
 				{
 					if (!empty($clusterList->id))
 					{

@@ -8,14 +8,15 @@
  */
 
 defined('_JEXEC') or die;
-JLoader::import("/techjoomla/media/storage/local", JPATH_LIBRARIES);
-use Joomla\Registry\Registry;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Table\Table;
+use Joomla\CMS\Session\Session;
+use Joomla\CMS\Uri\Uri;
+JLoader::import("/techjoomla/media/storage/local", JPATH_LIBRARIES);
+use Joomla\Registry\Registry;
 use Joomla\CMS\Filesystem\Folder;
 use Joomla\CMS\Filesystem\File;
-use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Language\Text;
 
@@ -274,7 +275,7 @@ class TjfieldsHelper
 				JLoader::import('components.com_tjucm.models.itemform', JPATH_SITE);
 
 				// Get all the records which were previously stored for the ucmsubform field in parent form
-				$db = JFactory::getDbo();
+				$db = Factory::getDbo();
 				$query = $db->getQuery(true);
 				$query->select('id');
 				$query->from($db->quoteName('#__tj_ucm_data'));
@@ -297,7 +298,7 @@ class TjfieldsHelper
 						if (empty($ucmSubFormContentId))
 						{
 							$tjUcmSubFormItemData = array('id' => '', 'parent_id' => $data['content_id'], 'client' => $ucmSubformClient, 'created_by' => $data['user_id']);
-							$tjUcmItemFormModel = JModelLegacy::getInstance('ItemForm', 'TjucmModel');
+							$tjUcmItemFormModel = BaseDatabaseModel::getInstance('ItemForm', 'TjucmModel');
 							$tjUcmItemFormModel->save($tjUcmSubFormItemData);
 							$ucmSubFormContentId = $tjUcmItemFormModel->getState($tjUcmItemFormModel->getName() . '.id');
 						}
@@ -319,7 +320,7 @@ class TjfieldsHelper
 				}
 
 				// Delete the records which are removed from the ucmsubform
-				$tjUcmItemFormModel = JModelLegacy::getInstance('ItemForm', 'TjucmModel');
+				$tjUcmItemFormModel = BaseDatabaseModel::getInstance('ItemForm', 'TjucmModel');
 
 				foreach ($ucmSubformRecordIds as $ucmSubformRecordId)
 				{
@@ -335,7 +336,7 @@ class TjfieldsHelper
 				{
 					// Get all the fields of the specified client
 					JLoader::import('components.com_tjfields.models.options', JPATH_ADMINISTRATOR);
-					$tjFieldOptionsModel = JModelLegacy::getInstance('Options', 'TjfieldsModel', array('ignore_request' => true));
+					$tjFieldOptionsModel = BaseDatabaseModel::getInstance('Options', 'TjfieldsModel', array('ignore_request' => true));
 					$tjFieldOptionsModel->setState('filter.field_id', $field->id);
 					$optionsValue = $tjFieldOptionsModel->getItems();
 
@@ -430,7 +431,7 @@ class TjfieldsHelper
 			elseif ($field->type == 'related' && $fieldParams->get('showParentRecordsOnly', '', 'INT'))
 			{
 				// This is special case to handle the copy of related fields data in copy item feature
-				$jInput = JFactory::getApplication()->input;
+				$jInput = Factory::getApplication()->input;
 				$tempId = $jInput->get('id', '', 'STRING');
 				$jInput->set('id', $tjUcmParentContentId);
 
@@ -459,7 +460,7 @@ class TjfieldsHelper
 
 						foreach ($relatedFieldDataSources as $relatedFieldDataSource)
 						{
-							$db = JFactory::getDbo();
+							$db = Factory::getDbo();
 							$query = $db->getQuery(true);
 							$query->select("GROUP_CONCAT(" . $db->quoteName('value') . " SEPARATOR ' ') AS combo_value");
 							$query->from($db->quoteName('#__tjfields_fields_value'));
@@ -525,8 +526,8 @@ class TjfieldsHelper
 
 		JLoader::import('components.com_tjfields.tables.fieldsvalue', JPATH_ADMINISTRATOR);
 		JLoader::import('components.com_tjfields.tables.option', JPATH_ADMINISTRATOR);
-		$fieldsValueTable = JTable::getInstance('FieldsValue', 'TjfieldsTable', array('dbo', JFactory::getDbo()));
-		$fieldOptionTable = JTable::getInstance('Option', 'TjfieldsTable', array('dbo', JFactory::getDbo()));
+		$fieldsValueTable = Table::getInstance('FieldsValue', 'TjfieldsTable', array('dbo', Factory::getDbo()));
+		$fieldOptionTable = Table::getInstance('Option', 'TjfieldsTable', array('dbo', Factory::getDbo()));
 
 		// Set currently logged in users id as user_id
 		$fieldsValueTable->user_id = Factory::getUser()->id;
@@ -2138,7 +2139,7 @@ class TjfieldsHelper
 				$basePathLink = 'index.php?option=com_tjfields&task=getMediaFile&fpht=';
 				$mediaURL = Uri::base() . substr(Route::_($basePathLink . $encodedFileName . $extraUrlParams), strlen(Uri::base(true)) + 1);
 
-				$csrf = JSession::getFormToken() . '=1';
+				$csrf = Session::getFormToken() . '=1';
 				$mediaURLlink = $mediaURL . '&' . $csrf;
 			}
 			else
@@ -2156,7 +2157,7 @@ class TjfieldsHelper
 					$uploadPath = $fieldParams->uploadpath;
 
 					$mediaURLlink = $uploadPath . '/' . $fileName;
-					$mediaURLlink = str_replace(JPATH_SITE, JUri::root(), $mediaURLlink);
+					$mediaURLlink = str_replace(JPATH_SITE, Uri::root(), $mediaURLlink);
 				}
 			}
 

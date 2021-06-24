@@ -8,24 +8,29 @@
  */
 // no direct access
 defined('_JEXEC') or die;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Router\Route;
 
 JHtml::addIncludePath(JPATH_COMPONENT . '/helpers/html');
-JHtml::_('behavior.tooltip');
-JHtml::_('behavior.formvalidation');
-JHtml::_('behavior.keepalive');
+HTMLHelper::_('bootstrap.tooltip');
+HTMLHelper::_('behavior.formvalidator');
+HTMLHelper::_('behavior.keepalive');
 
 if(JVERSION >= '3.0')
 {
-	JHtml::_('formbehavior.chosen', 'select');
+	HTMLHelper::_('formbehavior.chosen', 'select');
 }
 
 // Import CSS
-$document = JFactory::getDocument();
+$document = Factory::getDocument();
 $document->addStyleSheet('components/com_tjfields/assets/css/tjfields.css');
-$input = JFactory::getApplication()->input;
+$input = Factory::getApplication()->input;
 
 // Import helper for declaring language constant
-JLoader::import('TjfieldsHelper', JUri::root().'administrator/components/com_tjfields/helpers/tjfields.php');
+JLoader::import('TjfieldsHelper', Uri::root().'administrator/components/com_tjfields/helpers/tjfields.php');
 // Call helper function
 TjfieldsHelper::getLanguageConstant();
 ?>
@@ -42,7 +47,7 @@ TjfieldsHelper::getLanguageConstant();
 			{
 				if (techjoomla.jQuery('#jform_name').val().trim() == '')
 				{
-					alert(Joomla.JText._('COM_TJFIELDS_LABEL_WHITESPACES_NOT_ALLOWED'));
+					alert(Joomla.Text._('COM_TJFIELDS_LABEL_WHITESPACES_NOT_ALLOWED'));
 					techjoomla.jQuery('#jform_name').val('');
 					techjoomla.jQuery('#jform_name').focus();
 					return false;
@@ -52,15 +57,15 @@ TjfieldsHelper::getLanguageConstant();
 			}
 			else
 			{
-				alert('<?php echo $this->escape(JText::_('JGLOBAL_VALIDATION_FORM_FAILED')); ?>');
+				alert('<?php echo $this->escape(Text::_('JGLOBAL_VALIDATION_FORM_FAILED')); ?>');
 			}
 		}
 	}
 </script>
 <div class="techjoomla-bootstrap">
-	<form action="<?php echo JRoute::_('index.php?option=com_tjfields&layout=edit&id=' . (int) $this->item->id).' &client='.$input->get('client','','STRING'); ?>" method="post" enctype="multipart/form-data" name="adminForm" id="group-form" class="form-validate">
-		<?php echo JHtml::_('bootstrap.startTabSet', 'myTab', array('active' => 'general')); ?>
-		<?php echo JHtml::_('bootstrap.addTab', 'myTab', 'general', JText::_('COM_TJFIELDS_TITLE_FIELD_GROUP', true)); ?>
+	<form action="<?php echo Route::_('index.php?option=com_tjfields&layout=edit&id=' . (int) $this->item->id).' &client='.$input->get('client','','STRING'); ?>" method="post" enctype="multipart/form-data" name="adminForm" id="group-form" class="form-validate">
+		<?php echo HTMLHelper::_('bootstrap.startTabSet', 'myTab', array('active' => 'general')); ?>
+		<?php echo HTMLHelper::_('bootstrap.addTab', 'myTab', 'general', Text::_('COM_TJFIELDS_TITLE_FIELD_GROUP', true)); ?>
 		<div class="row-fluid">
 			<div class="span10 form-horizontal">
 				<fieldset class="adminform">
@@ -85,14 +90,14 @@ TjfieldsHelper::getLanguageConstant();
 				</fieldset>
 			</div>
 			<input type="hidden" name="task" value="" />
-			<?php echo JHtml::_('form.token'); ?>
+			<?php echo HTMLHelper::_('form.token'); ?>
 		</div>
-		<?php echo JHtml::_('bootstrap.endTab'); ?>
-		<?php if (JFactory::getUser()->authorise('core.admin','com_tjfields')) : ?>
-			<?php echo JHtml::_('bootstrap.addTab', 'myTab', 'permissions', JText::_('JGLOBAL_ACTION_PERMISSIONS_LABEL', true)); ?>
+		<?php echo HTMLHelper::_('bootstrap.endTab'); ?>
+		<?php if (Factory::getUser()->authorise('core.admin','com_tjfields')) : ?>
+			<?php echo HTMLHelper::_('bootstrap.addTab', 'myTab', 'permissions', Text::_('JGLOBAL_ACTION_PERMISSIONS_LABEL', true)); ?>
 			<?php echo $this->form->getInput('rules'); ?>
-			<?php echo JHtml::_('bootstrap.endTab'); ?>
+			<?php echo HTMLHelper::_('bootstrap.endTab'); ?>
 		<?php endif; ?>
-		<?php echo JHtml::_('bootstrap.endTabSet'); ?>
+		<?php echo HTMLHelper::_('bootstrap.endTabSet'); ?>
 	</form>
 </div>

@@ -12,6 +12,8 @@ defined('_JEXEC') or die();
 
 JFormHelper::loadFieldClass('list');
 
+use Joomla\CMS\Form\FormHelper;
+use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
@@ -22,7 +24,7 @@ use Joomla\CMS\Factory;
  *
  * @since  1.7.0
  */
-class JFormFieldTjList extends JFormFieldList
+class FormFieldTjList extends FormFieldList
 {
 	/**
 	 * The form field type.
@@ -107,12 +109,12 @@ class JFormFieldTjList extends JFormFieldList
 		$html = parent::getInput();
 
 		$doc = Factory::getDocument();
-		$doc->addScript(JUri::root() . 'administrator/components/com_tjfields/assets/js/tjlist.min.js');
+		$doc->addScript(Uri::root() . 'administrator/components/com_tjfields/assets/js/tjlist.min.js');
 
 		if ($this->multiple)
 		{
-			$doc->addStyleSheet(JUri::root() . 'administrator/components/com_tjfields/assets/css/bootstrap-tagsinput.css');
-			$doc->addScript(JUri::root() . 'administrator/components/com_tjfields/assets/js/bootstrap-tagsinput.min.js');
+			$doc->addStyleSheet(Uri::root() . 'administrator/components/com_tjfields/assets/css/bootstrap-tagsinput.css');
+			$doc->addScript(Uri::root() . 'administrator/components/com_tjfields/assets/js/bootstrap-tagsinput.min.js');
 		}
 
 		$options = $this->getOptions();

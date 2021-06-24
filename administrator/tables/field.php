@@ -9,13 +9,15 @@
 
 // No direct access
 defined('_JEXEC') or die;
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Language\Text;
 
 /**
  * Field Table class
  *
  * @since  1.1
  */
-class TjfieldsTablefield extends JTable
+class TjfieldsTablefield extends Table
 {
 	/**
 	 * Constructor
@@ -34,7 +36,7 @@ class TjfieldsTablefield extends JTable
 	 *
 	 * @return void
 	 */
-	private function JAccessRulestoArray($jaccessrules)
+	private function RulestoArray($jaccessrules)
 	{
 		$rules = array();
 
@@ -103,7 +105,7 @@ class TjfieldsTablefield extends JTable
 			else
 			{
 				// Nothing to set publishing state on, return false.
-				$this->setError(JText::_('JLIB_DATABASE_ERROR_NO_ROWS_SELECTED'));
+				$this->setError(Text::_('JLIB_DATABASE_ERROR_NO_ROWS_SELECTED'));
 
 				return false;
 			}
@@ -184,14 +186,14 @@ class TjfieldsTablefield extends JTable
 	 * 
 	 * @since  1.1
 	 */
-	protected function _getAssetParentId(JTable $table = null, $id = null)
+	protected function _getAssetParentId(Table $table = null, $id = null)
 	{
 		$assetId = null;
 
 			if ($this->group_id)
 			{
-				JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_tjfields/tables');
-				$groupTable = JTable::getInstance('group','TjfieldsTable');
+				Table::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_tjfields/tables');
+				$groupTable = Table::getInstance('group','TjfieldsTable');
 				$groupTable->load(array('id' => $this->group_id));
 				$assetId = $groupTable->asset_id;
 			}

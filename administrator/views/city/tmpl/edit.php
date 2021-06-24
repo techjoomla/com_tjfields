@@ -9,12 +9,16 @@
 
 // No direct access
 defined('_JEXEC') or die();
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Router\Route;
 
 JHtml::addIncludePath(JPATH_COMPONENT . '/helpers/html');
 
-JHtml::_('behavior.tooltip');
-JHtml::_('behavior.formvalidation');
-JHtml::_('behavior.keepalive');
+HTMLHelper::_('bootstrap.tooltip');
+HTMLHelper::_('behavior.formvalidator');
+HTMLHelper::_('behavior.keepalive');
 ?>
 
 <script type="text/javascript">
@@ -32,7 +36,7 @@ JHtml::_('behavior.keepalive');
 			}
 			else
 			{
-				alert('<?php echo $this->escape(JText::_('JGLOBAL_VALIDATION_FORM_FAILED')); ?>');
+				alert('<?php echo $this->escape(Text::_('JGLOBAL_VALIDATION_FORM_FAILED')); ?>');
 			}
 		}
 	}
@@ -64,14 +68,14 @@ JHtml::_('behavior.keepalive');
 
 		techjoomla.jQuery.ajax(
 		{
-			url:'<?php echo JUri::base();?>'+'index.php?option=com_tjfields&task=city.getRegionsList&countryId='+countryId+'&tmpl=component',
+			url:'<?php echo Uri::base();?>'+'index.php?option=com_tjfields&task=city.getRegionsList&countryId='+countryId+'&tmpl=component',
 			type:'GET',
 			dataType:'json',
 			success:function(data)
 			{
 				if (data === undefined || data === null || data.length <= 0)
 				{
-					var option = '<option value="">' + "<?php echo JText::_('COM_TJFIELDS_FILTER_SELECT_REGION');?>" + '</option>';
+					var option = '<option value="">' + "<?php echo Text::_('COM_TJFIELDS_FILTER_SELECT_REGION');?>" + '</option>';
 					select = techjoomla.jQuery('#jform_region_id');
 					select.find('option').remove().end();
 					select.append(option);
@@ -91,7 +95,7 @@ JHtml::_('behavior.keepalive');
 		select.find('option').remove().end();
 		options = data.options;
 
-		var option = '<option value="">' + "<?php echo JText::_('COM_TJFIELDS_FILTER_SELECT_REGION');?>" + '</option>';
+		var option = '<option value="">' + "<?php echo Text::_('COM_TJFIELDS_FILTER_SELECT_REGION');?>" + '</option>';
 		techjoomla.jQuery('#jform_region_id').append(option);
 
 		for (index = 0; index < data.length; ++index)
@@ -115,7 +119,7 @@ JHtml::_('behavior.keepalive');
 
 <div class="<?php echo TJFIELDS_WRAPPER_CLASS;?> tj-city">
 	<form
-		action="<?php echo JRoute::_('index.php?option=com_tjfields&layout=edit&id=' . (int) $this->item->id . '&client=' . $this->input->get('client', '', 'STRING')); ?>"
+		action="<?php echo Route::_('index.php?option=com_tjfields&layout=edit&id=' . (int) $this->item->id . '&client=' . $this->input->get('client', '', 'STRING')); ?>"
 		method="post" enctype="multipart/form-data" name="adminForm" id="city-form" class="form-validate">
 
 		<div class="form-horizontal">
@@ -170,7 +174,7 @@ JHtml::_('behavior.keepalive');
 									<div class="span12">
 										<p class="text text-warning">
 										<br/>
-										<?php echo JText::_('COM_TJFIELDS_FORM_DESC_CITY_CITY_JTEXT_HELP'); ?>
+										<?php echo Text::_('COM_TJFIELDS_FORM_DESC_CITY_CITY_JTEXT_HELP'); ?>
 										</p>
 									</div>
 								</div>
@@ -182,7 +186,7 @@ JHtml::_('behavior.keepalive');
 			</div>
 
 			<input type="hidden" name="task" value="" />
-			<?php echo JHtml::_('form.token'); ?>
+			<?php echo HTMLHelper::_('form.token'); ?>
 		</div>
 	</form>
 </div>

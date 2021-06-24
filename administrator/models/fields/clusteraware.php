@@ -11,6 +11,7 @@ defined('JPATH_PLATFORM') or die;
 
 JFormHelper::loadFieldClass('radio');
 
+use Joomla\CMS\Form\FormHelper;
 use Joomla\CMS\Component\ComponentHelper;
 
 /**
@@ -19,7 +20,7 @@ use Joomla\CMS\Component\ComponentHelper;
  *
  * @since  1.7.0
  */
-class JFormFieldClusterAware extends JFormFieldRadio
+class FormFieldClusterAware extends FormFieldRadio
 {
 	/**
 	 * The form field type.

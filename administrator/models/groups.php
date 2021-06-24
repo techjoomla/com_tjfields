@@ -8,6 +8,9 @@
  */
 
 defined('_JEXEC') or die;
+use Joomla\CMS\MVC\Model\ListModel;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Component\ComponentHelper;
 
 jimport('joomla.application.component.modellist');
 
@@ -18,7 +21,7 @@ jimport('joomla.application.component.modellist');
  *
  */
 
-class TjfieldsModelGroups extends JModelList
+class TjfieldsModelGroups extends ListModel
 {
 	/**
 	 * Constructor.
@@ -65,7 +68,7 @@ class TjfieldsModelGroups extends JModelList
 	protected function populateState($ordering = 'a.id', $direction = 'desc')
 	{
 		// Initialise variables.
-		$app = JFactory::getApplication('administrator');
+		$app = Factory::getApplication('administrator');
 
 		// Load the filter state.
 		$search = $app->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
@@ -75,7 +78,7 @@ class TjfieldsModelGroups extends JModelList
 		$this->setState('filter.state', $published);
 
 		// Load the parameters.
-		$params = JComponentHelper::getParams('com_tjfields');
+		$params = ComponentHelper::getParams('com_tjfields');
 		$this->setState('params', $params);
 
 		// List state information.
@@ -117,7 +120,7 @@ class TjfieldsModelGroups extends JModelList
 		$db = $this->getDbo();
 		$query = $db->getQuery(true);
 
-		$input = JFactory::getApplication()->input;
+		$input = Factory::getApplication()->input;
 
 		// Select the required fields from the table.
 		$query->select(
@@ -209,13 +212,13 @@ class TjfieldsModelGroups extends JModelList
 	 */
 	public function setItemState($items, $state)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		if (is_array($items))
 		{
 			foreach ($items as $id)
 			{
-				$db = JFactory::getDBO();
+				$db = Factory::getDBO();
 				$query = "UPDATE  #__tjfields_groups SET state = $state where id=" . $id;
 				$db->setQuery($query);
 
@@ -245,7 +248,7 @@ class TjfieldsModelGroups extends JModelList
 		if (count($id) > 1)
 		{
 			$group_to_delet = implode(',', $id);
-			$db = JFactory::getDBO();
+			$db = Factory::getDBO();
 			$query = "DELETE FROM #__tjfields_groups where id IN (" . $group_to_delet . ")";
 			$db->setQuery($query);
 
@@ -258,7 +261,7 @@ class TjfieldsModelGroups extends JModelList
 		}
 		else
 		{
-				$db = JFactory::getDBO();
+				$db = Factory::getDBO();
 				$query = "DELETE FROM #__tjfields_groups where id =" . $id[0];
 				$db->setQuery($query);
 

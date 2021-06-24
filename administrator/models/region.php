@@ -9,6 +9,11 @@
 
 // No direct access
 defined('_JEXEC') or die();
+use Joomla\CMS\MVC\Model\AdminModel;
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Language\Text;
 
 jimport('joomla.application.component.modeladmin');
 
@@ -19,7 +24,7 @@ jimport('joomla.application.component.modeladmin');
  * @subpackage  com_tjfields
  * @since       2.2
  */
-class TjfieldsModelRegion extends JModelAdmin
+class TjfieldsModelRegion extends AdminModel
 {
 	/**
 	 * @var		string	The prefix to use with controller messages.
@@ -38,7 +43,7 @@ class TjfieldsModelRegion extends JModelAdmin
 	 */
 	public function getTable($type = 'Region', $prefix = 'TjfieldsTable', $config = array())
 	{
-		return JTable::getInstance($type, $prefix, $config);
+		return Table::getInstance($type, $prefix, $config);
 	}
 
 	/**
@@ -54,7 +59,7 @@ class TjfieldsModelRegion extends JModelAdmin
 	public function getForm($data = array(), $loadData = true)
 	{
 		// Initialise variables.
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 
 		// Get the form.
 		$form = $this->loadForm('com_tjfields.region', 'region', array('control' => 'jform', 'load_data' => $loadData));
@@ -77,7 +82,7 @@ class TjfieldsModelRegion extends JModelAdmin
 	protected function loadFormData()
 	{
 		// Check the session for previously entered form data.
-		$data = JFactory::getApplication()->getUserState('com_tjfields.edit.region.data', array());
+		$data = Factory::getApplication()->getUserState('com_tjfields.edit.region.data', array());
 
 		if (empty($data))
 		{
@@ -122,7 +127,7 @@ class TjfieldsModelRegion extends JModelAdmin
 			// Set ordering to the last item if not set
 			if (@$table->ordering === '')
 			{
-				$db = JFactory::getDbo();
+				$db = Factory::getDbo();
 				$db->setQuery('SELECT MAX(ordering) FROM #__tj_region');
 				$max = $db->loadResult();
 				$table->ordering = $max + 1;
@@ -142,12 +147,12 @@ class TjfieldsModelRegion extends JModelAdmin
 
 	public function save($data)
 	{
-		$com_params = JComponentHelper::getParams('com_tjfields');
+		$com_params = ComponentHelper::getParams('com_tjfields');
 		$id = (!empty($data['id'])) ? $data['id'] : (int) $this->getState('region.id');
 		$state = (!empty($data['com_tjfields'])) ? 1 : 0;
 
-		$user = JFactory::getUser();
-		$app = JFactory::getApplication();
+		$user = Factory::getUser();
+		$app = Factory::getApplication();
 
 		if ($id)
 		{
@@ -174,7 +179,7 @@ class TjfieldsModelRegion extends JModelAdmin
 
 		if ($authorised !== true)
 		{
-			JError::raiseError(403, JText::_('JERROR_ALERTNOAUTHOR'));
+			JError::raiseError(403, Text::_('JERROR_ALERTNOAUTHOR'));
 
 			return false;
 		}

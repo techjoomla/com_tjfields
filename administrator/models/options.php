@@ -7,6 +7,7 @@
  * @license    GNU General Public License version 2 or later.
  */
 defined('_JEXEC') or die;
+use Joomla\CMS\MVC\Model\ListModel;
 
 jimport('joomla.application.component.modellist');
 
@@ -15,7 +16,7 @@ jimport('joomla.application.component.modellist');
  *
  * @since  _DEPLOY_VERSION_
  */
-class TjfieldsModelOptions extends JModelList
+class TjfieldsModelOptions extends ListModel
 {
 	/**
 	 * Constructor.

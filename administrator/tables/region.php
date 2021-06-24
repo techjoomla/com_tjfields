@@ -9,9 +9,9 @@
 
 // No direct access
 defined('_JEXEC') or die();
+use Joomla\CMS\Table\Table;
 
 use Joomla\CMS\Factory;
-use Joomla\CMS\Table\Table;
 use Joomla\Registry\Registry;
 use Joomla\CMS\Access\Access;
 use Joomla\CMS\Language\Text;
@@ -81,7 +81,7 @@ class TjfieldsTableRegion extends Table
 				}
 			}
 
-			$array['rules'] = $this->JAccessRulestoArray($array_jaccess);
+			$array['rules'] = $this->RulestoArray($array_jaccess);
 		}
 
 		// Bind the rules for ACL where supported.
@@ -100,7 +100,7 @@ class TjfieldsTableRegion extends Table
 	 *
 	 * @return  mixed  $rules  Set of rules
 	 */
-	private function JAccessRulestoArray ($jaccessrules)
+	private function RulestoArray ($jaccessrules)
 	{
 		$rules = array();
 
@@ -303,7 +303,7 @@ class TjfieldsTableRegion extends Table
 	 *
 	 * @since   11.1
 	 */
-	protected function _getAssetParentId (JTable $table = null, $id = null)
+	protected function _getAssetParentId (Table $table = null, $id = null)
 	{
 		// We will retrieve the parent-asset from the Asset-table
 		$assetParent = Table::getInstance('Asset');

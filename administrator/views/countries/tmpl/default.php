@@ -9,14 +9,18 @@
 
 // No direct access
 defined('_JEXEC') or die();
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Language\Text;
 
 JHtml::addIncludePath(JPATH_COMPONENT . '/helpers/html');
 
 // Load lang file for countries
-$lang = JFactory::getLanguage();
+$lang = Factory::getLanguage();
 $lang->load('tjgeo.countries', JPATH_SITE, null, false, true);
 
-$user = JFactory::getUser();
+$user = Factory::getUser();
 $userId = $user->get('id');
 $listOrder = $this->state->get('list.ordering');
 $listDirn = $this->state->get('list.direction');
@@ -26,7 +30,7 @@ $saveOrder = $listOrder == 'a.ordering';
 if ($saveOrder)
 {
 	$saveOrderingUrl = 'index.php?option=com_tjfields&task=countries.saveOrderAjax&tmpl=component';
-	JHtml::_('sortablelist.sortable', 'countryList', 'adminForm', strtolower($listDirn), $saveOrderingUrl);
+	HTMLHelper::_('sortablelist.sortable', 'countryList', 'adminForm', strtolower($listDirn), $saveOrderingUrl);
 }
 
 $sortFields = $this->getSortFields();
@@ -70,24 +74,24 @@ if (! empty($this->extra_sidebar))
 		<div id="j-main-container">
 		<?php endif; ?>
 	<form
-		action="<?php echo JRoute::_('index.php?option=com_tjfields&view=countries&client=' . $this->input->get('client', '', 'STRING')); ?>"
+		action="<?php echo Route::_('index.php?option=com_tjfields&view=countries&client=' . $this->input->get('client', '', 'STRING')); ?>"
 		method="post" name="adminForm" id="adminForm">
 		<div id="filter-bar" class="btn-toolbar">
 				<div class="filter-search btn-group pull-left">
 					<input type="text" name="filter_search" id="filter_search"
-					placeholder="<?php echo JText::_('COM_TJFIELDS_FILTER_SEARCH_DESC_COUNTRIES'); ?>"
+					placeholder="<?php echo Text::_('COM_TJFIELDS_FILTER_SEARCH_DESC_COUNTRIES'); ?>"
 					value="<?php echo $this->escape($this->state->get('filter.search')); ?>"
 					class="hasTooltip"
-					title="<?php echo JText::_('COM_TJFIELDS_FILTER_SEARCH_DESC_COUNTRIES'); ?>" />
+					title="<?php echo Text::_('COM_TJFIELDS_FILTER_SEARCH_DESC_COUNTRIES'); ?>" />
 				</div>
 
 				<div class="btn-group pull-left">
 					<button type="submit" class="btn hasTooltip"
-					title="<?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?>">
+					title="<?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?>">
 						<i class="icon-search"></i>
 					</button>
 					<button type="button" class="btn hasTooltip"
-					title="<?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?>"
+					title="<?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?>"
 					onclick="document.id('filter_search').value='';this.form.submit();">
 						<i class="icon-remove"></i>
 					</button>
@@ -96,18 +100,18 @@ if (! empty($this->extra_sidebar))
 				<?php if (JVERSION >= '3.0') : ?>
 					<div class="btn-group pull-right hidden-phone">
 						<label for="limit" class="element-invisible">
-							<?php echo JText::_('JFIELD_PLG_SEARCH_SEARCHLIMIT_DESC'); ?>
+							<?php echo Text::_('JFIELD_PLG_SEARCH_SEARCHLIMIT_DESC'); ?>
 						</label>
 						<?php echo $this->pagination->getLimitBox(); ?>
 					</div>
 
 					<div class="btn-group pull-right hidden-phone hidden-tablet">
 						<label for="directionTable" class="element-invisible">
-							<?php echo JText::_('JFIELD_ORDERING_DESC'); ?>
+							<?php echo Text::_('JFIELD_ORDERING_DESC'); ?>
 						</label>
 						<select name="directionTable" id="directionTable"
 							class="input-medium" onchange="Joomla.orderTable()">
-							<option value=""><?php echo JText::_('JFIELD_ORDERING_DESC'); ?></option>
+							<option value=""><?php echo Text::_('JFIELD_ORDERING_DESC'); ?></option>
 							<option value="asc"
 								<?php
 									if ($listDirn == 'asc')
@@ -115,7 +119,7 @@ if (! empty($this->extra_sidebar))
 										echo 'selected="selected"';
 									}
 								?>>
-									<?php echo JText::_('JGLOBAL_ORDER_ASCENDING'); ?>
+									<?php echo Text::_('JGLOBAL_ORDER_ASCENDING'); ?>
 							</option>
 							<option value="desc"
 								<?php
@@ -124,26 +128,26 @@ if (! empty($this->extra_sidebar))
 									echo 'selected="selected"';
 								}
 								?>>
-									<?php echo JText::_('JGLOBAL_ORDER_DESCENDING'); ?>
+									<?php echo Text::_('JGLOBAL_ORDER_DESCENDING'); ?>
 							</option>
 						</select>
 					</div>
 
 					<div class="btn-group pull-right hidden-phone hidden-tablet">
 						<label for="sortTable" class="element-invisible">
-							<?php echo JText::_('JGLOBAL_SORT_BY'); ?>
+							<?php echo Text::_('JGLOBAL_SORT_BY'); ?>
 						</label>
 						<select name="sortTable" id="sortTable" class="input-medium"
 							onchange="Joomla.orderTable()">
-							<option value=""><?php echo JText::_('JGLOBAL_SORT_BY'); ?></option>
-							<?php echo JHtml::_('select.options', $sortFields, 'value', 'text', $listOrder); ?>
+							<option value=""><?php echo Text::_('JGLOBAL_SORT_BY'); ?></option>
+							<?php echo HTMLHelper::_('select.options', $sortFields, 'value', 'text', $listOrder); ?>
 						</select>
 					</div>
 				<?php endif; ?>
 
 				<div class="btn-group pull-right hidden-phone">
 					<?php
-					echo JHtml::_('select.genericlist', $this->publish_states, "filter_published", 'class="input-medium" size="1" onchange="document.adminForm.submit();" name="filter_published"', "value", "text", $this->state->get('filter.state'));
+					echo HTMLHelper::_('select.genericlist', $this->publish_states, "filter_published", 'class="input-medium" size="1" onchange="document.adminForm.submit();" name="filter_published"', "value", "text", $this->state->get('filter.state'));
 					?>
 				</div>
 			</div>
@@ -153,7 +157,7 @@ if (! empty($this->extra_sidebar))
 			<?php if (empty($this->items)) : ?>
 				<div class="clearfix">&nbsp;</div>
 				<div class="alert alert-no-items">
-					<?php echo JText::_('COM_TJFIELDS_NO_MATCHING_RESULTS'); ?>
+					<?php echo Text::_('COM_TJFIELDS_NO_MATCHING_RESULTS'); ?>
 				</div>
 			<?php
 			else : ?>
@@ -164,7 +168,7 @@ if (! empty($this->extra_sidebar))
 								<?php if (isset($this->items[0]->ordering)): ?>
 									<th width="1%" class="nowrap center hidden-phone">
 										<?php
-										echo JHtml::_('grid.sort', '<i class="icon-menu-2"></i>',
+										echo HTMLHelper::_('grid.sort', '<i class="icon-menu-2"></i>',
 											'a.ordering', $listDirn, $listOrder, null, 'asc', 'JGRID_HEADING_ORDERING');
 										?>
 									</th>
@@ -173,35 +177,35 @@ if (! empty($this->extra_sidebar))
 
 							<th width="1%" class="hidden-phone">
 								<input type="checkbox" name="checkall-toggle" value=""
-								title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>"
+								title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>"
 								onclick="Joomla.checkAll(this)" />
 							</th>
 
 							<?php if (isset($this->items[0]->state)): ?>
 								<th width="1%" class="nowrap center">
-									<?php echo JHtml::_('grid.sort', 'JSTATUS', 'state', $listDirn, $listOrder); ?>
+									<?php echo HTMLHelper::_('grid.sort', 'JSTATUS', 'state', $listDirn, $listOrder); ?>
 								</th>
 							<?php endif; ?>
 
 							<th class='left'>
-								<?php echo JHtml::_('grid.sort', 'COM_TJFIELDS_COUNTRIES_COUNTRY', 'a.country', $listDirn, $listOrder); ?>
+								<?php echo HTMLHelper::_('grid.sort', 'COM_TJFIELDS_COUNTRIES_COUNTRY', 'a.country', $listDirn, $listOrder); ?>
 							</th>
 
 							<th class="center hidden-phone">
-								<?php echo JHtml::_('grid.sort', 'COM_TJFIELDS_COUNTRIES_COUNTRY_3_CODE', 'a.country_3_code', $listDirn, $listOrder); ?>
+								<?php echo HTMLHelper::_('grid.sort', 'COM_TJFIELDS_COUNTRIES_COUNTRY_3_CODE', 'a.country_3_code', $listDirn, $listOrder); ?>
 							</th>
 
 							<th class="center hidden-phone">
-								<?php echo JHtml::_('grid.sort', 'COM_TJFIELDS_COUNTRIES_COUNTRY_CODE', 'a.country_code', $listDirn, $listOrder); ?>
+								<?php echo HTMLHelper::_('grid.sort', 'COM_TJFIELDS_COUNTRIES_COUNTRY_CODE', 'a.country_code', $listDirn, $listOrder); ?>
 							</th>
 
 							<th class='left hidden-phone'>
-								<?php echo JHtml::_('grid.sort', 'COM_TJFIELDS_COUNTRIES_COUNTRY_JTEXT', 'a.country_jtext', $listDirn, $listOrder); ?>
+								<?php echo HTMLHelper::_('grid.sort', 'COM_TJFIELDS_COUNTRIES_COUNTRY_JTEXT', 'a.country_jtext', $listDirn, $listOrder); ?>
 							</th>
 
 							<?php if (isset($this->items[0]->id)): ?>
 								<th width="1%" class="nowrap center hidden-phone">
-									<?php echo JHtml::_('grid.sort', 'JGRID_HEADING_ID', 'a.id', $listDirn, $listOrder); ?>
+									<?php echo HTMLHelper::_('grid.sort', 'JGRID_HEADING_ID', 'a.id', $listDirn, $listOrder); ?>
 								</th>
 							<?php endif; ?>
 						</tr>
@@ -245,7 +249,7 @@ if (! empty($this->extra_sidebar))
 											$disabledLabel = '';
 
 											if (! $saveOrder):
-												$disabledLabel = JText::_('JORDERINGDISABLED');
+												$disabledLabel = Text::_('JORDERINGDISABLED');
 												$disableClassName = 'inactive tip-top';
 											endif;
 										?>
@@ -268,22 +272,22 @@ if (! empty($this->extra_sidebar))
 							<?php endif; ?>
 
 							<td class="center hidden-phone">
-								<?php echo JHtml::_('grid.id', $i, $item->id); ?>
+								<?php echo HTMLHelper::_('grid.id', $i, $item->id); ?>
 							</td>
 
 							<?php if (isset($this->items[0]->state)): ?>
 								<td class="center">
-									<?php echo JHtml::_('jgrid.published', $item->state, $i, 'countries.', $canChange, 'cb'); ?>
+									<?php echo HTMLHelper::_('jgrid.published', $item->state, $i, 'countries.', $canChange, 'cb'); ?>
 								</td>
 							<?php endif; ?>
 
 							<td>
 								<?php if (isset($item->checked_out) && $item->checked_out) : ?>
-									<?php echo JHtml::_('jgrid.checkedout', $i, $item->editor, $item->checked_out_time, 'countries.', $canCheckin); ?>
+									<?php echo HTMLHelper::_('jgrid.checkedout', $i, $item->editor, $item->checked_out_time, 'countries.', $canCheckin); ?>
 								<?php endif; ?>
 
 								<?php if ($canEdit) : ?>
-									<a href="<?php echo JRoute::_('index.php?option=com_tjfields&task=country.edit&id=' . (int) $item->id . '&client=' . $this->input->get('client', '', 'STRING')); ?>">
+									<a href="<?php echo Route::_('index.php?option=com_tjfields&task=country.edit&id=' . (int) $item->id . '&client=' . $this->input->get('client', '', 'STRING')); ?>">
 										<?php echo $this->escape($item->country); ?>
 									</a>
 									<?php else : ?>
@@ -303,11 +307,11 @@ if (! empty($this->extra_sidebar))
 								<?php
 								if ($lang->hasKey(strtoupper($item->country_jtext)))
 								{
-									echo JText::_($item->country_jtext);
+									echo Text::_($item->country_jtext);
 								}
 								else if ($item->country_jtext !== '')
 								{
-									echo "<span class='text text-warning'>" . JText::_('COM_TJFIELDS_MISSING_LANG_CONSTANT') . "</span>";
+									echo "<span class='text text-warning'>" . Text::_('COM_TJFIELDS_MISSING_LANG_CONSTANT') . "</span>";
 								}
 								?>
 							</td>
@@ -327,7 +331,7 @@ if (! empty($this->extra_sidebar))
 			<input type="hidden" name="boxchecked" value="0" />
 			<input type="hidden" name="filter_order" value="<?php echo $listOrder; ?>" />
 			<input type="hidden" name="filter_order_Dir" value="<?php echo $listDirn; ?>" />
-			<?php echo JHtml::_('form.token'); ?>
+			<?php echo HTMLHelper::_('form.token'); ?>
 		</div>
 	</form>
 </div>

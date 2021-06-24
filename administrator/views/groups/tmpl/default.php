@@ -9,24 +9,28 @@
 
 // no direct access
 defined('_JEXEC') or die;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Router\Route;
 
 use \Joomla\CMS\Layout\LayoutHelper;
 
 JHtml::addIncludePath(JPATH_COMPONENT.'/helpers/html');
 if(JVERSION >= '3.0')
 {
-	JHtml::_('bootstrap.tooltip');
-	JHtml::_('formbehavior.chosen', 'select');
-	JHtml::_('behavior.multiselect');
+	HTMLHelper::_('bootstrap.tooltip');
+	HTMLHelper::_('formbehavior.chosen', 'select');
+	HTMLHelper::_('behavior.multiselect');
 }
 
-//JHtml::_('behavior.multiselect');
+//HTMLHelper::_('behavior.multiselect');
 
 // Import CSS
-$document = JFactory::getDocument();
+$document = Factory::getDocument();
 $document->addStyleSheet('components/com_tjfields/assets/css/tjfields.css');
 
-$user	= JFactory::getUser();
+$user	= Factory::getUser();
 $userId	= $user->get('id');
 $listOrder	= $this->state->get('list.ordering');
 $listDirn	= $this->state->get('list.direction');
@@ -36,7 +40,7 @@ $input=jFactory::getApplication()->input;
 if ($saveOrder)
 {
 	$saveOrderingUrl = 'index.php?option=com_tjfields&task=groups.saveOrderAjax&tmpl=component';
-	JHtml::_('sortablelist.sortable', 'groupList', 'adminForm', strtolower($listDirn), $saveOrderingUrl);
+	HTMLHelper::_('sortablelist.sortable', 'groupList', 'adminForm', strtolower($listDirn), $saveOrderingUrl);
 }
 $sortFields = $this->getSortFields();
 ?>
@@ -44,7 +48,7 @@ $sortFields = $this->getSortFields();
 	Joomla.submitbutton = function (task) {
 		if (task == 'groups.delete')
 		{
-			if(confirm("<?php echo JText::_('COM_TJFIELDS_GROUPS_DELETE_CONFIRMATION'); ?>"))
+			if(confirm("<?php echo Text::_('COM_TJFIELDS_GROUPS_DELETE_CONFIRMATION'); ?>"))
 			{
 				Joomla.submitform(task);
 			}
@@ -72,7 +76,7 @@ $sortFields = $this->getSortFields();
 	}
 </script>
 
-<form action="<?php echo JRoute::_('index.php?option=com_tjfields&view=groups&client='.$input->get('client','','STRING')); ?>" method="post" name="adminForm" id="adminForm">
+<form action="<?php echo Route::_('index.php?option=com_tjfields&view=groups&client='.$input->get('client','','STRING')); ?>" method="post" name="adminForm" id="adminForm">
 	<div class="techjoomla-bootstrap">
 		<?php if (!empty($this->sidebar)): ?>
 			<div id="j-sidebar-container" class="span2"><?php echo $this->sidebar; ?></div>
@@ -86,24 +90,24 @@ $sortFields = $this->getSortFields();
 				</div>
 				<?php if(JVERSION >= '3.0'):?>
 				<div class="btn-group pull-right hidden-phone">
-					<label for="limit" class="element-invisible"><?php echo JText::_('JFIELD_PLG_SEARCH_SEARCHLIMIT_DESC');?></label>
+					<label for="limit" class="element-invisible"><?php echo Text::_('JFIELD_PLG_SEARCH_SEARCHLIMIT_DESC');?></label>
 					<?php echo $this->pagination->getLimitBox(); ?>
 				</div>
 
 				<div class="btn-group pull-right hidden-phone">
-					<label for="directionTable" class="element-invisible"><?php echo JText::_('JFIELD_ORDERING_DESC');?></label>
+					<label for="directionTable" class="element-invisible"><?php echo Text::_('JFIELD_ORDERING_DESC');?></label>
 					<select name="directionTable" id="directionTable" class="input-medium" onchange="Joomla.orderTable()">
-						<option value=""><?php echo JText::_('JFIELD_ORDERING_DESC');?></option>
-						<option value="asc" <?php if ($listDirn == 'asc') echo 'selected="selected"'; ?>><?php echo JText::_('JGLOBAL_ORDER_ASCENDING');?></option>
-						<option value="desc" <?php if ($listDirn == 'desc') echo 'selected="selected"'; ?>><?php echo JText::_('JGLOBAL_ORDER_DESCENDING');?></option>
+						<option value=""><?php echo Text::_('JFIELD_ORDERING_DESC');?></option>
+						<option value="asc" <?php if ($listDirn == 'asc') echo 'selected="selected"'; ?>><?php echo Text::_('JGLOBAL_ORDER_ASCENDING');?></option>
+						<option value="desc" <?php if ($listDirn == 'desc') echo 'selected="selected"'; ?>><?php echo Text::_('JGLOBAL_ORDER_DESCENDING');?></option>
 					</select>
 				</div>
 
 				<div class="btn-group pull-right">
-					<label for="sortTable" class="element-invisible"><?php echo JText::_('JGLOBAL_SORT_BY');?></label>
+					<label for="sortTable" class="element-invisible"><?php echo Text::_('JGLOBAL_SORT_BY');?></label>
 						<select name="sortTable" id="sortTable" class="input-medium" onchange="Joomla.orderTable()">
-							<option value=""><?php echo JText::_('JGLOBAL_SORT_BY');?></option>
-						<?php echo JHtml::_('select.options', $sortFields, 'value', 'text', $listOrder);?>
+							<option value=""><?php echo Text::_('JGLOBAL_SORT_BY');?></option>
+						<?php echo HTMLHelper::_('select.options', $sortFields, 'value', 'text', $listOrder);?>
 						</select>
 				</div>
 					<?php endif;?>
@@ -114,7 +118,7 @@ $sortFields = $this->getSortFields();
 			{
 			?>
 				<div class="alert alert-no-items">
-					<?php echo JText::_('COM_TJFIELD_NO_GROUP_FOUND');?>
+					<?php echo Text::_('COM_TJFIELD_NO_GROUP_FOUND');?>
 				</div>
 				<?php
 			}
@@ -125,30 +129,30 @@ $sortFields = $this->getSortFields();
 					<tr>
 					<?php if (isset($this->items[0]->ordering)): ?>
 						<th width="1%" class="nowrap center hidden-phone">
-							<?php echo JHtml::_('grid.sort', '<i class="icon-menu-2"></i>', 'a.ordering', $listDirn, $listOrder, null, 'asc', 'JGRID_HEADING_ORDERING'); ?>
+							<?php echo HTMLHelper::_('grid.sort', '<i class="icon-menu-2"></i>', 'a.ordering', $listDirn, $listOrder, null, 'asc', 'JGRID_HEADING_ORDERING'); ?>
 						</th>
 					<?php endif; ?>
 						<th width="1%" class="hidden-phone">
-							<input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
+							<input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
 						</th>
 					<?php if (isset($this->items[0]->state)): ?>
 						<th width="1%" class="nowrap center">
-							<?php echo JHtml::_('grid.sort', 'JSTATUS', 'a.state', $listDirn, $listOrder); ?>
+							<?php echo HTMLHelper::_('grid.sort', 'JSTATUS', 'a.state', $listDirn, $listOrder); ?>
 						</th>
 					<?php endif; ?>
 
 					<th class='left'>
-					<?php echo JHtml::_('grid.sort',  'COM_TJFIELDS_GROUPS_CREATED_BY', 'a.created_by_name', $listDirn, $listOrder); ?>
+					<?php echo HTMLHelper::_('grid.sort',  'COM_TJFIELDS_GROUPS_CREATED_BY', 'a.created_by_name', $listDirn, $listOrder); ?>
 					</th>
 					<th class='left'>
-					<?php echo JHtml::_('grid.sort',  'COM_TJFIELDS_GROUPS_NAME', 'a.name', $listDirn, $listOrder); ?>
+					<?php echo HTMLHelper::_('grid.sort',  'COM_TJFIELDS_GROUPS_NAME', 'a.name', $listDirn, $listOrder); ?>
 					</th>
 					<th class='left'>
-					<?php echo JHtml::_('grid.sort',  'COM_TJFIELDS_GROUPS_CLIENT', 'a.client', $listDirn, $listOrder); ?>
+					<?php echo HTMLHelper::_('grid.sort',  'COM_TJFIELDS_GROUPS_CLIENT', 'a.client', $listDirn, $listOrder); ?>
 					</th>
 					<?php if (isset($this->items[0]->id)): ?>
 						<th width="1%" class="nowrap center hidden-phone">
-							<?php echo JHtml::_('grid.sort', 'JGRID_HEADING_ID', 'a.id', $listDirn, $listOrder); ?>
+							<?php echo HTMLHelper::_('grid.sort', 'JGRID_HEADING_ID', 'a.id', $listDirn, $listOrder); ?>
 						</th>
 					<?php endif; ?>
 					</tr>
@@ -184,7 +188,7 @@ $sortFields = $this->getSortFields();
 							$disableClassName = '';
 							$disabledLabel	  = '';
 							if (!$saveOrder) :
-								$disabledLabel    = JText::_('JORDERINGDISABLED');
+								$disabledLabel    = Text::_('JORDERINGDISABLED');
 								$disableClassName = 'inactive tip-top';
 							endif; ?>
 							<span class="sortable-handler hasTooltip <?php echo $disableClassName?>" title="<?php echo $disabledLabel?>">
@@ -199,11 +203,11 @@ $sortFields = $this->getSortFields();
 						</td>
 					<?php endif; ?>
 						<td class="center hidden-phone">
-							<?php echo JHtml::_('grid.id', $i, $item->id); ?>
+							<?php echo HTMLHelper::_('grid.id', $i, $item->id); ?>
 						</td>
 					<?php if (isset($this->items[0]->state)): ?>
 						<td class="center">
-							<?php echo JHtml::_('jgrid.published', $item->state, $i, 'groups.', $canChange, 'cb'); ?>
+							<?php echo HTMLHelper::_('jgrid.published', $item->state, $i, 'groups.', $canChange, 'cb'); ?>
 						</td>
 					<?php endif; ?>
 
@@ -213,10 +217,10 @@ $sortFields = $this->getSortFields();
 					</td>
 					<td>
 					<?php if (isset($item->checked_out) && $item->checked_out) : ?>
-						<?php echo JHtml::_('jgrid.checkedout', $i, $item->editor, $item->checked_out_time, 'groups.', $canCheckin); ?>
+						<?php echo HTMLHelper::_('jgrid.checkedout', $i, $item->editor, $item->checked_out_time, 'groups.', $canCheckin); ?>
 					<?php endif; ?>
 					<?php if ($canEdit) : ?>
-						<a href="<?php echo JRoute::_('index.php?option=com_tjfields&task=group.edit&client='.$item->client.'&id='.(int) $item->id); ?>">
+						<a href="<?php echo Route::_('index.php?option=com_tjfields&task=group.edit&client='.$item->client.'&id='.(int) $item->id); ?>">
 						<?php echo $this->escape($item->name); ?></a>
 					<?php else : ?>
 						<?php echo $this->escape($item->name); ?>
@@ -242,7 +246,7 @@ $sortFields = $this->getSortFields();
 			<input type="hidden" name="boxchecked" value="0" />
 			<input type="hidden" name="filter_order" value="<?php echo $listOrder; ?>" />
 			<input type="hidden" name="filter_order_Dir" value="<?php echo $listDirn; ?>" />
-			<?php echo JHtml::_('form.token'); ?>
+			<?php echo HTMLHelper::_('form.token'); ?>
 		</div>
 	</form>
 </div>

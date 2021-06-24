@@ -9,6 +9,11 @@
 
 // No direct access
 defined('_JEXEC') or die();
+use Joomla\CMS\MVC\View\HtmlView;
+use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Form\FormField;
 
 jimport('joomla.application.component.view');
 
@@ -19,7 +24,7 @@ jimport('joomla.application.component.view');
  * @subpackage  com_tjfields
  * @since       2.2
  */
-class TjfieldsViewRegions extends JViewLegacy
+class TjfieldsViewRegions extends HtmlView
 {
 	protected $items;
 
@@ -41,7 +46,7 @@ class TjfieldsViewRegions extends JViewLegacy
 		$this->pagination = $this->get('Pagination');
 		$this->filterForm = $this->get('FilterForm');
 		$this->activeFilters = $this->get('ActiveFilters');
-		$this->input = JFactory::getApplication()->input;
+		$this->input = Factory::getApplication()->input;
 
 		// Check for errors.
 		if (count($errors = $this->get('Errors')))
@@ -60,18 +65,18 @@ class TjfieldsViewRegions extends JViewLegacy
 		{
 			// Creating status filter.
 			$sstatus = array();
-			$sstatus[] = JHtml::_('select.option', '', JText::_('JOPTION_SELECT_PUBLISHED'));
-			$sstatus[] = JHtml::_('select.option', 1, JText::_('JPUBLISHED'));
-			$sstatus[] = JHtml::_('select.option', 0, JText::_('JUNPUBLISHED'));
+			$sstatus[] = HTMLHelper::_('select.option', '', Text::_('JOPTION_SELECT_PUBLISHED'));
+			$sstatus[] = HTMLHelper::_('select.option', 1, Text::_('JPUBLISHED'));
+			$sstatus[] = HTMLHelper::_('select.option', 0, Text::_('JUNPUBLISHED'));
 
 			$this->sstatus = $sstatus;
 
 			// Creating country filter.
 			$countries = array();
-			$countries[] = JHtml::_('select.option', '', JText::_('COM_TJFIELDS_FILTER_SELECT_COUNTRY'));
+			$countries[] = HTMLHelper::_('select.option', '', Text::_('COM_TJFIELDS_FILTER_SELECT_COUNTRY'));
 
 			require_once JPATH_COMPONENT . '/models/fields/countries.php';
-			$countriesField = new JFormFieldCountries;
+			$countriesField = new FormFieldCountries;
 			$this->countries = $countriesField->getOptionsExternally();
 
 			// Merge options
@@ -93,23 +98,23 @@ class TjfieldsViewRegions extends JViewLegacy
 	{
 		require_once JPATH_COMPONENT . '/helpers/tjfields.php';
 
-		$client = JFactory::getApplication()->input->get('client', '', 'STRING');
+		$client = Factory::getApplication()->input->get('client', '', 'STRING');
 		$extention = explode('.', $client);
 		$canDo = TjfieldsHelper::getActions($extention[0], 'region');
 
 		$extensionName = strtoupper($client);
 
 		// Need to load the menu language file as mod_menu hasn't been loaded yet.
-		$lang = JFactory::getLanguage();
+		$lang = Factory::getLanguage();
 		$lang->load($client, JPATH_ADMINISTRATOR, null, false, true);
 
 		if (JVERSION >= '3.0')
 		{
-			JToolBarHelper::title(JText::_($extensionName) . ': ' . JText::_('COM_TJFIELDS_TITLE_REGIONS'), 'list');
+			JToolBarHelper::title(Text::_($extensionName) . ': ' . Text::_('COM_TJFIELDS_TITLE_REGIONS'), 'list');
 		}
 		else
 		{
-			JToolBarHelper::title(JText::_($extensionName) . ': ' . JText::_('COM_TJFIELDS_TITLE_REGIONS'), 'regions.png');
+			JToolBarHelper::title(Text::_($extensionName) . ': ' . Text::_('COM_TJFIELDS_TITLE_REGIONS'), 'regions.png');
 		}
 
 		// Check if the form exists before showing the add/edit buttons

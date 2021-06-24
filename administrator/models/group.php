@@ -9,6 +9,10 @@
 
 // No direct access.
 defined('_JEXEC') or die;
+use Joomla\CMS\MVC\Model\AdminModel;
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 
 jimport('joomla.application.component.modeladmin');
 
@@ -19,7 +23,7 @@ jimport('joomla.application.component.modeladmin');
  *
  */
 
-class TjfieldsModelGroup extends JModelAdmin
+class TjfieldsModelGroup extends AdminModel
 {
 	/**
 	 * @var		string	The prefix to use with controller messages.
@@ -40,7 +44,7 @@ class TjfieldsModelGroup extends JModelAdmin
 	{
 		JLoader::import('components.com_tjfields.tables.group', JPATH_ADMINISTRATOR);
 
-		return JTable::getInstance($type, $prefix, $config);
+		return Table::getInstance($type, $prefix, $config);
 	}
 
 	/**
@@ -56,7 +60,7 @@ class TjfieldsModelGroup extends JModelAdmin
 	public function getForm($data = array(), $loadData = true)
 	{
 		// Initialise variables.
-		$app	= JFactory::getApplication();
+		$app	= Factory::getApplication();
 
 		// Get the form.
 		$form = $this->loadForm('com_tjfields.group', 'group', array('control' => 'jform', 'load_data' => $loadData));
@@ -79,7 +83,7 @@ class TjfieldsModelGroup extends JModelAdmin
 	protected function loadFormData()
 	{
 		// Check the session for previously entered form data.
-		$data = JFactory::getApplication()->getUserState('com_tjfields.edit.group.data', array());
+		$data = Factory::getApplication()->getUserState('com_tjfields.edit.group.data', array());
 
 		if (empty($data))
 		{
@@ -124,7 +128,7 @@ class TjfieldsModelGroup extends JModelAdmin
 			// Set ordering to the last item if not set
 			if (@$table->ordering === '')
 			{
-				$db = JFactory::getDbo();
+				$db = Factory::getDbo();
 				$db->setQuery('SELECT MAX(ordering) FROM #__tjfields_groups');
 				$max = $db->loadResult();
 				$table->ordering = $max + 1;
@@ -144,7 +148,7 @@ class TjfieldsModelGroup extends JModelAdmin
 	public function save($data)
 	{
 		$table = $this->getTable();
-		$input = JFactory::getApplication()->input;
+		$input = Factory::getApplication()->input;
 		$data['name'] = trim($data['name']);
 		$data['title'] = trim($data['title']);
 
@@ -160,7 +164,7 @@ class TjfieldsModelGroup extends JModelAdmin
 			$name = explode("(", $data['name']);
 			$name = trim($name['0']);
 			$name = str_replace("`", "", $name);
-			$db = JFactory::getDbo();
+			$db = Factory::getDbo();
 			$query = 'SELECT a.*'
 			. ' FROM #__tjfields_groups AS a'
 			. " WHERE  a.name LIKE '" . $db->escape($name) . "%'"
@@ -169,7 +173,7 @@ class TjfieldsModelGroup extends JModelAdmin
 			$posts = $db->loadAssocList();
 			$postsCount = count($posts) + 1;
 			$data['name'] = $name . ' (' . $postsCount . ')';
-			$data['created_by'] = JFactory::getUser()->id;
+			$data['created_by'] = Factory::getUser()->id;
 		}
 
 		if ($table->save($data) === true)
@@ -200,7 +204,7 @@ class TjfieldsModelGroup extends JModelAdmin
 		JLoader::import('components.com_tjfields.models.fields', JPATH_ADMINISTRATOR);
 		JLoader::import('components.com_tjfields.models.field', JPATH_ADMINISTRATOR);
 
-		$db = JFactory::getDbo();
+		$db = Factory::getDbo();
 		$pks = (array) $pks;
 
 		foreach ($pks as $pk)
@@ -211,13 +215,13 @@ class TjfieldsModelGroup extends JModelAdmin
 			}
 
 			// Delete fields in the field group to be deleted
-			$tjFieldsFieldsModel = JModelLegacy::getInstance('Fields', 'TjfieldsModel', array('ignore_request' => true));
+			$tjFieldsFieldsModel = BaseDatabaseModel::getInstance('Fields', 'TjfieldsModel', array('ignore_request' => true));
 			$tjFieldsFieldsModel->setState("filter.group_id", $pk);
 			$fields = $tjFieldsFieldsModel->getItems();
 
 			foreach ($fields as $field)
 			{
-				$tjFieldsFieldModel = JModelLegacy::getInstance('Field', 'TjfieldsModel', array('ignore_request' => true));
+				$tjFieldsFieldModel = BaseDatabaseModel::getInstance('Field', 'TjfieldsModel', array('ignore_request' => true));
 				$status = $tjFieldsFieldModel->delete($field->id);
 
 				if ($status === false)

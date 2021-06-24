@@ -9,6 +9,11 @@
 
 defined('JPATH_PLATFORM') or die;
 
+use Joomla\CMS\Form\FormField;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
+
 jimport('joomla.html.html');
 jimport('joomla.form.formfield');
 
@@ -17,7 +22,7 @@ jimport('joomla.form.formfield');
  *
  * @since  1.3
  */
-class JFormFieldformsourcefield extends JFormField
+class FormFieldformsourcefield extends FormField
 {
 	/**
 	 * The form field type.
@@ -39,10 +44,10 @@ class JFormFieldformsourcefield extends JFormField
 	{
 		$options = array();
 
-		$input = JFactory::getApplication()->input;
+		$input = Factory::getApplication()->input;
 		$currentClient = $input->get('client', '', "STRING");
 
-		$db    = JFactory::getDbo();
+		$db    = Factory::getDbo();
 		$query = $db->getQuery(true);
 
 		$query->select($db->quoteName(array('id', 'title', 'unique_identifier')));
@@ -59,7 +64,7 @@ class JFormFieldformsourcefield extends JFormField
 		$db->setQuery($query);
 		$isSubform  = $db->loadObjectList();
 
-		$options[] = JHtml::_('select.option', '', JText::_('COM_TJFIELDS_FORM_LBL_FIELD_SELECT_SOURCE'));
+		$options[] = HTMLHelper::_('select.option', '', Text::_('COM_TJFIELDS_FORM_LBL_FIELD_SELECT_SOURCE'));
 
 		foreach ($isSubform as $form)
 		{
@@ -69,10 +74,10 @@ class JFormFieldformsourcefield extends JFormField
 
 			$filePathFrontend = 'components/' . $client . '/models/forms/' . $clientType . 'form_extra.xml';
 
-			$options[] = JHtml::_('select.option', $filePathFrontend, $form->title);
+			$options[] = HTMLHelper::_('select.option', $filePathFrontend, $form->title);
 		}
 
-		return JHtml::_('select.genericlist', $options, $this->name, 'class="inputbox required"',
+		return HTMLHelper::_('select.genericlist', $options, $this->name, 'class="inputbox required"',
 		'value', 'text', $this->value, $this->id, $this->name
 		);
 	}

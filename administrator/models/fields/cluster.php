@@ -8,6 +8,8 @@
 
 defined('JPATH_BASE') or die;
 
+use Joomla\CMS\Form\FormHelper;
+use Joomla\CMS\Table\Table;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\HTML\HTMLHelper;
@@ -21,7 +23,7 @@ JFormHelper::loadFieldClass('list');
  * @since  __DEPLOY_VERSION__
  */
 
-class JFormFieldCluster extends JFormFieldList
+class FormFieldCluster extends FormFieldList
 {
 	/**
 	 * The form field type.
@@ -132,14 +134,14 @@ class JFormFieldCluster extends JFormFieldList
 		// Get UCM type ID
 		$client = "com_tjucm." . str_replace("_clusterclusterid]", "", str_replace("jform[com_tjucm_", "", $this->name));
 		JLoader::import('components.com_tjucm.tables.type', JPATH_ADMINISTRATOR);
-		$typeTable = JTable::getInstance('Type', 'TjucmTable', array('dbo', JFactory::getDbo()));
+		$typeTable = Table::getInstance('Type', 'TjucmTable', array('dbo', Factory::getDbo()));
 		$typeTable->load(array("unique_identifier" => $client));
 
 		if (!empty($clusters))
 		{
 			foreach ($clusters as $clusterList)
 			{
-				if (RBACL::check(JFactory::getUser()->id, 'com_cluster', 'core.edititem.' . $typeTable->id, $clusterList->id) || RBACL::check(JFactory::getUser()->id, 'com_cluster', 'core.editallitem.' . $typeTable->id))
+				if (RBACL::check(Factory::getUser()->id, 'com_cluster', 'core.edititem.' . $typeTable->id, $clusterList->id) || RBACL::check(Factory::getUser()->id, 'com_cluster', 'core.editallitem.' . $typeTable->id))
 				{
 					if (!empty($clusterList->id))
 					{

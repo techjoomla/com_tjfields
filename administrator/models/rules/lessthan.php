@@ -9,6 +9,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Form\FormRule;
+use Joomla\CMS\Factory;
 use Joomla\Registry\Registry;
 use Joomla\String\StringHelper;
 use Joomla\CMS\Form\Rule\NumberRule;
@@ -18,7 +20,7 @@ use Joomla\CMS\Form\Rule\NumberRule;
  *
  * @since  1.6
  */
-class JFormRuleLessThan extends NumberRule
+class FormRuleLessThan extends NumberRule
 {
 	/**
 	 * Method to test for value of the field greater than the given field
@@ -33,7 +35,7 @@ class JFormRuleLessThan extends NumberRule
 	 *
 	 * @return  boolean  True if the value is valid, false otherwise.
 	 */
-	public function test(SimpleXMLElement $element, $value, $group = null, Registry $input = null, JForm $form = null)
+	public function test(SimpleXMLElement $element, $value, $group = null, Registry $input = null, Form $form = null)
 	{
 		// Check the basic validations
 		if (!parent::test($element, $value, $group, $input, $form))
@@ -49,14 +51,14 @@ class JFormRuleLessThan extends NumberRule
 			return false;
 		}
 
-		$input = JFactory::getApplication()->input;
+		$input = Factory::getApplication()->input;
 		$recordId = $input->get('recordid', '', 'INT');
 
 		$test = '';
 
 		if ($recordId)
 		{
-			$db = JFactory::getDbo();
+			$db = Factory::getDbo();
 			$query = $db->getQuery(true);
 			$query->select($db->quoteName('fv.value'));
 			$query->from($db->quoteName('#__tjfields_fields_value', 'fv'));

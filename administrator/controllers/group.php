@@ -9,6 +9,10 @@
 
 // No direct access
 defined('_JEXEC') or die;
+use Joomla\CMS\MVC\Controller\FormController;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Router\Route;
 
 jimport('joomla.application.component.controllerform');
 
@@ -17,7 +21,7 @@ jimport('joomla.application.component.controllerform');
  *
  * @since  1.0
  */
-class TjfieldsControllerGroup extends JControllerForm
+class TjfieldsControllerGroup extends FormController
 {
 	/**
 	 * Constructor
@@ -36,23 +40,23 @@ class TjfieldsControllerGroup extends JControllerForm
 	 */
 	public function apply()
 	{
-		$input = JFactory::getApplication()->input;
+		$input = Factory::getApplication()->input;
 		$data = $input->post->get('jform', '', 'ARRAY');
 		$model = $this->getModel('group');
 		$if_saved = $model->save($data);
 
 		if ($if_saved)
 		{
-			$msg = JText::_('COMTJFILEDS_GROUP_CREATED_SUCCESSFULLY');
-			$link = JRoute::_('index.php?option=com_tjfields&view=group&layout=edit', false);
+			$msg = Text::_('COMTJFILEDS_GROUP_CREATED_SUCCESSFULLY');
+			$link = Route::_('index.php?option=com_tjfields&view=group&layout=edit', false);
 			$link .= '&client=' . $input->get('client', '', 'STRING') . '&id=' . $if_saved;
 			$this->setRedirect($link, $msg);
 		}
 		else
 		{
-			$msg = JText::_('TJFIELDS_ERROR_MSG');
-			$this->setMessage(JText::plural($msg, 1));
-			$link = JRoute::_('index.php?option=com_tjfields&view=group&layout=edit', false);
+			$msg = Text::_('TJFIELDS_ERROR_MSG');
+			$this->setMessage(Text::plural($msg, 1));
+			$link = Route::_('index.php?option=com_tjfields&view=group&layout=edit', false);
 			$link .= '&client=' . $input->get('client', '', 'STRING') . '&id=' . $input->get('id');
 			$this->setRedirect($link, $msg, 'error');
 		}
@@ -65,7 +69,7 @@ class TjfieldsControllerGroup extends JControllerForm
 	 */
 	public function save($key = null, $urlVar = null)
 	{
-		$input = JFactory::getApplication()->input;
+		$input = Factory::getApplication()->input;
 		$task = $input->get('task', '', 'STRING');
 		$data = $input->post->get('jform', '', 'ARRAY');
 		$model = $this->getModel('group');
@@ -88,14 +92,14 @@ class TjfieldsControllerGroup extends JControllerForm
 
 		if ($if_saved)
 		{
-			$msg = JText::_('COMTJFILEDS_GROUP_CREATED_SUCCESSFULLY');
-			$link = JRoute::_('index.php?option=com_tjfields&view=groups&client=' . $input->get('client', '', 'STRING'), false);
+			$msg = Text::_('COMTJFILEDS_GROUP_CREATED_SUCCESSFULLY');
+			$link = Route::_('index.php?option=com_tjfields&view=groups&client=' . $input->get('client', '', 'STRING'), false);
 			$this->setRedirect($link, $msg);
 		}
 		else
 		{
-			$msg = JText::_('TJFIELDS_ERROR_MSG');
-			$link = JRoute::_('index.php?option=com_tjfields&view=groups&client=' . $input->get('client', '', 'STRING'), false);
+			$msg = Text::_('TJFIELDS_ERROR_MSG');
+			$link = Route::_('index.php?option=com_tjfields&view=groups&client=' . $input->get('client', '', 'STRING'), false);
 			$this->setRedirect($link, $msg, 'error');
 		}
 	}
@@ -107,21 +111,21 @@ class TjfieldsControllerGroup extends JControllerForm
 	 */
 	public function newsave()
 	{
-		$input = JFactory::getApplication()->input;
+		$input = Factory::getApplication()->input;
 		$data = $input->post->get('jform', '', 'ARRAY');
 		$model = $this->getModel('group');
 		$group_id = $model->save($data);
 
 		if ($group_id)
 		{
-			$msg = JText::_('COMTJFILEDS_GROUP_CREATED_SUCCESSFULLY');
-			$link = JRoute::_('index.php?option=com_tjfields&view=group&layout=edit&client=' . $input->get('client', '', 'STRING'), false);
+			$msg = Text::_('COMTJFILEDS_GROUP_CREATED_SUCCESSFULLY');
+			$link = Route::_('index.php?option=com_tjfields&view=group&layout=edit&client=' . $input->get('client', '', 'STRING'), false);
 			$this->setRedirect($link, $msg, 'success');
 		}
 		else
 		{
-			$msg = JText::_('TJFIELDS_ERROR_MSG');
-			$link = JRoute::_('index.php?option=com_tjfields&view=group&layout=edit&client=' . $input->get('client', '', 'STRING'), false);
+			$msg = Text::_('TJFIELDS_ERROR_MSG');
+			$link = Route::_('index.php?option=com_tjfields&view=group&layout=edit&client=' . $input->get('client', '', 'STRING'), false);
 			$this->setRedirect($link, $msg, 'error');
 		}
 	}
@@ -133,9 +137,9 @@ class TjfieldsControllerGroup extends JControllerForm
 	 */
 	public function add()
 	{
-		$input = JFactory::getApplication()->input;
+		$input = Factory::getApplication()->input;
 
-		$link = JRoute::_('index.php?option=com_tjfields&view=group&layout=edit&client=' . $input->get('client', '', 'STRING'), false);
+		$link = Route::_('index.php?option=com_tjfields&view=group&layout=edit&client=' . $input->get('client', '', 'STRING'), false);
 
 		$this->setRedirect($link);
 	}
@@ -147,11 +151,11 @@ class TjfieldsControllerGroup extends JControllerForm
 	 */
 	public function edit($key = null, $urlVar = null)
 	{
-		$input    = JFactory::getApplication()->input;
+		$input    = Factory::getApplication()->input;
 		$cid      = $input->post->get('cid', array(), 'array');
 		$recordId = (int) (count($cid) ? $cid[0] : $input->getInt('id'));
 
-		$link = JRoute::_('index.php?option=com_tjfields&view=group&layout=edit&id=' . $recordId, false);
+		$link = Route::_('index.php?option=com_tjfields&view=group&layout=edit&id=' . $recordId, false);
 
 		$link .= '&client=' . $input->get('client', '', 'STRING');
 
@@ -165,8 +169,8 @@ class TjfieldsControllerGroup extends JControllerForm
 	 */
 	public function cancel($key = null)
 	{
-		$input = JFactory::getApplication()->input;
-		$link = JRoute::_('index.php?option=com_tjfields&view=groups&client=' . $input->get('client', '', 'STRING'), false);
+		$input = Factory::getApplication()->input;
+		$link = Route::_('index.php?option=com_tjfields&view=groups&client=' . $input->get('client', '', 'STRING'), false);
 
 		$this->setRedirect($link, $msg);
 	}

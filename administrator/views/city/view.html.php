@@ -9,6 +9,9 @@
 
 // No direct access
 defined('_JEXEC') or die();
+use Joomla\CMS\MVC\View\HtmlView;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 
 jimport('joomla.application.component.view');
 
@@ -19,7 +22,7 @@ jimport('joomla.application.component.view');
  * @subpackage  com_tjfields
  * @since       2.2
  */
-class TjfieldsViewCity extends JViewLegacy
+class TjfieldsViewCity extends HtmlView
 {
 	protected $state;
 
@@ -39,7 +42,7 @@ class TjfieldsViewCity extends JViewLegacy
 		$this->state = $this->get('State');
 		$this->item = $this->get('Item');
 		$this->form = $this->get('Form');
-		$this->input = JFactory::getApplication()->input;
+		$this->input = Factory::getApplication()->input;
 
 		// Check for errors.
 		if (count($errors = $this->get('Errors')))
@@ -61,28 +64,28 @@ class TjfieldsViewCity extends JViewLegacy
 	 */
 	protected function addToolbar()
 	{
-		JFactory::getApplication()->input->set('hidemainmenu', true);
+		Factory::getApplication()->input->set('hidemainmenu', true);
 
-		$user = JFactory::getUser();
+		$user = Factory::getUser();
 		$isNew = ($this->item->id == 0);
 
 		// Let's get the extension name
-		$client = JFactory::getApplication()->input->get('client', '', 'STRING');
+		$client = Factory::getApplication()->input->get('client', '', 'STRING');
 		$extensionName = strtoupper($client);
 
 		// Need to load the menu language file as mod_menu hasn't been loaded yet.
-		$lang = JFactory::getLanguage();
+		$lang = Factory::getLanguage();
 		$lang->load($client, JPATH_ADMINISTRATOR, null, false, true);
 
-		$viewTitle = JText::_($extensionName);
+		$viewTitle = Text::_($extensionName);
 
 		if ($isNew)
 		{
-			$viewTitle = $viewTitle . ': ' . JText::_('COM_TJFIELDS_ADD_CITY');
+			$viewTitle = $viewTitle . ': ' . Text::_('COM_TJFIELDS_ADD_CITY');
 		}
 		else
 		{
-			$viewTitle = $viewTitle . ': ' . JText::_('COM_TJFIELDS_EDIT_CITY');
+			$viewTitle = $viewTitle . ': ' . Text::_('COM_TJFIELDS_EDIT_CITY');
 		}
 
 		if (JVERSION >= '3.0')

@@ -9,13 +9,16 @@
 
 // No direct access
 defined('_JEXEC') or die;
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 
 /**
  * Group Table class
  *
  * @since  1.1
  */
-class TjfieldsTablegroup extends JTable
+class TjfieldsTablegroup extends Table
 {
 	/**
 	 * Constructor
@@ -24,7 +27,7 @@ class TjfieldsTablegroup extends JTable
 	 */
 	public function __construct(&$db)
 	{
-		$lang = JFactory::getLanguage();
+		$lang = Factory::getLanguage();
 		$lang->load('com_tjfields', JPATH_ADMINISTRATOR, 'en-GB', true);
 
 		parent::__construct('#__tjfields_groups', 'id', $db);
@@ -39,7 +42,7 @@ class TjfieldsTablegroup extends JTable
 	 * 
 	 * @since  1.1
 	 */
-	private function JAccessRulestoArray($jaccessrules)
+	private function RulestoArray($jaccessrules)
 	{
 		$rules = array();
 
@@ -67,7 +70,7 @@ class TjfieldsTablegroup extends JTable
 	 */
 	public function check()
 	{
-		$db = JFactory::getDbo();
+		$db = Factory::getDbo();
 
 		// If there is an ordering column and this is a new row then get the next ordering value
 		if (property_exists($this, 'ordering') && $this->id == 0)
@@ -76,11 +79,11 @@ class TjfieldsTablegroup extends JTable
 		}
 
 		// Check for duplicate group name
-		$table = JTable::getInstance('Group', 'TjfieldsTable', array('dbo', $db));
+		$table = Table::getInstance('Group', 'TjfieldsTable', array('dbo', $db));
 
 		if ($table->load(array('name' => $this->name, 'client' => $this->client)) && ($table->id != $this->id || $this->id == 0))
 		{
-			JFactory::getApplication()->enqueueMessage(JText::_('COM_TJFIELDS_GROUP_TITLE_ALREADY_EXISTS'), 'error');
+			Factory::getApplication()->enqueueMessage(Text::_('COM_TJFIELDS_GROUP_TITLE_ALREADY_EXISTS'), 'error');
 
 			return false;
 		}
@@ -122,7 +125,7 @@ class TjfieldsTablegroup extends JTable
 			// Nothing to set publishing state on, return false.
 			else
 			{
-				$this->setError(JText::_('JLIB_DATABASE_ERROR_NO_ROWS_SELECTED'));
+				$this->setError(Text::_('JLIB_DATABASE_ERROR_NO_ROWS_SELECTED'));
 
 				return false;
 			}
@@ -212,10 +215,10 @@ class TjfieldsTablegroup extends JTable
 	 * 
 	 * @since  1.1
 	 */
-	protected function _getAssetParentId(JTable $table = null, $id = null)
+	protected function _getAssetParentId(Table $table = null, $id = null)
 	{
 		// We will retrieve the parent-asset from the Asset-table
-		$assetParent = JTable::getInstance('Asset');
+		$assetParent = Table::getInstance('Asset');
 
 // 		$client = explode('.',$this->client);
 

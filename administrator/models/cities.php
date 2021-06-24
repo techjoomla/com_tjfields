@@ -9,6 +9,9 @@
 
 // No direct access
 defined('_JEXEC') or die();
+use Joomla\CMS\MVC\Model\ListModel;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Component\ComponentHelper;
 
 jimport('joomla.application.component.modellist');
 
@@ -19,7 +22,7 @@ jimport('joomla.application.component.modellist');
  * @subpackage  com_tjfields
  * @since       2.2
  */
-class TjfieldsModelCities extends JModelList
+class TjfieldsModelCities extends ListModel
 {
 	/**
 	 * Constructor.
@@ -64,7 +67,7 @@ class TjfieldsModelCities extends JModelList
 	protected function populateState($ordering = null, $direction = null)
 	{
 		// Initialise variables.
-		$app = JFactory::getApplication('administrator');
+		$app = Factory::getApplication('administrator');
 
 		// Set ordering.
 		$orderCol = $app->getUserStateFromRequest($this->context . '.filter_order', 'filter_order');
@@ -101,7 +104,7 @@ class TjfieldsModelCities extends JModelList
 		$this->setState('filter.region', $region);
 
 		// Load the parameters.
-		$params = JComponentHelper::getParams('com_tjfields');
+		$params = ComponentHelper::getParams('com_tjfields');
 		$this->setState('params', $params);
 
 		// List state information.
@@ -142,7 +145,7 @@ class TjfieldsModelCities extends JModelList
 		// Create a new query object.
 		$db = $this->getDbo();
 		$query = $db->getQuery(true);
-		$client = JFactory::getApplication()->input->get('client', '', 'STRING');
+		$client = Factory::getApplication()->input->get('client', '', 'STRING');
 
 		// Select the required fields from the table.
 		$query->select(

@@ -9,6 +9,8 @@
 
 // No direct access
 defined('_JEXEC') or die();
+use Joomla\CMS\MVC\Controller\FormController;
+use Joomla\CMS\Factory;
 
 jimport('joomla.application.component.controllerform');
 
@@ -19,7 +21,7 @@ jimport('joomla.application.component.controllerform');
  * @subpackage  com_tjfields
  * @since       2.2
  */
-class TjfieldsControllerCountry extends JControllerForm
+class TjfieldsControllerCountry extends FormController
 {
 	/**
 	 * The extension for which the countries apply.
@@ -42,7 +44,7 @@ class TjfieldsControllerCountry extends JControllerForm
 		parent::__construct($config);
 		$this->view_list = 'countries';
 
-		$this->input = JFactory::getApplication()->input;
+		$this->input = Factory::getApplication()->input;
 
 		if (empty($this->client))
 		{

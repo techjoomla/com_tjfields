@@ -9,6 +9,10 @@
 
 // No direct access
 defined('_JEXEC') or die();
+use Joomla\CMS\Factory;
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\CMS\Language\Text;
 
 use Joomla\CMS\Filesystem\File;
 
@@ -16,7 +20,7 @@ jimport('joomla.application.component.modellist');
 jimport('joomla.filesystem.file');
 jimport('joomla.database.table');
 
-$lang = JFactory::getLanguage();
+$lang = Factory::getLanguage();
 $lang->load('com_tjfields', JPATH_SITE);
 JLoader::import('components.com_tjfields.helpers.tjfields', JPATH_SITE);
 
@@ -42,7 +46,7 @@ trait TjfieldsFilterField
 	public function getForm($data = array(), $loadData = true)
 	{
 		// Initialise variables.
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 
 		// Get the form.
 		$form = $this->loadForm($data['client'], $data['view'], array('control' => 'jform', 'load_data' => $loadData));
@@ -73,7 +77,7 @@ trait TjfieldsFilterField
 		// Check if form file is present.
 		$category = !empty($data['category']) ? $data['category'] : '';
 		$filePath = JPATH_SITE . '/components/' . $data['clientComponent'] . '/models/forms/' . $category . $data['view'] . 'form_extra.xml';
-		$user = JFactory::getUser();
+		$user = Factory::getUser();
 
 		$form = new stdclass;
 
@@ -120,9 +124,9 @@ trait TjfieldsFilterField
 		$form->bind($dataExtra);
 
 		// Check for field level permissions - start
-		$db = JFactory::getDbo();
-		JTable::addIncludePath(JPATH_ROOT . '/administrator/components/com_tjfields/tables');
-		$tjFieldFieldTable = JTable::getInstance('field', 'TjfieldsTable', array('dbo', $db));
+		$db = Factory::getDbo();
+		Table::addIncludePath(JPATH_ROOT . '/administrator/components/com_tjfields/tables');
+		$tjFieldFieldTable = Table::getInstance('field', 'TjfieldsTable', array('dbo', $db));
 		$fieldSets = $form->getFieldsets();
 		$extraData = $this->getDataExtra($data);
 
@@ -151,7 +155,7 @@ trait TjfieldsFilterField
 								$client = 'com_tjucm.' . str_replace('form_extra.xml', '', $client);
 
 								JLoader::import('components.com_tjucm.tables.type', JPATH_ADMINISTRATOR);
-								$ucmTypeTable = JTable::getInstance('Type', 'TjucmTable', array('dbo', $db));
+								$ucmTypeTable = Table::getInstance('Type', 'TjucmTable', array('dbo', $db));
 								$ucmTypeTable->load(array('unique_identifier' => $client));
 								$canAdd = $user->authorise('core.type.createitem', 'com_tjucm.type.' . $ucmTypeTable->id);
 							}
@@ -298,8 +302,8 @@ trait TjfieldsFilterField
 	 */
 	public function loadFormDataExtra($data, $id = null)
 	{
-		$input = JFactory::getApplication()->input;
-		$user = JFactory::getUser();
+		$input = Factory::getApplication()->input;
+		$user = Factory::getUser();
 
 		// If id is not present in $data then check if it is available in JInput
 		if (empty($id))
@@ -315,7 +319,7 @@ trait TjfieldsFilterField
 		$tjFieldsHelper = new TjfieldsHelper;
 
 		$data['content_id']  = $id;
-		$data['user_id']     = JFactory::getUser()->id;
+		$data['user_id']     = Factory::getUser()->id;
 
 		$extra_fields_data = $tjFieldsHelper->FetchDatavalue($data);
 		$extra_fields_data_formatted = array();
@@ -329,7 +333,7 @@ trait TjfieldsFilterField
 				if ($efd->type == 'ucmsubform')
 				{
 					JLoader::import('components.com_tjucm.models.itemform', JPATH_SITE);
-					$tjUcmItemFormModel = JModelLegacy::getInstance('ItemForm', 'TjucmModel');
+					$tjUcmItemFormModel = BaseDatabaseModel::getInstance('ItemForm', 'TjucmModel');
 					$extra_fields_data_formatted[$efd->name] = $tjUcmItemFormModel->getUcmSubFormFieldDataJson($data['content_id'], $efd);
 				}
 			}
@@ -405,7 +409,7 @@ trait TjfieldsFilterField
 	{
 		if (empty($id))
 		{
-			$input = JFactory::getApplication()->input;
+			$input = Factory::getApplication()->input;
 			$id = (empty($data['content_id'])) ? $input->get('content_id', '', 'INT') : $data['content_id'];
 		}
 
@@ -454,7 +458,7 @@ trait TjfieldsFilterField
 	 */
 	public function deleteExtraFieldsData($content_id, $client)
 	{
-		$db = JFactory::getDbo();
+		$db = Factory::getDbo();
 		$query = $db->getQuery(true);
 		$conditions = array(
 			$db->quoteName('content_id') . ' = ' . $content_id,
@@ -479,8 +483,8 @@ trait TjfieldsFilterField
 	 */
 	public static function getLanguage()
 	{
-		JText::script('COM_TJFIELDS_FILE_DELETE_CONFIRM');
-		JText::script('COM_TJFIELDS_FILE_ERROR_MAX_SIZE');
-		JText::script('COM_TJFIELDS_FILE_DELETE_SUCCESS');
+		Text::script('COM_TJFIELDS_FILE_DELETE_CONFIRM');
+		Text::script('COM_TJFIELDS_FILE_ERROR_MAX_SIZE');
+		Text::script('COM_TJFIELDS_FILE_DELETE_SUCCESS');
 	}
 }

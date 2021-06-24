@@ -9,6 +9,11 @@
 
 // No direct access.
 defined('_JEXEC') or die;
+use Joomla\CMS\MVC\Controller\AdminController;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Log\Log;
+use Joomla\CMS\Session\Session;
 
 JLoader::import('TjfieldsHelper', JPATH_ADMINISTRATOR . '/components/com_tjfields/helpers');
 jimport('joomla.application.component.controlleradmin');
@@ -19,7 +24,7 @@ JLoader::register('TjControllerHouseKeeping', JPATH_SITE . "/libraries/techjooml
  *
  * @since  1.0
  */
-class TjfieldsControllerFields extends JControllerAdmin
+class TjfieldsControllerFields extends AdminController
 {
 	use TjControllerHouseKeeping;
 
@@ -50,7 +55,7 @@ class TjfieldsControllerFields extends JControllerAdmin
 	public function saveOrderAjax()
 	{
 		// Get the input
-		$input = JFactory::getApplication()->input;
+		$input = Factory::getApplication()->input;
 		$pks = $input->post->get('cid', array(), 'array');
 		$order = $input->post->get('order', array(), 'array');
 
@@ -70,7 +75,7 @@ class TjfieldsControllerFields extends JControllerAdmin
 		}
 
 		// Close the application
-		JFactory::getApplication()->close();
+		Factory::getApplication()->close();
 	}
 
 	/**
@@ -80,10 +85,10 @@ class TjfieldsControllerFields extends JControllerAdmin
 	 */
 	public function publish()
 	{
-		$input = JFactory::getApplication()->input;
+		$input = Factory::getApplication()->input;
 		$post = $input->post;
 		$client = $input->get('client', '', 'STRING');
-		$cid = JFactory::getApplication()->input->get('cid', array(), 'array');
+		$cid = Factory::getApplication()->input->get('cid', array(), 'array');
 		$data = array('publish' => 1, 'unpublish' => 0, 'archive' => 2, 'trash' => -2, 'report' => -3);
 		$task = $this->getTask();
 		$value = JArrayHelper::getValue($data, $task, 0, 'int');
@@ -92,7 +97,7 @@ class TjfieldsControllerFields extends JControllerAdmin
 
 		if (empty($cid))
 		{
-			JLog::add(JText::_($this->text_prefix . '_NO_ITEM_SELECTED'), JLog::WARNING, 'jerror');
+			Log::add(Text::_($this->text_prefix . '_NO_ITEM_SELECTED'), Log::WARNING, 'jerror');
 		}
 		else
 		{
@@ -135,11 +140,11 @@ class TjfieldsControllerFields extends JControllerAdmin
 				$TjfieldsHelper->generateXml($data);
 
 				// End xml
-				$this->setMessage(JText::plural($ntext, count($cid)));
+				$this->setMessage(Text::plural($ntext, count($cid)));
 			}
 			catch (Exception $e)
 			{
-				$this->setMessage(JText::_('JLIB_DATABASE_ERROR_ANCESTOR_NODES_LOWER_STATE'), 'error');
+				$this->setMessage(Text::_('JLIB_DATABASE_ERROR_ANCESTOR_NODES_LOWER_STATE'), 'error');
 			}
 		}
 
@@ -154,20 +159,20 @@ class TjfieldsControllerFields extends JControllerAdmin
 	public function delete()
 	{
 		// Check for request forgeries
-		JSession::checkToken() or die(JText::_('JINVALID_TOKEN'));
+		Session::checkToken() or die(Text::_('JINVALID_TOKEN'));
 
 		// GET CLIENT AND CLIENT TYPE
-		$input = JFactory::getApplication()->input;
+		$input = Factory::getApplication()->input;
 		$client = $input->get('client', '', 'STRING');
 		$client_form = explode('.', $client);
 		$client_type = $client_form[1];
 
 		// Get items to remove from the request.
-		$cid = JFactory::getApplication()->input->get('cid', array(), 'array');
+		$cid = Factory::getApplication()->input->get('cid', array(), 'array');
 
 		if (!is_array($cid) || count($cid) < 1)
 		{
-			JLog::add(JText::_($this->text_prefix . '_NO_ITEM_SELECTED'), JLog::WARNING, 'jerror');
+			Log::add(Text::_($this->text_prefix . '_NO_ITEM_SELECTED'), Log::WARNING, 'jerror');
 		}
 		else
 		{
@@ -198,7 +203,7 @@ class TjfieldsControllerFields extends JControllerAdmin
 			}
 		}
 
-		$this->setMessage(JText::plural($ntext, count($cid)));
+		$this->setMessage(Text::plural($ntext, count($cid)));
 		$this->setRedirect('index.php?option=com_tjfields&view=fields&client=' . $client, false);
 	}
 }

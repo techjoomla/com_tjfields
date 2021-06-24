@@ -10,6 +10,8 @@ JLoader::import("/techjoomla/media/storage/local", JPATH_LIBRARIES);
 
 defined('JPATH_PLATFORM') or die;
 
+use Joomla\CMS\Form\FormField;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Factory;
 
@@ -22,7 +24,7 @@ JLoader::import('components.com_tjfields.models.fields.file', JPATH_ADMINISTRATO
  * @link   http://www.w3.org/TR/html-markup/input.file.html#input.file
  * @since  __DEPLOY_VERSION__
  */
-class JFormFieldCaptureImage extends JFormFieldFile
+class FormFieldCaptureImage extends FormFieldFile
 {
 	/**
 	 * The form field type.
@@ -160,10 +162,10 @@ class JFormFieldCaptureImage extends JFormFieldFile
 		$html .= '<div id="' . $this->id . '_capture_img' . '"></div>';
 		$html .= '<div  ' . $displayCapturedImgDiv . ' id="' . $this->id . '_captured_img' . '"><img /></div>';
 		$html .= '<br>';
-		$html .= '<input ' . $displayTakePictureButton . ' type="button" id="' . $this->id . '_take_snapshot' . '" value="' . JText::_("COM_TJFIELDS_FILE_CAPTURE_IMAGE_TAKE_PHOTO") . '" onClick="' . "take_snapshot('" . $this->id . "')" . '">';
-		$html .= '<input ' . $displayUsePictureButton . ' type="button" id="' . $this->id . '_use' . '" value="' . JText::_("COM_TJFIELDS_FILE_USE_CAPTURED_IMAGE") . '" onClick="' . "use_snapshot('" . $this->id . "')" . '">';
-		$html .= '<input ' . $displayCameraSwitchButton . ' type="button" id="' . $this->id . '_switch_camera' . '" value="' . JText::_("COM_TJFIELDS_FILE_SWITCH_CAMERA") . '" onClick="' . "switch_camera('" . $this->id . "')" . '">';
-		$html .= '<input ' . $displayTakeAnotherButton . ' type="button" id="' . $this->id . '_take_another' . '" value="' . JText::_("COM_TJFIELDS_FILE_CAPTURE_IMAGE_TAKE_ANOTHER") . '" onClick="' . "set_camera('" . $this->id . "')" . '">';
+		$html .= '<input ' . $displayTakePictureButton . ' type="button" id="' . $this->id . '_take_snapshot' . '" value="' . Text::_("COM_TJFIELDS_FILE_CAPTURE_IMAGE_TAKE_PHOTO") . '" onClick="' . "take_snapshot('" . $this->id . "')" . '">';
+		$html .= '<input ' . $displayUsePictureButton . ' type="button" id="' . $this->id . '_use' . '" value="' . Text::_("COM_TJFIELDS_FILE_USE_CAPTURED_IMAGE") . '" onClick="' . "use_snapshot('" . $this->id . "')" . '">';
+		$html .= '<input ' . $displayCameraSwitchButton . ' type="button" id="' . $this->id . '_switch_camera' . '" value="' . Text::_("COM_TJFIELDS_FILE_SWITCH_CAMERA") . '" onClick="' . "switch_camera('" . $this->id . "')" . '">';
+		$html .= '<input ' . $displayTakeAnotherButton . ' type="button" id="' . $this->id . '_take_another' . '" value="' . Text::_("COM_TJFIELDS_FILE_CAPTURE_IMAGE_TAKE_ANOTHER") . '" onClick="' . "set_camera('" . $this->id . "')" . '">';
 		$html .= '<br><br>';
 
 		if (!empty($layoutData["value"]))

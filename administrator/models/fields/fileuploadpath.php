@@ -9,6 +9,8 @@
 
 defined('JPATH_PLATFORM') or die;
 
+use Joomla\CMS\Form\FormHelper;
+
 JFormHelper::loadFieldClass('textarea');
 
 /**
@@ -17,7 +19,7 @@ JFormHelper::loadFieldClass('textarea');
  *
  * @since  11.1
  */
-class JFormFieldFileUploadPath extends JFormFieldTextarea
+class FormFieldFileUploadPath extends FormFieldTextarea
 {
 	/**
 	 * The form field type.

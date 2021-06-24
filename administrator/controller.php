@@ -9,10 +9,11 @@
 
 // No direct access
 defined('_JEXEC') or die;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Session\Session;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
-use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Uri\Uri;
 
@@ -70,7 +71,7 @@ class TjfieldsController extends BaseController
 	 */
 	public function getMediaFile()
 	{
-		(JSession::checkToken() or JSession::checkToken('get')) or jexit(JText::_('JINVALID_TOKEN'));
+		(Session::checkToken() or Session::checkToken('get')) or jexit(Text::_('JINVALID_TOKEN'));
 		JLoader::import("/techjoomla/media/storage/local", JPATH_LIBRARIES);
 		$app = Factory::getApplication();
 		$jinput = $app->input;

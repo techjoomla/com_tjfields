@@ -9,6 +9,10 @@
 
 defined('JPATH_PLATFORM') or die;
 
+use Joomla\CMS\Form\FormField;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+
 jimport('joomla.html.html');
 jimport('joomla.form.formfield');
 
@@ -17,7 +21,7 @@ jimport('joomla.form.formfield');
  *
  * @since  1.3
  */
-class JFormFieldlayoutfield extends JFormField
+class FormFieldlayoutfield extends FormField
 {
 	/**
 	 * The form field type.
@@ -38,17 +42,17 @@ class JFormFieldlayoutfield extends JFormField
 	protected function getInput()
 	{
 		$options = array();
-		$options[] = JHtml::_(
+		$options[] = HTMLHelper::_(
 								'select.option', 'joomla.form.field.subform.repeatable',
-								JText::_('COM_TJFIELDS_FORM_LBL_FIELD_SELECT_FIELD_LAYOUT_REPETABLE')
+								Text::_('COM_TJFIELDS_FORM_LBL_FIELD_SELECT_FIELD_LAYOUT_REPETABLE')
 							);
 
-		$options[] = JHtml::_(
+		$options[] = HTMLHelper::_(
 								'select.option', 'joomla.form.field.subform.repeatable-table',
-								JText::_('COM_TJFIELDS_FORM_LBL_FIELD_SELECT_FIELD_LAYOUT_REPETABLE_TABLE')
+								Text::_('COM_TJFIELDS_FORM_LBL_FIELD_SELECT_FIELD_LAYOUT_REPETABLE_TABLE')
 							);
 
-		return JHtml::_('select.genericlist', $options, $this->name,
+		return HTMLHelper::_('select.genericlist', $options, $this->name,
 		'class="inputbox required"', 'value', 'text', $this->value, $this->options['control'] . $this->name
 		);
 	}

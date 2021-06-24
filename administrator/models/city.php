@@ -9,6 +9,11 @@
 
 // No direct access
 defined('_JEXEC') or die();
+use Joomla\CMS\MVC\Model\AdminModel;
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Language\Text;
 
 jimport('joomla.application.component.modeladmin');
 
@@ -19,7 +24,7 @@ jimport('joomla.application.component.modeladmin');
  * @subpackage  com_tjfields
  * @since       2.2
  */
-class TjfieldsModelCity extends JModelAdmin
+class TjfieldsModelCity extends AdminModel
 {
 	/**
 	 * @var		string	The prefix to use with controller messages.
@@ -38,7 +43,7 @@ class TjfieldsModelCity extends JModelAdmin
 	 */
 	public function getTable($type = 'City', $prefix = 'TjfieldsTable', $config = array())
 	{
-		return JTable::getInstance($type, $prefix, $config);
+		return Table::getInstance($type, $prefix, $config);
 	}
 
 	/**
@@ -54,7 +59,7 @@ class TjfieldsModelCity extends JModelAdmin
 	public function getForm($data = array(), $loadData = true)
 	{
 		// Initialise variables.
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 
 		// Get the form.
 		$form = $this->loadForm('com_tjfields.city', 'city', array('control' => 'jform', 'load_data' => $loadData));
@@ -77,7 +82,7 @@ class TjfieldsModelCity extends JModelAdmin
 	protected function loadFormData()
 	{
 		// Check the session for previously entered form data.
-		$data = JFactory::getApplication()->getUserState('com_tjfields.edit.city.data', array());
+		$data = Factory::getApplication()->getUserState('com_tjfields.edit.city.data', array());
 
 		if (empty($data))
 		{
@@ -122,7 +127,7 @@ class TjfieldsModelCity extends JModelAdmin
 			// Set ordering to the last item if not set
 			if (@$table->ordering === '')
 			{
-				$db = JFactory::getDbo();
+				$db = Factory::getDbo();
 				$db->setQuery('SELECT MAX(ordering) FROM #__tj_city');
 				$max = $db->loadResult();
 				$table->ordering = $max + 1;
@@ -142,12 +147,12 @@ class TjfieldsModelCity extends JModelAdmin
 
 	public function save($data)
 	{
-		$com_params = JComponentHelper::getParams('com_tjfields');
+		$com_params = ComponentHelper::getParams('com_tjfields');
 		$id = (!empty($data['id'])) ? $data['id'] : (int) $this->getState('city.id');
 		$state = (!empty($data['com_tjfields'])) ? 1 : 0;
 
-		$user = JFactory::getUser();
-		$app = JFactory::getApplication();
+		$user = Factory::getUser();
+		$app = Factory::getApplication();
 
 		if ($id)
 		{
@@ -174,7 +179,7 @@ class TjfieldsModelCity extends JModelAdmin
 
 		if ($authorised !== true)
 		{
-			JError::raiseError(403, JText::_('JERROR_ALERTNOAUTHOR'));
+			JError::raiseError(403, Text::_('JERROR_ALERTNOAUTHOR'));
 
 			return false;
 		}
@@ -200,7 +205,7 @@ class TjfieldsModelCity extends JModelAdmin
 		// Validate to check for duplication
 		if (!$table->checkDuplicateCity())
 		{
-			$app->enqueueMessage(JText::_('COM_TJFIELDS_CITY_EXISTS_IN_REGION_COUNTRY'), 'warning');
+			$app->enqueueMessage(Text::_('COM_TJFIELDS_CITY_EXISTS_IN_REGION_COUNTRY'), 'warning');
 		}
 
 		// Attempt to save data
@@ -219,7 +224,7 @@ class TjfieldsModelCity extends JModelAdmin
 			return false;
 		}
 
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		$query = "SELECT r.id, r.region, r.region_jtext
 		 FROM #__tj_region AS r
@@ -231,14 +236,14 @@ class TjfieldsModelCity extends JModelAdmin
 		$regions = $db->loadObjectList();
 
 		// Load lang file for regions
-		$lang = JFactory::getLanguage();
+		$lang = Factory::getLanguage();
 		$lang->load('tjgeo.regions', JPATH_SITE, null, false, true);
 
 		foreach ($regions as $r)
 		{
 			if ($lang->hasKey(strtoupper($r->region_jtext)))
 			{
-				$r->region = JText::_($r->region_jtext);
+				$r->region = Text::_($r->region_jtext);
 			}
 		}
 
@@ -254,7 +259,7 @@ class TjfieldsModelCity extends JModelAdmin
 			set_time_limit ('300');
 		}
 
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		/*$query = "SELECT c.id, c.country_code
 		 FROM #__tj_country AS c

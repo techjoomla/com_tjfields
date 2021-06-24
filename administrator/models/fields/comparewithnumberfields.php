@@ -9,6 +9,12 @@
 
 defined('JPATH_PLATFORM') or die;
 
+use Joomla\CMS\Form\FormField;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
+
 jimport('joomla.filesystem.path');
 
 JLoader::register('JFormFieldSubform', JPATH_SITE . '/libraries/joomla/form/fields/list.php');
@@ -24,7 +30,7 @@ JLoader::register('JFormFieldSubform', JPATH_SITE . '/libraries/joomla/form/fiel
  *
  * @since  1.3
  */
-class JFormFieldCompareWithNumberFields extends JFormFieldList
+class FormFieldCompareWithNumberFields extends FormFieldList
 {
 	/**
 	 * The form field type.
@@ -43,11 +49,11 @@ class JFormFieldCompareWithNumberFields extends JFormFieldList
 	{
 		$options = array();
 
-		$input = JFactory::getApplication()->input;
+		$input = Factory::getApplication()->input;
 		$fieldId = $input->get('id', '', 'INT');
 		$currentClient = $input->get('client', '', "STRING");
 
-		$db    = JFactory::getDbo();
+		$db    = Factory::getDbo();
 		$query = $db->getQuery(true);
 
 		$query->select($db->quoteName(array('id', 'label', 'name')));
@@ -56,8 +62,8 @@ class JFormFieldCompareWithNumberFields extends JFormFieldList
 
 		if ($fieldId)
 		{
-			JTable::addIncludePath(JPATH_ROOT . '/administrator/components/com_tjfields/tables');
-			$fieldTable = JTable::getInstance('Field', 'TjfieldsTable', array('dbo', $db));
+			Table::addIncludePath(JPATH_ROOT . '/administrator/components/com_tjfields/tables');
+			$fieldTable = Table::getInstance('Field', 'TjfieldsTable', array('dbo', $db));
 			$fieldTable->load($fieldId);
 
 			$query->where($db->quoteName('name') . ' != ' . $db->quote($fieldTable->name));
@@ -68,14 +74,14 @@ class JFormFieldCompareWithNumberFields extends JFormFieldList
 		$db->setQuery($query);
 		$fields  = $db->loadObjectList();
 
-		$options[] = JHtml::_('select.option', '', JText::_('COM_TJFIELDS_FORM_NUMBER_FIELD_COMPARE_WITH_FIELD'));
+		$options[] = HTMLHelper::_('select.option', '', Text::_('COM_TJFIELDS_FORM_NUMBER_FIELD_COMPARE_WITH_FIELD'));
 
 		foreach ($fields as $field)
 		{
-			$options[] = JHtml::_('select.option', $field->name, $field->label);
+			$options[] = HTMLHelper::_('select.option', $field->name, $field->label);
 		}
 
-		return JHtml::_('select.genericlist', $options, $this->name, 'class="inputbox"',
+		return HTMLHelper::_('select.genericlist', $options, $this->name, 'class="inputbox"',
 		'value', 'text', $this->value, $this->id, $this->name
 		);
 	}

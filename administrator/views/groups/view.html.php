@@ -9,6 +9,10 @@
 
 // No direct access
 defined('_JEXEC') or die;
+use Joomla\CMS\MVC\View\HtmlView;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 
 jimport('joomla.application.component.view');
 
@@ -19,7 +23,7 @@ jimport('joomla.application.component.view');
  * @subpackage  com_tjfields
  * @since       2.2
  */
-class TjfieldsViewGroups extends JViewLegacy
+class TjfieldsViewGroups extends HtmlView
 {
 	protected $items;
 
@@ -68,7 +72,7 @@ class TjfieldsViewGroups extends JViewLegacy
 	 */
 	protected function addToolbar()
 	{
-		$input = JFactory::getApplication()->input;
+		$input = Factory::getApplication()->input;
 		JLoader::import('TjfieldsHelper', JPATH_ADMINISTRATOR . '/components/com_tjfields/helpers');
 		$client          = $input->get('client', '', 'STRING');
 
@@ -81,13 +85,13 @@ class TjfieldsViewGroups extends JViewLegacy
 			switch ($client['0'])
 			{
 				case 'com_jticketing' :
-					$component_title = JText::_('COM_JTICKETING_COMPONENT');
+					$component_title = Text::_('COM_JTICKETING_COMPONENT');
 					break;
 				case 'com_tjlms':
-					$component_title = JText::_('COM_TJLMS_COMPONENT');
+					$component_title = Text::_('COM_TJLMS_COMPONENT');
 					break;
 				case 'com_tjucm':
-					$component_title = JText::_('COM_TJUCM_COMPONENT');
+					$component_title = Text::_('COM_TJUCM_COMPONENT');
 			}
 		}
 
@@ -100,7 +104,7 @@ class TjfieldsViewGroups extends JViewLegacy
 		$tjfieldsHelper = new TjfieldsHelper;
 
 		$canDo = $tjfieldsHelper->getActions($client[0], 'group');
-		JToolBarHelper::title($component_title . ": " . JText::_('COM_TJFIELDS_TITLE_GROUPS'), 'list.png');
+		JToolBarHelper::title($component_title . ": " . Text::_('COM_TJFIELDS_TITLE_GROUPS'), 'list.png');
 
 		// Check if the form exists before showing the add/edit buttons
 		$formPath = JPATH_COMPONENT_ADMINISTRATOR . '/views/group';
@@ -164,13 +168,13 @@ class TjfieldsViewGroups extends JViewLegacy
 	protected function getSortFields()
 	{
 		return array(
-			'a.id' => JText::_('JGRID_HEADING_ID'),
-			'a.ordering' => JText::_('JGRID_HEADING_ORDERING'),
-			'a.state' => JText::_('JSTATUS'),
-			'a.created_by' => JText::_('COM_TJFIELDS_GROUPS_CREATED_BY'),
-			'a.name' => JText::_('COM_TJFIELDS_GROUPS_NAME'),
-			'a.client' => JText::_('COM_TJFIELDS_GROUPS_CLIENT'),
-			'a.client_type' => JText::_('COM_TJFIELDS_GROUPS_CLIENT_TYPE')
+			'a.id' => Text::_('JGRID_HEADING_ID'),
+			'a.ordering' => Text::_('JGRID_HEADING_ORDERING'),
+			'a.state' => Text::_('JSTATUS'),
+			'a.created_by' => Text::_('COM_TJFIELDS_GROUPS_CREATED_BY'),
+			'a.name' => Text::_('COM_TJFIELDS_GROUPS_NAME'),
+			'a.client' => Text::_('COM_TJFIELDS_GROUPS_CLIENT'),
+			'a.client_type' => Text::_('COM_TJFIELDS_GROUPS_CLIENT_TYPE')
 		);
 	}
 }
