@@ -41,7 +41,10 @@ else
 	define('TJFIELDS_WRAPPER_CLASS', "tjfields-wrapper");
 
 	// Tabstate
-	HTMLHelper::_('behavior.tabstate');
+	if (JVERSION < '4.0.0')
+	{
+		HTMLHelper::_('behavior.tabstate');
+	}
 
 	// Other
 	HTMLHelper::_('bootstrap.tooltip');
