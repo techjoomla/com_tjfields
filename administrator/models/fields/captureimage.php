@@ -24,7 +24,7 @@ JLoader::import('components.com_tjfields.models.fields.file', JPATH_ADMINISTRATO
  * @link   http://www.w3.org/TR/html-markup/input.file.html#input.file
  * @since  __DEPLOY_VERSION__
  */
-class FormFieldCaptureImage extends FormFieldFile
+class JFormFieldCaptureImage extends JFormFieldFile
 {
 	/**
 	 * The form field type.

@@ -24,7 +24,7 @@ use Joomla\CMS\HTML\HTMLHelper;
  * @link   http://www.w3.org/TR/html-markup/input.file.html#input.file
  * @since  11.1
  */
-class FormFieldFile extends FormField
+class JFormFieldFile extends JFormField
 {
 	/**
 	 * The form field type.

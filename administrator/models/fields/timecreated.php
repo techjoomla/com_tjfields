@@ -18,7 +18,7 @@ jimport('joomla.form.formfield');
 /**
  * Supports an HTML select list of categories
  */
-class FormFieldTimecreated extends FormField
+class JFormFieldTimecreated extends JFormField
 {
 	/**
 	 * The form field type.

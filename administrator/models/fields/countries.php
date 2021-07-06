@@ -20,7 +20,7 @@ JFormHelper::loadFieldClass('list');
 /**
  * Supports an HTML select list of categories
  */
-class FormFieldCountries extends FormFieldList
+class JFormFieldCountries extends JFormFieldList
 {
 	/**
 	 * The form field type.

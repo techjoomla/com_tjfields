@@ -22,7 +22,7 @@ JLoader::import('components.com_tjfields.models.fields.file', JPATH_ADMINISTRATO
  *
  * @since  __DEPLOY_VERSION__
  */
-class FormFieldImage extends FormFieldFile
+class JFormFieldImage extends JFormFieldFile
 {
 	/**
 	 * The form field type.

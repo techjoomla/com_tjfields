@@ -22,7 +22,7 @@ JFormHelper::loadFieldClass('list');
  *
  * @since  1.7.0
  */
-class FormFieldSQL extends FormFieldList
+class JFormFieldSQL extends JFormFieldList
 {
 	/**
 	 * The form field type.

@@ -24,7 +24,7 @@ use Joomla\CMS\Factory;
  *
  * @since  1.7.0
  */
-class FormFieldTjList extends FormFieldList
+class JFormFieldTjList extends JFormFieldList
 {
 	/**
 	 * The form field type.

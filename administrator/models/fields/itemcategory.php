@@ -23,7 +23,7 @@ JFormHelper::loadFieldClass('category');
  *
  * @since  1.5
  */
-class FormFieldItemCategory extends FormFieldCategory
+class JFormFieldItemCategory extends JFormFieldCategory
 {
 	/**
 	 * The form field type.

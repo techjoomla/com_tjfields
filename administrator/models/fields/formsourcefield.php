@@ -22,7 +22,7 @@ jimport('joomla.form.formfield');
  *
  * @since  1.3
  */
-class FormFieldformsourcefield extends FormField
+class JFormFieldformsourcefield extends JFormField
 {
 	/**
 	 * The form field type.

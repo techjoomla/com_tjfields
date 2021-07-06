@@ -28,7 +28,7 @@ use Joomla\CMS\Uri\Uri;
  *
  * @since  1.7.0
  */
-class FormFieldRelated extends FormFieldList
+class JFormFieldRelated extends JFormFieldList
 {
 	/**
 	 * The form field type.

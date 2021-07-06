@@ -26,7 +26,7 @@ $document->addScript(Uri::root() . 'administrator/components/com_tjfields/assets
  *
  * @since  1.7.0
  */
-class FormFieldRelatedFields extends FormFieldList
+class JFormFieldRelatedFields extends JFormFieldList
 {
 	/**
 	 * The form field type.

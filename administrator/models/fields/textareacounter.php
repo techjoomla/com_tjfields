@@ -21,7 +21,7 @@ JLoader::register('JFormFieldTextarea', JPATH_BASE . '/libraries/joomla/form/fie
  *
  * @since  11.1
  */
-class FormFieldTextareacounter extends FormFieldTextarea
+class JFormFieldTextareacounter extends JFormFieldTextarea
 {
 	/**
 	 * The form field type.

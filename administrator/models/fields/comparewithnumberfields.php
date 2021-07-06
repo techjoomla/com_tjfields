@@ -30,7 +30,7 @@ JLoader::register('JFormFieldSubform', JPATH_SITE . '/libraries/joomla/form/fiel
  *
  * @since  1.3
  */
-class FormFieldCompareWithNumberFields extends FormFieldList
+class JFormFieldCompareWithNumberFields extends JFormFieldList
 {
 	/**
 	 * The form field type.

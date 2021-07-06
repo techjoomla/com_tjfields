@@ -19,7 +19,7 @@ JLoader::import('components.com_tjfields.models.fields.video', JPATH_ADMINISTRAT
  *
  * @since  DEPLOY_VERSION
  */
-class FormFieldAudio extends FormFieldVideo
+class JFormFieldAudio extends JFormFieldVideo
 {
 	/**
 	 * The form field type.

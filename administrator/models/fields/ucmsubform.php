@@ -26,7 +26,7 @@ JLoader::register('JFormFieldSubform', JPATH_SITE . '/libraries/joomla/form/fiel
  *
  * @since  1.3
  */
-class FormFieldUcmsubform extends FormFieldSubform
+class JFormFieldUcmsubform extends JFormFieldSubform
 {
 	/**
 	 * The form field type.

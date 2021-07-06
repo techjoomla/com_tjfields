@@ -21,7 +21,7 @@ jimport('joomla.form.formfield');
  *
  * @since  1.0.0
  */
-class FormFieldFieldcategory extends FormField
+class JFormFieldFieldcategory extends JFormField
 {
 	protected $type = 'Fieldcategory';
 

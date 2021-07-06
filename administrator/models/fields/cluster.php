@@ -23,7 +23,7 @@ JFormHelper::loadFieldClass('list');
  * @since  __DEPLOY_VERSION__
  */
 
-class FormFieldCluster extends FormFieldList
+class JFormFieldCluster extends JFormFieldList
 {
 	/**
 	 * The form field type.
