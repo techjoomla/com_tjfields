@@ -176,8 +176,16 @@ class TjfieldsHelper
 			return false;
 		}
 
-		$tjUcmParentContentId = isset($data['parent_content_id']) ? $data['parent_content_id'] : $data['content_id'];
-		static $tjUcmSubFormContentId = array('childContentIds' => array());
+		if (!$data['parent_content_id'])
+		{
+			Table::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_tjucm/tables');
+			$ucmDataTable = Table::getInstance('data', 'TjucmTable');
+			$ucmDataTable->load(array('id' => $data['content_id']));
+			$data['parent_content_id'] = $ucmDataTable->parent_id;
+		}
+
+		$tjUcmParentContentId  = isset($data['parent_content_id']) ? $data['parent_content_id'] : $data['content_id'];
+		$tjUcmSubFormContentId = array('childContentIds' => array());
 
 		// Get user object
 		$user = Factory::getUser();
@@ -203,6 +211,7 @@ class TjfieldsHelper
 		{
 			$fieldKey = array_search($fieldName, array_column($fields, 'name'));
 			$field = $fields[$fieldKey];
+
 			$fieldParams = new Registry($field->params);
 
 			$fieldStoredValuesKeys = array_keys(array_column($storedValues, 'field_id'), $field->id);
@@ -266,6 +275,8 @@ class TjfieldsHelper
 					define("TJUCM_PARENT_CLIENT", $data['client']);
 				}
 
+
+
 				$ucmSubformClientTmp = explode('_', str_replace("com_tjucm_", '', array_key_first($fieldValue[array_key_first($fieldValue)])));
 				array_pop($ucmSubformClientTmp);
 				$ucmSubformClient = 'com_tjucm.' . implode('_', $ucmSubformClientTmp);
@@ -307,9 +318,13 @@ class TjfieldsHelper
 							unset($ucmSubformRecordIds[array_search($ucmSubFormContentId, $ucmSubformRecordIds)]);
 						}
 
+						Table::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_tjucm/tables');
+						$ucmDataTable = Table::getInstance('data', 'TjucmTable');
+						$ucmDataTable->load(array('id' => $data['content_id']));
+
 						$tjUcmSubFormContentId['childContentIds'][$ucmSubformContentIdFieldElementId] = (INT) $ucmSubFormContentId;
-						$ucmSubFormData = array();
-						$ucmSubFormData['parent_content_id'] = $data['content_id'];
+						$ucmSubFormData                      = array();
+						$ucmSubFormData['parent_content_id'] = $ucmDataTable->parent_id;
 						$ucmSubFormData['content_id']        = $ucmSubFormContentId;
 						$ucmSubFormData['client']            = $ucmSubformClient;
 						$ucmSubFormData['fieldsvalue']       = $ucmSubformValue;
@@ -432,8 +447,9 @@ class TjfieldsHelper
 				// This is special case to handle the copy of related fields data in copy item feature
 				$jInput = JFactory::getApplication()->input;
 				$tempId = $jInput->get('id', '', 'STRING');
-				$jInput->set('id', $tjUcmParentContentId);
 
+				$jInput->set('id', $tjUcmParentContentId);
+				// Get object of TJ-Fields field model
 				JLoader::import('components.com_tjfields.models.field', JPATH_ADMINISTRATOR);
 				$tjFieldsFieldModel = BaseDatabaseModel::getInstance('Field', 'TjfieldsModel', array('ignore_request' => true));
 				$relatedFieldOptions = $tjFieldsFieldModel->getRelatedFieldOptions($field->id);
@@ -451,9 +467,10 @@ class TjfieldsHelper
 					$fieldValue = array($fieldValue);
 				}
 
+
 				foreach ($fieldValue as $k => $fv)
 				{
-					if (!empty($fv) && !in_array($fv, $relatedFieldOptionValues))
+					if (!empty($fv) && !in_array($fv, $relatedFieldOptionTmp))
 					{
 						$relatedFieldDataSources = $fieldParams->get('fieldName');
 
@@ -467,12 +484,12 @@ class TjfieldsHelper
 							$query->where($db->quoteName('content_id') . ' = ' . $fv);
 							$query->where($db->quoteName('client') . ' = ' . $db->quote($relatedFieldDataSource->client));
 							$db->setQuery($query);
-
 							$relatedValue = $db->loadResult();
 							$fieldValue[$k] = array_search($relatedValue, $relatedFieldOptionTmp);
 						}
 					}
 				}
+
 
 				$this->saveMultiValuedFieldData($fieldValue, $field->client, $data['content_id'], $field->id, $fieldStoredValues);
 			}
