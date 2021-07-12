@@ -71,7 +71,7 @@ class TjfieldsController extends JControllerLegacy
 		$fieldsModel     = BaseDatabaseModel::getInstance('Fields', 'TjfieldsModel', array('ignore_request' => true));
 		$data = $fieldsModel->getMediaStoragePath($jinput->get('id', '', 'INT'), $subformFileFieldId);
 
-		if ($data->tjFieldFieldTable->type == "file")
+		if ($data->tjFieldFieldTable->type == "file" || $data->tjFieldFieldTable->type == "captureimage")
 		{
 			$extraFieldParams = json_decode($data->tjFieldFieldTable->params);
 			$storagePath = $extraFieldParams->uploadpath;

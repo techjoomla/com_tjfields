@@ -10,6 +10,13 @@
 // No direct access
 defined('_JEXEC') or die();
 
+use Joomla\CMS\Factory;
+use Joomla\CMS\Table\Table;
+use Joomla\Registry\Registry;
+use Joomla\CMS\Access\Access;
+use Joomla\CMS\Language\Text;
+use Joomla\Utilities\ArrayHelper;
+
 /**
  * JTable class for Region.
  *
@@ -17,7 +24,7 @@ defined('_JEXEC') or die();
  * @subpackage  com_tjfields
  * @since       2.2
  */
-class TjfieldsTableRegion extends JTable
+class TjfieldsTableRegion extends Table
 {
 	/**
 	 * Constructor
@@ -45,27 +52,33 @@ class TjfieldsTableRegion extends JTable
 	{
 		if (isset($array['params']) && is_array($array['params']))
 		{
-			$registry = new JRegistry;
+			$registry = new Registry;
 			$registry->loadArray($array['params']);
 			$array['params'] = (string) $registry;
 		}
 
 		if (isset($array['metadata']) && is_array($array['metadata']))
 		{
-			$registry = new JRegistry;
+			$registry = new Registry;
 			$registry->loadArray($array['metadata']);
 			$array['metadata'] = (string) $registry;
 		}
 
-		if (! JFactory::getUser()->authorise('core.admin', 'com_tjfields.region.' . $array['id']))
+		if (! Factory::getUser()->authorise('core.admin', 'com_tjfields.region.' . $array['id']))
 		{
-			$actions = JFactory::getACL()->getActions('com_tjfields', 'region');
-			$default_actions = JFactory::getACL()->getAssetRules('com_tjfields.region.' . $array['id'])->getData();
-			$array_jaccess = array();
+			$actions         = Access::getActionsFromData('com_tjfields', 'region');
+			$default_actions = Factory::getACL()->getAssetRules('com_tjfields.region.' . $array['id'])->getData();
+			$array_jaccess   = array();
 
-			foreach ($actions as $action)
+			if (is_array($actions) || is_object($actions))
 			{
-				$array_jaccess[$action->name] = $default_actions[$action->name];
+				foreach ($actions as $action)
+				{
+					if (array_key_exists($action->name, $default_actions))
+					{
+						$array_jaccess[$action->name] = $default_actions[$action->name];
+					}
+				}
 			}
 
 			$array['rules'] = $this->JAccessRulestoArray($array_jaccess);
@@ -127,35 +140,40 @@ class TjfieldsTableRegion extends JTable
 		}
 
 		// Start code validations
-		$db = JFactory::getDbo();
+		$db = Factory::getDbo();
 
 		// Check for 3 digit code
-		$query = "SELECT id, region_3_code
-		 FROM #__tj_region
-		 WHERE region_3_code = " . $db->quote($this->region_3_code) . "
-		 AND id != " . (int) $this->id . "
-		 AND country_id = " . (int) $this->country_id;
+		$query = $db->getQuery(true);
+		$query->select($db->qn('id'));
+		$query->select($db->qn('region_3_code'));
+		$query->from($db->qn('#__tj_region'));
+		$query->where($db->qn('region_3_code') . ' = ' . $db->quote($this->region_3_code));
+		$query->where($db->qn('id') . ' != ' . (int) $this->id);
+		$query->where($db->qn('country_id') . ' = ' . (int) $this->country_id);
 		$db->setQuery($query);
 		$result = intval($db->loadResult());
 
 		if ($result)
 		{
-			$this->setError(JText::_('COM_TJFIELDS_REGION_CODE_3_EXISTS'));
+			$this->setError(Text::_('COM_TJFIELDS_REGION_CODE_3_EXISTS'));
 
 			return false;
 		}
 		else
 		{
-			// Check for 2 digit code
-			$query = "SELECT id, region_code
-			FROM #__tj_region WHERE region_code = " . $db->quote($this->region_code) . "
-			AND id != " . (int) $this->id . " AND country_id = " . (int) $this->country_id;
+			$query = $db->getQuery(true);
+			$query->select($db->qn('id'));
+			$query->select($db->qn('region_code'));
+			$query->from($db->qn('#__tj_region'));
+			$query->where($db->qn('region_code') . ' = ' . $db->quote($this->region_code));
+			$query->where($db->qn('id') . ' != ' . (int) $this->id);
+			$query->where($db->qn('country_id') . ' = ' . (int) $this->country_id);
 			$db->setQuery($query);
 			$result = intval($db->loadResult());
 
 			if ($result)
 			{
-				$this->setError(JText::_('COM_TJFIELDS_REGION_CODE_EXISTS'));
+				$this->setError(Text::_('COM_TJFIELDS_REGION_CODE_EXISTS'));
 
 				return false;
 			}
@@ -179,15 +197,15 @@ class TjfieldsTableRegion extends JTable
 	 */
 	public function publish ($pks = null, $state = 1, $userId = 0)
 	{
-		$client = JFactory::getApplication()->input->get('client', '', 'STRING');
+		$client = Factory::getApplication()->input->get('client', '', 'STRING');
 
 		// Initialise variables.
 		$k = $this->_tbl_key;
 
 		// Sanitize input.
-		JArrayHelper::toInteger($pks);
+		ArrayHelper::toInteger($pks);
 		$userId = (int) $userId;
-		$state = (int) $state;
+		$state  = (int) $state;
 
 		// If there are no primary keys set check to see if the instance key is
 		// set.
@@ -195,14 +213,12 @@ class TjfieldsTableRegion extends JTable
 		{
 			if ($this->$k)
 			{
-				$pks = array(
-						$this->$k
-				);
+				$pks = array($this->$k);
 			}
 			// Nothing to set publishing state on, return false.
 			else
 			{
-				$this->setError(JText::_('JLIB_DATABASE_ERROR_NO_ROWS_SELECTED'));
+				$this->setError(Text::_('JLIB_DATABASE_ERROR_NO_ROWS_SELECTED'));
 
 				return false;
 			}
@@ -225,12 +241,14 @@ class TjfieldsTableRegion extends JTable
 		$this->_db->setQuery(
 				'UPDATE `' . $this->_tbl . '`' . ' SET `' . $client . '` = ' . (int) $state . ' WHERE (' . $where . ')' . $checkin
 			);
-		$this->_db->query();
 
-		// Check for a database error.
-		if ($this->_db->getErrorNum())
+		try
 		{
-			$this->setError($this->_db->getErrorMsg());
+			$this->_db->execute();
+		}
+		catch (\RuntimeException $e)
+		{
+			$this->setError($e->getMessage());
 
 			return false;
 		}
@@ -268,13 +286,6 @@ class TjfieldsTableRegion extends JTable
 	{
 		$k = $this->_tbl_key;
 
-// 		$client = explode('.', $this->client);
-
-// 		if (!empty($client[0]))
-// 		{
-// 			return $client[0] . '.region.' . (int) $this->$k;
-// 		}
-
 		return 'com_tjfields.region.' . (int) $this->$k;
 	}
 
@@ -295,23 +306,11 @@ class TjfieldsTableRegion extends JTable
 	protected function _getAssetParentId (JTable $table = null, $id = null)
 	{
 		// We will retrieve the parent-asset from the Asset-table
-		$assetParent = JTable::getInstance('Asset');
+		$assetParent = Table::getInstance('Asset');
 
 		// Default: if no asset-parent can be found we take the global asset
 		$assetParentId = $assetParent->getRootId();
-
-// 		$client = explode('.',$this->client);
-
-// 		if (!empty($client[0]))
-// 		{
-// 			// The item has the component as asset-parent
-// 			$assetParent->loadByName($client[0]);
-// 		}
-// 		else
-// 		{
-			// The item does not get the client
-			$assetParent->loadByName('com_tjfields');
-// 		}
+		$assetParent->loadByName('com_tjfields');
 
 		// Return the found asset-parent-id
 		if ($assetParent->id)
@@ -337,10 +336,6 @@ class TjfieldsTableRegion extends JTable
 	{
 		$this->load($pk);
 		$result = parent::delete($pk);
-
-		if ($result)
-		{
-		}
 
 		return $result;
 	}

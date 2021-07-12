@@ -659,14 +659,14 @@ class Com_TjfieldsInstallerScript
 		}
 		else
 		{
-			$newColumns = array('id', 'country', 'country_3_code', 'country_code', 'country_jtext', 'ordering');
+			$newColumns = array('id', 'country', 'country_3_code', 'country_code', 'country_dial_code', 'country_jtext', 'ordering');
 			$oldColumns = $this->getColumns('#__tj_country');
 
 			$dropTableFlag = 0;
 
 			foreach ($newColumns as $column)
 			{
-				if (! in_array($column, $oldColumns))
+				if (!in_array($column, $oldColumns))
 				{
 					$dropTableFlag = 1;
 					break;
@@ -682,6 +682,32 @@ class Com_TjfieldsInstallerScript
 				{
 					// Lets create the table with new structure
 					$this->runSQL($parent, 'country.sql');
+
+					$componentsArray = array('com_jgive', 'com_jticketing', 'com_quick2cart', 'com_socialads', 'com_tjlms', 'com_tjvendors');
+
+					foreach ($componentsArray as $key => $component)
+					{
+						$sql = $db->getQuery(true)
+						->select('id')
+						->from($db->qn($backup))
+						->where($db->qn($component) . ' = "0"');
+
+						$db->setQuery($sql);
+						$countryIdList = $db->loadAssocList();
+
+						$countryArray = array_column($countryIdList, 'id');
+						$countryList = str_replace("'", "", implode(',', $countryArray));
+
+						if ($countryList)
+						{
+							$query = $db->getQuery(true);
+							$query->update($db->qn('#__tj_country'))
+								->set($db->qn($component) . ' = "0"')
+								->where($db->qn('id') . ' IN (' . $countryList . ')');
+							$db->setQuery($query);
+							$db->query();
+						}
+					}
 				}
 			}
 		}
@@ -837,12 +863,15 @@ class Com_TjfieldsInstallerScript
 	public function renameTable($table, $newTable)
 	{
 		$db = JFactory::getDBO();
-		$query = "RENAME TABLE `" . $table . "` TO `" . $newTable . '_' . date('d-m-Y_H:m:s') . "`";
+
+		$newTable = $newTable . '_' . date('d-m-Y_H:m:s');
+
+		$query = "RENAME TABLE `" . $table . "` TO `" . $newTable . "`";
 		$db->setQuery($query);
 
 		if ($db->query())
 		{
-			return true;
+			return $newTable;
 		}
 
 		return false;
@@ -884,7 +913,7 @@ class Com_TjfieldsInstallerScript
 				{
 					$query = trim($query);
 
-					if ($query != '' && $query{0} != '#')
+					if ($query != '' && $query[0] != '#')
 					{
 						$db->setQuery($query);
 

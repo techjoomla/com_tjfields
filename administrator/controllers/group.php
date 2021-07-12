@@ -63,7 +63,7 @@ class TjfieldsControllerGroup extends JControllerForm
 	 *
 	 * @return  null
 	 */
-	public function save()
+	public function save($key = null, $urlVar = null)
 	{
 		$input = JFactory::getApplication()->input;
 		$task = $input->get('task', '', 'STRING');
@@ -145,7 +145,7 @@ class TjfieldsControllerGroup extends JControllerForm
 	 *
 	 * @return  null
 	 */
-	public function edit()
+	public function edit($key = null, $urlVar = null)
 	{
 		$input    = JFactory::getApplication()->input;
 		$cid      = $input->post->get('cid', array(), 'array');
@@ -163,7 +163,7 @@ class TjfieldsControllerGroup extends JControllerForm
 	 *
 	 * @return  null
 	 */
-	public function cancel()
+	public function cancel($key = null)
 	{
 		$input = JFactory::getApplication()->input;
 		$link = JRoute::_('index.php?option=com_tjfields&view=groups&client=' . $input->get('client', '', 'STRING'), false);

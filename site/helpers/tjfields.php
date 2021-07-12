@@ -245,7 +245,7 @@ class TjfieldsHelper
 				continue;
 			}
 
-			if ($field->type == 'file' || $field->type == 'image')
+			if ($field->type == 'file' || $field->type == 'image' || $field->type == 'captureimage')
 			{
 				$this->saveMediaFieldData($fieldValue, $field->client, $data['content_id'], $field->id, $fieldStoredValues);
 			}
@@ -682,11 +682,6 @@ class TjfieldsHelper
 			return false;
 		}
 
-		if (empty($fieldValue['name']) && empty($fieldValue['tmp_name']) && empty($fieldValue['size']))
-		{
-			return false;
-		}
-
 		JLoader::import('components.com_tjfields.tables.fieldsvalue', JPATH_ADMINISTRATOR);
 		$fieldsValueTable = Table::getInstance('FieldsValue', 'TjfieldsTable', array('dbo', Factory::getDbo()));
 
@@ -694,6 +689,37 @@ class TjfieldsHelper
 		$fieldTable = Table::getInstance('Field', 'TjfieldsTable', array('dbo', Factory::getDbo()));
 		$fieldTable->load($fieldId);
 		$fieldParams = new Registry($fieldTable->params);
+
+		if (is_array($fieldValue) && empty($fieldValue['name']) && empty($fieldValue['tmp_name']) && empty($fieldValue['size']))
+		{
+			return false;
+		}
+		else
+		{
+			if (strpos($fieldValue, ';base64,'))
+			{
+				$imageParts = explode(";base64,", $fieldValue);
+				$imageBase64 = base64_decode($imageParts[1]);
+				$fileName = time() . '_' . uniqid() . '.jpeg';
+
+				$uploadPath = $fieldParams->get('uploadpath', '');
+				$mediaPath = ($uploadPath != '') ? $uploadPath : JPATH_SITE . '/' . $fieldTable->type . 's/tjmedia/' . str_replace(".", "/", $client . "/");
+				$folderPath = str_replace('/', DIRECTORY_SEPARATOR, $mediaPath);
+
+				// If folder is not present create it
+				if (!Folder::exists($folderPath))
+				{
+					Folder::create($folderPath);
+				}
+
+				$file = $folderPath . $fileName;
+				file_put_contents($file, $imageBase64);
+
+				return $this->saveSingleValuedFieldData($fileName, $client, $contentId, $fieldId, $fieldStoredValues);
+			}
+
+			return true;
+		}
 
 		// Get media library object
 		$mediaLibObj = TJMediaStorageLocal::getInstance();

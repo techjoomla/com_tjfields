@@ -90,7 +90,7 @@ class JFormFieldJsfunction extends JFormField
 					}
 						$html.=	'<div id="com_tjfields_js__repeating_block'.$j.'"    class="com_tjfields_js__repeating_block span9">
 									<div class="form-inline">
-										'.$this->fetchJsfunction($this->name,(isset($jsarray_final[0]))?$jsarray_final[0]:"", $this->element, $this->options['control'],$j).$this->fetchJsfunctionName($this->name,(isset($jsarray_final[1]))?$jsarray_final[1]:"", $this->element, $this->options['control'],$j).'
+										'.$this->fetchJsfunction($this->name,($jsarray_final[0])?$jsarray_final[0]:"", $this->element, $this->options['control'],$j).$this->fetchJsfunctionName($this->name,($jsarray_final[1])?$jsarray_final[1]:"", $this->element, $this->options['control'],$j).'
 									</div>
 								</div>';
 
@@ -108,7 +108,7 @@ class JFormFieldJsfunction extends JFormField
 			{
 						$html.=	'<div id="com_tjfields_js__repeating_block0" class="com_tjfields_js__repeating_block span9">
 									<div class="form-inline">
-										'.$this->fetchJsfunction($this->name,(isset($this->value[$j]->options))?$this->value[$j]->options:"", $this->element, $this->options['control'],$j).$this->fetchJsfunctionName($this->name,(isset($this->value[$j]->value))?$this->value[$j]->value:"", $this->element, $this->options['control'],$j).'
+										'.$this->fetchJsfunction($this->name,(isset($this->value[$j]->options))?$this->value[$j]->options:"", $this->element, isset($this->options['control']),$j).$this->fetchJsfunctionName($this->name,(isset($this->value[$j]->value))?$this->value[$j]->value:"", $this->element, isset($this->options['control']),$j).'
 									</div>
 								</div>';
 			}
