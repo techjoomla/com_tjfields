@@ -241,8 +241,7 @@ class JFormFieldFile extends JFormField
 			});
 		</script>
 		<?php
-		$data->html = '<input fileFieldId="' . $layoutData["id"] . '" type="hidden" name="'
-		. $layoutData["name"] . '"' . 'id="' . $layoutData["id"] . '"' . 'value="' . $layoutData["value"] . '" />';
+		$data->html = '<input fileFieldId="' . $layoutData["id"] . '" type="hidden" value="' . $layoutData["value"] . '" />';
 
 		$fileInfo = new SplFileInfo($layoutData["value"]);
 		$data->extension = $fileInfo->getExtension();
@@ -323,7 +322,13 @@ class JFormFieldFile extends JFormField
 		if ($canView || $canDownload)
 		{
 			$renderer = $data->renderer;
-			$fileTitle = substr($data->fields_value_table->value, strpos($data->fields_value_table->value, '_', 12) + 1);
+			$fileTitle = '';
+
+			if ($data->fields_value_table->value)
+			{
+				$fileTitle = substr($data->fields_value_table->value, strpos($data->fields_value_table->value, '_', 12) + 1);
+			}
+			
 
 			if ($renderer == 'download')
 			{
@@ -348,7 +353,15 @@ class JFormFieldFile extends JFormField
 					$mediaLink = 'https://docs.google.com/gview?url=' . $data->mediaLink . '&embedded=true';
 				}
 
-				$downloadFile = '<strong><a style="cursor:pointer;" onclick="tjFieldsFileField.previewMedia(\'' . $mediaLink . '\');">' . $fileTitle . '</a></strong>';
+				$imageData = getimagesize($data->mediaLink);
+				$widthHeight = "";
+			
+				if (strpos($imageData['mime'], 'image') !== false)
+				{
+					$widthHeight  = ", " . $imageData[0] . ", " . $imageData[1];
+				}
+
+				$downloadFile = '<strong><a style="cursor:pointer;" onclick="tjFieldsFileField.previewMedia(\'' . $mediaLink . '\'' . $widthHeight . ');">' . $fileTitle . '</a></strong>';
 			}
 		}
 

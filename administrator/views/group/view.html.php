@@ -75,7 +75,7 @@ class TjfieldsViewGroup extends JViewLegacy
 			$checkedOut = false;
 		}
 
-		// $component_title = JText::_('COM_TJFIELDS_TITLE_COMPONENT');
+		$component_title = JText::_('COM_TJFIELDS_TITLE_COMPONENT');
 
 		if (!empty($client))
 		{
