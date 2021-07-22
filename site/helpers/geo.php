@@ -145,7 +145,7 @@ class TjGeoHelper
 	public function getCountryList($component_nm = "")
 	{
 		$query = $this->_db->getQuery(true);
-		$query->select("`id`, `country`,`country_jtext`")->from('#__tj_country');
+		$query->select("`id`, `country`,`country_jtext`,`country_dial_code`")->from('#__tj_country');
 
 		if ($component_nm)
 		{

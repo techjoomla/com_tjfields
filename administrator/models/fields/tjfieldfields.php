@@ -74,6 +74,7 @@ class JFormFieldtjfieldfields extends JFormFieldList
 		$options[] = JHtml::_('select.option', 'spacer', JText::_('COM_TJFIELDS_SPACER'));
 		$options[] = JHtml::_('select.option', 'subform', JText::_('COM_TJFIELDS_SUBFORM'));
 		$options[] = JHtml::_('select.option', 'image', JText::_('COM_TJFIELDS_IMAGE'));
+		$options[] = JHtml::_('select.option', 'captureimage', JText::_('COM_TJFIELDS_CAPTURE_IMAGE'));
 		$options[] = JHtml::_('select.option', 'audio', JText::_('COM_TJFIELDS_AUDIO'));
 		$options[] = JHtml::_('select.option', 'video', JText::_('COM_TJFIELDS_VIDEO'));
 		$options[] = JHtml::_('select.option', 'itemcategory', JText::_('COM_TJFIELDS_ITEM_CATEGORY'));

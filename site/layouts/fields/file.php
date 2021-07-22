@@ -43,6 +43,14 @@ if ($field->value)
 
 	$tjFieldHelper = new TjfieldsHelper;
 	$mediaLink = $tjFieldHelper->getMediaUrl($field->value, $extraParamArray, $renderer);
+	$imageData = getimagesize($mediaLink);
+	$widthHeight = "";
+
+	if (strpos($imageData['mime'], 'image') !== false)
+	{
+		$widthHeight  = ", " . $imageData[0] . ", " . $imageData[1];
+	}
+
 	$fileTitle = substr($field->value, strpos($field->value, '_', 12) + 1);
 
 	if ($renderer == 'download')
@@ -67,6 +75,6 @@ if ($field->value)
 			$mediaLink = 'https://docs.google.com/gview?url=' . $mediaLink . '&embedded=true';
 		}
 
-		echo '<div><strong class="ml-15"><a style="cursor:pointer;" onclick="tjFieldsFileField.previewMedia(\'' . $mediaLink . '\');">' . $fileTitle . '</a></strong></div>';
+		echo '<div><strong class="ml-15"><a style="cursor:pointer;" onclick="tjFieldsFileField.previewMedia(\'' . $mediaLink . '\'' . $widthHeight . ');">' . $fileTitle . '</a></strong></div>';
 	}
 }
