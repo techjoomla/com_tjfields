@@ -202,7 +202,7 @@ class TjfieldsHelper
 		foreach ($data['fieldsvalue'] as $fieldName => $fieldValue)
 		{
 			$fieldKey = array_search($fieldName, array_column($fields, 'name'));
-			$field = $fields[$fieldKey];
+			$field = !empty($fields[$fieldKey]) ? $fields[$fieldKey] : new stdclass;
 			$fieldParams = new Registry($field->params);
 
 			$fieldStoredValuesKeys = array_keys(array_column($storedValues, 'field_id'), $field->id);
