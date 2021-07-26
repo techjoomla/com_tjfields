@@ -202,293 +202,297 @@ class TjfieldsHelper
 		foreach ($data['fieldsvalue'] as $fieldName => $fieldValue)
 		{
 			$fieldKey = array_search($fieldName, array_column($fields, 'name'));
-			$field = !empty($fields[$fieldKey]) ? $fields[$fieldKey] : new stdclass;
-			$fieldParams = new Registry($field->params);
-
-			$fieldStoredValuesKeys = array_keys(array_column($storedValues, 'field_id'), $field->id);
-			$fieldStoredValues = array();
-
-			foreach ($fieldStoredValuesKeys as $fieldStoredValuesKey)
+			
+			if (!empty($fields[$fieldKey]))
 			{
-				$fieldStoredValues[] = $storedValues[$fieldStoredValuesKey];
-			}
+				$field = $fields[$fieldKey];
+				$fieldParams = new Registry($field->params);
 
-			// Check if user is authorised to save/edit the field value
-			if (empty($storedValues))
-			{
-				if ($user->authorise('core.field.addfieldvalue', 'com_tjfields.group.' . $field->group_id))
+				$fieldStoredValuesKeys = array_keys(array_column($storedValues, 'field_id'), $field->id);
+				$fieldStoredValues = array();
+
+				foreach ($fieldStoredValuesKeys as $fieldStoredValuesKey)
 				{
-					$authorised = $user->authorise('core.field.addfieldvalue', 'com_tjfields.field.' . $field->id);
+					$fieldStoredValues[] = $storedValues[$fieldStoredValuesKey];
 				}
-			}
-			else
-			{
-				if ($user->authorise('core.field.editfieldvalue', 'com_tjfields.group.' . $field->group_id))
+
+				// Check if user is authorised to save/edit the field value
+				if (empty($storedValues))
 				{
-					$authorised = $user->authorise('core.field.editfieldvalue', 'com_tjfields.field.' . $field->id);
+					if ($user->authorise('core.field.addfieldvalue', 'com_tjfields.group.' . $field->group_id))
+					{
+						$authorised = $user->authorise('core.field.addfieldvalue', 'com_tjfields.field.' . $field->id);
+					}
 				}
 				else
 				{
-					if ($user->authorise('core.field.editownfieldvalue', 'com_tjfields.group.' . $field->group_id))
+					if ($user->authorise('core.field.editfieldvalue', 'com_tjfields.group.' . $field->group_id))
 					{
-						if ($user->authorise('core.field.editownfieldvalue', 'com_tjfields.field.' . $field->id) && ($data['created_by'] == $user->id))
+						$authorised = $user->authorise('core.field.editfieldvalue', 'com_tjfields.field.' . $field->id);
+					}
+					else
+					{
+						if ($user->authorise('core.field.editownfieldvalue', 'com_tjfields.group.' . $field->group_id))
 						{
-							$authorised = true;
+							if ($user->authorise('core.field.editownfieldvalue', 'com_tjfields.field.' . $field->id) && ($data['created_by'] == $user->id))
+							{
+								$authorised = true;
+							}
 						}
 					}
 				}
-			}
 
-			// If not authorised then return false
-			if (empty($authorised))
-			{
-				continue;
-			}
-
-			if ($field->type == 'file' || $field->type == 'image' || $field->type == 'captureimage')
-			{
-				$this->saveMediaFieldData($fieldValue, $field->client, $data['content_id'], $field->id, $fieldStoredValues);
-			}
-			elseif ($field->type == 'subform')
-			{
-				$fieldValue = json_encode($fieldValue);
-				$this->saveSingleValuedFieldData($fieldValue, $field->client, $data['content_id'], $field->id, $fieldStoredValues);
-			}
-			elseif ($field->type == 'ucmsubform' && is_array($fieldValue))
-			{
-				if (empty($fieldValue))
+				// If not authorised then return false
+				if (empty($authorised))
 				{
 					continue;
 				}
 
-				if (!defined('TJUCM_PARENT_CLIENT'))
+				if ($field->type == 'file' || $field->type == 'image' || $field->type == 'captureimage')
 				{
-					define("TJUCM_PARENT_CLIENT", $data['client']);
+					$this->saveMediaFieldData($fieldValue, $field->client, $data['content_id'], $field->id, $fieldStoredValues);
 				}
-
-				$ucmSubformClientTmp = explode('_', str_replace("com_tjucm_", '', array_key_first($fieldValue[array_key_first($fieldValue)])));
-				array_pop($ucmSubformClientTmp);
-				$ucmSubformClient = 'com_tjucm.' . implode('_', $ucmSubformClientTmp);
-
-				// Load UCM itemform model
-				JLoader::import('components.com_tjucm.models.itemform', JPATH_SITE);
-
-				// Get all the records which were previously stored for the ucmsubform field in parent form
-				$db = JFactory::getDbo();
-				$query = $db->getQuery(true);
-				$query->select('id');
-				$query->from($db->quoteName('#__tj_ucm_data'));
-				$query->where($db->quoteName('parent_id') . '=' . $data['content_id']);
-				$query->where($db->quoteName('client') . '=' . $db->quote($ucmSubformClient));
-				$db->setQuery($query);
-				$ucmSubformRecordIds = $db->loadColumn();
-				$ucmSubformRecordIds = (!empty($ucmSubformRecordIds)) ? $ucmSubformRecordIds : array();
-
-				$this->saveSingleValuedFieldData($ucmSubformClient, TJUCM_PARENT_CLIENT, $data['content_id'], $field->id, $fieldStoredValues);
-
-				foreach ($fieldValue as $key => $ucmSubformValue)
+				elseif ($field->type == 'subform')
 				{
-					if (!empty($ucmSubformValue))
+					$fieldValue = json_encode($fieldValue);
+					$this->saveSingleValuedFieldData($fieldValue, $field->client, $data['content_id'], $field->id, $fieldStoredValues);
+				}
+				elseif ($field->type == 'ucmsubform' && is_array($fieldValue))
+				{
+					if (empty($fieldValue))
 					{
-						$ucmSubformContentIdFieldName = str_replace('.', '_', $ucmSubformClient . "_contentid");
-						$ucmSubformContentIdFieldElementId = 'jform_' . $field->name . '__' . $key . '__' . $ucmSubformContentIdFieldName;
-						$ucmSubFormContentId = (INT) (isset($ucmSubformValue[$ucmSubformContentIdFieldName])) ? $ucmSubformValue[$ucmSubformContentIdFieldName] : 0;
-
-						if (empty($ucmSubFormContentId))
-						{
-							$tjUcmSubFormItemData = array('id' => '', 'parent_id' => $data['content_id'], 'client' => $ucmSubformClient, 'created_by' => $data['user_id']);
-							$tjUcmItemFormModel = JModelLegacy::getInstance('ItemForm', 'TjucmModel');
-							$tjUcmItemFormModel->save($tjUcmSubFormItemData);
-							$ucmSubFormContentId = $tjUcmItemFormModel->getState($tjUcmItemFormModel->getName() . '.id');
-						}
-
-						if (array_search($ucmSubFormContentId, $ucmSubformRecordIds) !== false)
-						{
-							unset($ucmSubformRecordIds[array_search($ucmSubFormContentId, $ucmSubformRecordIds)]);
-						}
-
-						$tjUcmSubFormContentId['childContentIds'][$ucmSubformContentIdFieldElementId] = (INT) $ucmSubFormContentId;
-						$ucmSubFormData = array();
-						$ucmSubFormData['parent_content_id'] = $data['content_id'];
-						$ucmSubFormData['content_id']        = $ucmSubFormContentId;
-						$ucmSubFormData['client']            = $ucmSubformClient;
-						$ucmSubFormData['fieldsvalue']       = $ucmSubformValue;
-						$ucmSubFormData['created_by']        = Factory::getUser()->id;
-						$this->saveFieldsValue($ucmSubFormData);
+						continue;
 					}
-				}
 
-				// Delete the records which are removed from the ucmsubform
-				$tjUcmItemFormModel = JModelLegacy::getInstance('ItemForm', 'TjucmModel');
-
-				foreach ($ucmSubformRecordIds as $ucmSubformRecordId)
-				{
-					$tjUcmItemFormModel->delete($ucmSubformRecordId);
-				}
-			}
-			elseif ($field->type == 'tjlist')
-			{
-				// Check for Tjlist - start
-				$tjListParams = json_decode($field->params);
-
-				if ($tjListParams->other)
-				{
-					// Get all the fields of the specified client
-					JLoader::import('components.com_tjfields.models.options', JPATH_ADMINISTRATOR);
-					$tjFieldOptionsModel = JModelLegacy::getInstance('Options', 'TjfieldsModel', array('ignore_request' => true));
-					$tjFieldOptionsModel->setState('filter.field_id', $field->id);
-					$optionsValue = $tjFieldOptionsModel->getItems();
-
-					// Get array of dropdown values
-					$otherValues = array_column($optionsValue, 'value');
-				}
-
-				if (is_array($fieldValue))
-				{
-					// TODO:- To save data of tjlist in case of auto save - eliminate if possible
-					if (strpos($fieldValue[0], ','))
+					if (!defined('TJUCM_PARENT_CLIENT'))
 					{
-						$tmpFieldValue = $fieldValue;
-						$fieldValue = explode(',', $fieldValue[0]);
+						define("TJUCM_PARENT_CLIENT", $data['client']);
+					}
 
-						if (isset($tmpFieldValue[1]))
+					$ucmSubformClientTmp = explode('_', str_replace("com_tjucm_", '', array_key_first($fieldValue[array_key_first($fieldValue)])));
+					array_pop($ucmSubformClientTmp);
+					$ucmSubformClient = 'com_tjucm.' . implode('_', $ucmSubformClientTmp);
+
+					// Load UCM itemform model
+					JLoader::import('components.com_tjucm.models.itemform', JPATH_SITE);
+
+					// Get all the records which were previously stored for the ucmsubform field in parent form
+					$db = JFactory::getDbo();
+					$query = $db->getQuery(true);
+					$query->select('id');
+					$query->from($db->quoteName('#__tj_ucm_data'));
+					$query->where($db->quoteName('parent_id') . '=' . $data['content_id']);
+					$query->where($db->quoteName('client') . '=' . $db->quote($ucmSubformClient));
+					$db->setQuery($query);
+					$ucmSubformRecordIds = $db->loadColumn();
+					$ucmSubformRecordIds = (!empty($ucmSubformRecordIds)) ? $ucmSubformRecordIds : array();
+
+					$this->saveSingleValuedFieldData($ucmSubformClient, TJUCM_PARENT_CLIENT, $data['content_id'], $field->id, $fieldStoredValues);
+
+					foreach ($fieldValue as $key => $ucmSubformValue)
+					{
+						if (!empty($ucmSubformValue))
 						{
-							$fieldValue[] = $tmpFieldValue[1];
+							$ucmSubformContentIdFieldName = str_replace('.', '_', $ucmSubformClient . "_contentid");
+							$ucmSubformContentIdFieldElementId = 'jform_' . $field->name . '__' . $key . '__' . $ucmSubformContentIdFieldName;
+							$ucmSubFormContentId = (INT) (isset($ucmSubformValue[$ucmSubformContentIdFieldName])) ? $ucmSubformValue[$ucmSubformContentIdFieldName] : 0;
+
+							if (empty($ucmSubFormContentId))
+							{
+								$tjUcmSubFormItemData = array('id' => '', 'parent_id' => $data['content_id'], 'client' => $ucmSubformClient, 'created_by' => $data['user_id']);
+								$tjUcmItemFormModel = JModelLegacy::getInstance('ItemForm', 'TjucmModel');
+								$tjUcmItemFormModel->save($tjUcmSubFormItemData);
+								$ucmSubFormContentId = $tjUcmItemFormModel->getState($tjUcmItemFormModel->getName() . '.id');
+							}
+
+							if (array_search($ucmSubFormContentId, $ucmSubformRecordIds) !== false)
+							{
+								unset($ucmSubformRecordIds[array_search($ucmSubFormContentId, $ucmSubformRecordIds)]);
+							}
+
+							$tjUcmSubFormContentId['childContentIds'][$ucmSubformContentIdFieldElementId] = (INT) $ucmSubFormContentId;
+							$ucmSubFormData = array();
+							$ucmSubFormData['parent_content_id'] = $data['content_id'];
+							$ucmSubFormData['content_id']        = $ucmSubFormContentId;
+							$ucmSubFormData['client']            = $ucmSubformClient;
+							$ucmSubFormData['fieldsvalue']       = $ucmSubformValue;
+							$ucmSubFormData['created_by']        = Factory::getUser()->id;
+							$this->saveFieldsValue($ucmSubFormData);
 						}
 					}
+
+					// Delete the records which are removed from the ucmsubform
+					$tjUcmItemFormModel = JModelLegacy::getInstance('ItemForm', 'TjucmModel');
+
+					foreach ($ucmSubformRecordIds as $ucmSubformRecordId)
+					{
+						$tjUcmItemFormModel->delete($ucmSubformRecordId);
+					}
+				}
+				elseif ($field->type == 'tjlist')
+				{
+					// Check for Tjlist - start
+					$tjListParams = json_decode($field->params);
 
 					if ($tjListParams->other)
 					{
-						$fieldOtherVal = $fieldOptionsVal = array();
-						$postFieldValueCount = count($fieldValue);
-						$k = 0;
+						// Get all the fields of the specified client
+						JLoader::import('components.com_tjfields.models.options', JPATH_ADMINISTRATOR);
+						$tjFieldOptionsModel = JModelLegacy::getInstance('Options', 'TjfieldsModel', array('ignore_request' => true));
+						$tjFieldOptionsModel->setState('filter.field_id', $field->id);
+						$optionsValue = $tjFieldOptionsModel->getItems();
 
-						$otherValues[] = $field->type . 'othervalue';
+						// Get array of dropdown values
+						$otherValues = array_column($optionsValue, 'value');
+					}
 
-						foreach ($fieldValue as $key => $listfieldVale)
+					if (is_array($fieldValue))
+					{
+						// TODO:- To save data of tjlist in case of auto save - eliminate if possible
+						if (strpos($fieldValue[0], ','))
 						{
-							$k++;
+							$tmpFieldValue = $fieldValue;
+							$fieldValue = explode(',', $fieldValue[0]);
 
-							// Update the last index element of other options multi values
-							if (in_array($field->type . 'othervalue', $fieldValue) && $postFieldValueCount > 1 &&  $postFieldValueCount == $k)
+							if (isset($tmpFieldValue[1]))
 							{
-								$fieldOtherVal = explode(',', $listfieldVale);
-
-								// Add prefix for other values for tjlist field
-								$fieldOtherVal = preg_filter('/^/', $field->type . ':-', $fieldOtherVal);
-								unset($fieldValue[$key]);
-							}
-							elseif (!in_array($listfieldVale, $otherValues))
-							{
-								// Check its other options values not a actual option list values
-								$fieldValue[$key] = $field->type . ':-' . $listfieldVale;
-							}
-							else
-							{
-								$fieldValue = array_filter(
-									$fieldValue,
-									function($val)
-									{
-										return $val != 'tjlistothervalue';
-									}
-								);
+								$fieldValue[] = $tmpFieldValue[1];
 							}
 						}
 
-						// Check other options multiple values exist in array
-						if (!empty($fieldOtherVal))
+						if ($tjListParams->other)
 						{
-							$fieldValue = array_merge($fieldValue, $fieldOtherVal);
+							$fieldOtherVal = $fieldOptionsVal = array();
+							$postFieldValueCount = count($fieldValue);
+							$k = 0;
+
+							$otherValues[] = $field->type . 'othervalue';
+
+							foreach ($fieldValue as $key => $listfieldVale)
+							{
+								$k++;
+
+								// Update the last index element of other options multi values
+								if (in_array($field->type . 'othervalue', $fieldValue) && $postFieldValueCount > 1 &&  $postFieldValueCount == $k)
+								{
+									$fieldOtherVal = explode(',', $listfieldVale);
+
+									// Add prefix for other values for tjlist field
+									$fieldOtherVal = preg_filter('/^/', $field->type . ':-', $fieldOtherVal);
+									unset($fieldValue[$key]);
+								}
+								elseif (!in_array($listfieldVale, $otherValues))
+								{
+									// Check its other options values not a actual option list values
+									$fieldValue[$key] = $field->type . ':-' . $listfieldVale;
+								}
+								else
+								{
+									$fieldValue = array_filter(
+										$fieldValue,
+										function($val)
+										{
+											return $val != 'tjlistothervalue';
+										}
+									);
+								}
+							}
+
+							// Check other options multiple values exist in array
+							if (!empty($fieldOtherVal))
+							{
+								$fieldValue = array_merge($fieldValue, $fieldOtherVal);
+							}
+
+							// Check options list value exist in array
+							if (!empty($fieldOptionsVal))
+							{
+								$fieldValue = array_merge($fieldValue, $fieldOptionsVal);
+							}
 						}
 
-						// Check options list value exist in array
-						if (!empty($fieldOptionsVal))
+						$this->saveMultiValuedFieldData($fieldValue, $field->client, $data['content_id'], $field->id, $fieldStoredValues);
+					}
+					else
+					{
+						// Check other option enable for tjlist field
+						if ($tjListParams->other && !in_array($fieldValue, $otherValues))
 						{
-							$fieldValue = array_merge($fieldValue, $fieldOptionsVal);
+							// Add prefix for other values for tjlist field
+							$fieldValue = $field->type . ':-' . $fieldValue;
 						}
+
+						if ($fieldValue == 'tjlist:-tjlistothervalue')
+						{
+							$fieldValue = 'tjlist:-';
+						}
+
+						$this->saveSingleValuedFieldData($fieldValue, $field->client, $data['content_id'], $field->id, $fieldStoredValues);
+					}
+				}
+				elseif ($field->type == 'related' && $fieldParams->get('showParentRecordsOnly', '', 'INT'))
+				{
+					// This is special case to handle the copy of related fields data in copy item feature
+					$jInput = JFactory::getApplication()->input;
+					$tempId = $jInput->get('id', '', 'STRING');
+					$jInput->set('id', $tjUcmParentContentId);
+
+					JLoader::import('components.com_tjfields.models.field', JPATH_ADMINISTRATOR);
+					$tjFieldsFieldModel = BaseDatabaseModel::getInstance('Field', 'TjfieldsModel', array('ignore_request' => true));
+					$relatedFieldOptions = $tjFieldsFieldModel->getRelatedFieldOptions($field->id);
+					$jInput->set('id', $tempId);
+
+					$relatedFieldOptionTmp = array();
+
+					foreach ($relatedFieldOptions as $relatedFieldOption)
+					{
+						$relatedFieldOptionTmp[$relatedFieldOption['value']] = $relatedFieldOption['text'];
+					}
+
+					if (!is_array($fieldValue))
+					{
+						$fieldValue = array($fieldValue);
+					}
+
+					foreach ($fieldValue as $k => $fv)
+					{
+						if (!empty($fv) && !in_array($fv, $relatedFieldOptionValues))
+						{
+							$relatedFieldDataSources = $fieldParams->get('fieldName');
+
+							foreach ($relatedFieldDataSources as $relatedFieldDataSource)
+							{
+								$db = JFactory::getDbo();
+								$query = $db->getQuery(true);
+								$query->select("GROUP_CONCAT(" . $db->quoteName('value') . " SEPARATOR ' ') AS combo_value");
+								$query->from($db->quoteName('#__tjfields_fields_value'));
+								$query->where($db->quoteName('field_id') . ' IN (' . implode(", ", $relatedFieldDataSource->fieldIds) . ')');
+								$query->where($db->quoteName('content_id') . ' = ' . $fv);
+								$query->where($db->quoteName('client') . ' = ' . $db->quote($relatedFieldDataSource->client));
+								$db->setQuery($query);
+
+								$relatedValue = $db->loadResult();
+								$fieldValue[$k] = array_search($relatedValue, $relatedFieldOptionTmp);
+							}
+						}
+					}
+
+					$this->saveMultiValuedFieldData($fieldValue, $field->client, $data['content_id'], $field->id, $fieldStoredValues);
+				}
+				elseif (is_array($fieldValue))
+				{
+					// TODO:- To save data of multiselect in case of auto save - eliminate if possible
+					if (strpos($fieldValue[0], ','))
+					{
+						$fieldValue = explode(',', $fieldValue[0]);
 					}
 
 					$this->saveMultiValuedFieldData($fieldValue, $field->client, $data['content_id'], $field->id, $fieldStoredValues);
 				}
 				else
 				{
-					// Check other option enable for tjlist field
-					if ($tjListParams->other && !in_array($fieldValue, $otherValues))
-					{
-						// Add prefix for other values for tjlist field
-						$fieldValue = $field->type . ':-' . $fieldValue;
-					}
-
-					if ($fieldValue == 'tjlist:-tjlistothervalue')
-					{
-						$fieldValue = 'tjlist:-';
-					}
-
 					$this->saveSingleValuedFieldData($fieldValue, $field->client, $data['content_id'], $field->id, $fieldStoredValues);
 				}
-			}
-			elseif ($field->type == 'related' && $fieldParams->get('showParentRecordsOnly', '', 'INT'))
-			{
-				// This is special case to handle the copy of related fields data in copy item feature
-				$jInput = JFactory::getApplication()->input;
-				$tempId = $jInput->get('id', '', 'STRING');
-				$jInput->set('id', $tjUcmParentContentId);
-
-				JLoader::import('components.com_tjfields.models.field', JPATH_ADMINISTRATOR);
-				$tjFieldsFieldModel = BaseDatabaseModel::getInstance('Field', 'TjfieldsModel', array('ignore_request' => true));
-				$relatedFieldOptions = $tjFieldsFieldModel->getRelatedFieldOptions($field->id);
-				$jInput->set('id', $tempId);
-
-				$relatedFieldOptionTmp = array();
-
-				foreach ($relatedFieldOptions as $relatedFieldOption)
-				{
-					$relatedFieldOptionTmp[$relatedFieldOption['value']] = $relatedFieldOption['text'];
-				}
-
-				if (!is_array($fieldValue))
-				{
-					$fieldValue = array($fieldValue);
-				}
-
-				foreach ($fieldValue as $k => $fv)
-				{
-					if (!empty($fv) && !in_array($fv, $relatedFieldOptionValues))
-					{
-						$relatedFieldDataSources = $fieldParams->get('fieldName');
-
-						foreach ($relatedFieldDataSources as $relatedFieldDataSource)
-						{
-							$db = JFactory::getDbo();
-							$query = $db->getQuery(true);
-							$query->select("GROUP_CONCAT(" . $db->quoteName('value') . " SEPARATOR ' ') AS combo_value");
-							$query->from($db->quoteName('#__tjfields_fields_value'));
-							$query->where($db->quoteName('field_id') . ' IN (' . implode(", ", $relatedFieldDataSource->fieldIds) . ')');
-							$query->where($db->quoteName('content_id') . ' = ' . $fv);
-							$query->where($db->quoteName('client') . ' = ' . $db->quote($relatedFieldDataSource->client));
-							$db->setQuery($query);
-
-							$relatedValue = $db->loadResult();
-							$fieldValue[$k] = array_search($relatedValue, $relatedFieldOptionTmp);
-						}
-					}
-				}
-
-				$this->saveMultiValuedFieldData($fieldValue, $field->client, $data['content_id'], $field->id, $fieldStoredValues);
-			}
-			elseif (is_array($fieldValue))
-			{
-				// TODO:- To save data of multiselect in case of auto save - eliminate if possible
-				if (strpos($fieldValue[0], ','))
-				{
-					$fieldValue = explode(',', $fieldValue[0]);
-				}
-
-				$this->saveMultiValuedFieldData($fieldValue, $field->client, $data['content_id'], $field->id, $fieldStoredValues);
-			}
-			else
-			{
-				$this->saveSingleValuedFieldData($fieldValue, $field->client, $data['content_id'], $field->id, $fieldStoredValues);
 			}
 		}
 
