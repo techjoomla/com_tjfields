@@ -66,8 +66,9 @@ class TjfieldsTableCity extends Table
 
 		if (! Factory::getUser()->authorise('core.admin', 'com_tjfields.city.' . $array['id']))
 		{
-			$actions         = Access::getActionsFromData('com_tjfields', 'city');
-			$default_actions = Factory::getACL()->getAssetRules('com_tjfields.city.' . $array['id'])->getData();
+			$accessFilePath = JPATH_ADMINISTRATOR . '/components/com_tjfields/access.xml';
+			$actions = Access::getActionsFromFile($accessFilePath, "/access/section[@name='city']/");
+			$default_actions = Access::getAssetRules('com_tjfields.city.' . $array['id'])->getData();
 			$array_jaccess   = array();
 
 			if (is_array($actions) || is_object($actions))

@@ -66,8 +66,9 @@ class TjfieldsTableRegion extends Table
 
 		if (! Factory::getUser()->authorise('core.admin', 'com_tjfields.region.' . $array['id']))
 		{
-			$actions         = Access::getActionsFromData('com_tjfields', 'region');
-			$default_actions = Factory::getACL()->getAssetRules('com_tjfields.region.' . $array['id'])->getData();
+			$accessFilePath = JPATH_ADMINISTRATOR . '/components/com_tjfields/access.xml';
+			$actions = Access::getActionsFromFile($accessFilePath, "/access/section[@name='region']/");
+			$default_actions = Access::getAssetRules('com_tjfields.region.' . $array['id'])->getData();
 			$array_jaccess   = array();
 
 			if (is_array($actions) || is_object($actions))
