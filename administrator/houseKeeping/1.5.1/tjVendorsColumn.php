@@ -40,7 +40,9 @@ class TjHouseKeepingTjVendorsColumn extends TjModelHouseKeeping
 			$query = $db->getQuery(true);
 			$query = "SHOW COLUMNS FROM `#__tj_city`";
 			$db->setQuery($query);
-			$columns = $db->loadobjectlist();
+			$columns = $db->loadAssoclist();
+
+			$columns = array_column($columns, "Field");
 
 			if (!in_array('com_tjvendors', $columns))
 			{
@@ -61,6 +63,8 @@ class TjHouseKeepingTjVendorsColumn extends TjModelHouseKeeping
 			$db->setQuery($query);
 			$columns = $db->loadobjectlist();
 
+			$columns = array_column($columns, "Field");
+
 			if (!in_array('com_tjvendors', $columns))
 			{
 				$query = "ALTER TABLE `#__tj_region` ADD COLUMN `com_tjvendors` tinyint(1) NOT NULL DEFAULT '1'";
@@ -79,6 +83,8 @@ class TjHouseKeepingTjVendorsColumn extends TjModelHouseKeeping
 			$query = "SHOW COLUMNS FROM `#__tj_country`";
 			$db->setQuery($query);
 			$columns = $db->loadobjectlist();
+
+			$columns = array_column($columns, "Field");
 
 			if (!in_array('com_tjvendors', $columns))
 			{
