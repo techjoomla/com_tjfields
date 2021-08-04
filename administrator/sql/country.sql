@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS `#__tj_country` (
 	`com_quick2cart` tinyint(1) NOT NULL DEFAULT '1',
 	`com_socialads` tinyint(1) NOT NULL DEFAULT '1',
 	`com_tjlms` tinyint(1) NOT NULL DEFAULT '1',
-        `com_tjvendors` tinyint(1) NOT NULL DEFAULT '1',
+	`com_tjvendors` tinyint(1) NOT NULL DEFAULT '1',
 	PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci AUTO_INCREMENT=1;
 

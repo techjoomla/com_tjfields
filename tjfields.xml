@@ -4,10 +4,10 @@
 	<author>TechJoomla</author>
 	<authorEmail>extensions@techjoomla.com</authorEmail>
 	<authorUrl>www.techjoomla.com</authorUrl>
-	<copyright>Copyright(C)2012-20 TechJoomla</copyright>
+	<copyright>Copyright(C)2012-21 TechJoomla</copyright>
 	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
-	<creationDate>15th Sep 2020</creationDate>
-	<version>1.4.5</version>
+	<creationDate>4th Aug 2021</creationDate>
+	<version>1.4.6</version>
 	<description>TJFields - Common code for TJ Fields Manager and TJ Geo Manager!</description>
 	<install>
 		<sql>
