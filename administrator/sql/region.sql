@@ -4,11 +4,11 @@
 
 CREATE TABLE IF NOT EXISTS `#__tj_region` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `country_id` int(11) NOT NULL,
-  `region_3_code` varchar(3) NOT NULL,
-  `region_code` varchar(8) NOT NULL,
-  `region` varchar(64) NOT NULL,
-  `region_jtext` varchar(255) NOT NULL,
+  `country_id` int(11) NOT NULL DEFAULT '0',
+  `region_3_code` varchar(3) NOT NULL DEFAULT '',
+  `region_code` varchar(8) NOT NULL DEFAULT '',
+  `region` varchar(64) NOT NULL DEFAULT '',
+  `region_jtext` varchar(255) NOT NULL DEFAULT '',
   `ordering` int(3) NOT NULL DEFAULT '0',
   `com_jgive` tinyint(1) NOT NULL DEFAULT '1',
   `com_jticketing` tinyint(1) NOT NULL DEFAULT '1',
