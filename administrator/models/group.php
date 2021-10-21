@@ -9,12 +9,10 @@
 
 // No direct access.
 defined('_JEXEC') or die;
-use Joomla\CMS\MVC\Model\AdminModel;
-use Joomla\CMS\Table\Table;
 use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Model\AdminModel;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
-
-jimport('joomla.application.component.modeladmin');
+use Joomla\CMS\Table\Table;
 
 /**
  * Methods supporting a list of Tjfields records.
@@ -121,8 +119,6 @@ class TjfieldsModelGroup extends AdminModel
 	 */
 	protected function prepareTable($table)
 	{
-		jimport('joomla.filter.output');
-
 		if (empty($table->id))
 		{
 			// Set ordering to the last item if not set
@@ -147,16 +143,10 @@ class TjfieldsModelGroup extends AdminModel
 	 */
 	public function save($data)
 	{
-		$table = $this->getTable();
-		$input = Factory::getApplication()->input;
-		$data['name'] = trim($data['name']);
-		$data['title'] = trim($data['title']);
-
-		// Set group title as group label
-		if (!empty($data['name']))
-		{
-			$data['title'] = $data['name'];
-		}
+		$table         = $this->getTable();
+		$input         = Factory::getApplication()->input;
+		$data['name']  = trim($data['name']);
+		$data['title'] = (!empty($data['name'])) ? $data['name'] : trim($data['title']);
 
 		if ($input->get('task') == 'save2copy')
 		{
@@ -164,15 +154,17 @@ class TjfieldsModelGroup extends AdminModel
 			$name = explode("(", $data['name']);
 			$name = trim($name['0']);
 			$name = str_replace("`", "", $name);
-			$db = Factory::getDbo();
+
+			$db    = Factory::getDbo();
 			$query = 'SELECT a.*'
 			. ' FROM #__tjfields_groups AS a'
 			. " WHERE  a.name LIKE '" . $db->escape($name) . "%'"
 			. " AND  a.client LIKE '" . $db->escape($data['client']) . "'";
 			$db->setQuery($query);
 			$posts = $db->loadAssocList();
-			$postsCount = count($posts) + 1;
-			$data['name'] = $name . ' (' . $postsCount . ')';
+
+			$postsCount         = count($posts) + 1;
+			$data['name']       = $name . ' (' . $postsCount . ')';
 			$data['created_by'] = Factory::getUser()->id;
 		}
 
@@ -204,7 +196,6 @@ class TjfieldsModelGroup extends AdminModel
 		JLoader::import('components.com_tjfields.models.fields', JPATH_ADMINISTRATOR);
 		JLoader::import('components.com_tjfields.models.field', JPATH_ADMINISTRATOR);
 
-		$db = Factory::getDbo();
 		$pks = (array) $pks;
 
 		foreach ($pks as $pk)

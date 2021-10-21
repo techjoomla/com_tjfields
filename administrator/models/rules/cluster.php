@@ -9,9 +9,9 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
 use Joomla\CMS\Form\FormRule;
 use Joomla\CMS\Table\Table;
-use Joomla\CMS\Factory;
 use Joomla\Registry\Registry;
 use Joomla\String\StringHelper;
 

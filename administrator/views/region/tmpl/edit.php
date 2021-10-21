@@ -29,7 +29,7 @@ HTMLHelper::_('behavior.keepalive');
 		}
 		else
 		{
-			if (task != 'region.cancel' && document.formvalidator.isValid(document.id('region-form')))
+			if (task != 'region.cancel' && document.formvalidator.isValid(document.getElementById('region-form')))
 			{
 				Joomla.submitform(task, document.getElementById('region-form'));
 			}

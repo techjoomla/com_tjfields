@@ -9,14 +9,12 @@
 // No direct access
 defined('_JEXEC') or die;
 
-jimport('joomla.filesystem.file');
-
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\FormController;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
-use Joomla\CMS\Language\Text;
 use Joomla\CMS\Response\JsonResponse;
 use Joomla\CMS\Session\Session;
-use Joomla\CMS\Factory;
 
 /**
  * Item controller class.

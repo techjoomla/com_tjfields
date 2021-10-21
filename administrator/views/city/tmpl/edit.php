@@ -30,7 +30,7 @@ HTMLHelper::_('behavior.keepalive');
 		}
 		else
 		{
-			if (task != 'city.cancel' && document.formvalidator.isValid(document.id('city-form')))
+			if (task != 'city.cancel' && document.formvalidator.isValid(document.getElementById('city-form')))
 			{
 				Joomla.submitform(task, document.getElementById('city-form'));
 			}

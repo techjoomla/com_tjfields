@@ -9,14 +9,14 @@
 
 // No direct access.
 defined('_JEXEC') or die;
-use Joomla\CMS\MVC\Controller\AdminController;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Log\Log;
+use Joomla\CMS\MVC\Controller\AdminController;
 use Joomla\CMS\Session\Session;
+use Joomla\Utilities\ArrayHelper;
 
 JLoader::import('TjfieldsHelper', JPATH_ADMINISTRATOR . '/components/com_tjfields/helpers');
-jimport('joomla.application.component.controlleradmin');
 JLoader::register('TjControllerHouseKeeping', JPATH_SITE . "/libraries/techjoomla/controller/houseKeeping.php");
 
 /**
@@ -55,13 +55,14 @@ class TjfieldsControllerFields extends AdminController
 	public function saveOrderAjax()
 	{
 		// Get the input
-		$input = Factory::getApplication()->input;
-		$pks = $input->post->get('cid', array(), 'array');
+		$app   = Factory::getApplication();
+		$input = $app->input;
+		$pks   = $input->post->get('cid', array(), 'array');
 		$order = $input->post->get('order', array(), 'array');
 
 		// Sanitize the input
-		JArrayHelper::toInteger($pks);
-		JArrayHelper::toInteger($order);
+		ArrayHelper::toInteger($pks);
+		ArrayHelper::toInteger($order);
 
 		// Get the model
 		$model = $this->getModel();
@@ -75,7 +76,7 @@ class TjfieldsControllerFields extends AdminController
 		}
 
 		// Close the application
-		Factory::getApplication()->close();
+		$app->close();
 	}
 
 	/**
@@ -85,13 +86,14 @@ class TjfieldsControllerFields extends AdminController
 	 */
 	public function publish()
 	{
-		$input = Factory::getApplication()->input;
-		$post = $input->post;
+		$app    = Factory::getApplication();
+		$input  = $app->input;
+		$post   = $input->post;
 		$client = $input->get('client', '', 'STRING');
-		$cid = Factory::getApplication()->input->get('cid', array(), 'array');
-		$data = array('publish' => 1, 'unpublish' => 0, 'archive' => 2, 'trash' => -2, 'report' => -3);
-		$task = $this->getTask();
-		$value = JArrayHelper::getValue($data, $task, 0, 'int');
+		$cid    = $app->input->get('cid', array(), 'array');
+		$data   = array('publish' => 1, 'unpublish' => 0, 'archive' => 2, 'trash' => -2, 'report' => -3);
+		$task   = $this->getTask();
+		$value  = ArrayHelper::getValue($data, $task, 0, 'int');
 
 		// Get some variables from the request
 
@@ -105,7 +107,7 @@ class TjfieldsControllerFields extends AdminController
 			$model = $this->getModel('fields');
 
 			// Make sure the item ids are integers
-			JArrayHelper::toInteger($cid);
+			ArrayHelper::toInteger($cid);
 
 			// Publish the items.
 			try
@@ -131,15 +133,14 @@ class TjfieldsControllerFields extends AdminController
 
 				// Generate xml here
 				$TjfieldsHelper = new TjfieldsHelper;
-				$client_form = explode('.', $client);
-				$client_type = $client_form[1];
+				$client_form    = explode('.', $client);
+				$client_type    = $client_form[1];
 
 				$data = array();
 				$data['client'] = $client;
 				$data['client_type'] = $client_type;
 				$TjfieldsHelper->generateXml($data);
 
-				// End xml
 				$this->setMessage(Text::plural($ntext, count($cid)));
 			}
 			catch (Exception $e)
@@ -162,13 +163,14 @@ class TjfieldsControllerFields extends AdminController
 		Session::checkToken() or die(Text::_('JINVALID_TOKEN'));
 
 		// GET CLIENT AND CLIENT TYPE
-		$input = Factory::getApplication()->input;
-		$client = $input->get('client', '', 'STRING');
+		$app         = Factory::getApplication();
+		$input       = $app->input;
+		$client      = $input->get('client', '', 'STRING');
 		$client_form = explode('.', $client);
 		$client_type = $client_form[1];
 
 		// Get items to remove from the request.
-		$cid = Factory::getApplication()->input->get('cid', array(), 'array');
+		$cid = $app->input->get('cid', array(), 'array');
 
 		if (!is_array($cid) || count($cid) < 1)
 		{
@@ -180,8 +182,7 @@ class TjfieldsControllerFields extends AdminController
 			$model = $this->getModel('fields');
 
 			// Make sure the item ids are integers
-			jimport('joomla.utilities.arrayhelper');
-			JArrayHelper::toInteger($cid);
+			ArrayHelper::toInteger($cid);
 
 			// Remove the items.
 			if ($model->deletefield($cid))
@@ -189,12 +190,11 @@ class TjfieldsControllerFields extends AdminController
 				$model_field = $this->getModel('field');
 				$model_field->deleteFieldCategoriesMapping($cid);
 				$TjfieldsHelper = new TjfieldsHelper;
-				$data = array();
-				$data['client'] = $client;
+
+				$data                = array();
+				$data['client']      = $client;
 				$data['client_type'] = $client_type;
 				$TjfieldsHelper->generateXml($data);
-
-				// $this->setMessage(JText::plural($this->text_prefix . '_N_ITEMS_DELETED', count($cid)));
 				$ntext = $this->text_prefix . '_N_ITEMS_DELETED';
 			}
 			else

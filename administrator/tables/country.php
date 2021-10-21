@@ -9,12 +9,11 @@
 
 // No direct access
 defined('_JEXEC') or die();
-use Joomla\CMS\Table\Table;
-
-use Joomla\CMS\Factory;
-use Joomla\Registry\Registry;
 use Joomla\CMS\Access\Access;
+use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Table\Table;
+use Joomla\Registry\Registry;
 use Joomla\Utilities\ArrayHelper;
 /**
  * JTable class for Country.
@@ -28,7 +27,7 @@ class TjfieldsTablecountry extends Table
 	/**
 	 * Constructor
 	 *
-	 * @param   JDatabaseDriver  &$_db  Database connector object
+	 * @param   Joomla\Database\DatabaseDriver  &$_db  Database connector object
 	 *
 	 * @since 1.5
 	 */
@@ -145,6 +144,7 @@ class TjfieldsTablecountry extends Table
 		$query = $db->getQuery(true);
 		$query->select($db->qn('id'));
 		$query->select($db->qn('country_3_code'));
+		$query->from($db->qn('#__tj_country'));
 		$query->where($db->qn('country_3_code') . ' = ' . $db->quote($this->country_3_code));
 		$query->where($db->qn('id') . ' != ' . (int) $this->id);
 		$db->setQuery($query);

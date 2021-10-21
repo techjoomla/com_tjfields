@@ -9,11 +9,11 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\Form\FormRule;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Form\FormRule;
+use Joomla\CMS\Form\Rule\NumberRule;
 use Joomla\Registry\Registry;
 use Joomla\String\StringHelper;
-use Joomla\CMS\Form\Rule\NumberRule;
 
 /**
  * JFormRule for com_tjfields to make sure the email address is not blocked.

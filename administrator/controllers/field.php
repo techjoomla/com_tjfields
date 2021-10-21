@@ -9,12 +9,11 @@
 
 // No direct access
 defined('_JEXEC') or die;
-use Joomla\CMS\MVC\Controller\FormController;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\Controller\FormController;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
-jimport('joomla.application.component.controllerform');
 
 /**
  * Field controller class.
@@ -39,13 +38,14 @@ class TjfieldsControllerField extends FormController
 	 */
 	public function newsave()
 	{
-		$input = Factory::getApplication()->input;
-		$app = Factory::getApplication();
+		$app   = Factory::getApplication();
+		$input = $app->input;
 		$app->setUserState('com_tjfields.edit.field.data', "");
-		$data = $input->post->get('jform', '', 'ARRAY');
-		$model = $this->getModel('field');
-		$form = $model->getForm($data);
-		$data = $model->validate($form, $data);
+
+		$data   = $input->post->get('jform', '', 'ARRAY');
+		$model  = $this->getModel('field');
+		$form   = $model->getForm($data);
+		$data   = $model->validate($form, $data);
 		$result = $model->save($data);
 
 		if ($result)
@@ -54,7 +54,6 @@ class TjfieldsControllerField extends FormController
 			$link = Route::_(
 			'index.php?option=com_tjfields&view=field&layout=edit&client=' . $input->get('client', '', 'STRING'), false
 			);
-
 			$this->setRedirect($link, $msg);
 		}
 		else
@@ -80,7 +79,7 @@ class TjfieldsControllerField extends FormController
 	public function save($key = null, $urlVar = null)
 	{
 		$input = Factory::getApplication()->input;
-		$task = $input->get('task', '', 'STRING');
+		$task  = $input->get('task', '', 'STRING');
 
 		if ($task == 'apply' or $task == 'save2copy')
 		{
@@ -96,15 +95,15 @@ class TjfieldsControllerField extends FormController
 			return;
 		}
 
-		$data = $input->post->get('jform', '', 'ARRAY');
-		$model = $this->getModel('field');
-		$form = $model->getForm($data);
-		$data = $model->validate($form, $data);
+		$data   = $input->post->get('jform', '', 'ARRAY');
+		$model  = $this->getModel('field');
+		$form   = $model->getForm($data);
+		$data   = $model->validate($form, $data);
 		$result = $model->save($data);
 
 		if ($result)
 		{
-			$msg = Text::_('COMTJFILEDS_FIELD_CREATED_SUCCESSFULLY');
+			$msg  = Text::_('COMTJFILEDS_FIELD_CREATED_SUCCESSFULLY');
 			$link = Route::_('index.php?option=com_tjfields&view=fields&client=' . $input->get('client', '', 'STRING'), false
 			);
 
@@ -129,31 +128,29 @@ class TjfieldsControllerField extends FormController
 	public function apply()
 	{
 		$input = Factory::getApplication()->input;
-		$data = $input->post->get('jform', '', 'ARRAY');
+		$data  = $input->post->get('jform', '', 'ARRAY');
 		$model = $this->getModel('field');
-		$form = $model->getForm($data);
-		$data = $model->validate($form, $data);
+		$form  = $model->getForm($data);
+		$data  = $model->validate($form, $data);
 
 		$field_id = $model->save($data);
 
 		if ($field_id)
 		{
-			$msg = Text::_('COMTJFILEDS_FIELD_CREATED_SUCCESSFULLY');
+			$msg  = Text::_('COMTJFILEDS_FIELD_CREATED_SUCCESSFULLY');
 			$link = Route::_(
 			'index.php?option=com_tjfields&view=field&layout=edit&id=' . $field_id . '&client='
 			. $input->get('client', '', 'STRING'), false
 			);
-
 			$this->setRedirect($link, $msg);
 		}
 		else
 		{
-			$msg = Text::_('TJFIELDS_ERROR_MSG');
+			$msg  = Text::_('TJFIELDS_ERROR_MSG');
 			$link = Route::_(
 			'index.php?option=com_tjfields&view=field&layout=edit&id=' . $field_id . '&client='
 			. $input->get('client', '', 'STRING'), false
 			);
-
 			$this->setRedirect($link, $msg, 'error');
 		}
 	}

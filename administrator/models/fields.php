@@ -7,11 +7,9 @@
  * @license    GNU General Public License version 2 or later.
  */
 defined('_JEXEC') or die;
-use Joomla\CMS\MVC\Model\ListModel;
-use Joomla\CMS\Factory;
 use Joomla\CMS\Component\ComponentHelper;
-
-jimport('joomla.application.component.modellist');
+use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Model\ListModel;
 
 /**
  * Methods supporting a list of Tjfields records.
@@ -233,9 +231,13 @@ class TjfieldsModelFields extends ListModel
 				$query = "UPDATE  #__tjfields_fields SET state = $state where id=" . $id;
 				$db->setQuery($query);
 
-				if (!$db->execute())
+				try
 				{
-					$this->setError($this->_db->getErrorMsg());
+					$db->execute();
+				}
+				catch (\RuntimeException $e)
+				{
+					$this->setError($e->getMessage());
 
 					return false;
 				}
@@ -248,7 +250,7 @@ class TjfieldsModelFields extends ListModel
 	/**
 	 * Method to Delete Field.
 	 *
-	 * @param   Integer  $id  Id
+	 * @param   array  $id  Id
 	 *
 	 * @return  Boolean
 	 *
@@ -263,9 +265,13 @@ class TjfieldsModelFields extends ListModel
 			$query          = "DELETE FROM #__tjfields_fields where id IN (" . $group_to_delet . ")";
 			$db->setQuery($query);
 
-			if (!$db->execute())
+			try
 			{
-				$this->setError($this->_db->getErrorMsg());
+				$db->execute();
+			}
+			catch (\RuntimeException $e)
+			{
+				$this->setError($e->getMessage());
 
 				return false;
 			}
@@ -274,9 +280,13 @@ class TjfieldsModelFields extends ListModel
 			$query = "DELETE FROM #__tjfields_fields_value where field_id IN (" . $group_to_delet . ")";
 			$db->setQuery($query);
 
-			if (!$db->execute())
+			try
 			{
-				$this->setError($this->_db->getErrorMsg());
+				$db->execute();
+			}
+			catch (\RuntimeException $e)
+			{
+				$this->setError($e->getMessage());
 
 				return false;
 			}
@@ -285,9 +295,13 @@ class TjfieldsModelFields extends ListModel
 			$query = "DELETE FROM #__tjfields_options where field_id IN (" . $group_to_delet . ")";
 			$db->setQuery($query);
 
-			if (!$db->execute())
+			try
 			{
-				$this->setError($this->_db->getErrorMsg());
+				$db->execute();
+			}
+			catch (\RuntimeException $e)
+			{
+				$this->setError($e->getMessage());
 
 				return false;
 			}
@@ -298,9 +312,13 @@ class TjfieldsModelFields extends ListModel
 			$query = "DELETE FROM #__tjfields_fields where id =" . $id[0];
 			$db->setQuery($query);
 
-			if (!$db->execute())
+			try
 			{
-				$this->setError($this->_db->getErrorMsg());
+				$db->execute();
+			}
+			catch (\RuntimeException $e)
+			{
+				$this->setError($e->getMessage());
 
 				return false;
 			}
@@ -309,9 +327,13 @@ class TjfieldsModelFields extends ListModel
 			$query = "DELETE FROM #__tjfields_fields_value where field_id =" . $id[0];
 			$db->setQuery($query);
 
-			if (!$db->execute())
+			try
 			{
-				$this->setError($this->_db->getErrorMsg());
+				$db->execute();
+			}
+			catch (\RuntimeException $e)
+			{
+				$this->setError($e->getMessage());
 
 				return false;
 			}
@@ -320,9 +342,13 @@ class TjfieldsModelFields extends ListModel
 			$query = "DELETE FROM #__tjfields_options where field_id =" . $id[0];
 			$db->setQuery($query);
 
-			if (!$db->execute())
+			try
 			{
-				$this->setError($this->_db->getErrorMsg());
+				$db->execute();
+			}
+			catch (\RuntimeException $e)
+			{
+				$this->setError($e->getMessage());
 
 				return false;
 			}

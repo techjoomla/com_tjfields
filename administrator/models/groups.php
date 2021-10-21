@@ -8,11 +8,9 @@
  */
 
 defined('_JEXEC') or die;
-use Joomla\CMS\MVC\Model\ListModel;
-use Joomla\CMS\Factory;
 use Joomla\CMS\Component\ComponentHelper;
-
-jimport('joomla.application.component.modellist');
+use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Model\ListModel;
 
 /**
  * Methods supporting a list of Tjfields records.
@@ -117,9 +115,8 @@ class TjfieldsModelGroups extends ListModel
 	protected function getListQuery()
 	{
 		// Create a new query object.
-		$db = $this->getDbo();
+		$db    = $this->getDbo();
 		$query = $db->getQuery(true);
-
 		$input = Factory::getApplication()->input;
 
 		// Select the required fields from the table.
@@ -175,7 +172,7 @@ class TjfieldsModelGroups extends ListModel
 		}
 
 		// Add the list ordering clause.
-		$orderCol = $this->state->get('list.ordering');
+		$orderCol  = $this->state->get('list.ordering');
 		$orderDirn = $this->state->get('list.direction');
 
 		if ($orderCol && $orderDirn)
@@ -212,8 +209,6 @@ class TjfieldsModelGroups extends ListModel
 	 */
 	public function setItemState($items, $state)
 	{
-		$db = Factory::getDBO();
-
 		if (is_array($items))
 		{
 			foreach ($items as $id)
@@ -222,9 +217,13 @@ class TjfieldsModelGroups extends ListModel
 				$query = "UPDATE  #__tjfields_groups SET state = $state where id=" . $id;
 				$db->setQuery($query);
 
-				if (!$db->execute())
+				try
 				{
-					$this->setError($this->_db->getErrorMsg());
+					$db->execute();
+				}
+				catch (\RuntimeException $e)
+				{
+					$this->setError($e->getMessage());
 
 					return false;
 				}
@@ -237,7 +236,7 @@ class TjfieldsModelGroups extends ListModel
 	/**
 	 * Build an SQL query to load the list data.
 	 *
-	 * @param   INT  $id  id.
+	 * @param   array  $id  id.
 	 *
 	 * @return	JDatabaseQuery
 	 *
@@ -248,29 +247,37 @@ class TjfieldsModelGroups extends ListModel
 		if (count($id) > 1)
 		{
 			$group_to_delet = implode(',', $id);
-			$db = Factory::getDBO();
+			$db    = Factory::getDBO();
 			$query = "DELETE FROM #__tjfields_groups where id IN (" . $group_to_delet . ")";
 			$db->setQuery($query);
 
-			if (!$db->execute())
+			try
 			{
-				$this->setError($this->_db->getErrorMsg());
+				$db->execute();
+			}
+			catch (\RuntimeException $e)
+			{
+				$this->setError($e->getMessage());
 
 				return false;
 			}
 		}
 		else
 		{
-				$db = Factory::getDBO();
-				$query = "DELETE FROM #__tjfields_groups where id =" . $id[0];
-				$db->setQuery($query);
+			$db = Factory::getDBO();
+			$query = "DELETE FROM #__tjfields_groups where id =" . $id[0];
+			$db->setQuery($query);
 
-				if (!$db->execute())
-				{
-					$this->setError($this->_db->getErrorMsg());
+			try
+			{
+				$db->execute();
+			}
+			catch (\RuntimeException $e)
+			{
+				$this->setError($e->getMessage());
 
-					return false;
-				}
+				return false;
+			}
 		}
 
 		return true;

@@ -9,13 +9,11 @@
 
 // No direct access
 defined('_JEXEC') or die();
+use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\AdminModel;
 use Joomla\CMS\Table\Table;
-use Joomla\CMS\Factory;
-use Joomla\CMS\Component\ComponentHelper;
-use Joomla\CMS\Language\Text;
-
-jimport('joomla.application.component.modeladmin');
 
 /**
  * Item Model for an Region.
@@ -58,9 +56,6 @@ class TjfieldsModelRegion extends AdminModel
 	 */
 	public function getForm($data = array(), $loadData = true)
 	{
-		// Initialise variables.
-		$app = Factory::getApplication();
-
 		// Get the form.
 		$form = $this->loadForm('com_tjfields.region', 'region', array('control' => 'jform', 'load_data' => $loadData));
 
@@ -120,8 +115,6 @@ class TjfieldsModelRegion extends AdminModel
 	 */
 	protected function prepareTable($table)
 	{
-		jimport('joomla.filter.output');
-
 		if (empty($table->id))
 		{
 			// Set ordering to the last item if not set
@@ -147,12 +140,9 @@ class TjfieldsModelRegion extends AdminModel
 
 	public function save($data)
 	{
-		$com_params = ComponentHelper::getParams('com_tjfields');
-		$id = (!empty($data['id'])) ? $data['id'] : (int) $this->getState('region.id');
+		$id    = (!empty($data['id'])) ? $data['id'] : (int) $this->getState('region.id');
 		$state = (!empty($data['com_tjfields'])) ? 1 : 0;
-
-		$user = Factory::getUser();
-		$app = Factory::getApplication();
+		$user  = Factory::getUser();
 
 		if ($id)
 		{
@@ -179,7 +169,8 @@ class TjfieldsModelRegion extends AdminModel
 
 		if ($authorised !== true)
 		{
-			JError::raiseError(403, Text::_('JERROR_ALERTNOAUTHOR'));
+			$app = Factory::getApplication();
+			$app->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'error');
 
 			return false;
 		}

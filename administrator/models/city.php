@@ -9,13 +9,11 @@
 
 // No direct access
 defined('_JEXEC') or die();
+use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\AdminModel;
 use Joomla\CMS\Table\Table;
-use Joomla\CMS\Factory;
-use Joomla\CMS\Component\ComponentHelper;
-use Joomla\CMS\Language\Text;
-
-jimport('joomla.application.component.modeladmin');
 
 /**
  * Item Model for an City.
@@ -120,8 +118,6 @@ class TjfieldsModelCity extends AdminModel
 	 */
 	protected function prepareTable($table)
 	{
-		jimport('joomla.filter.output');
-
 		if (empty($table->id))
 		{
 			// Set ordering to the last item if not set
@@ -147,12 +143,10 @@ class TjfieldsModelCity extends AdminModel
 
 	public function save($data)
 	{
-		$com_params = ComponentHelper::getParams('com_tjfields');
-		$id = (!empty($data['id'])) ? $data['id'] : (int) $this->getState('city.id');
+		$id    = (!empty($data['id'])) ? $data['id'] : (int) $this->getState('city.id');
 		$state = (!empty($data['com_tjfields'])) ? 1 : 0;
-
-		$user = Factory::getUser();
-		$app = Factory::getApplication();
+		$user  = Factory::getUser();
+		$app   = Factory::getApplication();
 
 		if ($id)
 		{
@@ -179,7 +173,7 @@ class TjfieldsModelCity extends AdminModel
 
 		if ($authorised !== true)
 		{
-			JError::raiseError(403, Text::_('JERROR_ALERTNOAUTHOR'));
+			$app->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'error');
 
 			return false;
 		}
@@ -259,49 +253,21 @@ class TjfieldsModelCity extends AdminModel
 			set_time_limit ('300');
 		}
 
-		$db = Factory::getDBO();
-
-		/*$query = "SELECT c.id, c.country_code
-		 FROM #__tj_country AS c
-		ORDER BY c.country";
-		$db->setQuery($query);
-		$countries = $db->loadObjectList();
-
-		foreach ($countries as $c)
-		{
-			echo $c->country_code  . ' - ';
-
-			echo $query = "UPDATE #__tj_city3 AS ct
-			SET country_id = " . $c->id . "
-		    WHERE ct.country_code = '" . $c->country_code . "'";
-
-			echo ' <br/> ';
-
-			$db->setQuery($query);
-			$db->query();
-		}*/
-
+		$db    = Factory::getDBO();
 		$query = "SELECT ct.*
 		 FROM #__tj_city3 AS ct";
 		$db->setQuery($query);
-
 		$cities = $db->loadObjectList();
 
 		foreach ($cities as $ct)
 		{
-			//echo $ct->city  . ' - ';
-
-			//echo
 			$query = 'INSERT INTO `#__tj_city4`
 			(`id`, `city_id`, `city`, `country_id`, `region_id`)
 			VALUES
 			( ' . $ct->city_id . ', ' . $ct->city_id . ', ' . $db->quote($ct->city) . ', ' . $ct->country_id . ', ' . $ct->region_id . ')';
 
-			//echo ' <br/> ';
-
 			$db->setQuery($query);
-			$db->query();
+			$db->execute();
 		}
-
 	}
 }

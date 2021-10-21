@@ -9,16 +9,15 @@
 
 // No direct access.
 defined('_JEXEC') or die;
-use Joomla\CMS\MVC\Model\AdminModel;
-use Joomla\CMS\Table\Table;
-use Joomla\CMS\Form\Form;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Language\Text;
-jimport('joomla.application.component.modeladmin');
-
-use Joomla\Registry\Registry;
 use Joomla\CMS\Filesystem\File;
 use Joomla\CMS\Filesystem\Folder;
+use Joomla\CMS\Form\Form;
+use Joomla\CMS\Form\FormHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\Model\AdminModel;
+use Joomla\CMS\Table\Table;
+use Joomla\Registry\Registry;
 
 /**
  * Tjfields model.
@@ -169,7 +168,7 @@ class TjfieldsModelField extends AdminModel
 	/**
 	 * Method Prepare and sanitise the table prior to saving.
 	 *
-	 * @param   Array  $table  table
+	 * @param   Object  $table  table
 	 *
 	 * @return  void
 	 *
@@ -177,8 +176,6 @@ class TjfieldsModelField extends AdminModel
 	 */
 	protected function prepareTable($table)
 	{
-		jimport('joomla.filter.output');
-
 		if (empty($table->id))
 		{
 			// Set ordering to the last item if not set
