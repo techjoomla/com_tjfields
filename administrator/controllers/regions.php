@@ -9,12 +9,11 @@
 
 // No direct access.
 defined('_JEXEC') or die();
-use Joomla\CMS\MVC\Controller\AdminController;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Log\Log;
-
-jimport('joomla.application.component.controlleradmin');
+use Joomla\CMS\MVC\Controller\AdminController;
+use Joomla\Utilities\ArrayHelper;
 
 /**
  * Regions list controller class.
@@ -53,14 +52,14 @@ class TjfieldsControllerRegions extends AdminController
 	public function publish()
 	{
 		$client = Factory::getApplication()->input->get('client', '', 'STRING');
-		$cid = Factory::getApplication()->input->get('cid', array(), 'array');
-		$data = array(
+		$cid    = Factory::getApplication()->input->get('cid', array(), 'array');
+		$data   = array(
 			'publish' => 1,
 			'unpublish' => 0
 		);
 
-		$task = $this->getTask();
-		$value = JArrayHelper::getValue($data, $task, 0, 'int');
+		$task  = $this->getTask();
+		$value = ArrayHelper::getValue($data, $task, 0, 'int');
 
 		// Get some variables from the request
 		if (empty($cid))
@@ -73,7 +72,7 @@ class TjfieldsControllerRegions extends AdminController
 			$model = $this->getModel();
 
 			// Make sure the item ids are integers
-			JArrayHelper::toInteger($cid);
+			ArrayHelper::toInteger($cid);
 
 			// Publish the items.
 			try

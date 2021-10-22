@@ -9,13 +9,11 @@
 
 // No direct access
 defined('_JEXEC') or die();
+use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\AdminModel;
 use Joomla\CMS\Table\Table;
-use Joomla\CMS\Factory;
-use Joomla\CMS\Component\ComponentHelper;
-use Joomla\CMS\Language\Text;
-
-jimport('joomla.application.component.modeladmin');
 
 /**
  * Item Model for Country.
@@ -120,8 +118,6 @@ class TjfieldsModelCountry extends AdminModel
 	 */
 	protected function prepareTable($table)
 	{
-		jimport('joomla.filter.output');
-
 		if (empty($table->id))
 		{
 			// Set ordering to the last item if not set
@@ -178,7 +174,7 @@ class TjfieldsModelCountry extends AdminModel
 
 		if ($authorised !== true)
 		{
-			JError::raiseError(403, Text::_('JERROR_ALERTNOAUTHOR'));
+			$app->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'error');
 
 			return false;
 		}

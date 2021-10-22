@@ -9,10 +9,8 @@
 
 // No direct access
 defined('_JEXEC') or die();
-use Joomla\CMS\MVC\Controller\FormController;
 use Joomla\CMS\Factory;
-
-jimport('joomla.application.component.controllerform');
+use Joomla\CMS\MVC\Controller\FormController;
 
 /**
  * Region form controller class.

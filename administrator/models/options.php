@@ -9,8 +9,6 @@
 defined('_JEXEC') or die;
 use Joomla\CMS\MVC\Model\ListModel;
 
-jimport('joomla.application.component.modellist');
-
 /**
  * Methods supporting a list of Tjfields option records.
  *

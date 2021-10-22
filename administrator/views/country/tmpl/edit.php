@@ -28,7 +28,7 @@ HTMLHelper::_('behavior.keepalive');
 		}
 		else
 		{
-			if (task != 'country.cancel' && document.formvalidator.isValid(document.id('country-form')))
+			if (task != 'country.cancel' && document.formvalidator.isValid(document.getElementById('country-form')))
 			{
 				Joomla.submitform(task, document.getElementById('country-form'));
 			}

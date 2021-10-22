@@ -43,7 +43,7 @@ TjfieldsHelper::getLanguageConstant();
 		}
 		else
 		{
-			if (task != 'group.cancel' && document.formvalidator.isValid(document.id('group-form')))
+			if (task != 'group.cancel' && document.formvalidator.isValid(document.getElementById('group-form')))
 			{
 				if (techjoomla.jQuery('#jform_name').val().trim() == '')
 				{

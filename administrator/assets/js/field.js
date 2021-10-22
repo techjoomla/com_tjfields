@@ -118,7 +118,7 @@ Joomla.submitbutton = function(task)
 	}
 	else
 	{
-		if (task != 'field.cancel' && document.formvalidator.isValid(document.id('field-form')))
+		if (task != 'field.cancel' && document.formvalidator.isValid(document.getElementById('field-form')))
 		{
 			var isrequired = techjoomla.jQuery('input[name="jform[required]"]:checked', '#field-form').val();
 			var field_type = techjoomla.jQuery('#jform_type').val();
