@@ -9,8 +9,11 @@
 
 // No direct access
 defined('_JEXEC') or die;
-use Joomla\CMS\Table\Table;
+
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Table\Table;
+use Joomla\Database\DatabaseDriver;
+use Joomla\Utilities\ArrayHelper;
 
 /**
  * Field Table class
@@ -22,9 +25,9 @@ class TjfieldsTablefield extends Table
 	/**
 	 * Constructor
 	 *
-	 * @param   JDatabase  &$db  A database connector object
+	 * @param   Joomla\Database\DatabaseDriver  $db  A database connector object
 	 */
-	public function __construct(&$db)
+	public function __construct(DatabaseDriver $db)
 	{
 		parent::__construct('#__tjfields_fields', 'id', $db);
 	}
@@ -91,7 +94,7 @@ class TjfieldsTablefield extends Table
 		$k = $this->_tbl_key;
 
 		// Sanitize input.
-		JArrayHelper::toInteger($pks);
+		ArrayHelper::toInteger($pks);
 		$userId = (int) $userId;
 		$state = (int) $state;
 
@@ -126,12 +129,13 @@ class TjfieldsTablefield extends Table
 
 		// Update the publishing state for rows with the given primary keys.
 		$this->_db->setQuery(
-				'UPDATE `' . $this->_tbl . '`' .
-				' SET `state` = ' . (int) $state .
-				' WHERE (' . $where . ')' .
-				$checkin
+			'UPDATE `' . $this->_tbl . '`' .
+			' SET `state` = ' . (int) $state .
+			' WHERE (' . $where . ')' .
+			$checkin
 		);
-		$this->_db->query();
+
+		$this->_db->execute();
 
 		// Check for a database error.
 		if ($this->_db->getErrorNum())

@@ -321,14 +321,21 @@ class TjfieldsModelField extends AdminModel
 
 		// Remove extra value which are not needed to save in the fields table
 		$TjfieldsHelper = new TjfieldsHelper;
-		$data['params']['accept'] = preg_replace('/\s+/', '', $data['params']['accept']);
 
-		// Rename the .htaccess file if the file renderer is changed to preview
-		$htaccessFile = $data['params']['uploadpath'] . '/' . $this->htaccess;
-
-		if ($data['params']['renderer'] == 'preview')
+		if (array_key_exists("accept",$data['params']))
 		{
-			if (File::exists($htaccessFile))
+		    $data['params']['accept'] = preg_replace('/\s+/', '', $data['params']['accept']);
+		}
+
+		if (array_key_exists("uploadpath", $data['params']))
+		{
+		    // Rename the .htaccess file if the file renderer is changed to preview
+		    $htaccessFile = $data['params']['uploadpath'] . '/' . $this->htaccess;
+		}
+		
+		if (array_key_exists("renderer", $data['params']) && $data['params']['renderer'] == 'preview')
+		{
+			if (!empty($htaccessFile) && File::exists($htaccessFile))
 			{
 				// Rename the .htaccess file if the renderer is preview
 				File::move($htaccessFile, $htaccessFile . '.txt');
@@ -336,7 +343,7 @@ class TjfieldsModelField extends AdminModel
 		}
 		else
 		{
-			if (!File::exists($htaccessFile))
+			if (!empty($htaccessFile) &&  !File::exists($htaccessFile))
 			{
 				Folder::create(dirname($htaccessFile));
 				File::write($htaccessFile, $this->htaccessFileContent);
@@ -344,6 +351,7 @@ class TjfieldsModelField extends AdminModel
 		}
 
 		$data['params'] = json_encode($data['params']);
+		$data['js_function'] = '';
 
 		if ($table->save($data) === true)
 		{

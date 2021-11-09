@@ -22,8 +22,8 @@ $categoryId = (int) $field->value;
 if ($categoryId)
 {
 	$db = Factory::getApplication();
-	Table::addIncludePath(JPATH_ROOT . '/administrator/components/com_category/tables');
-	$categoryTable = Table::getInstance('Category', 'Table', array('dbo', $db));
+	Table::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_categories/tables');
+	$categoryTable = Table::getInstance('Category', 'JTable');
 	$categoryTable->load($categoryId);
 
 	echo htmlspecialchars($categoryTable->title, ENT_COMPAT, 'UTF-8');

@@ -57,9 +57,6 @@ class TjfieldsModelGroup extends AdminModel
 	 */
 	public function getForm($data = array(), $loadData = true)
 	{
-		// Initialise variables.
-		$app	= Factory::getApplication();
-
 		// Get the form.
 		$form = $this->loadForm('com_tjfields.group', 'group', array('control' => 'jform', 'load_data' => $loadData));
 

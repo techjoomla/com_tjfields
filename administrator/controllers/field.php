@@ -132,7 +132,6 @@ class TjfieldsControllerField extends FormController
 		$model = $this->getModel('field');
 		$form  = $model->getForm($data);
 		$data  = $model->validate($form, $data);
-
 		$field_id = $model->save($data);
 
 		if ($field_id)
