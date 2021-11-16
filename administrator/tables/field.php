@@ -27,7 +27,7 @@ class TjfieldsTablefield extends Table
 	 *
 	 * @param   Joomla\Database\DatabaseDriver  $db  A database connector object
 	 */
-	public function __construct(DatabaseDriver $db)
+	public function __construct($db)
 	{
 		parent::__construct('#__tjfields_fields', 'id', $db);
 	}
