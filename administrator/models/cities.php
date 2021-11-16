@@ -68,7 +68,7 @@ class TjfieldsModelCities extends ListModel
 		$app = Factory::getApplication('administrator');
 
 		// Set ordering.
-		$orderCol = $app->getUserStateFromRequest($this->context . '.filter_order', 'filter_order');
+		$orderCol = $this->getUserStateFromRequest($this->context . '.filter_order', 'filter_order');
 
 		if (!in_array($orderCol, $this->filter_fields))
 		{
@@ -78,7 +78,7 @@ class TjfieldsModelCities extends ListModel
 		$this->setState('list.ordering', $orderCol);
 
 		// Set ordering direction.
-		$listOrder = $app->getUserStateFromRequest($this->context . 'filter_order_Dir', 'filter_order_Dir');
+		$listOrder = $this->getUserStateFromRequest($this->context . 'filter_order_Dir', 'filter_order_Dir');
 
 		if (!in_array(strtoupper($listOrder), array('ASC', 'DESC', '')))
 		{
@@ -86,19 +86,19 @@ class TjfieldsModelCities extends ListModel
 		}
 
 		// Load the filter search
-		$search = $app->getUserStateFromRequest($this->context . 'filter.search', 'filter_search');
+		$search = $this->getUserStateFromRequest($this->context . 'filter.search', 'filter_search');
 		$this->setState('filter.search', $search);
 
 		// Load the filter state
-		$published = $app->getUserStateFromRequest($this->context . 'filter.state', 'filter_state', '', 'string');
+		$published = $this->getUserStateFromRequest($this->context . 'filter.state', 'filter_state', '', 'string');
 		$this->setState('filter.state', $published);
 
 		// Load the filter country
-		$country = $app->getUserStateFromRequest($this->context . 'filter.country', 'filter_country', '', 'string');
+		$country = $this->getUserStateFromRequest($this->context . 'filter.country', 'filter_country', '', 'string');
 		$this->setState('filter.country', $country);
 
 		// Load the filter country
-		$region = $app->getUserStateFromRequest($this->context . 'filter.region', 'filter_region', '', 'string');
+		$region = $this->getUserStateFromRequest($this->context . 'filter.region', 'filter_region', '', 'string');
 		$this->setState('filter.region', $region);
 
 		// Load the parameters.

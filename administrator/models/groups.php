@@ -69,10 +69,10 @@ class TjfieldsModelGroups extends ListModel
 		$app = Factory::getApplication('administrator');
 
 		// Load the filter state.
-		$search = $app->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
+		$search = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
 		$this->setState('filter.search', $search);
 
-		$published = $app->getUserStateFromRequest($this->context . '.filter.state', 'filter_published', '', 'string');
+		$published = $this->getUserStateFromRequest($this->context . '.filter.state', 'filter_published', '', 'string');
 		$this->setState('filter.state', $published);
 
 		// Load the parameters.
@@ -120,11 +120,7 @@ class TjfieldsModelGroups extends ListModel
 		$input = Factory::getApplication()->input;
 
 		// Select the required fields from the table.
-		$query->select(
-				$this->getState(
-						'list.select', 'a.*'
-				)
-		);
+		$query->select($this->getState('list.select', 'a.*'));
 		$query->from('`#__tjfields_groups` AS a');
 
 		// Join over the user field 'created_by'

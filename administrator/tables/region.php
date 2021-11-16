@@ -9,12 +9,12 @@
 
 // No direct access
 defined('_JEXEC') or die();
-use Joomla\CMS\Table\Table;
+use Joomla\CMS\Access\Access;
 
 use Joomla\CMS\Factory;
-use Joomla\Registry\Registry;
-use Joomla\CMS\Access\Access;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Table\Table;
+use Joomla\Registry\Registry;
 use Joomla\Utilities\ArrayHelper;
 
 /**

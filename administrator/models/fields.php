@@ -55,7 +55,7 @@ class TjfieldsModelFields extends ListModel
 	 * @param   Integer  $ordering   Ordering
 	 * @param   Integer  $direction  Direction
 	 *
-	 * @return  String
+	 * @return   Countable|array
 	 *
 	 * @since  1.6
 	 */
@@ -73,14 +73,14 @@ class TjfieldsModelFields extends ListModel
 		}
 
 		// Load the filter state.
-		$search = $app->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
+		$search = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
 		$this->setState('filter.search', $search);
 
-		$published = $app->getUserStateFromRequest($this->context . '.filter.state', 'filter_published', '', 'string');
+		$published = $this->getUserStateFromRequest($this->context . '.filter.state', 'filter_published', '', 'string');
 		$this->setState('filter.state', $published);
 
 		// Filtering field_type
-		$this->setState('filter.type', $app->getUserStateFromRequest($this->context . '.filter.type', 'filter_field_type', '', 'string'));
+		$this->setState('filter.type', $this->getUserStateFromRequest($this->context . '.filter.type', 'filter_field_type', '', 'string'));
 
 		// Load the parameters.
 		$params = ComponentHelper::getParams('com_tjfields');

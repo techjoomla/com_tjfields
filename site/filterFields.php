@@ -10,15 +10,12 @@
 // No direct access
 defined('_JEXEC') or die();
 use Joomla\CMS\Factory;
-use Joomla\CMS\Table\Table;
-use Joomla\CMS\MVC\Model\BaseDatabaseModel;
-use Joomla\CMS\Language\Text;
-
 use Joomla\CMS\Filesystem\File;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\CMS\Table\Table;
 
 jimport('joomla.application.component.modellist');
-jimport('joomla.filesystem.file');
-jimport('joomla.database.table');
 
 $lang = Factory::getLanguage();
 $lang->load('com_tjfields', JPATH_SITE);
@@ -95,7 +92,7 @@ trait TjfieldsFilterField
 			$path = JPATH_SITE . '/components/' . $data['clientComponent'] . '/models/forms/' . $data['view'] . 'form_extra.xml';
 
 			// If category XML esists then add global fields XML in current JForm object else create new object of Global Fields
-			if (!empty($form))
+			if (!empty((array) $form))
 			{
 				if (File::exists($path))
 				{
