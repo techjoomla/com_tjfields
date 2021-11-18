@@ -10,6 +10,8 @@
 */
 
 defined('JPATH_BASE') or die;
+
+use Joomla\CMS\Factory;
 use Joomla\CMS\Form\FormField;
 use Joomla\CMS\Language\Text;
 
@@ -41,10 +43,10 @@ class JFormFieldJsfunction extends FormField
 			$j=0;
 			$html='';
 
-			$html.='
-			<script>var js_lenght='.$countjs.'
-				var tjfield_icon_minus = "icon-minus-2 ";
-			</script>';
+			Factory::getDocument()->addScriptDeclaration("
+				var js_lenght = '" . $countjs ."';
+				var tjfield_icon_minus = 'icon-minus-2 ';
+			");
 
 			$html.='<div class="techjoomla-bootstrap">
 				<div id="tjfield_js_container" class="tjfield_js_container" >';
