@@ -173,6 +173,8 @@ class JFormFieldTjList extends JFormFieldList
 					jQuery(document).ready(function() {
 						jQuery("select[name=\"' . $this->name . '\"] option[value=\"' . Text::_('COM_TJFIELDS_TJLIST_OTHER_OPTION_VALUE') . '\"]")
 						.prop("selected", true).trigger("liszt:updated");
+						jQuery("select[name=\"' . $this->name . '\"] option[value=\"' . Text::_('COM_TJFIELDS_TJLIST_OTHER_OPTION_VALUE') . '\"]")
+						.prop("selected", true).trigger("chosen:updated");
 					});
 				');
 			}
