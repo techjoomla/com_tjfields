@@ -44,6 +44,7 @@ else
 	if (JVERSION < '4.0.0')
 	{
 		HTMLHelper::_('behavior.tabstate');
+		HTMLHelper::_('formbehavior.chosen', 'select');
 	}
 
 	// Other
@@ -52,14 +53,6 @@ else
 	// Bootstrap tooltip and chosen js
 	HTMLHelper::_('bootstrap.tooltip');
 	HTMLHelper::_('behavior.multiselect');
-	HTMLHelper::_('formbehavior.chosen', 'select');
-}
-
-// Load techjoomla strapper
-if (file_exists(JPATH_ROOT . '/media/techjoomla_strapper/tjstrapper.php'))
-{
-	require_once JPATH_ROOT . '/media/techjoomla_strapper/tjstrapper.php';
-	TjStrapper::loadTjAssets('com_tjfields');
 }
 
 $document = Factory::getDocument();

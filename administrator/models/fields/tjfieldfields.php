@@ -105,8 +105,10 @@ class JFormFieldtjfieldfields extends JFormFieldList
 
 		$onchange = ($view == 'field') ? "show_option_div(this.value);" : "this.form.submit();";
 
+		$class = (JVERSION < '4.0.0') ? '' : 'form-select';
+
 		return HTMLHelper::_('select.genericlist', $options, $this->name,
-		'class="required" onchange="' . $onchange . '"', 'value', 'text', $this->value, 'jform_type'
+			'class="required ' . $class . '" onchange="' . $onchange . '"', 'value', 'text', $this->value, 'jform_type'
 		);
 	}
 }

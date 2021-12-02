@@ -95,11 +95,23 @@ class JFormFieldJsfunction extends FormField
 						title='.Text::_("COM_TJFIELDS_ADD_BUTTON").'>
 							<i class="'.$this->tjfield_icon_plus.'"></i>
 						</button>
-					</div>
-					<div style="clear:both"></div>
-					<span class="span9 alert alert-info alert-help-inline">
-							'.Text::_("COM_TJFIELDS_JS_NOTE").'
-					</span>';
+					</div>';
+
+			if (JVERSION < '4.0.0')
+			{
+				$html.= '<div style="clear:both"></div>
+				<span class="span9 alert alert-info alert-help-inline">
+						'.Text::_("COM_TJFIELDS_JS_NOTE").'
+				</span>';
+			}
+			else
+			{
+				$html.= '<div class="control-label">&nbsp;</div>
+				<div class="controls alert alert-info alert-help-inline">
+						'.Text::_("COM_TJFIELDS_JS_NOTE").'
+				</div>';
+			}
+
 		$html.= '</div>
 
 			</div>';//bootstrap div

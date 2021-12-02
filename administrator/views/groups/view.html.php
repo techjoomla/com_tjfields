@@ -55,6 +55,12 @@ class TjfieldsViewGroups extends HtmlView
 		TjfieldsHelper::addSubmenu('groups');
 		$this->addToolbar();
 
+		$this->publish_states = array(
+			'' => Text::_('JOPTION_SELECT_PUBLISHED'),
+			'1'  => Text::_('JPUBLISHED'),
+			'0'  => Text::_('JUNPUBLISHED')
+		);
+
 		if (JVERSION >= '3.0')
 		{
 			$this->sidebar = JHtmlSidebar::render();

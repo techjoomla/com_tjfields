@@ -73,7 +73,9 @@ class JFormFieldCustomfield extends JFormField
 			$options[] = HTMLHelper::_('select.option',$group->id, $group->name);
 		}
 
-		return HTMLHelper::_('select.genericlist',  $options, $name, 'class="inputbox required"', 'value', 'text', $value,'jform_group_id');
+		$class = (JVERSION < '4.0.0') ? '' : 'form-select';
+
+		return HTMLHelper::_('select.genericlist',  $options, $name, 'class="inputbox required ' . $class . '"', 'value', 'text', $value,'jform_group_id');
 	}
 
 	/**

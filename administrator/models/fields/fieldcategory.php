@@ -92,8 +92,10 @@ class JFormFieldFieldcategory extends JFormField
 			$disabled = 'disabled="true"';
 		}
 
+		$class = (JVERSION < '4.0.0') ? '' : 'form-select';
+
 		$html = HTMLHelper::_('select.genericlist', $options, $fieldName,
-		'class="inputbox "  multiple="multiple" size="5" ' . $disabled, 'value', 'text', $value, $control_name . $name
+		'class="inputbox ' . $class . '"  multiple="multiple" size="5" ' . $disabled, 'value', 'text', $value, $control_name . $name
 		);
 
 		return $html;
