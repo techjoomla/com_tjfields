@@ -10,6 +10,7 @@
 
 // No direct access
 defined('_JEXEC') or die;
+use Joomla\CMS\Table\Table;
 
 /**
  * Sections Table class
@@ -17,7 +18,7 @@ defined('_JEXEC') or die;
  * @since  1.4
  *
  */
-class TjfieldsTablefieldsvalue extends JTable
+class TjfieldsTablefieldsvalue extends Table
 {
 	/**
 	 * Constructor

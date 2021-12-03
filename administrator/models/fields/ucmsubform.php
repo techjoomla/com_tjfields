@@ -9,6 +9,8 @@
 
 defined('JPATH_PLATFORM') or die;
 
+use Joomla\CMS\Form\FormField;
+
 jimport('joomla.filesystem.path');
 
 JLoader::register('JFormFieldSubform', JPATH_SITE . '/libraries/joomla/form/fields/subform.php');

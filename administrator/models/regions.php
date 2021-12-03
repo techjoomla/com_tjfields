@@ -9,8 +9,9 @@
 
 // No direct access
 defined('_JEXEC') or die();
-
-jimport('joomla.application.component.modellist');
+use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Model\ListModel;
 
 /**
  * Methods supporting a list of regions records.
@@ -19,7 +20,7 @@ jimport('joomla.application.component.modellist');
  * @subpackage  com_tjfields
  * @since       2.2
  */
-class TjfieldsModelRegions extends JModelList
+class TjfieldsModelRegions extends ListModel
 {
 	/**
 	 * Constructor.
@@ -63,10 +64,10 @@ class TjfieldsModelRegions extends JModelList
 	protected function populateState($ordering = null, $direction = null)
 	{
 		// Initialise variables.
-		$app = JFactory::getApplication('administrator');
+		$app = Factory::getApplication('administrator');
 
 		// Set ordering.
-		$orderCol = $app->getUserStateFromRequest($this->context . '.filter_order', 'filter_order');
+		$orderCol = $this->getUserStateFromRequest($this->context . '.filter_order', 'filter_order');
 
 		if (!in_array($orderCol, $this->filter_fields))
 		{
@@ -76,7 +77,7 @@ class TjfieldsModelRegions extends JModelList
 		$this->setState('list.ordering', $orderCol);
 
 		// Set ordering direction.
-		$listOrder = $app->getUserStateFromRequest($this->context . 'filter_order_Dir', 'filter_order_Dir');
+		$listOrder = $this->getUserStateFromRequest($this->context . 'filter_order_Dir', 'filter_order_Dir');
 
 		if (!in_array(strtoupper($listOrder), array('ASC', 'DESC', '')))
 		{
@@ -84,19 +85,19 @@ class TjfieldsModelRegions extends JModelList
 		}
 
 		// Load the filter search
-		$search = $app->getUserStateFromRequest($this->context . 'filter.search', 'filter_search');
+		$search = $this->getUserStateFromRequest($this->context . 'filter.search', 'filter_search');
 		$this->setState('filter.search', $search);
 
 		// Load the filter state
-		$published = $app->getUserStateFromRequest($this->context . 'filter.state', 'filter_state', '', 'string');
+		$published = $this->getUserStateFromRequest($this->context . 'filter.state', 'filter_state', '', 'string');
 		$this->setState('filter.state', $published);
 
 		// Load the filter country
-		$country = $app->getUserStateFromRequest($this->context . 'filter.country', 'filter_country', '', 'string');
+		$country = $this->getUserStateFromRequest($this->context . 'filter.country', 'filter_country', '', 'string');
 		$this->setState('filter.country', $country);
 
 		// Load the parameters.
-		$params = JComponentHelper::getParams('com_tjfields');
+		$params = ComponentHelper::getParams('com_tjfields');
 		$this->setState('params', $params);
 
 		// List state information.
@@ -135,17 +136,12 @@ class TjfieldsModelRegions extends JModelList
 	protected function getListQuery()
 	{
 		// Create a new query object.
-		$db = $this->getDbo();
-		$query = $db->getQuery(true);
-		$client = JFactory::getApplication()->input->get('client', '', 'STRING');
+		$db     = $this->getDbo();
+		$query  = $db->getQuery(true);
+		$client = Factory::getApplication()->input->get('client', '', 'STRING');
 
 		// Select the required fields from the table.
-		$query->select(
-			$this->getState(
-				'list.select', 'a.*'
-			)
-		);
-
+		$query->select($this->getState('list.select', 'a.*'));
 		$query->from('`#__tj_region` AS a');
 		$query->select('a.' . $client .' AS state');
 		$query->select('c.country');
@@ -193,7 +189,7 @@ class TjfieldsModelRegions extends JModelList
 		}
 
 		// Add the list ordering clause.
-		$orderCol = $this->state->get('list.ordering');
+		$orderCol  = $this->state->get('list.ordering');
 		$orderDirn = $this->state->get('list.direction');
 
 		if ($orderCol && $orderDirn)

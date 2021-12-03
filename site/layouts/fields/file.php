@@ -10,7 +10,8 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 use Joomla\CMS\HTML\HTMLHelper;
-JHtml::_('behavior.modal');
+use Joomla\CMS\Table\Table;
+HTMLHelper::_('bootstrap.renderModal');
 
 if (!key_exists('field', $displayData) || !key_exists('fieldXml', $displayData))
 {
@@ -28,8 +29,8 @@ $renderer = ($xmlField['renderer'] instanceof SimpleXMLElement) ? $xmlField['ren
 
 if ($field->value)
 {
-	JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_tjfields/tables');
-	$fieldsValueTable = JTable::getInstance('Fieldsvalue', 'TjfieldsTable');
+	Table::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_tjfields/tables');
+	$fieldsValueTable = Table::getInstance('Fieldsvalue', 'TjfieldsTable');
 	$fieldsValueTable->load(array('value' => $field->value));
 
 	$extraParamArray = array();

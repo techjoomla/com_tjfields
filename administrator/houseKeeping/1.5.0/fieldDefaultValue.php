@@ -9,8 +9,9 @@
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
-
+use Joomla\CMS\Factory;
 use Joomla\CMS\Table\Table;
+
 
 /**
  * Migration file for TJ-Fields
@@ -36,7 +37,7 @@ class TjHouseKeepingFieldDefaultValue extends TjModelHouseKeeping
 
 		try
 		{
-			$db = JFactory::getDbo();
+			$db = Factory::getDbo();
 			JLoader::import('components.com_tjfields.tables.option', JPATH_ADMINISTRATOR);
 			$optionTable = Table::getInstance('Option', 'TjfieldsTable', array('dbo', $db));
 			$optionTableColumns = $optionTable->getFields();
@@ -60,7 +61,7 @@ class TjHouseKeepingFieldDefaultValue extends TjModelHouseKeeping
 			if (!empty($fieldOptions))
 			{
 				JLoader::import('components.com_tjfields.tables.field', JPATH_ADMINISTRATOR);
-				$fieldTable = JTable::getInstance('Field', 'TjfieldsTable', array('dbo', $db));
+				$fieldTable = Table::getInstance('Field', 'TjfieldsTable', array('dbo', $db));
 
 				foreach ($fieldOptions as $fieldOption)
 				{

@@ -9,11 +9,14 @@
 
 // No direct access
 defined('_JEXEC') or die();
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Router\Route;
 
 JHtml::addIncludePath(JPATH_COMPONENT . '/helpers/html');
 
-JHtml::_('behavior.formvalidation');
-JHtml::_('behavior.keepalive');
+HTMLHelper::_('behavior.formvalidator');
+HTMLHelper::_('behavior.keepalive');
 ?>
 
 <script type="text/javascript">
@@ -25,20 +28,20 @@ JHtml::_('behavior.keepalive');
 		}
 		else
 		{
-			if (task != 'country.cancel' && document.formvalidator.isValid(document.id('country-form')))
+			if (task != 'country.cancel' && document.formvalidator.isValid(document.getElementById('country-form')))
 			{
 				Joomla.submitform(task, document.getElementById('country-form'));
 			}
 			else
 			{
-				alert('<?php echo $this->escape(JText::_('JGLOBAL_VALIDATION_FORM_FAILED')); ?>');
+				alert('<?php echo $this->escape(Text::_('JGLOBAL_VALIDATION_FORM_FAILED')); ?>');
 			}
 		}
 	}
 </script>
 
 <div class="<?php echo TJFIELDS_WRAPPER_CLASS;?> tj-country">
-	<form action="<?php echo JRoute::_('index.php?option=com_tjfields&layout=edit&id=' . (int) $this->item->id . '&client=' . $this->input->get('client', '', 'STRING')); ?>"
+	<form action="<?php echo Route::_('index.php?option=com_tjfields&layout=edit&id=' . (int) $this->item->id . '&client=' . $this->input->get('client', '', 'STRING')); ?>"
 		  method="post" enctype="multipart/form-data" name="adminForm" id="country-form" class="form-validate">
 
 		<div class="form-horizontal">
@@ -74,7 +77,7 @@ JHtml::_('behavior.keepalive');
 									<div class="span12">
 										<p class="text text-warning">
 										<br/>
-										<?php echo JText::_('COM_TJFIELDS_FORM_DESC_COUNTRY_COUNTRY_JTEXT_HELP'); ?>
+										<?php echo Text::_('COM_TJFIELDS_FORM_DESC_COUNTRY_COUNTRY_JTEXT_HELP'); ?>
 										</p>
 									</div>
 								</div>
@@ -86,7 +89,7 @@ JHtml::_('behavior.keepalive');
 			</div>
 
 			<input type="hidden" name="task" value="" />
-			<?php echo JHtml::_('form.token'); ?>
+			<?php echo HTMLHelper::_('form.token'); ?>
 
 		</div>
 	</form>

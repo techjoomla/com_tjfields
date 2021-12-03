@@ -35,6 +35,7 @@ var relatedField = {
 					});
 
 					jQuery("#"+fieldsElementId).trigger("liszt:updated");
+					jQuery("#"+fieldsElementId).trigger("chosen:updated");
 				}
 			}
 		});

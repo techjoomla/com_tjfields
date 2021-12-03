@@ -8,6 +8,9 @@
 
 defined('JPATH_BASE') or die;
 
+use Joomla\CMS\Form\FormHelper;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\HTML\HTMLHelper;
@@ -60,8 +63,8 @@ class JFormFieldOwnerShip extends JFormFieldList
 		// If cluster field is not there in the form or if the ownership field is not cluster aware then show list of all users
 		if (!array_key_exists($clusterFieldId, $fields) || !$clusterAware)
 		{
-			JModelLegacy::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_users/models');
-			$userModel = JModelLegacy::getInstance('Users', 'UsersModel', array('ignore_request' => true));
+			BaseDatabaseModel::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_users/models');
+			$userModel = BaseDatabaseModel::getInstance('Users', 'UsersModel', array('ignore_request' => true));
 			$userModel->setState('filter.state', 0);
 			$allUsers = $userModel->getItems();
 
@@ -75,7 +78,7 @@ class JFormFieldOwnerShip extends JFormFieldList
 		}
 
 		$doc = Factory::getDocument();
-		$doc->addScript(JUri::root() . 'administrator/components/com_tjfields/assets/js/ownershipfield.js');
+		$doc->addScript(Uri::root() . 'administrator/components/com_tjfields/assets/js/ownershipfield.js');
 
 		$data = $this->getLayoutData();
 
@@ -108,7 +111,7 @@ class JFormFieldOwnerShip extends JFormFieldList
 			if (array_key_exists($clusterFieldId, $fields))
 			{
 				// Add script to initialise ownership field
-				$document = JFactory::getDocument();
+				$document = Factory::getDocument();
 				$document->addScriptDeclaration('jQuery(document).ready(function() {
 					var dataFields = {cluster_id: 0, user_id: 0};
 					ownership.setUsers(dataFields, "' . $clusterFieldId . '");

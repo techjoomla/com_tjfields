@@ -9,13 +9,14 @@
 
 // No direct access
 defined('_JEXEC') or die;
+use Joomla\CMS\Table\Table;
 
 /**
  * Field Table class
  *
  * @since  1.1
  */
-class TjfieldsTableOption extends JTable
+class TjfieldsTableOption extends Table
 {
 	/**
 	 * Constructor

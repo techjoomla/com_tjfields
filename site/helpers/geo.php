@@ -8,6 +8,8 @@
  */
 
 defined('_JEXEC') or die;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 
 /**
  * Class for Geo helper to get region and states
@@ -45,11 +47,11 @@ class TjGeoHelper
 		$this->name = $name;
 
 		// Load lang file for countries
-		$this->_tjlang = JFactory::getLanguage();
+		$this->_tjlang = Factory::getLanguage();
 		$this->_tjlang->load('tjgeo.countries', JPATH_SITE, null, false, true);
 		$this->_tjlang->load('tjgeo.regions', JPATH_SITE, null, false, true);
 		$this->_tjlang->load('tjgeo.cities', JPATH_SITE, null, false, true);
-		$this->_db = JFactory::getDbo();
+		$this->_db = Factory::getDbo();
 	}
 
 	/**
@@ -100,7 +102,7 @@ class TjGeoHelper
 		$this->_db->setQuery($query);
 		$country = $this->_db->loadObject();
 
-		$countryName = $this->getCountryJText($country->country_jtext);
+		$countryName = $this->getCountryText($country->country_jtext);
 
 		if ($countryName)
 		{
@@ -121,11 +123,11 @@ class TjGeoHelper
 	 *
 	 * @since   1.5
 	 */
-	public function getCountryJText($countryJtext)
+	public function getCountryText($countryJtext)
 	{
 		if ($this->_tjlang->hasKey(strtoupper($countryJtext)))
 		{
-			return JText::_($countryJtext, true);
+			return Text::_($countryJtext, true);
 		}
 		elseif ($countryJtext !== '')
 		{
@@ -161,7 +163,7 @@ class TjGeoHelper
 		{
 			if ($country['country_jtext'])
 			{
-				$jtext = $this->getCountryJText($country['country_jtext']);
+				$jtext = $this->getCountryText($country['country_jtext']);
 
 				if ($jtext)
 				{
@@ -186,7 +188,7 @@ class TjGeoHelper
 	 */
 	public function getRegionList($countryId, $component_nm = "", $orderingCol = "region")
 	{
-		$this->_db = JFactory::getDBO();
+		$this->_db = Factory::getDBO();
 		$query     = $this->_db->getQuery(true);
 		$query->select("id, region,region_jtext");
 		$query->from('#__tj_region');
@@ -206,7 +208,7 @@ class TjGeoHelper
 		{
 			if ($region['region_jtext'])
 			{
-				$jtext = $this->getRegionJText($region['region_jtext']);
+				$jtext = $this->getRegionText($region['region_jtext']);
 
 				if ($jtext)
 				{
@@ -269,7 +271,7 @@ class TjGeoHelper
 		$res = $this->_db->loadObject();
 
 		// Get jtext value.
-		$jtext = $this->getRegionJText($res->region_jtext);
+		$jtext = $this->getRegionText($res->region_jtext);
 
 		if ($jtext)
 		{
@@ -289,11 +291,11 @@ class TjGeoHelper
 	 * @since   1.1
 	 * @return   Region name;
 	 */
-	public function getRegionJText($jtext)
+	public function getRegionText($jtext)
 	{
 		if ($this->_tjlang->hasKey(strtoupper($jtext)))
 		{
-			return JText::_($jtext, true);
+			return Text::_($jtext, true);
 		}
 		elseif ($jtext !== '')
 		{
@@ -341,7 +343,7 @@ class TjGeoHelper
 
 			if (!empty($country->country_jtext))
 			{
-				$countryName = $this->getCountryJText($country->country_jtext);
+				$countryName = $this->getCountryText($country->country_jtext);
 			}
 			else
 			{
@@ -400,7 +402,7 @@ class TjGeoHelper
 
 			if (!empty($region->region_jtext))
 			{
-				$regionName = $this->getRegionJText($region->region_jtext);
+				$regionName = $this->getRegionText($region->region_jtext);
 			}
 			else
 			{
@@ -430,7 +432,7 @@ class TjGeoHelper
 	 */
 	public function getCityList($countryId, $component_nm = "", $orderingCol = "city")
 	{
-		$this->_db = JFactory::getDbo();
+		$this->_db = Factory::getDbo();
 		$query     = $this->_db->getQuery(true);
 		$query->select($this->_db->qn(array('id', 'city', 'city_jtext')));
 		$query->from($this->_db->qn('#__tj_city'));
@@ -449,7 +451,7 @@ class TjGeoHelper
 		{
 			if ($city['city_jtext'])
 			{
-				$jtext = $this->getCityJText($city['city_jtext']);
+				$jtext = $this->getCityText($city['city_jtext']);
 
 				if ($jtext)
 				{
@@ -470,11 +472,11 @@ class TjGeoHelper
 	 *
 	 * @return   city name;
 	 */
-	public function getCityJText($jtext)
+	public function getCityText($jtext)
 	{
 		if ($this->_tjlang->hasKey(strtoupper($jtext)))
 		{
-			return JText::_($jtext, true);
+			return Text::_($jtext, true);
 		}
 		elseif ($jtext !== '')
 		{

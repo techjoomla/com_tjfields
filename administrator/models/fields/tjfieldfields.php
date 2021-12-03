@@ -9,6 +9,10 @@
 
 defined('JPATH_PLATFORM') or die;
 
+use Joomla\CMS\Form\FormHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Factory;
 use Joomla\CMS\Component\ComponentHelper;
 
 jimport('joomla.html.html');
@@ -58,51 +62,53 @@ class JFormFieldtjfieldfields extends JFormFieldList
 		}
 
 		$options = array();
-		$options[] = JHtml::_('select.option', 'text', JText::_('COM_TJFIELDS_TEXT'));
-		$options[] = JHtml::_('select.option', 'radio', JText::_('COM_TJFIELDS_RADIO'));
-		$options[] = JHtml::_('select.option', 'checkbox', JText::_('COM_TJFIELDS_CHECKBOX'));
-		$options[] = JHtml::_('select.option', 'tjlist', JText::_('COM_TJFIELDS_TJLIST'));
-		$options[] = JHtml::_('select.option', 'single_select', JText::_('COM_TJFIELDS_SINGLE_SELECT'));
-		$options[] = JHtml::_('select.option', 'multi_select', JText::_('COM_TJFIELDS_MULTI_SELECT'));
-		$options[] = JHtml::_('select.option', 'sql', JText::_('COM_TJFIELDS_SQL'));
-		$options[] = JHtml::_('select.option', 'textarea', JText::_('COM_TJFIELDS_TEXTAREA'));
-		$options[] = JHtml::_('select.option', 'textareacounter', JText::_('COM_TJFIELDS_TEXTAREACOUNTER'));
-		$options[] = JHtml::_('select.option', 'calendar', JText::_('COM_TJFIELDS_CALENDAR'));
-		$options[] = JHtml::_('select.option', 'editor', JText::_('COM_TJFIELDS_EDITOR'));
-		$options[] = JHtml::_('select.option', 'email', JText::_('COM_TJFIELDS_EMAIL'));
-		$options[] = JHtml::_('select.option', 'file', JText::_('COM_TJFIELDS_FILE'));
-		$options[] = JHtml::_('select.option', 'spacer', JText::_('COM_TJFIELDS_SPACER'));
-		$options[] = JHtml::_('select.option', 'subform', JText::_('COM_TJFIELDS_SUBFORM'));
-		$options[] = JHtml::_('select.option', 'image', JText::_('COM_TJFIELDS_IMAGE'));
-		$options[] = JHtml::_('select.option', 'captureimage', JText::_('COM_TJFIELDS_CAPTURE_IMAGE'));
-		$options[] = JHtml::_('select.option', 'audio', JText::_('COM_TJFIELDS_AUDIO'));
-		$options[] = JHtml::_('select.option', 'video', JText::_('COM_TJFIELDS_VIDEO'));
-		$options[] = JHtml::_('select.option', 'itemcategory', JText::_('COM_TJFIELDS_ITEM_CATEGORY'));
-		$options[] = JHtml::_('select.option', 'number', JText::_('COM_TJFIELDS_NUMBER'));
-		$options[] = JHtml::_('select.option', 'hidden', JText::_('COM_TJFIELDS_HIDDEN'));
+		$options[] = HTMLHelper::_('select.option', 'text', Text::_('COM_TJFIELDS_TEXT'));
+		$options[] = HTMLHelper::_('select.option', 'radio', Text::_('COM_TJFIELDS_RADIO'));
+		$options[] = HTMLHelper::_('select.option', 'checkbox', Text::_('COM_TJFIELDS_CHECKBOX'));
+		$options[] = HTMLHelper::_('select.option', 'tjlist', Text::_('COM_TJFIELDS_TJLIST'));
+		$options[] = HTMLHelper::_('select.option', 'single_select', Text::_('COM_TJFIELDS_SINGLE_SELECT'));
+		$options[] = HTMLHelper::_('select.option', 'multi_select', Text::_('COM_TJFIELDS_MULTI_SELECT'));
+		$options[] = HTMLHelper::_('select.option', 'sql', Text::_('COM_TJFIELDS_SQL'));
+		$options[] = HTMLHelper::_('select.option', 'textarea', Text::_('COM_TJFIELDS_TEXTAREA'));
+		$options[] = HTMLHelper::_('select.option', 'textareacounter', Text::_('COM_TJFIELDS_TEXTAREACOUNTER'));
+		$options[] = HTMLHelper::_('select.option', 'calendar', Text::_('COM_TJFIELDS_CALENDAR'));
+		$options[] = HTMLHelper::_('select.option', 'editor', Text::_('COM_TJFIELDS_EDITOR'));
+		$options[] = HTMLHelper::_('select.option', 'email', Text::_('COM_TJFIELDS_EMAIL'));
+		$options[] = HTMLHelper::_('select.option', 'file', Text::_('COM_TJFIELDS_FILE'));
+		$options[] = HTMLHelper::_('select.option', 'spacer', Text::_('COM_TJFIELDS_SPACER'));
+		$options[] = HTMLHelper::_('select.option', 'subform', Text::_('COM_TJFIELDS_SUBFORM'));
+		$options[] = HTMLHelper::_('select.option', 'image', Text::_('COM_TJFIELDS_IMAGE'));
+		$options[] = HTMLHelper::_('select.option', 'captureimage', Text::_('COM_TJFIELDS_CAPTURE_IMAGE'));
+		$options[] = HTMLHelper::_('select.option', 'audio', Text::_('COM_TJFIELDS_AUDIO'));
+		$options[] = HTMLHelper::_('select.option', 'video', Text::_('COM_TJFIELDS_VIDEO'));
+		$options[] = HTMLHelper::_('select.option', 'itemcategory', Text::_('COM_TJFIELDS_ITEM_CATEGORY'));
+		$options[] = HTMLHelper::_('select.option', 'number', Text::_('COM_TJFIELDS_NUMBER'));
+		$options[] = HTMLHelper::_('select.option', 'hidden', Text::_('COM_TJFIELDS_HIDDEN'));
 
 		if ($installUcm === 1)
 		{
-			$options[] = JHtml::_('select.option', 'ucmsubform', JText::_('COM_TJFIELDS_UCMSUBFORM'));
-			$options[] = JHtml::_('select.option', 'related', JText::_('COM_TJFIELDS_RELATED'));
+			$options[] = HTMLHelper::_('select.option', 'ucmsubform', Text::_('COM_TJFIELDS_UCMSUBFORM'));
+			$options[] = HTMLHelper::_('select.option', 'related', Text::_('COM_TJFIELDS_RELATED'));
 		}
 
 		if ($installCluster === 1)
 		{
-			$options[] = JHtml::_('select.option', 'cluster', JText::_('COM_TJFIELDS_CLUSTER'));
+			$options[] = HTMLHelper::_('select.option', 'cluster', Text::_('COM_TJFIELDS_CLUSTER'));
 		}
 
-		$options[] = JHtml::_('select.option', 'ownership', JText::_('COM_TJFIELDS_OWNERSHIP'));
-		$options[] = JHtml::_('select.option', 'color', JText::_('COM_TJFIELDS_COLOR'));
+		$options[] = HTMLHelper::_('select.option', 'ownership', Text::_('COM_TJFIELDS_OWNERSHIP'));
+		$options[] = HTMLHelper::_('select.option', 'color', Text::_('COM_TJFIELDS_COLOR'));
 
 		$options = array_merge(parent::getOptions(), $options);
 
-		$view = JFactory::getApplication()->input->get('view', '', 'STRING');
+		$view = Factory::getApplication()->input->get('view', '', 'STRING');
 
 		$onchange = ($view == 'field') ? "show_option_div(this.value);" : "this.form.submit();";
 
-		return JHtml::_('select.genericlist', $options, $this->name,
-		'class="required" onchange="' . $onchange . '"', 'value', 'text', $this->value, 'jform_type'
+		$class = (JVERSION < '4.0.0') ? '' : 'form-select';
+
+		return HTMLHelper::_('select.genericlist', $options, $this->name,
+			'class="required ' . $class . '" onchange="' . $onchange . '"', 'value', 'text', $this->value, 'jform_type'
 		);
 	}
 }

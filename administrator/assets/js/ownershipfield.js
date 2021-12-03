@@ -36,6 +36,7 @@ var ownership = {
 
 				/* IMP : to update to chz-done selects*/
 				jQuery("#"+ownershipFieldId).trigger("liszt:updated");
+				jQuery("#"+ownershipFieldId).trigger("chosen:updated");
 			}
 		});
 	},

@@ -10,19 +10,24 @@
 // No direct access
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Table\Table;
+use Joomla\Database\DatabaseDriver;
+use Joomla\Utilities\ArrayHelper;
+
 /**
  * Field Table class
  *
  * @since  1.1
  */
-class TjfieldsTablefield extends JTable
+class TjfieldsTablefield extends Table
 {
 	/**
 	 * Constructor
 	 *
-	 * @param   JDatabase  &$db  A database connector object
+	 * @param   Joomla\Database\DatabaseDriver  $db  A database connector object
 	 */
-	public function __construct(&$db)
+	public function __construct($db)
 	{
 		parent::__construct('#__tjfields_fields', 'id', $db);
 	}
@@ -34,7 +39,7 @@ class TjfieldsTablefield extends JTable
 	 *
 	 * @return void
 	 */
-	private function JAccessRulestoArray($jaccessrules)
+	private function RulestoArray($jaccessrules)
 	{
 		$rules = array();
 
@@ -89,7 +94,7 @@ class TjfieldsTablefield extends JTable
 		$k = $this->_tbl_key;
 
 		// Sanitize input.
-		JArrayHelper::toInteger($pks);
+		ArrayHelper::toInteger($pks);
 		$userId = (int) $userId;
 		$state = (int) $state;
 
@@ -103,7 +108,7 @@ class TjfieldsTablefield extends JTable
 			else
 			{
 				// Nothing to set publishing state on, return false.
-				$this->setError(JText::_('JLIB_DATABASE_ERROR_NO_ROWS_SELECTED'));
+				$this->setError(Text::_('JLIB_DATABASE_ERROR_NO_ROWS_SELECTED'));
 
 				return false;
 			}
@@ -124,12 +129,13 @@ class TjfieldsTablefield extends JTable
 
 		// Update the publishing state for rows with the given primary keys.
 		$this->_db->setQuery(
-				'UPDATE `' . $this->_tbl . '`' .
-				' SET `state` = ' . (int) $state .
-				' WHERE (' . $where . ')' .
-				$checkin
+			'UPDATE `' . $this->_tbl . '`' .
+			' SET `state` = ' . (int) $state .
+			' WHERE (' . $where . ')' .
+			$checkin
 		);
-		$this->_db->query();
+
+		$this->_db->execute();
 
 		// Check for a database error.
 		if ($this->_db->getErrorNum())
@@ -184,14 +190,14 @@ class TjfieldsTablefield extends JTable
 	 * 
 	 * @since  1.1
 	 */
-	protected function _getAssetParentId(JTable $table = null, $id = null)
+	protected function _getAssetParentId(Table $table = null, $id = null)
 	{
 		$assetId = null;
 
 			if ($this->group_id)
 			{
-				JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_tjfields/tables');
-				$groupTable = JTable::getInstance('group','TjfieldsTable');
+				Table::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_tjfields/tables');
+				$groupTable = Table::getInstance('group','TjfieldsTable');
 				$groupTable->load(array('id' => $this->group_id));
 				$assetId = $groupTable->asset_id;
 			}

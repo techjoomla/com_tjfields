@@ -8,6 +8,13 @@
  */
 
 defined('_JEXEC') or die();
+use Joomla\CMS\Filesystem\File;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Object\CMSObject;
+use Joomla\CMS\Installer\Installer;
+use Joomla\CMS\Language\Text;
+use Joomla\Data\DataObject;
 
 jimport('joomla.filesystem.folder');
 jimport('joomla.filesystem.file');
@@ -45,9 +52,9 @@ class Com_TjfieldsInstallerScript
 	public function preflight($type, $parent)
 	{
 		// Delete sql file if exist as related column is added through script
-		if (JFile::exists(JPATH_SITE . '/administrator/components/com_tjfields/sql/updates/mysql/1.3.1.sql'))
+		if (File::exists(JPATH_SITE . '/administrator/components/com_tjfields/sql/updates/mysql/1.3.1.sql'))
 		{
-			JFile::delete(JPATH_SITE . '/administrator/components/com_tjfields/sql/updates/mysql/1.3.1.sql');
+			File::delete(JPATH_SITE . '/administrator/components/com_tjfields/sql/updates/mysql/1.3.1.sql');
 		}
 	}
 
@@ -64,7 +71,7 @@ class Com_TjfieldsInstallerScript
 	 */
 	public function postflight($type, $parent)
 	{
-		$db = JFactory::getDbo();
+		$db = Factory::getDbo();
 
 		// Create a new query object.
 		$query = $db->getQuery(true);
@@ -105,8 +112,8 @@ class Com_TjfieldsInstallerScript
 
 		if (version_compare(JVERSION, '3.0', 'lt'))
 		{
-			$document = JFactory::getDocument();
-			$document->addStyleSheet(JUri::root() . '/media/techjoomla_strapper/css/bootstrap.min.css');
+			$document = Factory::getDocument();
+			$document->addStyleSheet(Uri::root() . '/media/techjoomla_strapper/css/bootstrap.min.css');
 		}
 	}
 
@@ -121,9 +128,9 @@ class Com_TjfieldsInstallerScript
 	{
 		$src = $parent->getParent()->getPath('source');
 
-		$db = JFactory::getDbo();
+		$db = Factory::getDbo();
 
-		$status = new JObject;
+		$status = new CMSObject;
 		$status->modules = array();
 
 		// Modules installation
@@ -174,7 +181,7 @@ class Com_TjfieldsInstallerScript
 
 						$count = $db->loadResult();
 
-						$installer = new JInstaller;
+						$installer = new Installer;
 						$result = $installer->install($path);
 
 						$status->modules[] = array(
@@ -206,7 +213,7 @@ class Com_TjfieldsInstallerScript
 							}
 
 							$db->setQuery($sql);
-							$db->query();
+							$db->execute();
 
 							// B. Change the ordering of back-end modules to 1 + max ordering
 							if ($folder == 'admin')
@@ -224,7 +231,7 @@ class Com_TjfieldsInstallerScript
 									->set($db->qn('ordering') . ' = ' . $db->q($position))
 									->where($db->qn('module') . ' = ' . $db->q('mod_' . $module));
 								$db->setQuery($query);
-								$db->query();
+								$db->execute();
 							}
 
 							// C. Link to all pages
@@ -282,18 +289,18 @@ class Com_TjfieldsInstallerScript
 	{
 		?>
 		<?php $rows = 0;?>
-		<h2><?php echo JText::_('TJ-Fields Uninstallation Status'); ?></h2>
+		<h2><?php echo Text::_('TJ-Fields Uninstallation Status'); ?></h2>
 		<table class="adminlist">
 			<thead>
 				<tr>
-					<th class="title" colspan="2"><?php echo JText::_('Extension'); ?></th>
-					<th width="30%"><?php echo JText::_('Status'); ?></th>
+					<th class="title" colspan="2"><?php echo Text::_('Extension'); ?></th>
+					<th width="30%"><?php echo Text::_('Status'); ?></th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr class="row0">
-					<td class="key" colspan="2"><?php echo 'TjFields ' . JText::_('Component'); ?></td>
-					<td><strong style="color: green"><?php echo JText::_('Removed'); ?></strong></td>
+					<td class="key" colspan="2"><?php echo 'TjFields ' . Text::_('Component'); ?></td>
+					<td><strong style="color: green"><?php echo Text::_('Removed'); ?></strong></td>
 				</tr>
 			</tbody>
 		</table>
@@ -334,7 +341,7 @@ class Com_TjfieldsInstallerScript
 	 */
 	public function fix_db_on_update()
 	{
-		$db = JFactory::getDbo();
+		$db = Factory::getDbo();
 
 		$field_array = array();
 		$query = "SHOW COLUMNS FROM `#__tjfields_fields`";
@@ -354,7 +361,7 @@ class Com_TjfieldsInstallerScript
 
 			if (!$db->execute() )
 			{
-				echo $img_ERROR . JText::_('Unable to Alter #__tjfields_fields table. (While adding filterable column )') . $BR;
+				echo $img_ERROR . Text::_('Unable to Alter #__tjfields_fields table. (While adding filterable column )') . $BR;
 				echo $db->getErrorMsg();
 
 				return false;
@@ -369,7 +376,7 @@ class Com_TjfieldsInstallerScript
 
 			if (!$db->execute() )
 			{
-				echo $img_ERROR . JText::_('Unable to Alter #__tjfields_fields table. (While adding asset_id column )') . $BR;
+				echo $img_ERROR . Text::_('Unable to Alter #__tjfields_fields table. (While adding asset_id column )') . $BR;
 				echo $db->getErrorMsg();
 
 				return false;
@@ -383,7 +390,7 @@ class Com_TjfieldsInstallerScript
 
 			if (!$db->execute())
 			{
-				echo $img_ERROR . JText::_('Unable to Alter #__tjfields_fields table. (While adding filterable showonlist )') . $BR;
+				echo $img_ERROR . Text::_('Unable to Alter #__tjfields_fields table. (While adding filterable showonlist )') . $BR;
 				echo $db->getErrorMsg();
 
 				return false;
@@ -399,7 +406,7 @@ class Com_TjfieldsInstallerScript
 		$db->setQuery($query);
 		$db->execute();
 
-		$db = JFactory::getDbo();
+		$db = Factory::getDbo();
 
 		$field_array = array();
 		$query = "SHOW COLUMNS FROM `#__tjfields_fields_value`";
@@ -419,7 +426,7 @@ class Com_TjfieldsInstallerScript
 
 			if (!$db->execute())
 			{
-				echo $img_ERROR . JText::_('Unable to Alter #__tjfields_fields_value table. (While adding option_id column )') . $BR;
+				echo $img_ERROR . Text::_('Unable to Alter #__tjfields_fields_value table. (While adding option_id column )') . $BR;
 				echo $db->getErrorMsg();
 
 				return false;
@@ -444,7 +451,7 @@ class Com_TjfieldsInstallerScript
 
 			if (!$db->execute() )
 			{
-				echo $img_ERROR . JText::_('Unable to Alter #__tjfields_groups table. (While adding title column )') . $BR;
+				echo $img_ERROR . Text::_('Unable to Alter #__tjfields_groups table. (While adding title column )') . $BR;
 				echo $db->getErrorMsg();
 
 				return false;
@@ -461,7 +468,7 @@ class Com_TjfieldsInstallerScript
 				{
 					$group->title = $group->name;
 
-					JFactory::getDbo()->updateObject('#__tjfields_groups', $group, 'id', true);
+					Factory::getDbo()->updateObject('#__tjfields_groups', $group, 'id', true);
 				}
 			}
 		}
@@ -474,7 +481,7 @@ class Com_TjfieldsInstallerScript
 
 			if (!$db->execute() )
 			{
-				echo $img_ERROR . JText::_('Unable to Alter #__tjfields_groups table. (While adding asset_id column )') . $BR;
+				echo $img_ERROR . Text::_('Unable to Alter #__tjfields_groups table. (While adding asset_id column )') . $BR;
 				echo $db->getErrorMsg();
 
 				return false;
@@ -497,7 +504,7 @@ class Com_TjfieldsInstallerScript
 	{
 		$field_array = array();
 		$query = "SHOW COLUMNS FROM `#__tjfields_fields`";
-		$db = JFactory::getDbo();
+		$db = Factory::getDbo();
 		$db->setQuery($query);
 		$columns = $db->loadobjectlist();
 
@@ -513,7 +520,7 @@ class Com_TjfieldsInstallerScript
 
 			if (!$db->execute())
 			{
-				echo $img_ERROR . JText::_('Unable to Alter #__tjfields_fields table. (While adding title column )') . $BR;
+				echo $img_ERROR . Text::_('Unable to Alter #__tjfields_fields table. (While adding title column )') . $BR;
 				echo $db->getErrorMsg();
 
 				return false;
@@ -530,7 +537,7 @@ class Com_TjfieldsInstallerScript
 				{
 					$field->title = $field->label;
 
-					JFactory::getDbo()->updateObject('#__tjfields_fields', $field, 'id', true);
+					Factory::getDbo()->updateObject('#__tjfields_fields', $field, 'id', true);
 				}
 			}
 		}
@@ -545,7 +552,7 @@ class Com_TjfieldsInstallerScript
 	{
 		$field_array = array();
 		$query = "SHOW COLUMNS FROM `#__tjfields_fields`";
-		$db = JFactory::getDbo();
+		$db = Factory::getDbo();
 		$db->setQuery($query);
 		$columns = $db->loadobjectlist();
 
@@ -561,7 +568,7 @@ class Com_TjfieldsInstallerScript
 
 			if (!$db->execute())
 			{
-				echo $img_ERROR . JText::_('Unable to Alter #__tjfields_fields table. (While adding params column )') . $BR;
+				echo $img_ERROR . Text::_('Unable to Alter #__tjfields_fields table. (While adding params column )') . $BR;
 				echo $db->getErrorMsg();
 
 				return false;
@@ -615,7 +622,7 @@ class Com_TjfieldsInstallerScript
 
 					$field->params = json_encode($param);
 
-					JFactory::getDbo()->updateObject('#__tjfields_fields', $field, 'id', true);
+					Factory::getDbo()->updateObject('#__tjfields_fields', $field, 'id', true);
 				}
 
 				$deleteColumn = array("min", "max", "rows", "cols", "format", "default_value", "placeholder");
@@ -628,7 +635,7 @@ class Com_TjfieldsInstallerScript
 
 					if (!$db->execute())
 					{
-						echo $img_ERROR . JText::_('Unable to delete column ') . $pm;
+						echo $img_ERROR . Text::_('Unable to delete column ') . $pm;
 						echo $db->getErrorMsg();
 
 						return false;
@@ -647,7 +654,7 @@ class Com_TjfieldsInstallerScript
 	 */
 	public function installSqlFiles($parent)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		// Install country table(#__tj_country) if it does not exists
 		$check = $this->checkTableExists('tj_country');
@@ -705,7 +712,7 @@ class Com_TjfieldsInstallerScript
 								->set($db->qn($component) . ' = "0"')
 								->where($db->qn('id') . ' IN (' . $countryList . ')');
 							$db->setQuery($query);
-							$db->query();
+							$db->execute();
 						}
 					}
 				}
@@ -796,8 +803,8 @@ class Com_TjfieldsInstallerScript
 	 */
 	public function checkTableExists($table)
 	{
-		$db = JFactory::getDBO();
-		$config = JFactory::getConfig();
+		$db = Factory::getDBO();
+		$config = Factory::getConfig();
 
 		if (JVERSION >= '3.0')
 		{
@@ -837,7 +844,7 @@ class Com_TjfieldsInstallerScript
 	 */
 	public function getColumns($table)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		$field_array = array();
 		$query = "SHOW COLUMNS FROM " . $table;
@@ -862,14 +869,14 @@ class Com_TjfieldsInstallerScript
 	 */
 	public function renameTable($table, $newTable)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		$newTable = $newTable . '_' . date('d-m-Y_H:m:s');
 
 		$query = "RENAME TABLE `" . $table . "` TO `" . $newTable . "`";
 		$db->setQuery($query);
 
-		if ($db->query())
+		if ($db->execute())
 		{
 			return $newTable;
 		}
@@ -887,7 +894,7 @@ class Com_TjfieldsInstallerScript
 	 */
 	public function runSQL($parent,$sqlfile)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		// Obviously you may have to change the path and name if your installation SQL file ;)
 		if (method_exists($parent, 'extension_root'))
@@ -904,8 +911,7 @@ class Com_TjfieldsInstallerScript
 
 		if ($buffer !== false)
 		{
-			jimport('joomla.installer.helper');
-			$queries = JInstallerHelper::splitSql($buffer);
+			$queries = \JDatabaseDriver::splitSql($buffer);
 
 			if (count($queries) != 0)
 			{
@@ -917,9 +923,9 @@ class Com_TjfieldsInstallerScript
 					{
 						$db->setQuery($query);
 
-						if (!$db->query())
+						if (!$db->execute())
 						{
-							JError::raiseWarning(1, JText::sprintf('JLIB_INSTALLER_ERROR_SQL_ERROR', $db->stderr(true)));
+							JError::raiseWarning(1, Text::sprintf('JLIB_INSTALLER_ERROR_SQL_ERROR', $db->stderr(true)));
 
 							return false;
 						}
