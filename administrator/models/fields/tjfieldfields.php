@@ -43,8 +43,6 @@ class JFormFieldtjfieldfields extends JFormFieldList
 	 */
 	protected function getInput()
 	{
-		jimport('joomla.filesystem.file');
-
 		$installUcm = 0;
 
 		$installCluster = 0;
@@ -74,7 +72,7 @@ class JFormFieldtjfieldfields extends JFormFieldList
 		$options[] = HTMLHelper::_('select.option', 'calendar', Text::_('COM_TJFIELDS_CALENDAR'));
 		$options[] = HTMLHelper::_('select.option', 'editor', Text::_('COM_TJFIELDS_EDITOR'));
 		$options[] = HTMLHelper::_('select.option', 'email', Text::_('COM_TJFIELDS_EMAIL'));
-		$options[] = HTMLHelper::_('select.option', 'file', Text::_('COM_TJFIELDS_FILE'));
+		$options[] = HTMLHelper::_('select.option', 'tjfile', Text::_('COM_TJFIELDS_FILE'));
 		$options[] = HTMLHelper::_('select.option', 'spacer', Text::_('COM_TJFIELDS_SPACER'));
 		$options[] = HTMLHelper::_('select.option', 'subform', Text::_('COM_TJFIELDS_SUBFORM'));
 		$options[] = HTMLHelper::_('select.option', 'image', Text::_('COM_TJFIELDS_IMAGE'));

@@ -56,6 +56,18 @@ class Com_TjfieldsInstallerScript
 		{
 			File::delete(JPATH_SITE . '/administrator/components/com_tjfields/sql/updates/mysql/1.3.1.sql');
 		}
+
+		// Delete file field class if exists as this is replaced by tjfile.php
+		if (File::exists(JPATH_SITE . '/administrator/components/com_tjfields/models/fields/file.php'))
+		{
+			File::delete(JPATH_SITE . '/administrator/components/com_tjfields/models/fields/file.php');
+		}
+
+		// Delete file field xml if exists as this is replaced by tjfile.xml
+		if (File::exists(JPATH_SITE . '/administrator/components/com_tjfields/models/forms/types/forms/file.xml'))
+		{
+			File::delete(JPATH_SITE . '/administrator/components/com_tjfields/models/forms/types/forms/file.xml');
+		}
 	}
 
 	/**
