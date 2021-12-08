@@ -10,15 +10,15 @@ CREATE TABLE IF NOT EXISTS `#__tjfields_fields` (
 	`required` varchar(255) NOT NULL DEFAULT '',
 	`readonly` int(11) NOT NULL DEFAULT 0,
 	`created_by` int(11) NOT NULL DEFAULT 0,
-	`description` text NOT NULL,
-	`js_function` text NOT NULL,
-	`validation_class` text NOT NULL,
+	`description` text DEFAULT NULL,
+	`js_function` text DEFAULT NULL,
+	`validation_class` text DEFAULT NULL,
 	`ordering` int(11) NOT NULL DEFAULT 0,
 	`filterable` tinyint(1) NOT NULL DEFAULT 0 COMMENT '0 - For not filterable field. 1 for filterable field',
 	`client` varchar(255) NOT NULL DEFAULT '',
 	`group_id` int(11) NOT NULL DEFAULT 0,
 	`showonlist` tinyint(1) NOT NULL DEFAULT 0,
-	`params` varchar(500) DEFAULT '',
+	`params` text DEFAULT NULL,
 	PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci AUTO_INCREMENT=1;
 
@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS `#__tjfields_fields_value` (
 	`id` int(11) NOT NULL AUTO_INCREMENT,
 	`field_id` int(11) NOT NULL COMMENT 'Field table ID' DEFAULT 0,
 	`content_id` int(11) NOT NULL COMMENT 'client specific id' DEFAULT 0,
-	`value` text NOT NULL,
+	`value` text DEFAULT NULL,
 	`option_id` int(11) DEFAULT NULL DEFAULT 0,
 	`user_id` int(11) NOT NULL DEFAULT 0,
 	`email_id` varchar(255) NOT NULL DEFAULT '',
