@@ -10,13 +10,13 @@
 // No direct access.
 defined('_JEXEC') or die();
 
-JFormHelper::loadFieldClass('list');
-
 use Joomla\CMS\Form\FormHelper;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
+
+FormHelper::loadFieldClass('list');
 
 /**
  * Form Field class for the Joomla Platform.

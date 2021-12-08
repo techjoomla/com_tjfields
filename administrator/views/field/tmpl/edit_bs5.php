@@ -46,7 +46,7 @@ $document->addStyleSheet('components/com_tjfields/assets/css/tjfields.css');
 	});
 </script>
 <?php $document->addScript(Uri::root() . 'administrator/components/com_tjfields/assets/js/field.js'); ?>
-<div class="techjoomla-bootstrap">
+<div>
 	<form action="<?php echo Route::_('index.php?option=com_tjfields&view=field&layout=edit&id='.(int) $this->item->id).'&client='.$input->get('client','','STRING'); ?>" method="post" enctype="multipart/form-data" name="adminForm" id="field-form" class="form-validate">
 		<div class="form-horizontal">
 			<?php echo HTMLHelper::_('bootstrap.startTabSet', 'myTab', array('active' => 'general')); ?>
@@ -121,13 +121,12 @@ $document->addStyleSheet('components/com_tjfields/assets/css/tjfields.css');
 						} ?> 
 						
 					</div>
-					<div class="control-group fileUploadAlert hide">
-						<span class="control-label">&nbsp;</span>
-						<span class="controls alert alert-info alert-help-inline alert_no_margin">
+					<div class="fileUploadAlert d-none">
+						<p class="alert alert-info text-break">
 							<?php
 								echo Text::_('COM_TJFIELDS_FORM_LBL_FILE_UPLOAD_PATH_NOTICE');
 							?>
-						</span>
+						</p>
 					</div>
 					<input type="hidden" name="jform[client]" value="<?php echo $input->get('client','','STRING'); ?>" />
 				</div>

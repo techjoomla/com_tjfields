@@ -7,15 +7,16 @@
  * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
-JLoader::import("/techjoomla/media/storage/local", JPATH_LIBRARIES);
-
 defined('JPATH_PLATFORM') or die;
 
-use Joomla\CMS\Form\FormField;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Form\FormField;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Form\FormHelper;
+
+JLoader::import("/techjoomla/media/storage/local", JPATH_LIBRARIES);
 
 /**
  * Form Field class for the Joomla Platform.
@@ -24,7 +25,7 @@ use Joomla\CMS\HTML\HTMLHelper;
  * @link   http://www.w3.org/TR/html-markup/input.file.html#input.file
  * @since  11.1
  */
-class JFormFieldFile extends JFormField
+class JFormFieldFile extends FormField
 {
 	/**
 	 * The form field type.
@@ -332,7 +333,6 @@ class JFormFieldFile extends JFormField
 			{
 				$fileTitle = substr($data->fields_value_table->value, strpos($data->fields_value_table->value, '_', 12) + 1);
 			}
-			
 
 			if ($renderer == 'download')
 			{
@@ -359,7 +359,7 @@ class JFormFieldFile extends JFormField
 
 				$imageData = getimagesize($data->mediaLink);
 				$widthHeight = "";
-			
+
 				if (strpos($imageData['mime'], 'image') !== false)
 				{
 					$widthHeight  = ", " . $imageData[0] . ", " . $imageData[1];
