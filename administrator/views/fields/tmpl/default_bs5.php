@@ -86,7 +86,7 @@ if (!empty($this->extra_sidebar)) {
 }
 ?>
 <form action="<?php echo Route::_('index.php?option=com_tjfields&view=fields&client='.$input->get('client','','STRING')); ?>" method="post" name="adminForm" id="adminForm">
-	<div class="techjoomla-bootstrap">
+	<div>
 		<div class="j-sidebar-container" id="j-sidebar-container">
 			<div class="tjBs3">
 			<?php

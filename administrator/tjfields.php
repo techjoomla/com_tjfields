@@ -67,8 +67,12 @@ if (!class_exists('TjfieldsHelper'))
 	JLoader::load('TjfieldsHelper');
 }
 
-// Include dependancies
-jimport('joomla.application.component.controller');
+// Load techjoomla strapper
+if (file_exists(JPATH_ROOT . '/media/techjoomla_strapper/tjstrapper.php'))
+{
+	require_once JPATH_ROOT . '/media/techjoomla_strapper/tjstrapper.php';
+	TjStrapper::loadTjAssets('com_tjfields');
+}
 
 $controller	= BaseController::getInstance('Tjfields');
 $controller->execute(Factory::getApplication()->input->get('task'));

@@ -72,7 +72,7 @@ $sortFields = $this->getSortFields();
 </script>
 
 <form action="<?php echo Route::_('index.php?option=com_tjfields&view=groups&client='.$input->get('client','','STRING')); ?>" method="post" name="adminForm" id="adminForm">
-	<div class="techjoomla-bootstrap j-main-container" id="j-main-container">
+	<div class="j-main-container" id="j-main-container">
 			<div class="tjBs3 col-md-12">
 				<div class="js-stools-container-selector filter-search btn-group pull-left">
 					<input type="text" name="filter_search" id="filter_search"
