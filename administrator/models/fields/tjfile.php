@@ -26,7 +26,7 @@ JLoader::import("/techjoomla/media/storage/local", JPATH_LIBRARIES);
  * @link   http://www.w3.org/TR/html-markup/input.file.html#input.file
  * @since  11.1
  */
-class JFormFieldTjFile extends FormField
+class JFormFieldTjFile extends JFormFieldFile
 {
 	/**
 	 * The form field type.
