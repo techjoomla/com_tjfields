@@ -16,6 +16,7 @@ use Joomla\CMS\Form\FormField;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Form\FormHelper;
 
+FormHelper::loadFieldClass('file');
 JLoader::import("/techjoomla/media/storage/local", JPATH_LIBRARIES);
 
 /**
@@ -25,7 +26,7 @@ JLoader::import("/techjoomla/media/storage/local", JPATH_LIBRARIES);
  * @link   http://www.w3.org/TR/html-markup/input.file.html#input.file
  * @since  11.1
  */
-class JFormFieldFile extends FormField
+class JFormFieldTjFile extends FormField
 {
 	/**
 	 * The form field type.
@@ -33,7 +34,7 @@ class JFormFieldFile extends FormField
 	 * @var    string
 	 * @since  11.1
 	 */
-	protected $type = 'File';
+	protected $type = 'Tjfile';
 
 	/**
 	 * The accepted file type list.
