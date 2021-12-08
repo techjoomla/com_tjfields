@@ -8,18 +8,18 @@ ALTER TABLE `#__tjfields_fields` CHANGE `type` `type` varchar(255) NOT NULL DEFA
 ALTER TABLE `#__tjfields_fields` CHANGE `state` `state` tinyint(1) NOT NULL DEFAULT 0;
 ALTER TABLE `#__tjfields_fields` CHANGE `required` `required` varchar(255) NOT NULL DEFAULT '';
 ALTER TABLE `#__tjfields_fields` CHANGE `created_by` `created_by` int(11) NOT NULL DEFAULT 0;
-ALTER TABLE `#__tjfields_fields` CHANGE `description` `description` text NOT NULL;
-ALTER TABLE `#__tjfields_fields` CHANGE `js_function` `js_function` text NOT NULL;
-ALTER TABLE `#__tjfields_fields` CHANGE `validation_class` `validation_class` text NOT NULL;
+ALTER TABLE `#__tjfields_fields` CHANGE `description` `description` text DEFAULT NULL;
+ALTER TABLE `#__tjfields_fields` CHANGE `js_function` `js_function` text DEFAULT NULL;
+ALTER TABLE `#__tjfields_fields` CHANGE `validation_class` `validation_class` text DEFAULT NULL;
 ALTER TABLE `#__tjfields_fields` CHANGE `ordering` `ordering` int(11) NOT NULL DEFAULT 0;
 ALTER TABLE `#__tjfields_fields` CHANGE `client` `client` varchar(255) NOT NULL DEFAULT '';
 ALTER TABLE `#__tjfields_fields` CHANGE `group_id` `group_id` int(11) NOT NULL DEFAULT 0;
 ALTER TABLE `#__tjfields_fields` CHANGE `showonlist` `showonlist` tinyint(1) NOT NULL DEFAULT 0;
-ALTER TABLE `#__tjfields_fields` CHANGE `params` `params` varchar(500) DEFAULT '';
+ALTER TABLE `#__tjfields_fields` CHANGE `params` `params` text DEFAULT NULL;
 
 ALTER TABLE `#__tjfields_fields_value` CHANGE `field_id` `field_id` int(11) NOT NULL COMMENT 'Field table ID' DEFAULT 0;
 ALTER TABLE `#__tjfields_fields_value` CHANGE `content_id` `content_id` int(11) NOT NULL COMMENT 'client specific id' DEFAULT 0;
-ALTER TABLE `#__tjfields_fields_value` CHANGE `value` `value` text NOT NULL;
+ALTER TABLE `#__tjfields_fields_value` CHANGE `value` `value` text DEFAULT NULL;
 ALTER TABLE `#__tjfields_fields_value` CHANGE `option_id` `option_id` int(11) DEFAULT NULL DEFAULT 0;
 ALTER TABLE `#__tjfields_fields_value` CHANGE `user_id` `user_id` int(11) NOT NULL DEFAULT 0;
 ALTER TABLE `#__tjfields_fields_value` CHANGE `email_id` `email_id`  varchar(255) NOT NULL DEFAULT '';
