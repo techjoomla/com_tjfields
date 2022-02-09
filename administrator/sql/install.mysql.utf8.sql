@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS `#__tjfields_fields_value` (
 	`id` int(11) NOT NULL AUTO_INCREMENT,
 	`field_id` int(11) NOT NULL COMMENT 'Field table ID',
 	`content_id` int(11) NOT NULL COMMENT 'client specific id',
-	`value` text NOT NULL,
+	`value` mediumtext NOT NULL,
 	`option_id` int(11) DEFAULT NULL,
 	`user_id` int(11) NOT NULL,
 	`email_id` varchar(255) NOT NULL,
