@@ -1,0 +1,1 @@
+ALTER TABLE `#__tjfields_fields_value` CHANGE `value` `value` mediumtext DEFAULT NULL;
