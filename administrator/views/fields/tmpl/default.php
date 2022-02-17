@@ -27,7 +27,7 @@ JHtml::_('behavior.multiselect');
 JText::script('COM_TJFIELD_CONFIRM_DELETE_FIELD', true);
 JText::script('COM_TJFIELDS_FILE_ERROR_MAX_SIZE');
 JText::script('COM_TJFIELD_CONFIRM_DELETE_REFRENCE_DATA', true);
-JHtml::script(JUri::root() . 'administrator/components/com_tjfields/assets/js/tjfields.js');
+JHtml::script(JUri::root() . 'media/com_tjfields/js/tjfields.js');
 JHtml::script(JUri::root() . 'libraries/techjoomla/assets/js/houseKeeping.js');
 
 // Import CSS

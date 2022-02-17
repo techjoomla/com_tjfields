@@ -38,8 +38,10 @@
 		<filename>tjfields.php</filename>
 	</files>
 	<media destination="com_tjfields" folder="media">
-		<folder>vendors</folder>
+		<folder>css</folder>
+		<folder>images</folder>
 		<folder>js</folder>
+		<folder>vendors</folder>
 	</media>
 	<languages folder="site_language">
 		<language tag="en-GB">en-GB/en-GB.com_tjfields.ini</language>
@@ -49,7 +51,6 @@
 	</languages>
 	<administration>
 		<files folder="administrator">
-			<folder>assets</folder>
 			<folder>controllers</folder>
 			<folder>helpers</folder>
 			<folder>models</folder>

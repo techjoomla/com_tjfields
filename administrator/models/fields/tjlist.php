@@ -107,12 +107,12 @@ class JFormFieldTjList extends JFormFieldList
 		$html = parent::getInput();
 
 		$doc = Factory::getDocument();
-		$doc->addScript(JUri::root() . 'administrator/components/com_tjfields/assets/js/tjlist.min.js');
+		$doc->addScript(JUri::root() . 'media/com_tjfields/js/tjlist.min.js');
 
 		if ($this->multiple)
 		{
-			$doc->addStyleSheet(JUri::root() . 'administrator/components/com_tjfields/assets/css/bootstrap-tagsinput.css');
-			$doc->addScript(JUri::root() . 'administrator/components/com_tjfields/assets/js/bootstrap-tagsinput.min.js');
+			$doc->addStyleSheet(JUri::root() . 'media/com_tjfields/css/bootstrap-tagsinput.css');
+			$doc->addScript(JUri::root() . 'media/com_tjfields/js/bootstrap-tagsinput.min.js');
 		}
 
 		$options = $this->getOptions();

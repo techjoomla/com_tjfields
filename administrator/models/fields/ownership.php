@@ -75,7 +75,7 @@ class JFormFieldOwnerShip extends JFormFieldList
 		}
 
 		$doc = Factory::getDocument();
-		$doc->addScript(JUri::root() . 'administrator/components/com_tjfields/assets/js/ownershipfield.js');
+		$doc->addScript(JUri::root() . 'media/com_tjfields/js/ownershipfield.js');
 
 		$data = $this->getLayoutData();
 

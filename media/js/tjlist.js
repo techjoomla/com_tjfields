@@ -44,7 +44,7 @@ var tjlist = {
 	  var script= document.createElement('script');
 
 	  // @Todo - Decide right place to store below JS
-	  script.src= Joomla.getOptions('system.paths').base +'/administrator/components/com_tjfields/assets/js/bootstrap-tagsinput.min.js';
+	  script.src= Joomla.getOptions('system.paths').base +'/media/com_tjfields/js/bootstrap-tagsinput.min.js';
 	  head.appendChild(script);
 	}
 }

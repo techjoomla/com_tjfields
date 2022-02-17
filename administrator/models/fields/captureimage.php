@@ -132,7 +132,7 @@ class JFormFieldCaptureImage extends JFormFieldFile
 	protected function getInput()
 	{
 		HTMLHelper::script('media/com_tjfields/vendors/webcamjs/webcam.min.js');
-		HTMLHelper::script('administrator/components/com_tjfields/assets/js/captureimage.min.js');
+		HTMLHelper::script('media/com_tjfields/js/captureimage.min.js');
 
 		$layoutData = $this->getLayoutData();
 
