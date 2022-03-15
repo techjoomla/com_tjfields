@@ -162,6 +162,10 @@ $document->addStyleSheet('components/com_tjfields/assets/css/tjfields.css');
 							<div class="controls"><?php echo $this->form->getInput('showonlist'); ?></div>
 						</div>
 						<div class="control-group">
+							<div class="control-label"><?php echo $this->form->getLabel('tags'); ?></div>
+							<div class="controls"><?php echo $this->form->getInput('tags'); ?></div>
+						</div>
+						<div class="control-group">
 							<div class="control-label"><?php echo $this->form->getLabel('created_by'); ?></div>
 							<div class="controls"><?php echo $this->form->getInput('created_by'); ?></div>
 						</div>

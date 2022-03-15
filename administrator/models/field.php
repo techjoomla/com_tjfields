@@ -162,6 +162,12 @@ class TjfieldsModelField extends AdminModel
 			}
 		}
 
+		if ($item->id)
+		{
+			$item->tags = new JHelperTags;
+			$item->tags->getTagIds($input->get('id', '', 'INT'), 'com_tjfields.field');			
+		}
+
 		return $item;
 	}
 
@@ -353,6 +359,13 @@ class TjfieldsModelField extends AdminModel
 		$data['params'] = json_encode($data['params']);
 		$data['js_function'] = '';
 
+		$data['tags'] = end($data['tags']);
+
+		if (!empty($data['tags']))
+		{
+			$table->newTags = array($data['tags']);
+		}
+		
 		if ($table->save($data) === true)
 		{
 			$id = $table->id;
@@ -876,5 +889,26 @@ class TjfieldsModelField extends AdminModel
 		}
 
 		return $this->loadForm($name, $formSource, array('control' => 'jform','load_data' => $loadData));
+	}
+
+	/**
+	 * Function to get tags array
+	 *
+	 * @return  ARRAY  Tags
+	 *
+	 * @since	__DEPLOY_VERSION__
+	 */
+	public function getTags()
+	{
+		$db = JFactory::getDbo();
+		$query = $db->getQuery(true);
+		$query->select($db->qn(array('a.id', 'a.title', 'a.level', 'a.parent_id')))
+			->from($db->qn('#__tags', 'a'))
+			->where($db->qn('a.parent_id') .  '>' . (int) 0)
+			->where($db->qn('a.published') . ' = ' . (int) 1)
+			->order($db->qn('a.lft') . ' DESC');
+		$db->setQuery($query);
+		$tags = $db->loadAssocList();
+		return $tags;
 	}
 }
