@@ -29,6 +29,12 @@ class TjfieldsTablefield extends Table
 	 */
 	public function __construct($db)
 	{
+		$this->setColumnAlias('published', 'state');
+		$this->_observers = new JObserverUpdater($this);
+		JObserverMapper::attachAllObservers($this);
+
+		JObserverMapper::addObserverClassToClass('JTableObserverTags', 'TjfieldsTablefield', array('typeAlias' => 'com_tjfields.field'));
+
 		parent::__construct('#__tjfields_fields', 'id', $db);
 	}
 

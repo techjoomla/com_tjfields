@@ -44,6 +44,19 @@ class TjfieldsViewField extends HtmlView
 		$this->item  = $this->get('Item');
 		$this->form  = $this->get('Form');
 
+
+		$this->tags = $this->get('Tags');
+		$comTagsParams = JComponentHelper::getParams('com_tags');
+		$minTermLength = (int) $comTagsParams->get('min_term_length', 3);
+		$this->tagParamData = array(
+			'minTermLength' => $minTermLength,
+			'selector'      => '#jform_tags',
+			'allowCustom'   => JFactory::getUser()->authorise('core.create', 'com_tags') ? true : false,
+		);
+
+		$this->item->tags = new JHelperTags;
+		$this->item->tags->getItemTags('com_tjfields.field', $this->item->id);
+
 		if (in_array($this->form->getValue('type'), array('radio', 'single_select', 'multi_select', 'tjlist')))
 		{
 			$this->form->setFieldAttribute('fieldoption', 'required', true);

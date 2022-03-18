@@ -53,6 +53,31 @@ trait TjfieldsFilterField
 			return false;
 		}
 
+		// To set tag attribute
+		$db = JFactory::getDbo();
+		JTable::addIncludePath(JPATH_ROOT . '/administrator/components/com_tjfields/tables');
+		$tjFieldFieldTable = JTable::getInstance('field', 'TjfieldsTable', array('dbo', $db));
+		$fieldSets = $form->getFieldsets();
+
+		foreach ($fieldSets as $fieldset)
+		{
+			foreach ($form->getFieldset($fieldset->name) as $field)
+			{
+				$fieldId = $this->getFieldIdFromName($field->fieldname);
+
+				$this->item->tags = new JHelperTags;
+				$this->item->tags->getItemTags('com_tjfields.field', $fieldId);
+				
+				$tagId = $this->item->tags->itemTags[0]->tag_id;
+			
+				if(!empty($tagId))
+				{
+					$form->setFieldAttribute($field->fieldname, 'tags', $tagId);
+				}			
+			}
+			
+		}
+		
 		return $form;
 	}
 
@@ -392,6 +417,25 @@ trait TjfieldsFilterField
 		return $data;
 	}
 
+	/**
+	 * Check if the name is unique
+	 *
+	 * @param   STRING  $data_unique_name  field name
+	 *
+	 * @return field Id
+	 */
+	public function getFieldIdFromName($data_unique_name="")
+	{
+		$db = JFactory::getDbo();
+		$query	= $db->getQuery(true);
+		$query->select('id FROM #__tjfields_fields');
+		$query->where('name="' . $data_unique_name . '"');
+		$db->setQuery($query);
+		$is_unique = $db->loadResult();
+
+		return $is_unique;
+	}
+	
 	/**
 	 * Method to get the extra fields information
 	 *
