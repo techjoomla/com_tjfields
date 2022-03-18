@@ -37,6 +37,9 @@ class TjfieldsModelField extends AdminModel
 		Deny from All
 	</FilesMatch>';
 
+	protected $type = 'com_tjfields';
+	public $typeAlias = 'com_tjfields.field';
+
 	protected $htaccess = '.htaccess';
 
 	/**
