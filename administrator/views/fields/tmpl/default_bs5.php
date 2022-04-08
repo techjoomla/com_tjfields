@@ -98,7 +98,7 @@ if (!empty($this->extra_sidebar)) {
 			if (empty($this->items))
 			{
 				?>
-				<div class="alert alert-no-items">
+				<div class="alert alert-no-items alert-warning">
 					<?php echo Text::_('COM_TJFIELD_NO_FIELD_FOUND');?>
 				</div>
 				<?php
