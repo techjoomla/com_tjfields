@@ -46,7 +46,7 @@
 
 #field-form .subform-repeatable-wrapper
 {
-	max-width: 440px;
+	max-width: auto;
 }
 
 .tjfields-wrapper th {
