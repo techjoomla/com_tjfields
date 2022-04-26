@@ -14,8 +14,8 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Form\FormField;
-
-jimport('joomla.application.component.view');
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Toolbar\Toolbar;
 
 /**
  * View class for a list of regions.
@@ -41,12 +41,12 @@ class TjfieldsViewRegions extends HtmlView
 	 */
 	public function display ($tpl = null)
 	{
-		$this->state = $this->get('State');
-		$this->items = $this->get('Items');
-		$this->pagination = $this->get('Pagination');
-		$this->filterForm = $this->get('FilterForm');
+		$this->state         = $this->get('State');
+		$this->items         = $this->get('Items');
+		$this->pagination    = $this->get('Pagination');
+		$this->filterForm    = $this->get('FilterForm');
 		$this->activeFilters = $this->get('ActiveFilters');
-		$this->input = Factory::getApplication()->input;
+		$this->input         = Factory::getApplication()->input;
 
 		// Check for errors.
 		if (count($errors = $this->get('Errors')))
@@ -98,11 +98,11 @@ class TjfieldsViewRegions extends HtmlView
 	{
 		require_once JPATH_COMPONENT . '/helpers/tjfields.php';
 
-		$client = Factory::getApplication()->input->get('client', '', 'STRING');
-		$extention = explode('.', $client);
-		$canDo = TjfieldsHelper::getActions($extention[0], 'region');
-
+		$client        = Factory::getApplication()->input->get('client', '', 'STRING');
+		$extention     = explode('.', $client);
+		$canDo         = TjfieldsHelper::getActions($extention[0], 'region');
 		$extensionName = strtoupper($client);
+		$bar           = ToolBar::getInstance('toolbar');
 
 		// Need to load the menu language file as mod_menu hasn't been loaded yet.
 		$lang = Factory::getLanguage();
@@ -110,11 +110,11 @@ class TjfieldsViewRegions extends HtmlView
 
 		if (JVERSION >= '3.0')
 		{
-			JToolBarHelper::title(Text::_($extensionName) . ': ' . Text::_('COM_TJFIELDS_TITLE_REGIONS'), 'list');
+			ToolBarHelper::title(Text::_($extensionName) . ': ' . Text::_('COM_TJFIELDS_TITLE_REGIONS'), 'list');
 		}
 		else
 		{
-			JToolBarHelper::title(Text::_($extensionName) . ': ' . Text::_('COM_TJFIELDS_TITLE_REGIONS'), 'regions.png');
+			ToolBarHelper::title(Text::_($extensionName) . ': ' . Text::_('COM_TJFIELDS_TITLE_REGIONS'), 'regions.png');
 		}
 
 		// Check if the form exists before showing the add/edit buttons
@@ -124,28 +124,45 @@ class TjfieldsViewRegions extends HtmlView
 		{
 			if ($canDo->get('core.create'))
 			{
-				JToolBarHelper::addNew('region.add', 'JTOOLBAR_NEW');
+				ToolBarHelper::addNew('region.add', 'JTOOLBAR_NEW');
 			}
+		}
 
-			if ($canDo->get('core.edit') && isset($this->items[0]))
-			{
-				JToolBarHelper::editList('region.edit', 'JTOOLBAR_EDIT');
-			}
+		if (JVERSION >= '4.0.0')
+		{
+			$dropdown = $bar->dropdownButton('status-group')
+				->text('JTOOLBAR_CHANGE_STATUS')
+				->toggleSplit(false)
+				->icon('icon-ellipsis-h')
+				->buttonClass('btn btn-action')
+				->listCheck(true);
+
+			$childBar = $dropdown->getChildToolbar();
 		}
 
 		if ($canDo->get('core.edit.state'))
 		{
 			if (isset($this->items[0]->state))
 			{
-				JToolBarHelper::divider();
-				JToolBarHelper::custom('regions.publish', 'publish.png', 'publish_f2.png', 'JTOOLBAR_PUBLISH', true);
-				JToolBarHelper::custom('regions.unpublish', 'unpublish.png', 'unpublish_f2.png', 'JTOOLBAR_UNPUBLISH', true);
+				if (JVERSION < '4.0.0')
+				{
+					ToolBarHelper::divider();
+					ToolBarHelper::custom('regions.publish', 'publish.png', 'publish_f2.png', 'JTOOLBAR_PUBLISH', true);
+					ToolBarHelper::custom('regions.unpublish', 'unpublish.png', 'unpublish_f2.png', 'JTOOLBAR_UNPUBLISH', true);
+				}
+				else
+				{
+					$childBar->publish('regions.publish')->listCheck(true);
+					$childBar->unpublish('regions.unpublish')->listCheck(true);
+				}
 			}
 		}
 
+		HTMLHelper::_('bootstrap.modal', 'collapseModal');
+
 		if ($canDo->get('core.admin'))
 		{
-			JToolBarHelper::preferences('com_tjfields');
+			ToolBarHelper::preferences('com_tjfields');
 		}
 
 		if (JVERSION >= '3.0')
