@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS `#__tjfields_fields_value` (
 	`field_id` int(11) NOT NULL COMMENT 'Field table ID' DEFAULT 0,
 	`content_id` int(11) NOT NULL COMMENT 'client specific id' DEFAULT 0,
 	`value` text DEFAULT NULL,
-	`option_id` int(11) DEFAULT NULL DEFAULT 0,
+	`option_id` int(11) NOT NULL DEFAULT 0,
 	`user_id` int(11) NOT NULL DEFAULT 0,
 	`email_id` varchar(255) NOT NULL DEFAULT '',
 	`client` varchar(255) NOT NULL COMMENT 'client(eg com_jticketing.event)' DEFAULT '',
