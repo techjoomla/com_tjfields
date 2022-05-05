@@ -44,11 +44,6 @@
 	cursor:pointer;
 }
 
-#field-form .subform-repeatable-wrapper
-{
-	max-width: 440px;
-}
-
 .tjfields-wrapper th {
 	white-space: inherit !important;
 }
