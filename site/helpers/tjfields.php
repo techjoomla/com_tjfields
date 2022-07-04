@@ -250,6 +250,11 @@ class TjfieldsHelper
 			{
 				$this->saveMediaFieldData($fieldValue, $field->client, $data['content_id'], $field->id, $fieldStoredValues);
 			}
+			elseif ($field->type == 'uniqueid')
+			{
+				$fieldValue = $fieldValue . $data['content_id'];
+				$this->saveSingleValuedFieldData($fieldValue, $field->client, $data['content_id'], $field->id, $fieldStoredValues);
+			}
 			elseif ($field->type == 'subform')
 			{
 				$fieldValue = json_encode($fieldValue);
