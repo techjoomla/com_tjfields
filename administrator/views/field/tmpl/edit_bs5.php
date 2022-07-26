@@ -91,7 +91,7 @@ $document->addStyleSheet('components/com_tjfields/assets/css/tjfields.css');
 											name="jform[type]"
 											id="jform_type"
 											value="<?php echo $this->item->type;?>"
-											class="required"
+											class="required form-control"
 											required="required"
 											aria-required="true"
 											aria-invalid="false"
