@@ -6,30 +6,31 @@
  * @copyright  Copyright (c) 2009-2016 TechJoomla. All rights reserved.
  * @license    GNU General Public License version 2 or later.
  */
-// no direct access
+
+// No direct access
 defined('_JEXEC') or die;
+
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Language\Text;
 
-JHtml::addIncludePath(JPATH_COMPONENT . '/helpers/html');
+HTMLHelper::addIncludePath(JPATH_COMPONENT . '/helpers/html');
 HTMLHelper::_('bootstrap.tooltip');
 HTMLHelper::_('behavior.formvalidator');
 HTMLHelper::_('behavior.keepalive');
 
-$input = Factory::getApplication()->input;
+$input      = Factory::getApplication()->input;
 $fullClient = $input->get('client', '', 'STRING');
 $fullClient =  explode('.', $fullClient);
-
-$client = $fullClient[0];
+$client     = $fullClient[0];
 $clientType = $fullClient[1];
-
-$link = Route::_('index.php?option=com_tjfields&view=field&layout=edit&id=0&client=' . $input->get('client', '', 'STRING'), false);
+$link       = Route::_('index.php?option=com_tjfields&view=field&layout=edit&id=0&client=' . $input->get('client', '', 'STRING'), false);
 
 // Import helper for declaring language constant
 JLoader::import('TjfieldsHelper', Uri::root() . 'administrator/components/com_tjfields/helpers/tjfields.php');
+
 // Call helper function
 TjfieldsHelper::getLanguageConstant();
 
@@ -56,9 +57,7 @@ $document->addStyleSheet('components/com_tjfields/assets/css/tjfields.css');
 				<div class="col-md-6">
 					<div class="adminform">
 						<legend>
-							<?php
-								echo Text::_('COM_TJFIELDS_BASIC_FIELDS_VALUES');
-							?>
+							<?php echo Text::_('COM_TJFIELDS_BASIC_FIELDS_VALUES');?>
 						</legend>
 						<div class="control-group">
 							<div class="control-label"><?php echo $this->form->getLabel('id'); ?></div>
@@ -70,10 +69,10 @@ $document->addStyleSheet('components/com_tjfields/assets/css/tjfields.css');
 							<div class="controls"><?php echo $this->form->getInput('label'); ?></div>
 							<span class="control-label">&nbsp;</span>
 							<span class="controls alert alert-info alert-help-inline alert_no_margin">
-							<?php echo Text::_('COM_TJFIELDS_LABEL_LANG_CONSTRAINT_ONE'); ?>
-							<span class="alert-text-change">
-							<?php echo Text::sprintf('COM_TJFIELDS_LABEL_LANG_CONSTRAINT_TWO', $client); ?>
-							</span>
+								<?php echo Text::_('COM_TJFIELDS_LABEL_LANG_CONSTRAINT_ONE'); ?>
+								<span class="alert-text-change">
+									<?php echo Text::sprintf('COM_TJFIELDS_LABEL_LANG_CONSTRAINT_TWO', $client); ?>
+								</span>
 							</span>
 						</div>
 						<div class="control-group">
@@ -87,7 +86,16 @@ $document->addStyleSheet('components/com_tjfields/assets/css/tjfields.css');
 								{
 									?>
 									<div class="controls">
-										<input type="text" name="jform[type]" id="jform_type" value="<?php echo $this->item->type;?>" class="required" required="required" aria-required="true" aria-invalid="false" readonly="true"/>
+										<input
+											type="text"
+											name="jform[type]"
+											id="jform_type"
+											value="<?php echo $this->item->type;?>"
+											class="required"
+											required="required"
+											aria-required="true"
+											aria-invalid="false"
+											readonly="true"/>
 									</div>
 									<?php
 								}
@@ -123,9 +131,7 @@ $document->addStyleSheet('components/com_tjfields/assets/css/tjfields.css');
 					</div>
 					<div class="fileUploadAlert d-none">
 						<p class="alert alert-info text-break">
-							<?php
-								echo Text::_('COM_TJFIELDS_FORM_LBL_FILE_UPLOAD_PATH_NOTICE');
-							?>
+							<?php echo Text::_('COM_TJFIELDS_FORM_LBL_FILE_UPLOAD_PATH_NOTICE');?>
 						</p>
 					</div>
 					<input type="hidden" name="jform[client]" value="<?php echo $input->get('client','','STRING'); ?>" />
@@ -133,9 +139,7 @@ $document->addStyleSheet('components/com_tjfields/assets/css/tjfields.css');
 				<div class="col-md-5 form-horizontal">
 					<div class="adminform form-horizontal">
 						<legend>
-							<?php
-								echo Text::_('COM_TJFIELDS_EXTRA_FIELDS_VALUES');
-								?>
+							<?php echo Text::_('COM_TJFIELDS_EXTRA_FIELDS_VALUES');?>
 						</legend>
 						<div class="control-group">
 							<div class="control-label"><?php echo $this->form->getLabel('group_id'); ?></div>
@@ -163,9 +167,7 @@ $document->addStyleSheet('components/com_tjfields/assets/css/tjfields.css');
 						</div>
 						<div class="control-group">
 							<div class="control-label"><?php echo $this->form->getLabel('category') ; ?></div>
-							<div class="controls">
-								<?php echo $this->form->getInput('category');?>
-							</div>
+							<div class="controls"><?php echo $this->form->getInput('category');?></div>
 							<span class="control-label">&nbsp;</span>
 							<span class="controls alert alert-warning alert-help-inline col-md-9 alert_no_margin">
 								<?php echo Text::_('COM_TJFIELDS_CATEGORY_NOTE'); ?>
@@ -173,12 +175,10 @@ $document->addStyleSheet('components/com_tjfields/assets/css/tjfields.css');
 						</div>
 						<div class="control-group">
 							<div class="control-label"><?php echo $this->form->getLabel('filterable'); ?></div>
-							<div class="controls">
-								<?php echo $this->form->getInput('filterable'); ?>
-							</div>
+							<div class="controls"><?php echo $this->form->getInput('filterable'); ?></div>
 							<span class="control-label">&nbsp;</span>
 							<span class="controls alert alert-info alert-help-inline col-md-9 alert_no_margin">
-							<?php echo Text::_('COM_TJFIELDS_FILTERABLE_NOTE'); ?>
+								<?php echo Text::_('COM_TJFIELDS_FILTERABLE_NOTE'); ?>
 							</span>
 						</div>
 						<div class="control-group">
@@ -187,9 +187,7 @@ $document->addStyleSheet('components/com_tjfields/assets/css/tjfields.css');
 						</div>
 						<div class="control-group">
 							<div class="control-label"><?php echo $this->form->getLabel('js_function'); ?></div>
-							<div class="controls">
-								<?php echo $this->form->getInput('js_function'); ?>
-							</div>
+							<div class="controls"><?php echo $this->form->getInput('js_function'); ?></div>
 						</div>
 						<div class="control-group">
 							<div class="control-label"><?php echo $this->form->getLabel('validation_class'); ?></div>
@@ -203,21 +201,18 @@ $document->addStyleSheet('components/com_tjfields/assets/css/tjfields.css');
 						</div>
 					</div>
 				</div>
-				<!--</div>-->
 			</div>
-			<?php echo HTMLHelper::_('bootstrap.endTab'); ?>
-			<?php if (Factory::getUser()->authorise('core.admin','com_tjfields')) : ?>
-				<?php echo HTMLHelper::_('bootstrap.addTab', 'myTab', 'permissions', Text::_('JGLOBAL_ACTION_PERMISSIONS_LABEL', true)); ?>
-				<?php echo $this->form->getInput('rules'); ?>
-				<?php echo HTMLHelper::_('bootstrap.endTab'); ?>
-			<?php endif; ?>
-		<?php echo HTMLHelper::_('bootstrap.endTabSet'); ?>
+			<?php
+			echo HTMLHelper::_('bootstrap.endTab'); 
+			if (Factory::getUser()->authorise('core.admin','com_tjfields')) :
+				echo HTMLHelper::_('bootstrap.addTab', 'myTab', 'permissions', Text::_('JGLOBAL_ACTION_PERMISSIONS_LABEL', true));
+				echo $this->form->getInput('rules');
+				echo HTMLHelper::_('bootstrap.endTab');
+			endif;
+			echo HTMLHelper::_('bootstrap.endTabSet'); ?>
 			<input type="hidden" name="client_type" value="<?php echo $clientType;?>" />
 			<input type="hidden" name="task" value="" />
 			<?php echo HTMLHelper::_('form.token'); ?>
 		</div>
-		<!--row fuild ends-->
-</div>
-<!--techjoomla ends-->
-</form>
+	</form>
 </div>

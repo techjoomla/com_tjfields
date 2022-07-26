@@ -31,7 +31,7 @@
 			<option value="1">COM_TJFIELDS_YES</option>
 			<option value="0">COM_TJFIELDS_NO</option>
 		</field>
-		<field name="category" type="fieldcategory" multiple="multiple" label="COM_TJFIELDS_FORM_LBL_FIELD_CATEGORY" class="category" description="COM_TJFIELDS_FORM_FIELD_CATEGORY_DESC" />
+		<field name="category" type="fieldcategory" multiple="true" label="COM_TJFIELDS_FORM_LBL_FIELD_CATEGORY" layout="joomla.form.field.list-fancy-select" class="category" description="COM_TJFIELDS_FORM_FIELD_CATEGORY_DESC" />
 		<field type="radio" name="showonlist" label="COM_TJFIELDS_FORM_LBL_FIELD_SHOW_IN_LIST_VIEW" description="COM_TJFIELDS_FORM_DESC_FIELD_SHOW_IN_LIST_VIEW" default="1" class="btn-group">
 			<option value="1">COM_TJFIELDS_YES</option>
 			<option value="0">COM_TJFIELDS_NO</option>
