@@ -25,18 +25,16 @@ class JFormFieldJsfunction extends FormField
 	function __construct ()
 	{
 		parent::__construct();
-		$this->countoption=0;
-		$this->tjfield_icon_plus = "icon-plus-2 ";
+		$this->countoption        = 0;
+		$this->tjfield_icon_plus  = "icon-plus-2 ";
 		$this->tjfield_icon_minus = "icon-minus-2 ";
 	}
 
 	protected function getInput()
 	{
-		$jsarray = explode('||', $this->value);
-		//now we get array[0] = onclick-getfunction()
-		//remove the blank array element
+		$jsarray                       = explode('||', $this->value);
 		$jsarray_removed_blank_element = array_filter($jsarray);
-		$countjs = empty($this->value) ? 0 : count($this->value);
+		$countjs                       = empty($this->value) ? 0 : count($this->value);
 
 		if(empty($this->value))
 		$countjs = 0;
@@ -123,19 +121,18 @@ class JFormFieldJsfunction extends FormField
 
 	function fetchJsfunction($fieldName, $value, &$node, $control_name,$j)
 	{
-		return $Jsfunction = '<input type="text" id="tjfields_jsoptions_'.$j.'" name="tjfieldsJs['.$j.'][jsoptions]"  class="tjfields_jsoptions "  placeholder="Events"  value="'.$value.'">';
+		return $Jsfunction = '<input type="text" id="tjfields_jsoptions_'.$j.'" name="tjfieldsJs['.$j.'][jsoptions]"  class="tjfields_jsoptions form-control"  placeholder="Events"  value="'.$value.'">';
 	}
 
 	function fetchJsfunctionName($fieldName, $value, &$node, $control_name,$j)
 	{
-		return $JsfunctionName = '<input type="text" id="tjfields_jsfunctionname_'.$j.'" name="tjfieldsJs['.$j.'][jsfunctionname]"  class="tjfields_jsfunctionname "  placeholder="Function name"  value="'.$value.'">';
+		return $JsfunctionName = '<input type="text" id="tjfields_jsfunctionname_'.$j.'" name="tjfieldsJs['.$j.'][jsfunctionname]"  class="tjfields_jsfunctionname form-control"  placeholder="Function name"  value="'.$value.'">';
 	}
 }
 ?>
 <script type="text/javascript">
 	function addClonejsOption(rId,rClass)
 	{
-		//window.js_lenght=f_lenght;
 		var pre=js_lenght;
 		js_lenght++;
 
