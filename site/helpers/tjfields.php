@@ -1643,15 +1643,15 @@ class TjfieldsHelper
 	 */
 	public function getOptions($field_id, $option_value = '')
 	{
+		$db    = Factory::getDbo();
+		$query = $db->getQuery(true);
+
+		$query->select($db->quoteName(array('options','value')));
+		$query->from($db->quoteName('#__tjfields_options'));
+		$query->where($db->quoteName('field_id') . ' = ' . (int) $field_id);
+
 		if ($option_value != '')
 		{
-			$db    = Factory::getDbo();
-			$query = $db->getQuery(true);
-
-			$query->select($db->quoteName(array('options','value')));
-			$query->from($db->quoteName('#__tjfields_options'));
-			$query->where($db->quoteName('field_id') . ' = ' . (int) $field_id);
-
 			$new_option_value = json_decode($option_value);
 
 			if ($new_option_value != '')
@@ -1719,13 +1719,8 @@ class TjfieldsHelper
 		}
 		else
 		{
-			$extra_options = array();
-			$obj = new stdclass;
-			$obj->id = '';
-			$obj->options = '';
-			$obj->value = '';
-
-			$extra_options[] = $obj;
+			$db->setQuery($query);
+			$extra_options = $db->loadObjectlist();
 		}
 
 		return $extra_options;
