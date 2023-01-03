@@ -9,6 +9,11 @@
 
 // No direct access
 defined('_JEXEC') or die();
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\MVC\Controller\BaseController;
 
 if (!defined('DS'))
 {
@@ -16,9 +21,9 @@ if (!defined('DS'))
 }
 
 // Access check.
-if (!JFactory::getUser()->authorise('core.manage', 'com_tjfields'))
+if (!Factory::getUser()->authorise('core.manage', 'com_tjfields'))
 {
-	throw new Exception(JText::_('JERROR_ALERTNOAUTHOR'));
+	throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'));
 }
 
 // Define constants
@@ -28,7 +33,7 @@ if (JVERSION < '3.0')
 	define('TJFIELDS_WRAPPER_CLASS', "tjfields-wrapper techjoomla-bootstrap");
 
 	// Other
-	JHtml::_('behavior.tooltip');
+	HTMLHelper::_('bootstrap.tooltip');
 }
 else
 {
@@ -36,26 +41,22 @@ else
 	define('TJFIELDS_WRAPPER_CLASS', "tjfields-wrapper");
 
 	// Tabstate
-	JHtml::_('behavior.tabstate');
+	if (JVERSION < '4.0.0')
+	{
+		HTMLHelper::_('behavior.tabstate');
+		HTMLHelper::_('formbehavior.chosen', 'select');
+	}
 
 	// Other
-	JHtml::_('behavior.tooltip');
+	HTMLHelper::_('bootstrap.tooltip');
 
 	// Bootstrap tooltip and chosen js
-	JHtml::_('bootstrap.tooltip');
-	JHtml::_('behavior.multiselect');
-	JHtml::_('formbehavior.chosen', 'select');
+	HTMLHelper::_('bootstrap.tooltip');
+	HTMLHelper::_('behavior.multiselect');
 }
 
-// Load techjoomla strapper
-if (file_exists(JPATH_ROOT . '/media/techjoomla_strapper/tjstrapper.php'))
-{
-	require_once JPATH_ROOT . '/media/techjoomla_strapper/tjstrapper.php';
-	TjStrapper::loadTjAssets('com_tjfields');
-}
-
-$document = JFactory::getDocument();
-$document->addStyleSheet(JUri::base() . 'components/com_tjfields/assets/css/tjfields.css');
+$document = Factory::getDocument();
+$document->addStyleSheet(Uri::base() . 'components/com_tjfields/assets/css/tjfields.css');
 
 // Include helper file
 $helperPath = dirname(__FILE__) . '/helpers/tjfields.php';
@@ -66,9 +67,13 @@ if (!class_exists('TjfieldsHelper'))
 	JLoader::load('TjfieldsHelper');
 }
 
-// Include dependancies
-jimport('joomla.application.component.controller');
+// Load techjoomla strapper
+if (file_exists(JPATH_ROOT . '/media/techjoomla_strapper/tjstrapper.php'))
+{
+	require_once JPATH_ROOT . '/media/techjoomla_strapper/tjstrapper.php';
+	TjStrapper::loadTjAssets('com_tjfields');
+}
 
-$controller	= JControllerLegacy::getInstance('Tjfields');
-$controller->execute(JFactory::getApplication()->input->get('task'));
+$controller	= BaseController::getInstance('Tjfields');
+$controller->execute(Factory::getApplication()->input->get('task'));
 $controller->redirect();

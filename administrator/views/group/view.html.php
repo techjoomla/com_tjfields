@@ -9,6 +9,10 @@
 
 // No direct access
 defined('_JEXEC') or die;
+use Joomla\CMS\MVC\View\HtmlView;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Toolbar\ToolbarHelper;
 jimport('joomla.application.component.view');
 
 /**
@@ -18,7 +22,7 @@ jimport('joomla.application.component.view');
  * @subpackage  com_tjfields
  * @since       2.2
  */
-class TjfieldsViewGroup extends JViewLegacy
+class TjfieldsViewGroup extends HtmlView
 {
 	protected $state;
 
@@ -58,12 +62,12 @@ class TjfieldsViewGroup extends JViewLegacy
 	 */
 	protected function addToolbar()
 	{
-		$input           = JFactory::getApplication()->input;
+		$input           = Factory::getApplication()->input;
 		$client          = $input->get('client', '', 'STRING');
 
 		$input->set('hidemainmenu', true);
 
-		$user  = JFactory::getUser();
+		$user  = Factory::getUser();
 		$isNew = ($this->item->id == 0);
 
 		if (isset($this->item->checked_out))
@@ -75,7 +79,7 @@ class TjfieldsViewGroup extends JViewLegacy
 			$checkedOut = false;
 		}
 
-		$component_title = JText::_('COM_TJFIELDS_TITLE_COMPONENT');
+		$component_title = Text::_('COM_TJFIELDS_TITLE_COMPONENT');
 
 		if (!empty($client))
 		{
@@ -84,19 +88,19 @@ class TjfieldsViewGroup extends JViewLegacy
 			switch ($client['0'])
 			{
 				case 'com_jticketing' :
-					$component_title = JText::_('COM_JTICKETING_COMPONENT');
+					$component_title = Text::_('COM_JTICKETING_COMPONENT');
 					break;
 				case 'com_tjlms':
-					$component_title = JText::_('COM_TJLMS_COMPONENT');
+					$component_title = Text::_('COM_TJLMS_COMPONENT');
 					break;
 				case 'com_tjucm':
-					$component_title = JText::_('COM_TJUCM_COMPONENT');
+					$component_title = Text::_('COM_TJUCM_COMPONENT');
 			}
 		}
 
-		JToolbarHelper::title(
+		ToolbarHelper::title(
 		$component_title . ": " .
-		JText::_('COM_TJFIELDS_PAGE_' . ($checkedOut ? 'VIEW_GROUP' : ($isNew ? 'ADD_GROUP' : 'EDIT_GROUP'))),
+		Text::_('COM_TJFIELDS_PAGE_' . ($checkedOut ? 'VIEW_GROUP' : ($isNew ? 'ADD_GROUP' : 'EDIT_GROUP'))),
 			'pencil-2 article-add'
 		);
 

@@ -8,9 +8,13 @@
  */
 
 defined('JPATH_PLATFORM') or die;
-JLoader::import('components.com_tjfields.models.fields.file', JPATH_ADMINISTRATOR);
 
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Form\FormField;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
+
+JLoader::import('components.com_tjfields.models.fields.file', JPATH_ADMINISTRATOR);
 
 /**
  * Form Field Image class
@@ -160,7 +164,7 @@ class JFormFieldImage extends JFormFieldFile
 		}
 
 		// Load backend language file
-		$lang = JFactory::getLanguage();
+		$lang = Factory::getLanguage();
 		$lang->load('com_tjfields', JPATH_SITE);
 
 		if (!empty($layoutData["value"]))
@@ -193,7 +197,7 @@ class JFormFieldImage extends JFormFieldFile
 	 */
 	protected function renderImage($data, $layoutData)
 	{
-		$path = JUri::root() . 'images/tjmedia/';
+		$path = Uri::root() . 'images/tjmedia/';
 
 		if (!empty($data->tjFieldFieldTable))
 		{

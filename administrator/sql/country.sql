@@ -8,14 +8,15 @@ CREATE TABLE IF NOT EXISTS `#__tj_country` (
 	`country_3_code` char(3) DEFAULT NULL,
 	`country_code` char(2) DEFAULT NULL,
 	`country_dial_code` char(7) DEFAULT NULL,
-	`country_jtext` varchar(255) NOT NULL,
-	`ordering` int(3) NOT NULL DEFAULT '0',
-	`com_jgive` tinyint(1) NOT NULL DEFAULT '1',
-	`com_jticketing` tinyint(1) NOT NULL DEFAULT '1',
-	`com_quick2cart` tinyint(1) NOT NULL DEFAULT '1',
-	`com_socialads` tinyint(1) NOT NULL DEFAULT '1',
-	`com_tjlms` tinyint(1) NOT NULL DEFAULT '1',
-	`com_tjvendors` tinyint(1) NOT NULL DEFAULT '1',
+
+	`country_jtext` varchar(255) NOT NULL DEFAULT '',
+	`ordering` int(3) NOT NULL DEFAULT 0,
+	`com_jgive` tinyint(1) NOT NULL DEFAULT 1,
+	`com_jticketing` tinyint(1) NOT NULL DEFAULT 1,
+	`com_quick2cart` tinyint(1) NOT NULL DEFAULT 1,
+	`com_socialads` tinyint(1) NOT NULL DEFAULT 1,
+	`com_tjlms` tinyint(1) NOT NULL DEFAULT 1,
+	`com_tjvendors` tinyint(1) NOT NULL DEFAULT 1,
 	PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci AUTO_INCREMENT=1;
 

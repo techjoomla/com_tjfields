@@ -9,6 +9,7 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Form\FormRule;
 use Joomla\Registry\Registry;
 use Joomla\String\StringHelper;
 
@@ -17,7 +18,7 @@ use Joomla\String\StringHelper;
  *
  * @since  1.6
  */
-class JFormRuleTextareaCounter extends JFormRule
+class FormRuleTextareaCounter extends FormRule
 {
 	/**
 	 * Method to test for banned email addresses
@@ -32,7 +33,7 @@ class JFormRuleTextareaCounter extends JFormRule
 	 *
 	 * @return  boolean  True if the value is valid, false otherwise.
 	 */
-	public function test(SimpleXMLElement $element, $value, $group = null, Registry $input = null, JForm $form = null)
+	public function test(SimpleXMLElement $element, $value, $group = null, Registry $input = null, Form $form = null)
 	{
 		$maxLength = ($element['maxlength'] instanceof SimpleXMLElement) ? $element['maxlength']->__toString() : '';
 		$minLength = ($element['minlength'] instanceof SimpleXMLElement) ? $element['minlength']->__toString() : '';

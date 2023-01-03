@@ -9,9 +9,13 @@
 
 // No direct access.
 defined('_JEXEC') or die();
-$jinput = JFactory::getApplication()->input;
-$document = JFactory::getDocument();
-$path = JUri::base() . 'modules/mod_tjfields_search/assets/css/tjfilters.css';
+use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
+$jinput = Factory::getApplication()->input;
+$document = Factory::getDocument();
+$path = Uri::base() . 'modules/mod_tjfields_search/assets/css/tjfilters.css';
 $document->addStyleSheet($path);
 ?>
 
@@ -59,7 +63,7 @@ $selectedFilters = explode(',', $jinput->get('tj_fields_value', '', 'string'));
 	{ ?>
 	<div class="center">
 <!-- @TOODO Temporary hide this button
-		<a class="btn btn-small btn-info" onclick='tj_clearfilters()'><?php echo JText::_('MOD_TJFIELDS_SEARCH_CLEAR_BTN');?></a>
+		<a class="btn btn-small btn-info" onclick='tj_clearfilters()'><?php echo Text::_('MOD_TJFIELDS_SEARCH_CLEAR_BTN');?></a>
 -->
 	</div>
 	<?php
@@ -77,10 +81,10 @@ if ($showCategoryFilter && !empty($fieldsCategorys))
 }
 	?>
 	<div class="tj_categoryFilter" style="<?php echo $categoryFilterStyle; ?>">
-		<div><b><?php echo JText::_('MOD_TJFIELDS_SEARCH_SELECT_CATEGORY');?></b></div>
+		<div><b><?php echo Text::_('MOD_TJFIELDS_SEARCH_SELECT_CATEGORY');?></b></div>
 		<div class="form-group">
 			<?php
-				echo JHtml::_('select.genericlist', $fieldsCategorys, "category_id", 'class="form-control"  size="1" onchange="submitCategory()" title="' . JText::_('MOD_TJFIELDS_SEARCH_SELECT_CATEGORY') . '"', 'value', 'text', $selectedCategory, 'category_id');
+				echo HTMLHelper::_('select.genericlist', $fieldsCategorys, "category_id", 'class="form-control"  size="1" onchange="submitCategory()" title="' . Text::_('MOD_TJFIELDS_SEARCH_SELECT_CATEGORY') . '"', 'value', 'text', $selectedCategory, 'category_id');
 			?>
 		</div>
 	</div>
@@ -137,7 +141,7 @@ if (!empty($fieldsArray))
 <!-- @TOODO Temporary hide this button
 		<div class="center">
 			<a class="btn btn-small btn-info" onclick='tj_clearfilters()'>
-				<?php echo JText::_('MOD_TJFIELDS_SEARCH_CLEAR_BTN');?>
+				<?php echo Text::_('MOD_TJFIELDS_SEARCH_CLEAR_BTN');?>
 			</a>
 		</div>
 -->

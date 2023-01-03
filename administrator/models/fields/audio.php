@@ -9,6 +9,8 @@
 
 defined('JPATH_PLATFORM') or die;
 
+use Joomla\CMS\Form\FormField;
+
 JLoader::import('components.com_tjfields.models.fields.video', JPATH_ADMINISTRATOR);
 
 /**

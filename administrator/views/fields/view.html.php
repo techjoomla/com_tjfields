@@ -9,6 +9,11 @@
 
 // No direct access
 defined('_JEXEC') or die;
+use Joomla\CMS\MVC\View\HtmlView;
+use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Toolbar\Toolbar;
+use Joomla\CMS\Language\Text;
 
 jimport('joomla.application.component.view');
 
@@ -19,7 +24,7 @@ jimport('joomla.application.component.view');
  * @subpackage  com_tjfields
  * @since       2.2
  */
-class TjfieldsViewFields extends JViewLegacy
+class TjfieldsViewFields extends HtmlView
 {
 	protected $items;
 
@@ -36,7 +41,7 @@ class TjfieldsViewFields extends JViewLegacy
 	 */
 	public function display($tpl = null)
 	{
-		$input           = JFactory::getApplication()->input;
+		$input           = Factory::getApplication()->input;
 		$client          = $input->get('client', '', 'STRING');
 
 		$this->state      = $this->get('State');
@@ -71,27 +76,27 @@ class TjfieldsViewFields extends JViewLegacy
 	protected function addToolbar()
 	{
 		require_once JPATH_COMPONENT . '/helpers/tjfields.php';
-		$input           = JFactory::getApplication()->input;
+		$input           = Factory::getApplication()->input;
 		$client          = $input->get('client', '', 'STRING');
 		$client          = explode('.', $client);
 		$component_title = '';
 
-		$toolbar = JToolbar::getInstance('toolbar');
-		$toolbar->appendButton('Custom', '<a id="tjHouseKeepingFixDatabasebutton" class="btn btn-default hidden"><span class="icon-refresh"></span>' . JText::_('COM_TJFIELDS_FIX_DATABASE') . '</a>');
+		$toolbar = Toolbar::getInstance('toolbar');
+		$toolbar->appendButton('Custom', '<a id="tjHouseKeepingFixDatabasebutton" class="btn btn-default hidden"><span class="icon-refresh"></span>' . Text::_('COM_TJFIELDS_FIX_DATABASE') . '</a>');
 
 		if (!empty($client))
 		{
 			switch ($client['0'])
 			{
 				case 'com_jticketing' :
-					$component_title = JText::_('COM_JTICKETING_COMPONENT');
+					$component_title = Text::_('COM_JTICKETING_COMPONENT');
 					JToolBarHelper::back('COM_JTICKETING_HOME', 'index.php?option=com_jticketing&view=cp');
 					break;
 
 				case 'com_tjlms':
-					$component_title = JText::_('COM_TJLMS_COMPONENT_LABEL') . ' : ';
+					$component_title = Text::_('COM_TJLMS_COMPONENT_LABEL') . ' : ';
 
-					$lang = JFactory::getLanguage();
+					$lang = Factory::getLanguage();
 					$lang->load('com_tjlms', JPATH_ADMINISTRATOR, 'en-GB', true);
 
 					break;
@@ -103,11 +108,11 @@ class TjfieldsViewFields extends JViewLegacy
 
 		if (JVERSION >= '3.0')
 		{
-			JToolBarHelper::title($component_title . JText::_('COM_TJFIELDS_TITLE_FIELDS'), 'list');
+			JToolBarHelper::title($component_title . Text::_('COM_TJFIELDS_TITLE_FIELDS'), 'list');
 		}
 		else
 		{
-			JToolBarHelper::title($component_title . JText::_('COM_TJFIELDS_TITLE_FIELDS'), 'fields.png');
+			JToolBarHelper::title($component_title . Text::_('COM_TJFIELDS_TITLE_FIELDS'), 'fields.png');
 		}
 
 		// Check if the form exists before showing the add/edit buttons
@@ -175,11 +180,11 @@ class TjfieldsViewFields extends JViewLegacy
 	protected function getSortFields()
 	{
 		return array(
-			'a.id' => JText::_('JGRID_HEADING_ID'),
-			'a.label' => JText::_('COM_TJFIELDS_FIELDS_LABEL'),
-			'a.type' => JText::_('COM_TJFIELDS_FIELDS_FIELD_TYPE'),
-			'a.state' => JText::_('JSTATUS'),
-			'a.client' => JText::_('COM_TJFIELDS_FIELDS_CLIENT')
+			'a.id' => Text::_('JGRID_HEADING_ID'),
+			'a.label' => Text::_('COM_TJFIELDS_FIELDS_LABEL'),
+			'a.type' => Text::_('COM_TJFIELDS_FIELDS_FIELD_TYPE'),
+			'a.state' => Text::_('JSTATUS'),
+			'a.client' => Text::_('COM_TJFIELDS_FIELDS_CLIENT')
 		);
 	}
 }

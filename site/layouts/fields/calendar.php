@@ -9,6 +9,7 @@
 // No direct access
 
 defined('_JEXEC') or die('Restricted access');
+use Joomla\CMS\HTML\HTMLHelper;
 
 if (!key_exists('field', $displayData) || !key_exists('fieldXml', $displayData))
 {
@@ -20,5 +21,5 @@ $format = str_replace('%', '', $field->format);
 
 if ($field->value)
 {
-	echo JHtml::date($field->value, $format);
+	echo HTMLHelper::date($field->value, $format);
 }

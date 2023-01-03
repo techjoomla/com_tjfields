@@ -9,19 +9,22 @@
 
 // No direct access.
 defined('_JEXEC') or die;
-jimport('joomla.application.component.modeladmin');
-
-use Joomla\Registry\Registry;
-use Joomla\CMS\Form\FormHelper;
+use Joomla\CMS\Factory;
 use Joomla\CMS\Filesystem\File;
 use Joomla\CMS\Filesystem\Folder;
+use Joomla\CMS\Form\Form;
+use Joomla\CMS\Form\FormHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\Model\AdminModel;
+use Joomla\CMS\Table\Table;
+use Joomla\Registry\Registry;
 
 /**
  * Tjfields model.
  *
  * @since  2.5
  */
-class TjfieldsModelField extends JModelAdmin
+class TjfieldsModelField extends AdminModel
 {
 	/**
 	 * @var		string	The prefix to use with controller messages.
@@ -51,7 +54,7 @@ class TjfieldsModelField extends JModelAdmin
 	{
 		JLoader::import('components.com_tjfields.tables.field', JPATH_ADMINISTRATOR);
 
-		return JTable::getInstance($type, $prefix, $config);
+		return Table::getInstance($type, $prefix, $config);
 	}
 
 	/**
@@ -67,8 +70,8 @@ class TjfieldsModelField extends JModelAdmin
 	public function getForm($data = array(), $loadData = true)
 	{
 		// Get the form.
-		JForm::addFormPath(JPATH_ADMINISTRATOR . '/components/com_tjfields/models/forms');
-		JForm::addFormPath(JPATH_ADMINISTRATOR . '/components/com_tjfields/models/forms/types/forms');
+		Form::addFormPath(JPATH_ADMINISTRATOR . '/components/com_tjfields/models/forms');
+		Form::addFormPath(JPATH_ADMINISTRATOR . '/components/com_tjfields/models/forms/types/forms');
 		$form = $this->loadForm('com_tjfields.field', 'field', array('control' => 'jform','load_data' => $loadData));
 
 		// Load field params in the field form
@@ -112,7 +115,7 @@ class TjfieldsModelField extends JModelAdmin
 	 */
 	protected function loadFormData()
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$input = $app->input;
 
 		// Check the session for previously entered form data.
@@ -140,14 +143,14 @@ class TjfieldsModelField extends JModelAdmin
 	 */
 	public function getItem($pk = null)
 	{
-		$input = JFactory::getApplication()->input;
+		$input = Factory::getApplication()->input;
 
 		if ($item = parent::getItem($pk))
 		{
 			// Do any procesing on fields here if needed
 			if ($input->get('id', '', 'INT'))
 			{
-				$db = JFactory::getDbo();
+				$db = Factory::getDbo();
 				$query = $db->getQuery(true);
 				$query->select('opt.id as optionid,opt.options as name,opt.value FROM #__tjfields_options as opt');
 				$query->where('opt.field_id=' . $input->get('id', '', 'INT'));
@@ -165,7 +168,7 @@ class TjfieldsModelField extends JModelAdmin
 	/**
 	 * Method Prepare and sanitise the table prior to saving.
 	 *
-	 * @param   Array  $table  table
+	 * @param   Object  $table  table
 	 *
 	 * @return  void
 	 *
@@ -173,14 +176,12 @@ class TjfieldsModelField extends JModelAdmin
 	 */
 	protected function prepareTable($table)
 	{
-		jimport('joomla.filter.output');
-
 		if (empty($table->id))
 		{
 			// Set ordering to the last item if not set
 			if (@$table->ordering === '')
 			{
-				$db = JFactory::getDbo();
+				$db = Factory::getDbo();
 				$db->setQuery('SELECT MAX(ordering) FROM #__tjfields_fields');
 				$max = $db->loadResult();
 				$table->ordering = $max + 1;
@@ -199,12 +200,12 @@ class TjfieldsModelField extends JModelAdmin
 	 */
 	public function save($data)
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$fields_in_DB = array();
 		$options_filled = array();
 		$table = $this->getTable();
 		$form = $this->getForm($data);
-		JTable::addIncludePath(JPATH_ROOT . '/administrator/components/com_tjfields/tables');
+		Table::addIncludePath(JPATH_ROOT . '/administrator/components/com_tjfields/tables');
 
 		// Sanitize the field data
 		foreach ($data as $k => $validatedFieldData)
@@ -243,7 +244,7 @@ class TjfieldsModelField extends JModelAdmin
 			return false;
 		}
 
-		$input = JFactory::getApplication()->input;
+		$input = Factory::getApplication()->input;
 		$data['label'] = trim($data['label']);
 
 		// Set field title as field label
@@ -259,7 +260,7 @@ class TjfieldsModelField extends JModelAdmin
 			$name = explode("(", $data['label']);
 			$name = trim($name['0']);
 			$name = str_replace("`", "", $name);
-			$db = JFactory::getDBO();
+			$db = Factory::getDBO();
 
 			// Create a new query object.
 			$query = $db->getQuery(true);
@@ -275,7 +276,7 @@ class TjfieldsModelField extends JModelAdmin
 			$posts = $db->loadAssocList();
 			$postsCount = count($posts) + 1;
 			$data['label'] = $name . ' (' . $postsCount . ")";
-			$data['created_by'] = JFactory::getUser()->id;
+			$data['created_by'] = Factory::getUser()->id;
 		}
 
 		// Add clint type in data as it is not present in jform
@@ -320,14 +321,21 @@ class TjfieldsModelField extends JModelAdmin
 
 		// Remove extra value which are not needed to save in the fields table
 		$TjfieldsHelper = new TjfieldsHelper;
-		$data['params']['accept'] = preg_replace('/\s+/', '', $data['params']['accept']);
 
-		// Rename the .htaccess file if the file renderer is changed to preview
-		$htaccessFile = $data['params']['uploadpath'] . '/' . $this->htaccess;
-
-		if ($data['params']['renderer'] == 'preview')
+		if (array_key_exists("accept",$data['params']))
 		{
-			if (File::exists($htaccessFile))
+		    $data['params']['accept'] = preg_replace('/\s+/', '', $data['params']['accept']);
+		}
+
+		if (array_key_exists("uploadpath", $data['params']))
+		{
+		    // Rename the .htaccess file if the file renderer is changed to preview
+		    $htaccessFile = $data['params']['uploadpath'] . '/' . $this->htaccess;
+		}
+		
+		if (array_key_exists("renderer", $data['params']) && $data['params']['renderer'] == 'preview')
+		{
+			if (!empty($htaccessFile) && File::exists($htaccessFile))
 			{
 				// Rename the .htaccess file if the renderer is preview
 				File::move($htaccessFile, $htaccessFile . '.txt');
@@ -335,7 +343,7 @@ class TjfieldsModelField extends JModelAdmin
 		}
 		else
 		{
-			if (!File::exists($htaccessFile))
+			if (!empty($htaccessFile) &&  !File::exists($htaccessFile))
 			{
 				Folder::create(dirname($htaccessFile));
 				File::write($htaccessFile, $this->htaccessFileContent);
@@ -343,6 +351,7 @@ class TjfieldsModelField extends JModelAdmin
 		}
 
 		$data['params'] = json_encode($data['params']);
+		$data['js_function'] = '';
 
 		if ($table->save($data) === true)
 		{
@@ -387,7 +396,7 @@ class TjfieldsModelField extends JModelAdmin
 				// Check for empty options
 				if (count($options) == 0)
 				{
-					JFactory::getApplication()->enqueueMessage(JText::_('COM_TJFIELDS_INVALID_OPTION_VALUES'), 'error');
+					Factory::getApplication()->enqueueMessage(Text::_('COM_TJFIELDS_INVALID_OPTION_VALUES'), 'error');
 
 					return $id;
 				}
@@ -397,7 +406,7 @@ class TjfieldsModelField extends JModelAdmin
 					// Check for empty options
 					if ((!empty($value['name']) && $value['value'] == '') || ($value['name'] == '' && !empty($value['value'])))
 					{
-						JFactory::getApplication()->enqueueMessage(JText::_('COM_TJFIELDS_INVALID_OPTION_VALUES'), 'error');
+						Factory::getApplication()->enqueueMessage(Text::_('COM_TJFIELDS_INVALID_OPTION_VALUES'), 'error');
 
 						return $id;
 					}
@@ -568,7 +577,7 @@ class TjfieldsModelField extends JModelAdmin
 	 */
 	public function delete_option($delete_ids)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		foreach ($delete_ids as $key => $value)
 		{
@@ -596,7 +605,7 @@ class TjfieldsModelField extends JModelAdmin
 	 */
 	public function deleteFieldCategoriesMapping($field_id = array(), $cats = array())
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		try
 		{
@@ -637,7 +646,7 @@ class TjfieldsModelField extends JModelAdmin
 	 *
 	 * @since	1.6
 	 */
-	protected function preprocessForm(JForm $form, $data, $group = 'content')
+	protected function preprocessForm(Form $form, $data, $group = 'content')
 	{
 		$dataObject = $data;
 
@@ -677,10 +686,10 @@ class TjfieldsModelField extends JModelAdmin
 			return false;
 		}
 
-		$db = JFactory::getDbo();
-		$jInput = JFactory::getApplication()->input;
+		$db = Factory::getDbo();
+		$jInput = Factory::getApplication()->input;
 		JLoader::import('components.com_tjfields.tables.field', JPATH_ADMINISTRATOR);
-		$fieldTable = JTable::getInstance('Field', 'TjfieldsTable', array('dbo', $db));
+		$fieldTable = Table::getInstance('Field', 'TjfieldsTable', array('dbo', $db));
 		$fieldTable->load(array('id' => $fieldId));
 
 		// Get decoded data object
@@ -693,7 +702,7 @@ class TjfieldsModelField extends JModelAdmin
 
 		if (empty($fieldParams->get('multiple')))
 		{
-			$options = array(array('value' => '', "text" => JText::_("JGLOBAL_SELECT_AN_OPTION")));
+			$options = array(array('value' => '', "text" => Text::_("JGLOBAL_SELECT_AN_OPTION")));
 		}
 
 		foreach ($realtedFields as $realtedField)
@@ -805,7 +814,7 @@ class TjfieldsModelField extends JModelAdmin
 	 */
 	public function delete(&$pks)
 	{
-		$db = JFactory::getDbo();
+		$db = Factory::getDbo();
 		$pks = (array) $pks;
 
 		foreach ($pks as $pk)

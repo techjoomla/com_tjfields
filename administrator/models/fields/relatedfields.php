@@ -10,12 +10,15 @@
 defined('JPATH_PLATFORM') or die;
 
 JFormHelper::loadFieldClass('list');
+
 use Joomla\CMS\Factory;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\CMS\Form\FormHelper;
+use Joomla\CMS\Uri\Uri;
 
 $document = Factory::getDocument();
-$document->addScript(JUri::root() . 'administrator/components/com_tjfields/assets/js/relatedfield.js');
+$document->addScript(Uri::root() . 'administrator/components/com_tjfields/assets/js/relatedfield.js');
 
 /**
  * Form Field class for the Joomla Platform.

@@ -9,6 +9,10 @@
 
 defined('JPATH_PLATFORM') or die;
 
+use Joomla\CMS\Form\FormField;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Factory;
+
 JLoader::register('JFormFieldTextarea', JPATH_BASE . '/libraries/joomla/form/fields/textarea.php');
 
 /**
@@ -104,7 +108,7 @@ class JFormFieldTextareacounter extends JFormFieldTextarea
 		if ($return)
 		{
 			$this->countertext = isset($this->element['countertext']) ? (string) $this->element['countertext'] : '';
-			$this->countertext = JText::_($this->countertext);
+			$this->countertext = Text::_($this->countertext);
 			$this->maxlength = isset($this->element['maxlength']) ? (int) $this->element['maxlength'] : 0;
 			$this->minlength = isset($this->element['minlength']) ? (int) $this->element['minlength'] : 0;
 			$this->class .= ' tjfieldTextareacounter';
@@ -132,7 +136,7 @@ class JFormFieldTextareacounter extends JFormFieldTextarea
 		$html .= $this->getCounterMask();
 
 		// Using the .tjfieldTextareacounter selector
-		$doc = JFactory::getDocument();
+		$doc = Factory::getDocument();
 		$doc->addScriptDeclaration('
 			jQuery(document).ready(function() {
 

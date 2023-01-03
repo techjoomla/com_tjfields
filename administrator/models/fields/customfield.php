@@ -11,6 +11,10 @@
 
 defined('JPATH_BASE') or die;
 
+use Joomla\CMS\Form\FormField;
+use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
+
 jimport('joomla.html.html');
 jimport('joomla.form.formfield');
 
@@ -57,8 +61,8 @@ class JFormFieldCustomfield extends JFormField
 
 	protected function fetchGroupid($name, $value, &$node, $control_name)
 	{
-		$input = JFactory::getApplication()->input;
-		$db=JFactory::getDbo();
+		$input = Factory::getApplication()->input;
+		$db=Factory::getDbo();
 		$query	= $db->getQuery(true);
 		$query->select('grp.id,grp.name FROM `#__tjfields_groups` as grp');
 		$query->where('grp.state=1 AND client="'.$input->get('client','','STRING').'"');
@@ -66,10 +70,12 @@ class JFormFieldCustomfield extends JFormField
 		$groups=$db->loadObjectList();
 		$options = array();
 		foreach($groups as $group){
-			$options[] = JHtml::_('select.option',$group->id, $group->name);
+			$options[] = HTMLHelper::_('select.option',$group->id, $group->name);
 		}
 
-		return JHtml::_('select.genericlist',  $options, $name, 'class="inputbox required"', 'value', 'text', $value,'jform_group_id');
+		$class = (JVERSION < '4.0.0') ? '' : 'form-select';
+
+		return HTMLHelper::_('select.genericlist',  $options, $name, 'class="inputbox required ' . $class . '"', 'value', 'text', $value,'jform_group_id');
 	}
 
 	/**
@@ -80,7 +86,7 @@ class JFormFieldCustomfield extends JFormField
 	function fetchClientType($name, $value, &$node, $control_name)
 	{
 		//print_r($value); die('asda');
-		$input = JFactory::getApplication()->input;
+		$input = Factory::getApplication()->input;
 
 		$full_client = $input->get('client','','STRING');
 		$full_client =  explode('.',$full_client);
@@ -92,7 +98,7 @@ class JFormFieldCustomfield extends JFormField
 			$value = $full_client[1];
 		}
 
-					$db=JFactory::getDbo();
+					$db=Factory::getDbo();
 					$query	= $db->getQuery(true);
 					$query->select('client_type FROM `#__tjfields_client_type` as client_type');
 					$query->where('client_type.client="'.$client.'"');
@@ -102,10 +108,10 @@ class JFormFieldCustomfield extends JFormField
 
 		$options = array();
 		foreach($client_type as $type){
-			$options[] = JHtml::_('select.option',$type->client_type, $type->client_type);
+			$options[] = HTMLHelper::_('select.option',$type->client_type, $type->client_type);
 		}
-		return JHtml::_('select.genericlist',  $options, $name, 'class="inputbox required"', 'value', 'text', $value, $control_name.$name );
-		//return JHtml::_('select.genericlist', $options, $fieldName, 'class="inputbox required"', 'value', 'text', $value, $control_name.$name );
+		return HTMLHelper::_('select.genericlist',  $options, $name, 'class="inputbox required"', 'value', 'text', $value, $control_name.$name );
+		//return HTMLHelper::_('select.genericlist', $options, $fieldName, 'class="inputbox required"', 'value', 'text', $value, $control_name.$name );
 	}
 	*/
 }

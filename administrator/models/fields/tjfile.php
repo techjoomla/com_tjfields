@@ -7,11 +7,17 @@
  * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
-JLoader::import("/techjoomla/media/storage/local", JPATH_LIBRARIES);
-
 defined('JPATH_PLATFORM') or die;
 
+use Joomla\CMS\Factory;
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Form\FormField;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Form\FormHelper;
+
+FormHelper::loadFieldClass('file');
+JLoader::import("/techjoomla/media/storage/local", JPATH_LIBRARIES);
 
 /**
  * Form Field class for the Joomla Platform.
@@ -20,7 +26,7 @@ use Joomla\CMS\HTML\HTMLHelper;
  * @link   http://www.w3.org/TR/html-markup/input.file.html#input.file
  * @since  11.1
  */
-class JFormFieldFile extends JFormField
+class JFormFieldTjFile extends JFormFieldFile
 {
 	/**
 	 * The form field type.
@@ -28,7 +34,7 @@ class JFormFieldFile extends JFormField
 	 * @var    string
 	 * @since  11.1
 	 */
-	protected $type = 'File';
+	protected $type = 'Tjfile';
 
 	/**
 	 * The accepted file type list.
@@ -145,7 +151,7 @@ class JFormFieldFile extends JFormField
 		}
 
 		// Load backend language file
-		$lang = JFactory::getLanguage();
+		$lang = Factory::getLanguage();
 		$lang->load('com_tjfields', JPATH_SITE);
 
 		if (!empty($layoutData["value"]))
@@ -201,7 +207,7 @@ class JFormFieldFile extends JFormField
 		$tjFieldHelper = new TjfieldsHelper;
 		$data = new stdClass;
 
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$data->clientForm = $app->input->get('client', '', 'string');
 
 		// Checking the field is from subfrom or not
@@ -247,16 +253,16 @@ class JFormFieldFile extends JFormField
 		$data->extension = $fileInfo->getExtension();
 
 		// Access based actions
-		$data->user = JFactory::getUser();
+		$data->user = Factory::getUser();
 
-		$db = JFactory::getDbo();
-		JTable::addIncludePath(JPATH_ROOT . '/administrator/components/com_tjfields/tables');
-		$data->tjFieldFieldTable = JTable::getInstance('field', 'TjfieldsTable', array('dbo', $db));
+		$db = Factory::getDbo();
+		Table::addIncludePath(JPATH_ROOT . '/administrator/components/com_tjfields/tables');
+		$data->tjFieldFieldTable = Table::getInstance('field', 'TjfieldsTable', array('dbo', $db));
 		$data->tjFieldFieldTable->load(array('name' => $layoutData['field']->fieldname));
 
 		// Get Field value details
-		JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_tjfields/tables');
-		$data->fields_value_table = JTable::getInstance('Fieldsvalue', 'TjfieldsTable');
+		Table::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_tjfields/tables');
+		$data->fields_value_table = Table::getInstance('Fieldsvalue', 'TjfieldsTable');
 		$data->fields_value_table->load(array('value' => $layoutData['value']));
 
 		$extraParamArray = array();
@@ -298,7 +304,7 @@ class JFormFieldFile extends JFormField
 	{
 		$canView = 0;
 		$canDownload = 0;
-		$user = JFactory::getUser();
+		$user = Factory::getUser();
 
 		if ($data->user->authorise('core.field.viewfieldvalue', 'com_tjfields.group.' . $data->tjFieldFieldTable->group_id))
 		{
@@ -328,7 +334,6 @@ class JFormFieldFile extends JFormField
 			{
 				$fileTitle = substr($data->fields_value_table->value, strpos($data->fields_value_table->value, '_', 12) + 1);
 			}
-			
 
 			if ($renderer == 'download')
 			{
@@ -336,7 +341,7 @@ class JFormFieldFile extends JFormField
 			}
 			else
 			{
-				HTMLHelper::_('behavior.modal');
+				HTMLHelper::_('bootstrap.renderModal');
 				HTMLHelper::script('media/com_tjfields/js/ui/file.js');
 				$extension = $data->extension;
 
@@ -355,7 +360,7 @@ class JFormFieldFile extends JFormField
 
 				$imageData = getimagesize($data->mediaLink);
 				$widthHeight = "";
-			
+
 				if (strpos($imageData['mime'], 'image') !== false)
 				{
 					$widthHeight  = ", " . $imageData[0] . ", " . $imageData[1];
@@ -402,7 +407,7 @@ class JFormFieldFile extends JFormField
 		$deleteFiledata = '';
 
 		// Add constant to the JS
-		JText::script('COM_TJFIELDS_FILE_DELETE_CONFIRM');
+		Text::script('COM_TJFIELDS_FILE_DELETE_CONFIRM');
 
 		if (!empty($data->mediaLink) && ($canEdit || $canEditOwn) && $layoutData['required'] == '' && $data->fields_value_table->id)
 		{
@@ -410,7 +415,7 @@ class JFormFieldFile extends JFormField
 				onclick="deleteFile(\'' . base64_encode($layoutData["value"]) . '\',
 				 \'' . $layoutData["id"] . '\', \'' . base64_encode($data->fields_value_table->id) . '\',
 				  \'' . $data->subFormFileFieldId . '\',\'' . $data->isSubformField . '\');"><strong>'
-				. JText::_("COM_TJFIELDS_FILE_DELETE") . '</strong></a> </span>';
+				. Text::_("COM_TJFIELDS_FILE_DELETE") . '</strong></a> </span>';
 		}
 
 		return $deleteFiledata;

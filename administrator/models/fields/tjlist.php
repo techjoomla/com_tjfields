@@ -10,11 +10,13 @@
 // No direct access.
 defined('_JEXEC') or die();
 
-JFormHelper::loadFieldClass('list');
-
+use Joomla\CMS\Form\FormHelper;
+use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
+
+FormHelper::loadFieldClass('list');
 
 /**
  * Form Field class for the Joomla Platform.
@@ -107,12 +109,12 @@ class JFormFieldTjList extends JFormFieldList
 		$html = parent::getInput();
 
 		$doc = Factory::getDocument();
-		$doc->addScript(JUri::root() . 'administrator/components/com_tjfields/assets/js/tjlist.min.js');
+		$doc->addScript(Uri::root() . 'administrator/components/com_tjfields/assets/js/tjlist.min.js');
 
 		if ($this->multiple)
 		{
-			$doc->addStyleSheet(JUri::root() . 'administrator/components/com_tjfields/assets/css/bootstrap-tagsinput.css');
-			$doc->addScript(JUri::root() . 'administrator/components/com_tjfields/assets/js/bootstrap-tagsinput.min.js');
+			$doc->addStyleSheet(Uri::root() . 'administrator/components/com_tjfields/assets/css/bootstrap-tagsinput.css');
+			$doc->addScript(Uri::root() . 'administrator/components/com_tjfields/assets/js/bootstrap-tagsinput.min.js');
 		}
 
 		$options = $this->getOptions();
@@ -171,6 +173,8 @@ class JFormFieldTjList extends JFormFieldList
 					jQuery(document).ready(function() {
 						jQuery("select[name=\"' . $this->name . '\"] option[value=\"' . Text::_('COM_TJFIELDS_TJLIST_OTHER_OPTION_VALUE') . '\"]")
 						.prop("selected", true).trigger("liszt:updated");
+						jQuery("select[name=\"' . $this->name . '\"] option[value=\"' . Text::_('COM_TJFIELDS_TJLIST_OTHER_OPTION_VALUE') . '\"]")
+						.prop("selected", true).trigger("chosen:updated");
 					});
 				');
 			}
