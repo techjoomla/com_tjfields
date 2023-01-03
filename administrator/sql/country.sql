@@ -8,7 +8,6 @@ CREATE TABLE IF NOT EXISTS `#__tj_country` (
 	`country_3_code` char(3) DEFAULT NULL,
 	`country_code` char(2) DEFAULT NULL,
 	`country_dial_code` char(7) DEFAULT NULL,
-
 	`country_jtext` varchar(255) NOT NULL DEFAULT '',
 	`ordering` int(3) NOT NULL DEFAULT 0,
 	`com_jgive` tinyint(1) NOT NULL DEFAULT 1,
