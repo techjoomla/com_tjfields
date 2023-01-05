@@ -1760,11 +1760,11 @@ class TjfieldsHelper
 	 *
 	 * @return array|string
 	 */
-	public function getCategoryFields($client, $categoryId = '')
+	public function getCategoryFields($client, $categoryId)
 	{
 		$universalFields = "";
 
-		if (!empty($client))
+		if (!empty($client) && !empty($categoryId))
 		{
 			$db    = Factory::getDbo();
 			$query = $db->getQuery(true);
