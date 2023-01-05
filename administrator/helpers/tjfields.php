@@ -18,6 +18,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Filesystem\File;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Table\Table;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 
 /**
  * Helper class for tjfields
@@ -298,6 +299,10 @@ class TjfieldsHelper extends ContentHelper
 
 			// To store added field groups to the JForm
 			$addedFieldGroups = array();
+			
+			JLoader::import('components.com_tjfields.models.conditions', JPATH_ADMINISTRATOR);
+			$conditionsModel = BaseDatabaseModel::getInstance('Conditions', 'TjfieldsModel');
+			$conditionalFields = $conditionsModel->getConditionalFields();
 
 			foreach ($fields as $f)
 			{
@@ -318,6 +323,47 @@ class TjfieldsHelper extends ContentHelper
 				$field->addAttribute('type', $f->type);
 				$field->addAttribute('label', $f->label);
 				$field->addAttribute('description', $f->description);
+				
+				if (in_array($f->id, $conditionalFields))
+				{
+					$conditions = $conditionsModel->getConditions($f->id);
+					
+					$showonCondition = "";
+					$flag = 1;
+
+					foreach ($conditions as $condition)
+					{
+						$conditionMatch = $condition->condition_match;
+						$matchCase = ($conditionMatch == 1) ? "[AND]" : "[OR]" ;
+						$index = 1;
+
+						foreach (json_decode($condition->condition) as $condition1)
+						{		
+							$jsonDecoded = json_decode($condition1);
+							$fieldName = $conditionsModel->getFieldNameById($jsonDecoded->field_on_show);
+							$optionValue = $conditionsModel->getOptionName($jsonDecoded->field_on_show, $jsonDecoded->option);
+							$operator = ($jsonDecoded->operator == 1) ? ":" : "!:";
+							
+							$showonCondition .= $fieldName . $operator . $optionValue;
+							
+							if (count((array) json_decode($condition->condition)) > $index)
+							{
+								$showonCondition .= $matchCase;
+							}
+							
+							$index ++;
+						}
+						
+						if (count((array) $conditions) > $flag)
+						{
+							$showonCondition .= $matchCase;
+						}
+						
+						$flag ++;
+					}
+					
+					$field->addAttribute('showon', $showonCondition);
+				}
 
 				if ($f->required == 1)
 				{
