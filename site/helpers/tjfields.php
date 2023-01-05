@@ -1760,7 +1760,7 @@ class TjfieldsHelper
 	 *
 	 * @return array|string
 	 */
-	public function getCategoriesFields($client, $categoryId = '')
+	public function getCategoryFields($client, $categoryId = '')
 	{
 		$universalFields = "";
 
