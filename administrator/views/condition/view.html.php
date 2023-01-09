@@ -11,6 +11,7 @@ defined('_JEXEC') or die();
 use Joomla\CMS\MVC\View\HtmlView;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Toolbar\ToolbarHelper;
 
 jimport('joomla.application.component.view');
 
@@ -89,11 +90,11 @@ class TjfieldsViewCondition extends HtmlView
 
 		if (JVERSION >= '3.0')
 		{
-			JToolBarHelper::title($viewTitle, 'pencil-2');
+			ToolbarHelper::title($viewTitle, 'pencil-2');
 		}
 		else
 		{
-			JToolBarHelper::title($viewTitle, 'condition.png');
+			ToolbarHelper::title($viewTitle, 'condition.png');
 		}
 
 		if (isset($this->item->checked_out))
@@ -112,17 +113,17 @@ class TjfieldsViewCondition extends HtmlView
 		// If not checked out, can save the item.
 		if (! $checkedOut && ($canDo->get('core.edit') || ($canDo->get('core.create'))))
 		{
-			JToolBarHelper::apply('condition.apply', 'JTOOLBAR_APPLY');
-			JToolBarHelper::save('condition.save', 'JTOOLBAR_SAVE');
+			ToolbarHelper::apply('condition.apply', 'JTOOLBAR_APPLY');
+			ToolbarHelper::save('condition.save', 'JTOOLBAR_SAVE');
 		}
 
 		if (empty($this->item->id))
 		{
-			JToolBarHelper::cancel('condition.cancel', 'JTOOLBAR_CANCEL');
+			ToolbarHelper::cancel('condition.cancel', 'JTOOLBAR_CANCEL');
 		}
 		else
 		{
-			JToolBarHelper::cancel('condition.cancel', 'JTOOLBAR_CLOSE');
+			ToolbarHelper::cancel('condition.cancel', 'JTOOLBAR_CLOSE');
 		}
 	}
 }

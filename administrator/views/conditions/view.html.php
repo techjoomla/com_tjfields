@@ -11,6 +11,7 @@ defined('_JEXEC') or die();
 use Joomla\CMS\MVC\View\HtmlView;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Toolbar\ToolbarHelper;
 
 jimport('joomla.application.component.view');
 
@@ -89,11 +90,11 @@ class TjfieldsViewConditions extends HtmlView
 
 		if (JVERSION >= '3.0')
 		{
-			JToolBarHelper::title(Text::_('COM_TJFIELDS_TITLE_CONDITIONS'), 'list');
+			ToolbarHelper::title(Text::_('COM_TJFIELDS_TITLE_CONDITIONS'), 'list');
 		}
 		else
 		{
-			JToolBarHelper::title(Text::_('COM_TJFIELDS_TITLE_CONDITIONS'), 'conditions.png');
+			ToolbarHelper::title(Text::_('COM_TJFIELDS_TITLE_CONDITIONS'), 'conditions.png');
 		}
 
 		// Check if the form exists before showing the add/edit buttons
@@ -103,12 +104,12 @@ class TjfieldsViewConditions extends HtmlView
 		{
 			if ($canDo->get('core.create'))
 			{
-				JToolBarHelper::addNew('condition.add', 'JTOOLBAR_NEW');
+				ToolbarHelper::addNew('condition.add', 'JTOOLBAR_NEW');
 			}
 
 			if ($canDo->get('core.edit') && isset($this->items[0]))
 			{
-				JToolBarHelper::editList('condition.edit', 'JTOOLBAR_EDIT');
+				ToolbarHelper::editList('condition.edit', 'JTOOLBAR_EDIT');
 			}
 		}
 
@@ -116,9 +117,9 @@ class TjfieldsViewConditions extends HtmlView
 		{
 			if (isset($this->items[0]->state))
 			{
-				JToolBarHelper::divider();
-				JToolBarHelper::custom('conditions.publish', 'publish.png', 'publish_f2.png', 'JTOOLBAR_PUBLISH', true);
-				JToolBarHelper::custom('conditions.unpublish', 'unpublish.png', 'unpublish_f2.png', 'JTOOLBAR_UNPUBLISH', true);
+				ToolbarHelper::divider();
+				ToolbarHelper::custom('conditions.publish', 'publish.png', 'publish_f2.png', 'JTOOLBAR_PUBLISH', true);
+				ToolbarHelper::custom('conditions.unpublish', 'unpublish.png', 'unpublish_f2.png', 'JTOOLBAR_UNPUBLISH', true);
 			}
 		}
 		
@@ -127,15 +128,15 @@ class TjfieldsViewConditions extends HtmlView
 		{
 			if ($canDo->get('core.delete'))
 			{
-				JToolBarHelper::deleteList('', 'conditions.delete', 'JTOOLBAR_DELETE');
-				JToolBarHelper::divider();
+				ToolbarHelper::deleteList('', 'conditions.delete', 'JTOOLBAR_DELETE');
+				ToolbarHelper::divider();
 			}
 		}
 
 
 		if ($canDo->get('core.admin'))
 		{
-			JToolBarHelper::preferences('com_tjfields');
+			ToolbarHelper::preferences('com_tjfields');
 		}
 
 		if (JVERSION >= '3.0')
