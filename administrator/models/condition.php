@@ -194,10 +194,10 @@ class TjfieldsModelCondition extends AdminModel
 			$client_form = explode('.', $client);
 			$client_type = $client_form[1];
 
-			$data2 = array();
-			$data2['client'] = $client;
-			$data2['client_type'] = $client_type;
-			$TjfieldsHelper->generateXml($data2);
+			$dataOfClient = array();
+			$dataOfClient['client'] = $client;
+			$dataOfClient['client_type'] = $client_type;
+			$TjfieldsHelper->generateXml($dataOfClient);
 
 			// End xml
 		

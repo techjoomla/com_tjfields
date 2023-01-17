@@ -5,6 +5,8 @@
 			label="COM_TJFIELDS_FORM_LBL_CONDITION_ID"
 			description="COM_TJFIELDS_FORM_DESC_CONDITION_ID"
 			filter="safehtml" />
+		<field name="state" type="hiddle" label="JSTATUS" description="JFIELD_PUBLISHED_DESC" class="inputbox" size="1" default="1">
+		</field>
 
 		<field
 			name="show"

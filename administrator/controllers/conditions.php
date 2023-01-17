@@ -12,6 +12,8 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Controller\AdminController;
 use Joomla\CMS\Log\Log;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Session\Session;
+use Joomla\Utilities\ArrayHelper;
 
 jimport('joomla.application.component.controlleradmin');
 
@@ -87,6 +89,16 @@ class TjfieldsControllerConditions extends AdminController
 				{
 					$ntext = 'COM_TJFIELDS_N_CONDITIONS_UNPUBLISHED';
 				}
+				
+				// Generate xml here
+				$TjfieldsHelper = new TjfieldsHelper;
+				$client_form    = explode('.', $client);
+				$client_type    = $client_form[1];
+
+				$data = array();
+				$data['client'] = $client;
+				$data['client_type'] = $client_type;
+				$TjfieldsHelper->generateXml($data);
 
 				$this->setMessage(Text::plural($ntext, count($cid)));
 			}
@@ -97,5 +109,49 @@ class TjfieldsControllerConditions extends AdminController
 		}
 
 		$this->setRedirect('index.php?option=com_tjfields&view=conditions&client=' . $client);
+	}
+	
+	public function delete()
+	{
+		//GET CLIENT AND CLIENT TYPE
+		$app         = Factory::getApplication();
+		$input       = $app->input;
+		$client      = $input->get('client','','STRING');
+		$client_form = explode('.',$client);
+		$client_type = $client_form[1];
+
+		// Get items to remove from the request.
+		$cid = $app->input->get('cid', array(), 'array');
+
+		if (!is_array($cid) || count($cid) < 1)
+		{
+			Log::add(Text::_($this->text_prefix . '_NO_ITEM_SELECTED'), Log::WARNING, 'jerror');
+		}
+		else
+		{
+			// Get the model.
+			$model = $this->getModel();
+
+			// Make sure the item ids are integers
+			ArrayHelper::toInteger($cid);
+
+			// Remove the items.
+			if ($model->delete($cid))
+			{
+				$TjfieldsHelper      = new TjfieldsHelper();
+				$data                = array();
+				$data['client']      = $client;
+				$data['client_type'] = $client_type;
+				$TjfieldsHelper->generateXml($data);
+				$ntext = $this->text_prefix . '_N_ITEMS_DELETED';
+			}
+			else
+			{
+				$this->setMessage($model->getError());
+			}
+		}
+
+		$this->setMessage(Text::plural($ntext, count($cid)));
+		$this->setRedirect('index.php?option=com_tjfields&view=conditions&client='.$client, false);
 	}
 }

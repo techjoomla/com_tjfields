@@ -139,7 +139,7 @@ if (! empty($this->extra_sidebar))
 										<?php echo "Edit"; ?>
 										</a>
 										</br>
-										<a href="<?php echo Route::_('index.php?option=com_tjfields&task=conditions.delete&id=' . (int) $item->id . '&client=' . $this->input->get('client', '', 'STRING')); ?>">
+										<a href="<?php echo Route::_('index.php?option=com_tjfields&task=conditions.delete&cid=' . (int) $item->id . '&client=' . $this->input->get('client', '', 'STRING')); ?>">
 										<?php echo "Delete"; ?>
 										</a>
 									</td>

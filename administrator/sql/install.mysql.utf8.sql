@@ -71,7 +71,7 @@ CREATE TABLE IF NOT EXISTS `#__tjfields_fields_conditions` (
 	`field_to_show` int(11) NOT NULL,
 	`condition_match` int(11) NOT NULL,
 	`field_on_show` int(11) NOT NULL,
-	`condition` text CHARACTER NOT NULL,
+	`condition` text NOT NULL,
 	`type_id` int NOT NULL,
 	`client` varchar(255) NOT NULL,
 	`created_date` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' ,

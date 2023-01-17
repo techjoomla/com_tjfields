@@ -201,6 +201,7 @@ class TjfieldsModelConditions extends ListModel
 		$db = Factory::getDbo();
 		$query	= $db->getQuery(true);
 		$query->select('field_to_show FROM #__tjfields_fields_conditions');
+		$query->where('state = 1');
 		$db->setQuery($query);
 		$conditionalFields = $db->loadColumn();
 
