@@ -212,7 +212,7 @@ class TjfieldsModelConditions extends ListModel
 	{
 		$db = Factory::getDbo();
 		$query	= $db->getQuery(true);
-		$query->select($db->qn(array('condition','condition_match')));
+		$query->select($db->qn(array('condition','condition_match','show')));
 		$query->from('#__tjfields_fields_conditions');
 		$query->where('field_to_show=' . $id);
 		$db->setQuery($query);

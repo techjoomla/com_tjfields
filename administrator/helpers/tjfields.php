@@ -323,7 +323,7 @@ class TjfieldsHelper extends ContentHelper
 				$field->addAttribute('type', $f->type);
 				$field->addAttribute('label', $f->label);
 				$field->addAttribute('description', $f->description);
-				
+
 				if (in_array($f->id, $conditionalFields))
 				{
 					$conditions = $conditionsModel->getConditions($f->id);
@@ -342,7 +342,15 @@ class TjfieldsHelper extends ContentHelper
 							$jsonDecoded = json_decode($condition1);
 							$fieldName = $conditionsModel->getFieldNameById($jsonDecoded->field_on_show);
 							$optionValue = $conditionsModel->getOptionName($jsonDecoded->field_on_show, $jsonDecoded->option);
-							$operator = ($jsonDecoded->operator == 1) ? ":" : "!:";
+							
+							if ($condition->show == 1)
+							{
+								$operator = ($jsonDecoded->operator == 1) ? ":" : "!:";
+							}
+							else
+							{
+								$operator = ($jsonDecoded->operator == 1) ? "!:" : ":";
+							}
 							
 							$showonCondition .= $fieldName . $operator . $optionValue;
 							
