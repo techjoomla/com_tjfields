@@ -12,8 +12,6 @@ use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Component\ComponentHelper;
 
-jimport('joomla.application.component.modellist');
-
 /**
  * Methods supporting a list of countries records.
  *
@@ -231,5 +229,21 @@ class TjfieldsModelConditions extends ListModel
 		$name = $db->loadResult();
 
 		return $name;
+	}
+	
+	public function getConditionalFieldsData($client)
+	{
+		$db = Factory::getDbo();
+		$query	= $db->getQuery(true);
+		$query->select('tfc.*,tf.name');
+		$query->from('`#__tjfields_fields_conditions` AS tfc');
+		$query->join('LEFT', '`#__tjfields_fields` AS tf ON tf.id=tfc.field_to_show');
+		$query->where($db->quoteName('tfc.state') . ' = ' . $db->quote('1'));
+		$query->where($db->quoteName('tfc.client') . ' = ' . $db->quote($client));
+		
+		$db->setQuery($query);
+		$conditionalFields = $db->loadColumn();
+
+		return $conditionalFields;
 	}
 }

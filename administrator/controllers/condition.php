@@ -12,8 +12,6 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Response\JsonResponse;
 use Joomla\CMS\MVC\Controller\FormController;
 
-jimport('joomla.application.component.controllerform');
-
 /**
  * Country form controller class.
  *

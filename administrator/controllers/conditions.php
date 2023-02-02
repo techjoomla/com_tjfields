@@ -15,8 +15,6 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Session\Session;
 use Joomla\Utilities\ArrayHelper;
 
-jimport('joomla.application.component.controlleradmin');
-
 /**
  * Countries list controller class.
  *

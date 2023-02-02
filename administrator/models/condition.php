@@ -12,8 +12,6 @@ use Joomla\CMS\MVC\Model\AdminModel;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Factory;
 
-jimport('joomla.application.component.modeladmin');
-
 /**
  * Item Model for Condition.
  *

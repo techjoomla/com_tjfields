@@ -13,8 +13,6 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 
-jimport('joomla.application.component.view');
-
 /**
  * View class for editing condition.
  *
