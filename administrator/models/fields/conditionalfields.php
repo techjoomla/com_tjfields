@@ -48,15 +48,15 @@ class JFormFieldConditionalfields extends JFormFieldList
 		$db = Factory::getDbo();
 		$query = $db->getQuery(true);
 		$client = Factory::getApplication()->input->get('client', '', 'STRING');
-
+		
 		// Select the required fields from the table.
-		$query->select('tf.id, tf.label');
+		$query->select($db->qn(array('tf.id', 'tf.label')));
 		$query->from('`#__tjfields_fields` AS tf');
-		$query->where('tf.state = 1');
+		$query->where($db->quoteName('tf.state') . ' = ' . $db->quote('1'));
 
 		if ($client)
 		{
-			$query->where('tf.client = "' . $client . '"');
+			$query->where($db->quoteName('tf.client') . ' = ' . $db->quote($client));
 		}
 
 		$query->order($db->escape('tf.ordering ASC'));

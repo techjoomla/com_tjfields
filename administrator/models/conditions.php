@@ -139,61 +139,12 @@ class TjfieldsModelConditions extends ListModel
 
 		return $query;
 	}
-
-	/**
-	 * Method to get a list of countries.
-	 *
-	 * @return  mixed  An array of data items on success, false on failure.
-	 *
-	 * @since   1.6.1
-	 */
-	public function getItems()
-	{
-		$items = parent::getItems();
-
-		return $items;
-	}
 	
 	/**
-	 * Get option which are stored in field option table.
-	 *
-	 * @param   INT  $field_id  field id
-	 *
+	 * Get conditional fields.
+	 * 
 	 * @return array of option for the particular field
 	 */
-	public function getFieldName($fieldId)
-	{
-		$db = Factory::getDbo();
-		$query	= $db->getQuery(true);
-		$query->select('label');
-		$query->from('#__tjfields_fields AS tf');
-		$query->where('tf.id=' . $fieldId);
-		$db->setQuery($query);
-		$name = $db->loadResult();
-
-		return $name;
-	}
-	
-	/**
-	 * Get option which are stored in field option table.
-	 *
-	 * @param   INT  $field_id  field id
-	 *
-	 * @return array of option for the particular field
-	 */
-	public function getOptionName($fieldId, $optionId)
-	{
-		$db = Factory::getDbo();
-		$query	= $db->getQuery(true);
-		$query->select('value FROM #__tjfields_options');
-		$query->where('field_id=' . $fieldId);
-		$query->where('id=' . $optionId);
-		$db->setQuery($query);
-		$optionName = $db->loadResult();
-
-		return $optionName;
-	}
-	
 	public function getConditionalFields()
 	{
 		$db = Factory::getDbo();
@@ -206,6 +157,13 @@ class TjfieldsModelConditions extends ListModel
 		return $conditionalFields;
 	}
 
+	/**
+	 * Get conditions.
+	 *
+	 * @param   int  $id  id.
+	 * 
+	 * @return array of option for the particular field
+	 */
 	public function getConditions($id)
 	{
 		$db = Factory::getDbo();
@@ -218,19 +176,14 @@ class TjfieldsModelConditions extends ListModel
 
 		return $conditions;
 	}
-
-	public function getFieldNameById($id)
-	{
-		$db = Factory::getDbo();
-		$query	= $db->getQuery(true);
-		$query->select('name FROM #__tjfields_fields');
-		$query->where('id=' . $id);
-		$db->setQuery($query);
-		$name = $db->loadResult();
-
-		return $name;
-	}
 	
+	/**
+	 * Get conditional fields data.
+	 *
+	 * @param   string  $client  client.
+	 * 
+	 * @return array of option for the particular field
+	 */
 	public function getConditionalFieldsData($client)
 	{
 		$db = Factory::getDbo();

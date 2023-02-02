@@ -12,6 +12,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Table\Table;
 
 HTMLHelper::addIncludePath(JPATH_COMPONENT . '/helpers/html');
 
@@ -109,7 +110,13 @@ if (! empty($this->extra_sidebar))
 										} 
 										?>
 										<div>
-										<?php echo $showHide . ' - ' . $this->model->getFieldName($item->field_to_show); ?>
+										<?php 
+										Table::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_tjfields/tables');
+										$fieldTable = Table::getInstance('field', 'TjfieldsTable');
+										$fieldTable->load((int) $item->field_on_show);
+										$fieldName = $fieldTable->name;
+										
+										echo $showHide . ' - ' . $fieldName; ?>
 										</div>
 										<div>
 											<ul>	
@@ -126,10 +133,20 @@ if (! empty($this->extra_sidebar))
 													{
 														$operator = "Is Not";
 													}
-													?> 
-												<li><?php echo $this->model->getFieldName($conditionObj->field_on_show) . ' ';  ?>
+													?>
+													<?php 
+														$optionTable = Table::getInstance('Option', 'TjfieldsTable');
+														$optionTable->load(array('field_id' => $conditionObj->field_on_show, 'id' => $conditionObj->option));
+														$optionValue = $optionTable->value;
+													?>
+												<li><?php 
+												$fieldsTable = Table::getInstance('field', 'TjfieldsTable');
+												$fieldsTable->load((int) $conditionObj->field_on_show);
+												$fieldsName = $fieldsTable->name;
+												
+												echo $fieldsName . ' ';  ?>
 												<strong><?php  echo $operator; ?></strong>
-												<?php echo ' ' . $this->model->getOptionName($conditionObj->field_on_show, $conditionObj->option); ?></li>
+												<?php echo ' ' . $optionValue; ?></li>
 												<?php } ?>
 											</ul>
 										</div>

@@ -340,9 +340,16 @@ class TjfieldsHelper extends ContentHelper
 						foreach (json_decode($condition->condition) as $condition1)
 						{		
 							$jsonDecoded = json_decode($condition1);
-							$fieldName = $conditionsModel->getFieldNameById($jsonDecoded->field_on_show);
-							$optionValue = $conditionsModel->getOptionName($jsonDecoded->field_on_show, $jsonDecoded->option);
+
+							Table::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_tjfields/tables');
+							$fieldTable = Table::getInstance('field', 'TjfieldsTable');
+							$fieldTable->load((int) $jsonDecoded->field_on_show);
+							$fieldName = $fieldTable->name;
 							
+							$optionTable = Table::getInstance('Option', 'TjfieldsTable');
+							$optionTable->load(array('field_id' => $jsonDecoded->field_on_show, 'id' => $jsonDecoded->option));
+							$optionValue = $optionTable->value;
+
 							if ($condition->show == 1)
 							{
 								$operator = ($jsonDecoded->operator == 1) ? ":" : "!:";
