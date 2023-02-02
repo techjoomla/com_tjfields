@@ -1,177 +1,21 @@
 <?php
 /**
- * @package    Tjfields
- * @author     Techjoomla <extensions@techjoomla.com>
- * @copyright  Copyright (c) 2009-2023 TechJoomla. All rights reserved.
- * @license    GNU General Public License version 2 or later.
+ * @package     TJ-Fields
+ * @subpackage  com_tjfields
+ *
+ * @author      Techjoomla <extensions@techjoomla.com>
+ * @copyright   Copyright (C) 2009 - 2021 Techjoomla. All rights reserved.
+ * @license     http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
-// No direct access
-defined('_JEXEC') or die();
-use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Router\Route;
-use Joomla\CMS\Language\Text;
-use Joomla\CMS\Factory;
-use Joomla\CMS\Table\Table;
+// Do not allow direct access
+defined('_JEXEC') or die('Restricted access');
 
-HTMLHelper::addIncludePath(JPATH_COMPONENT . '/helpers/html');
-
-// Load lang file for countries
-$lang = Factory::getLanguage();
-$lang->load('tjgeo.countries', JPATH_SITE, null, false, true);
-$listOrder = $this->state->get('list.ordering');
-$listDirn = $this->state->get('list.direction');
-$user = Factory::getUser();
-?>
-<?php
-if (! empty($this->extra_sidebar))
+if (JVERSION < '4.0.0')
 {
-	$this->sidebar .= $this->extra_sidebar;
+	echo $this->loadTemplate('bs2');
 }
-?>
-
-<div class="<?php echo TJFIELDS_WRAPPER_CLASS;?> tj-conditions">
-	<?php if (!empty($this->sidebar)): ?>
-	<div id="j-sidebar-container" class="span2">
-		<?php echo $this->sidebar; ?>
-	</div>
-	<div id="j-main-container" class="span10">
-
-	<?php else : ?>
-		<div id="j-main-container">
-		<?php endif; ?>
-	<form
-		action="<?php echo Route::_('index.php?option=com_tjfields&view=conditions&client=' . $this->input->get('client', '', 'STRING')); ?>"
-		method="post" name="adminForm" id="adminForm">
-
-			<?php if (empty($this->items)) : ?>
-				<div class="clearfix">&nbsp;</div>
-				<div class="alert alert-no-items">
-					<?php echo Text::_('COM_TJFIELDS_NO_MATCHING_RESULTS'); ?>
-				</div>
-			<?php
-			else : ?>
-				<table class="table table-striped" id="countryList">
-					<thead>
-						<tr>
-							<th width="1%" class="hidden-phone">
-								<input type="checkbox" name="checkall-toggle" value=""
-								title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>"
-								onclick="Joomla.checkAll(this)" />
-							</th>
-							<?php if (isset($this->items[0]->state)): ?>
-								<th width="1%" class="nowrap center">
-									<?php echo HTMLHelper::_('grid.sort', 'JSTATUS', 'state', $listDirn, $listOrder); ?>
-								</th>
-							<?php endif; ?>
-
-							<th class='left'>
-								<?php echo Text::_('Condition'); ?>
-							</th>
-
-							<th class="center hidden-phone">
-								<?php echo Text::_('Actions'); ?>
-							</th>
-						</tr>
-					</thead>
-					<tbody>
-						<?php
-						foreach ($this->items as $i => $item):
-						$canChange = $user->authorise('core.edit.state', 'com_tjfields');
-						?>
-							<tr class="row<?php echo $i % 2; ?>">
-								<?php if (JVERSION >= '3.0'): ?>
-									<td class="center hidden-phone">
-										<?php echo HTMLHelper::_('grid.id', $i, $item->id); ?>
-									</td>
-									<?php if (isset($this->items[0]->state)): ?>
-										<td class="center">
-											<?php echo HTMLHelper::_('jgrid.published', $item->state, $i, 'conditions.', $canChange, 'cb'); ?>
-										</td>
-									<?php endif; ?>
-									<td>
-										<?php 
-										if ($item->show == 1)
-										{
-											$showHide = "Show";
-										}
-										else
-										{
-											$showHide = "Hide";
-										}
-										
-										if ($item->condition_match == 1)
-										{
-											$conditionMatch = "All";
-										}
-										else
-										{
-											$conditionMatch = "Any";
-										} 
-										?>
-										<div>
-										<?php 
-										Table::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_tjfields/tables');
-										$fieldTable = Table::getInstance('field', 'TjfieldsTable');
-										$fieldTable->load((int) $item->field_on_show);
-										$fieldName = $fieldTable->name;
-										
-										echo $showHide . ' - ' . $fieldName; ?>
-										</div>
-										<div>
-											<ul>	
-												<li><strong><?php echo $conditionMatch; ?></strong></li>
-												<?php foreach (json_decode($item->condition) as $condition) { ?>
-													<?php 
-													$conditionObj = json_decode($condition);
-													
-													if ($conditionObj->operator == 1)
-													{
-														$operator = "Is";
-													}
-													else
-													{
-														$operator = "Is Not";
-													}
-													?>
-													<?php 
-														$optionTable = Table::getInstance('Option', 'TjfieldsTable');
-														$optionTable->load(array('field_id' => $conditionObj->field_on_show, 'id' => $conditionObj->option));
-														$optionValue = $optionTable->value;
-													?>
-												<li><?php 
-												$fieldsTable = Table::getInstance('field', 'TjfieldsTable');
-												$fieldsTable->load((int) $conditionObj->field_on_show);
-												$fieldsName = $fieldsTable->name;
-												
-												echo $fieldsName . ' ';  ?>
-												<strong><?php  echo $operator; ?></strong>
-												<?php echo ' ' . $optionValue; ?></li>
-												<?php } ?>
-											</ul>
-										</div>
-									</td>
-									<td>
-										<a href="<?php echo Route::_('index.php?option=com_tjfields&task=condition.edit&id=' . (int) $item->id . '&client=' . $this->input->get('client', '', 'STRING')); ?>">
-										<?php echo "Edit"; ?>
-										</a>
-										</br>
-										<a href="<?php echo Route::_('index.php?option=com_tjfields&task=conditions.delete&cid=' . (int) $item->id . '&client=' . $this->input->get('client', '', 'STRING')); ?>">
-										<?php echo "Delete"; ?>
-										</a>
-									</td>
-								<?php endif; ?>
-							</tr>
-						<?php endforeach; ?>
-					</tbody>
-				</table>
-			<?php endif; ?>
-
-			<input type="hidden" name="task" value="" />
-			<input type="hidden" name="boxchecked" value="0" />
-			<input type="hidden" name="filter_order" value="<?php echo $listOrder; ?>" />
-			<input type="hidden" name="filter_order_Dir" value="<?php echo $listDirn; ?>" />
-			<?php echo HTMLHelper::_('form.token'); ?>
-		</div>
-	</form>
-</div>
+else
+{
+	echo $this->loadTemplate('bs5');
+}
