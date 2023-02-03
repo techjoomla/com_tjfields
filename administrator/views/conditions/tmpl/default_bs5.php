@@ -113,8 +113,8 @@ if (! empty($this->extra_sidebar))
 										<?php 
 										Table::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_tjfields/tables');
 										$fieldTable = Table::getInstance('field', 'TjfieldsTable');
-										$fieldTable->load((int) $item->field_on_show);
-										$fieldName = $fieldTable->name;
+										$fieldTable->load((int) $item->field_to_show);
+										$fieldName = $fieldTable->label;
 										
 										echo $showHide . ' - ' . $fieldName; ?>
 										</div>
@@ -142,7 +142,7 @@ if (! empty($this->extra_sidebar))
 												<li><?php 
 												$fieldsTable = Table::getInstance('field', 'TjfieldsTable');
 												$fieldsTable->load((int) $conditionObj->field_on_show);
-												$fieldsName = $fieldsTable->name;
+												$fieldsName = $fieldsTable->label;
 												
 												echo $fieldsName . ' ';  ?>
 												<strong><?php  echo $operator; ?></strong>
