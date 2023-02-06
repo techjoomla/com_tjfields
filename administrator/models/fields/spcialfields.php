@@ -53,7 +53,7 @@ class JFormFieldSpcialfields extends JFormFieldList
 		$query->select($db->qn(array('tf.id', 'tf.label')));
 		$query->from('`#__tjfields_fields` AS tf');
 		
-		$query->where($db->quoteName('tf.type') . ' IN ("tjlist","radio","checkbox")');
+		$query->where($db->quoteName('tf.type') . ' IN ("tjlist","radio","checkbox","single_select","multi_select","sql","itemcategory","ownership")');
 		$query->where($db->quoteName('tf.state') . ' = ' . $db->quote('1'));
 
 		if ($client)

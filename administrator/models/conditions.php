@@ -171,6 +171,7 @@ class TjfieldsModelConditions extends ListModel
 		$query->select($db->qn(array('condition','condition_match','show')));
 		$query->from('#__tjfields_fields_conditions');
 		$query->where('field_to_show=' . $id);
+		$query->where($db->quoteName('state') . ' = ' . $db->quote('1'));
 		$db->setQuery($query);
 		$conditions = $db->loadObjectList();
 

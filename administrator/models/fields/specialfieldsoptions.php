@@ -52,8 +52,6 @@ class JFormFieldSpecialfieldsoptions extends JFormFieldList
 		$query->select('t.id, t.options');
 		$query->from('`#__tjfields_options` AS t');
 		$query->order($db->escape('t.ordering ASC'));
-		
-		//~ echo $query->dump();die;
 
 		$db->setQuery($query);
 

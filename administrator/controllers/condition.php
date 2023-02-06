@@ -11,6 +11,7 @@ defined('_JEXEC') or die();
 use Joomla\CMS\Factory;
 use Joomla\CMS\Response\JsonResponse;
 use Joomla\CMS\MVC\Controller\FormController;
+use Joomla\CMS\Table\Table;
 
 /**
  * Country form controller class.
@@ -95,22 +96,34 @@ class TjfieldsControllerCondition extends FormController
 		$app = Factory::getApplication();
 		$fieldId = $app->input->get('fieldId', 0, 'INT');
 		
+		Table::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_tjfields/tables');
+		$fieldTable = Table::getInstance('field', 'TjfieldsTable');
+		$fieldTable->load((int) $fieldId);
+		$fieldParams = json_decode($fieldTable->params);
+
 		$db = Factory::getDbo();
 		$query = $db->getQuery(true);
 
 		// Select the required fields from the table.
 		$query->select('t.id AS value, t.options AS text');
 		$query->from('`#__tjfields_options` AS t');
-		$query->order($db->escape('t.ordering ASC'));
 		$query->where('t.field_id = ' . (int) $fieldId);
-	
+		$query->order($db->escape('t.ordering ASC'));
 		$db->setQuery($query);
 
 		// Get all countries.
 		$fieldOptions = $db->loadObjectList();
+		
+		if ($fieldParams->other)
+		{
+			$object = new stdClass();
+			$object->value = 'tjlistothervalue';
+			$object->text = 'Other';
+
+			array_push($fieldOptions, $object);
+		}
 
 		echo new JsonResponse($fieldOptions);
 		$app->close();
-
 	}
 }

@@ -135,15 +135,20 @@ if (! empty($this->extra_sidebar))
 													}
 													?>
 													<?php 
+														$fieldsTable = Table::getInstance('field', 'TjfieldsTable');
+														$fieldsTable->load((int) $conditionObj->field_on_show);
+														$fieldsName = $fieldsTable->label;
+
 														$optionTable = Table::getInstance('Option', 'TjfieldsTable');
 														$optionTable->load(array('field_id' => $conditionObj->field_on_show, 'id' => $conditionObj->option));
 														$optionValue = $optionTable->value;
+														
+														if (json_decode($fieldsTable->params)->other && empty($optionValue) && $conditionObj->option == 'tjlistothervalue')
+														{
+															$optionValue = 'Other';
+														}
 													?>
 												<li><?php 
-												$fieldsTable = Table::getInstance('field', 'TjfieldsTable');
-												$fieldsTable->load((int) $conditionObj->field_on_show);
-												$fieldsName = $fieldsTable->label;
-												
 												echo $fieldsName . ' ';  ?>
 												<strong><?php  echo $operator; ?></strong>
 												<?php echo ' ' . $optionValue; ?></li>

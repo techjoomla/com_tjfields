@@ -333,6 +333,7 @@ class TjfieldsHelper extends ContentHelper
 
 					foreach ($conditions as $condition)
 					{
+						
 						$conditionMatch = $condition->condition_match;
 						$matchCase = ($conditionMatch == 1) ? "[AND]" : "[OR]" ;
 						$index = 1;
@@ -349,6 +350,11 @@ class TjfieldsHelper extends ContentHelper
 							$optionTable = Table::getInstance('Option', 'TjfieldsTable');
 							$optionTable->load(array('field_id' => $jsonDecoded->field_on_show, 'id' => $jsonDecoded->option));
 							$optionValue = $optionTable->value;
+							
+							if (json_decode($fieldTable->params)->other && empty($optionValue))
+							{
+								$optionValue = $jsonDecoded->option;
+							}
 
 							if ($condition->show == 1)
 							{
