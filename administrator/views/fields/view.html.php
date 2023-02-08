@@ -165,6 +165,10 @@ class TjfieldsViewFields extends HtmlView
 		{
 			JToolBarHelper::preferences('com_tjfields');
 		}
+		
+		$btnAddCondtionalFields = '<a href="index.php?option=com_tjfields&view=condition&layout=edit&client=' . $client[0] . "." . $client[1] . '" class="btn">' . Text::_('COM_TJFIELDS_CONDITIONAL_FIELDS') . '</a>';
+			$toolbar->appendButton('Custom', $btnAddCondtionalFields);
+
 
 		$this->extra_sidebar = '';
 		$this->filterForm    = $this->get('FilterForm');
