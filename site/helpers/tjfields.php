@@ -1761,6 +1761,35 @@ class TjfieldsHelper
 	 * Get option which are stored in field option table.
 	 *
 	 * @param   string  $client  Get all fields based on client
+	 * @param   int  $categoryId  Get all fields based on category
+	 *
+	 * @return array|string
+	 */
+	public function getCategoryFields($client, $categoryId)
+	{
+		$universalFields = "";
+
+		if (!empty($client) && !empty($categoryId))
+		{
+			$db    = Factory::getDbo();
+			$query = $db->getQuery(true);
+			$query->select(array('f.*'));
+			$query->from($db->quoteName('#__tjfields_fields', 'f'));
+			$query->join('LEFT', $db->quoteName('#__tjfields_category_mapping', 'mapping') . 'ON (' . $db->quoteName('mapping.field_id') . '=' . $db->quoteName('f.id') . ')');
+			$query->where($db->quoteName('mapping.category_id') . "=" . (int) $categoryId);
+			$query->where($db->quoteName('f.client') . "=" . $db->quote($client));
+			$query->where($db->quoteName('f.state') . " = 1");
+			$db->setQuery($query);
+			$universalFields = $db->loadObjectlist();
+		}
+
+		return $universalFields;
+	}
+
+	/**
+	 * Get option which are stored in field option table.
+	 *
+	 * @param   string  $client  Get all fields based on client
 	 *
 	 * @return object
 	 */
