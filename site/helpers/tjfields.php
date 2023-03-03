@@ -77,7 +77,8 @@ class TjfieldsHelper
 			$multipleValueField = (isset($fieldParams->multiple) && !empty($fieldParams->multiple)) ? 1 : 0;
 			
 			// Initialize $fieldDataValue[$data->field_id] if needed
-		    if (!isset($fieldDataValue[$data->field_id])) {
+		    if (!isset($fieldDataValue[$data->field_id])) 
+		    {
 		        $fieldDataValue[$data->field_id] = new stdclass;
 		    }
 
