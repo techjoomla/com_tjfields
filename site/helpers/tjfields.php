@@ -62,7 +62,7 @@ class TjfieldsHelper
 		$query->join('INNER', $db->qn('#__tjfields_fields', 'f') . ' ON (' .
 		$db->qn('f.id') . ' = ' . $db->qn('fv.field_id') . ')');
 
-		$query->where('fv.content_id=' . $content_id);
+		$query->where('fv.content_id=' . (int) $content_id);
 		$query->where('fv.client="' . $client . '" ' . $query_user_string);
 		$query->where('f.state=' . $db->quote("1"));
 		$db->setQuery($query);
@@ -75,6 +75,12 @@ class TjfieldsHelper
 		{
 			$fieldParams = json_decode($data->params);
 			$multipleValueField = (isset($fieldParams->multiple) && !empty($fieldParams->multiple)) ? 1 : 0;
+			
+			// Initialize $fieldDataValue[$data->field_id] if needed
+		    if (!isset($fieldDataValue[$data->field_id])) 
+		    {
+		        $fieldDataValue[$data->field_id] = new stdclass;
+		    }
 
 			if ($data->type == "radio" || $data->type == "single_select")
 			{
@@ -89,7 +95,7 @@ class TjfieldsHelper
 			}
 			else
 			{
-				$fieldDataValue[$data->field_id] = new stdclass;
+				
 				$fieldDataValue[$data->field_id]->value = $data->value;
 				$fieldDataValue[$data->field_id]->field_id = $data->field_id;
 			}
