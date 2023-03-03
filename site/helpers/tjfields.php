@@ -75,7 +75,11 @@ class TjfieldsHelper
 		{
 			$fieldParams = json_decode($data->params);
 			$multipleValueField = (isset($fieldParams->multiple) && !empty($fieldParams->multiple)) ? 1 : 0;
-			$fieldDataValue[$data->field_id] = new stdclass;
+			
+			// Initialize $fieldDataValue[$data->field_id] if needed
+		    if (!isset($fieldDataValue[$data->field_id])) {
+		        $fieldDataValue[$data->field_id] = new stdclass;
+		    }
 
 			if ($data->type == "radio" || $data->type == "single_select")
 			{
