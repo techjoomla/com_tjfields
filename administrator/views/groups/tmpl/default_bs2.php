@@ -87,7 +87,7 @@ $sortFields = $this->getSortFields();
 				<div id="j-main-container">
 		<?php endif; ?>
 			<div class="tjBs3">
-				<div class="btn-group pull-left">
+				<div class="span12">
 					<?php echo LayoutHelper::render('joomla.searchtools.default', array('view' => $this)); ?>
 				</div>
 			</div>
