@@ -883,7 +883,7 @@ class Com_TjfieldsInstallerScript
 	{
 		$db = Factory::getDBO();
 
-		$newTable = $newTable . '_' . date('d-m-Y_H:m:s');
+		$newTable = $newTable . '_' . date('Y_m_d_H_i_s');
 
 		$query = "RENAME TABLE `" . $table . "` TO `" . $newTable . "`";
 		$db->setQuery($query);
