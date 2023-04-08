@@ -26,7 +26,7 @@ HTMLHelper::_('behavior.formvalidator');
 JText::script('COM_TJFIELD_CONFIRM_DELETE_FIELD', true);
 JText::script('COM_TJFIELDS_FILE_ERROR_MAX_SIZE');
 JText::script('COM_TJFIELD_CONFIRM_DELETE_REFRENCE_DATA', true);
-JHtml::script(Uri::root() . 'administrator/components/com_tjfields/assets/js/tjfields.js');
+JHtml::script(Uri::root() . 'media/com_tjfields/js/tjfields.js');
 JHtml::script(Uri::root(true) . '/libraries/techjoomla/assets/js/houseKeeping.js');
 
 // Import CSS
