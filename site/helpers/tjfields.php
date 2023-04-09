@@ -227,7 +227,8 @@ class TjfieldsHelper
 				{
 					$authorised = $user->authorise('core.field.editfieldvalue', 'com_tjfields.field.' . $field->id);
 				}
-				else
+
+				if (!$authorised)
 				{
 					if ($user->authorise('core.field.editownfieldvalue', 'com_tjfields.group.' . $field->group_id))
 					{
