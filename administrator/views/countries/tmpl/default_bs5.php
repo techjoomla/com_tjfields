@@ -67,72 +67,78 @@ if (! empty($this->extra_sidebar))
 
 <div class="<?php echo TJFIELDS_WRAPPER_CLASS;?> tj-countries j-sidebar-container" id="j-sidebar-container">
 	<form action="<?php echo Route::_('index.php?option=com_tjfields&view=countries&client=' . $this->input->get('client', '', 'STRING')); ?>" method="post" name="adminForm" id="adminForm">
-		<div id="filter-bar" class="btn-toolbar">
-			<div class="js-stools-container-selector filter-search btn-group pull-left">
-				<input
-					type="text"
-					name="filter_search"
-					id="filter_search"
-					placeholder="<?php echo Text::_('COM_TJFIELDS_FILTER_SEARCH_DESC_COUNTRIES'); ?>"
-					value="<?php echo $this->escape($this->state->get('filter.search')); ?>"
-					class="hasTooltip form-control"
-					title="<?php echo Text::_('COM_TJFIELDS_FILTER_SEARCH_DESC_COUNTRIES'); ?>" />
+		<div class="col-md-12">
+			<div class="js-stools" role="search">
+				<div class="js-stools-container-bar">
+					<div id="filter-bar" class="btn-toolbar">
+						<div class="js-stools-container-selector filter-search btn-group float-start">
+							<input
+								type="text"
+								name="filter_search"
+								id="filter_search"
+								placeholder="<?php echo Text::_('COM_TJFIELDS_FILTER_SEARCH_DESC_COUNTRIES'); ?>"
+								value="<?php echo $this->escape($this->state->get('filter.search')); ?>"
+								class="hasTooltip form-control"
+								title="<?php echo Text::_('COM_TJFIELDS_FILTER_SEARCH_DESC_COUNTRIES'); ?>" />
 
-				<button
-					type="submit"
-					class="btn btn-primary hasTooltip"
-					title="<?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?>">
-					<i class="icon-search"></i>
-				</button>
-				<button
-					type="button"
-					class="btn btn-primary hasTooltip"
-					title="<?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?>"
-					onclick="document.getElementById('filter_search').value='';this.form.submit();">
-					<i class="icon-remove"></i>
-				</button>
-			</div>
-			<div class="js-stools-container-selector btn-group pull-right hidden-phone hidden-tablet">
-				<label for="directionTable" class="element-invisible">
-					<?php echo Text::_('JFIELD_ORDERING_DESC'); ?>
-				</label>
-				<select name="directionTable" id="directionTable" class="form-select" onchange="Joomla.orderTable()">
-					<option value=""><?php echo Text::_('JFIELD_ORDERING_DESC'); ?></option>
-					<option value="asc"
-						<?php
-							if ($listDirn == 'asc')
-							{
-								echo 'selected="selected"';
-							}
-						?>>
-							<?php echo Text::_('JGLOBAL_ORDER_ASCENDING'); ?>
-					</option>
-					<option value="desc"
-						<?php
-						if ($listDirn == 'desc')
-						{
-							echo 'selected="selected"';
-						}
-						?>>
-							<?php echo Text::_('JGLOBAL_ORDER_DESCENDING'); ?>
-					</option>
-				</select>
-			</div>
-			<div class="js-stools-container-selector btn-group pull-right hidden-phone hidden-tablet">
-				<label for="sortTable" class="element-invisible">
-					<?php echo Text::_('JGLOBAL_SORT_BY'); ?>
-				</label>
-				<select name="sortTable" id="sortTable" class="form-select" onchange="Joomla.orderTable()">
-					<option value=""><?php echo Text::_('JGLOBAL_SORT_BY'); ?></option>
-					<?php echo HTMLHelper::_('select.options', $sortFields, 'value', 'text', $listOrder); ?>
-				</select>
-			</div>
-			<div class="js-stools-container-selector btn-group pull-right hidden-phone">
-				<?php echo HTMLHelper::_('select.genericlist', $this->publish_states, "filter_published", 'class="form-select" size="1" onchange="document.adminForm.submit();" name="filter_published"', "value", "text", $this->state->get('filter.state'));?>
-			</div>
-			<div class="js-stools-container-selector btn-group pull-right hidden-phone">
-				<label for="limit" class="element-invisible"><?php echo Text::_('JFIELD_PLG_SEARCH_SEARCHLIMIT_DESC'); ?></label>
-				<?php echo $this->pagination->getLimitBox(); ?>
+							<button
+								type="submit"
+								class="btn btn-primary hasTooltip"
+								title="<?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?>">
+								<i class="icon-search"></i>
+							</button>
+							<button
+								type="button"
+								class="btn btn-primary hasTooltip"
+								title="<?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?>"
+								onclick="document.getElementById('filter_search').value='';this.form.submit();">
+								<i class="icon-remove"></i>
+							</button>
+						</div>
+						<div class="js-stools-container-selector btn-group float-end hidden-phone hidden-tablet">
+							<label for="directionTable" class="element-invisible">
+								<?php echo Text::_('JFIELD_ORDERING_DESC'); ?>
+							</label>
+							<select name="directionTable" id="directionTable" class="form-select" onchange="Joomla.orderTable()">
+								<option value=""><?php echo Text::_('JFIELD_ORDERING_DESC'); ?></option>
+								<option value="asc"
+									<?php
+										if ($listDirn == 'asc')
+										{
+											echo 'selected="selected"';
+										}
+									?>>
+										<?php echo Text::_('JGLOBAL_ORDER_ASCENDING'); ?>
+								</option>
+								<option value="desc"
+									<?php
+									if ($listDirn == 'desc')
+									{
+										echo 'selected="selected"';
+									}
+									?>>
+										<?php echo Text::_('JGLOBAL_ORDER_DESCENDING'); ?>
+								</option>
+							</select>
+						</div>
+						<div class="js-stools-container-selector btn-group float-end hidden-phone hidden-tablet">
+							<label for="sortTable" class="element-invisible">
+								<?php echo Text::_('JGLOBAL_SORT_BY'); ?>
+							</label>
+							<select name="sortTable" id="sortTable" class="form-select" onchange="Joomla.orderTable()">
+								<option value=""><?php echo Text::_('JGLOBAL_SORT_BY'); ?></option>
+								<?php echo HTMLHelper::_('select.options', $sortFields, 'value', 'text', $listOrder); ?>
+							</select>
+						</div>
+						<div class="js-stools-container-selector btn-group float-end hidden-phone">
+							<?php echo HTMLHelper::_('select.genericlist', $this->publish_states, "filter_published", 'class="form-select" size="1" onchange="document.adminForm.submit();" name="filter_published"', "value", "text", $this->state->get('filter.state'));?>
+						</div>
+						<div class="js-stools-container-selector btn-group float-end hidden-phone">
+							<label for="limit" class="element-invisible"><?php echo Text::_('JFIELD_PLG_SEARCH_SEARCHLIMIT_DESC'); ?></label>
+							<?php echo $this->pagination->getLimitBox(); ?>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 
@@ -140,14 +146,14 @@ if (! empty($this->extra_sidebar))
 		if (empty($this->items))
 		{?>
 			<div class="clearfix">&nbsp;</div>
-			<div class="alert alert-no-items">
+			<div class="alert alert-no-items mt-3">
 				<?php echo Text::_('COM_TJFIELDS_NO_MATCHING_RESULTS'); ?>
 			</div>
 		<?php
 		}
 		else
 		{?>
-			<table class="table" id="countryList">
+			<table class="table mt-3" id="countryList">
 				<thead>
 					<tr>
 						<?php
