@@ -8,7 +8,12 @@
 var tjlist = {
 	addOtherOption: function (element) {
 
-		jQuery(tjlist.getTextBox(element)).insertAfter(element.next(".chzn-container"));
+		if (element.next(".chzn-container").length) {
+			jQuery(tjlist.getTextBox(element)).insertAfter(element.next(".chzn-container"));
+		} else {
+
+			jQuery(tjlist.getTextBox(element)).insertAfter(element);
+		}
 
 		setTimeout(function() {
 			element.siblings('div.tjfieldTjListOtherText').children('.bootstrap-tagsinput').children().focus();
@@ -36,7 +41,7 @@ var tjlist = {
 			var tagInput    = (element.attr('multiple') != undefined) ? 'data-role="tagsinput"' : '';
 		}
 
-		return '<div class="tjfieldTjListOtherText"><br/><input ' + tagInput + ' placeholder="' + Joomla.JText._('COM_TJFIELDS_OTHER_VALUE') + '" ' + isRequired + ' type="text" name="' + inputName + '" id="' + inputId + '" value="" class=" focus ' + requiredClass + '" aria-invalid="false"></div>';
+		return '<div class="tjfieldTjListOtherText"><br/><input ' + tagInput + ' placeholder="' + Joomla.JText._('COM_TJFIELDS_OTHER_VALUE') + '" ' + isRequired + ' type="text" name="' + inputName + '" id="' + inputId + '" value="" class=" form-control focus ' + requiredClass + '" aria-invalid="false"></div>';
 	},
 	loadTagsinputjs: function()
 	{
