@@ -105,6 +105,7 @@ class JFormFieldTjList extends JFormFieldList
 		// Add Other option language constant for JavaScript
 		Text::script('COM_TJFIELDS_TJLIST_OTHER_OPTION');
 		Text::script('COM_TJFIELDS_TJLIST_OTHER_OPTION_VALUE');
+		Text::script('COM_TJFIELDS_OTHER_VALUE');
 
 		$html = parent::getInput();
 
