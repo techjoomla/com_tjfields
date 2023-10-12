@@ -79,7 +79,7 @@ class TjfieldsModelRegions extends ListModel
 		// Set ordering direction.
 		$listOrder = $this->getUserStateFromRequest($this->context . 'filter_order_Dir', 'filter_order_Dir');
 
-		if (!in_array(strtoupper($listOrder), array('ASC', 'DESC', '')))
+		if (!in_array(strtoupper($listOrder ? $listOrder : ''), array('ASC', 'DESC', '')))
 		{
 			$listOrder = 'ASC';
 		}
