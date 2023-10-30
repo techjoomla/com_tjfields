@@ -478,7 +478,7 @@ trait TjfieldsFilterField
 	 * @since   1.0
 	 * @return   null
 	 */
-	public static function getLanguage()
+	public static function getLanguageConstantForJs()
 	{
 		Text::script('COM_TJFIELDS_FILE_DELETE_CONFIRM');
 		Text::script('COM_TJFIELDS_FILE_ERROR_MAX_SIZE');
