@@ -471,17 +471,4 @@ trait TjfieldsFilterField
 
 		return $result;
 	}
-
-	/**
-	 * This define the  language constant which you have use in js file.
-	 *
-	 * @since   1.0
-	 * @return   null
-	 */
-	public static function getLanguage()
-	{
-		Text::script('COM_TJFIELDS_FILE_DELETE_CONFIRM');
-		Text::script('COM_TJFIELDS_FILE_ERROR_MAX_SIZE');
-		Text::script('COM_TJFIELDS_FILE_DELETE_SUCCESS');
-	}
 }
