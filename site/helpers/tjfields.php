@@ -2322,5 +2322,6 @@ class TjfieldsHelper
 	{
 		Text::script('COM_TJFIELDS_FILE_DELETE_CONFIRM');
 		Text::script('COM_TJFIELDS_FILE_ERROR_MAX_SIZE');
+		Text::script('COM_TJFIELDS_FILE_DELETE_SUCCESS');
 	}
 }
