@@ -208,7 +208,7 @@ if (! empty($this->extra_sidebar))
 
 								<td class="left hidden-phone">
 									<?php
-									if ($lang->hasKey(strtoupper($item->city_jtext)))
+									if ($lang->hasKey(strtoupper($item->city_jtext ? $item->city_jtext : '')))
 									{
 										echo Text::_($item->city_jtext);
 									}
