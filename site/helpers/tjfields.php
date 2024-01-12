@@ -1745,6 +1745,7 @@ class TjfieldsHelper
 			$query->where('NOT EXISTS (select * FROM #__tjfields_category_mapping AS cm where f.id=cm.field_id)');
 			$query->where($db->quoteName('f.client') . "=" . $db->quote($client));
 			$query->where($db->quoteName('f.state') . " = 1");
+			$query->order($db->quoteName('f.ordering'));
 			$db->setQuery($query);
 			$universalFields = $db->loadObjectlist();
 		}
@@ -1774,6 +1775,7 @@ class TjfieldsHelper
 			$query->where($db->quoteName('mapping.category_id') . "=" . (int) $categoryId);
 			$query->where($db->quoteName('f.client') . "=" . $db->quote($client));
 			$query->where($db->quoteName('f.state') . " = 1");
+			$query->order($db->quoteName('f.ordering'));
 			$db->setQuery($query);
 			$universalFields = $db->loadObjectlist();
 		}
