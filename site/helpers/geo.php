@@ -20,6 +20,8 @@ use Joomla\CMS\Language\Text;
  */
 class TjGeoHelper
 {
+	public $_tjlang, $_db;
+	
 	/**
 	 * Toolbar name
 	 *
