@@ -20,6 +20,7 @@ use Joomla\CMS\Language\Text;
  */
 class JFormFieldJsfunction extends FormField
 {
+	public $countoption, $tjfield_icon_plus, $tjfield_icon_minus;
 	protected $type = 'text';
 
 	function __construct ()
