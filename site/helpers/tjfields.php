@@ -652,6 +652,11 @@ class TjfieldsHelper
 			{
 				if (!in_array($value, $previouslyStoredValues))
 				{
+					if (is_array($value))
+					{
+						$value = implode(',', $value);
+					}
+					
 					$status = $this->saveSingleValuedFieldData($value, $client, $contentId, $fieldId);
 
 					if ($status === false)
