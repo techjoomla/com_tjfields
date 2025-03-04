@@ -1827,7 +1827,7 @@ class TjfieldsHelper
 		{
 			$db    = Factory::getDbo();
 			$query = $db->getQuery(true);
-			$query->select('DISTINCT fv.option_id, f.id,f.name, f.label,fv.value,fo.options');
+			$query->select('DISTINCT fv.option_id, f.id,f.name, f.label,fv.value,fo.options,f.type');
 			$query->FROM("#__tjfields_fields AS f");
 			$query->JOIN('INNER', '#__tjfields_fields_value AS fv ON fv.field_id = f.id');
 			$query->JOIN('INNER', '#__tjfields_options AS fo ON fo.id = fv.option_id');
@@ -1854,7 +1854,7 @@ class TjfieldsHelper
 			{
 				$db    = Factory::getDbo();
 				$queryCat = $db->getQuery(true);
-				$queryCat->select('DISTINCT fv.option_id, f.id,f.name, f.label,fv.value,fo.options');
+				$queryCat->select('DISTINCT fv.option_id, f.id,f.name, f.label,fv.value,fo.options,f.type');
 				$queryCat->FROM("#__tjfields_fields AS f");
 				$queryCat->JOIN('INNER', '#__tjfields_fields_value AS fv ON fv.field_id = f.id');
 				$queryCat->JOIN('INNER', '#__tjfields_options AS fo ON fo.id = fv.option_id');
