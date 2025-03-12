@@ -50,25 +50,25 @@ class TjfieldsModelOption extends JModelItem
 	public function getItem()
 	{
 		$db = $this->getDbo();
-        $query = $db->getQuery(true);
+		$query = $db->getQuery(true);
 
-        // Get the ID from state if not provided
-        $id = (!empty($id)) ? (int) $id : (int) $this->getState('filter.id');
+		// Get the ID from state if not provided
+		$id = (!empty($id)) ? (int) $id : (int) $this->getState('filter.id');
 
-        // If no ID is found, return false
-        if (!$id) {
-            return false;
-        }
+		// If no ID is found, return false
+		if (!$id) {
+			return false;
+		}
 
-        // Build the query to fetch record by ID
-        $query->select('*')
-              ->from($db->quoteName('#__tjfields_options'))
-              ->where($db->quoteName('id') . ' = ' . (int) $id);
-        $db->setQuery($query);
+		// Build the query to fetch record by ID
+		$query->select('*')
+			->from($db->quoteName('#__tjfields_options'))
+			->where($db->quoteName('id') . ' = ' . (int) $id);
+		$db->setQuery($query);
 
-        // Fetch the result
-        $item = $db->loadObject();
+		// Fetch the result
+		$item = $db->loadObject();
 
-        return $item;
+		return $item;
 	}
 }
