@@ -41,9 +41,9 @@ class TjfieldsModelOption extends JModelItem
 
 
 	/**
-	 * Method to get an array of data items.
+	 * Method to get data items.
 	 *
-	 * @return  mixed  An array of data items on success, false on failure.
+	 * @return  mixed  A data items on success, false on failure.
 	 *
 	 * @since  _DEPLOY_VERSION_
 	 */
