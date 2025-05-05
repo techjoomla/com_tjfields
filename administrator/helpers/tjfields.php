@@ -172,7 +172,7 @@ class TjfieldsHelper extends ContentHelper
 		LEFT JOIN #__tjfields_groups as g
 		ON g.id = f.group_id WHERE NOT EXISTS (select * FROM #__tjfields_category_mapping AS cm where f.id=cm.field_id)
 		AND f.client="' . $data['client'] . '" AND f.state=1 AND g.state = 1
-		ORDER BY f.ordering';
+		ORDER BY g.ordering, f.ordering';
 
 		$db->setQuery($query);
 		$unmappedFields = $db->loadObjectList();
