@@ -6,6 +6,11 @@
 			<field name="min" type="number" label="COM_TJFIELDS_FORM_LBL_FIELD_MIN" description="COM_TJFIELDS_FORM_DESC_FIELD_MIN"/>
 			<field name="max" type="number" label="COM_TJFIELDS_FORM_LBL_FIELD_MAX" description="COM_TJFIELDS_FORM_DESC_FIELD_MAX"/>
 			<field name="step" type="number" label="COM_TJFIELDS_FORM_LBL_FIELD_STEP" description="COM_TJFIELDS_FORM_DESC_FIELD_STEP"/>
+			<field name="data-currency-symbol" type="text" label="COM_TJFIELDS_FORM_LBL_FIELD_CURRENCY_SYMBOL" description="COM_TJFIELDS_FORM_DESC_FIELD_CURRENCY_SYMBOL"/>
+			<field name="data-currency-position" type="radio" label="COM_TJFIELDS_FORM_LBL_FIELD_CURRENCY_POSITION" description="COM_TJFIELDS_FORM_DESC_FIELD_CURRENCY_POSITION" class="btn-group">
+				<option value="prefix">COM_TJFIELDS_FORM_OPTION_CURRENCY_PREFIX</option>
+				<option value="suffix">COM_TJFIELDS_FORM_OPTION_CURRENCY_SUFFIX</option>
+			</field>
 			<field name="hint" type="text" label="COM_TJFIELDS_FORM_LBL_NUMBER_FIELD_PLACEHOLDER" description="COM_TJFIELDS_FORM_DESC_NUMBER_FIELD_PLACEHOLDER"/>
 			<field name="filter" type="text" default="number"/>
 			<field name="compare" type="radio" default="0" class="btn-group" label="COM_TJFIELDS_FORM_LBL_NUMBER_FIELD_COMPARE" description="COM_TJFIELDS_FORM_DESC_NUMBER_FIELD_COMPARE">
