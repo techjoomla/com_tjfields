@@ -1,3 +1,4 @@
+
 <?php
 /**
  * @package     Joomla.Platform
@@ -10,12 +11,16 @@
 defined('JPATH_PLATFORM') or die;
 
 JFormHelper::loadFieldClass('list');
-use Joomla\CMS\Factory;
+
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Language\Text;
 use Joomla\Registry\Registry;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Form\FormHelper;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
 
 /**
  * Form Field class for the Joomla Platform.
@@ -54,7 +59,7 @@ class JFormFieldRelated extends JFormFieldList
 
 		// Get object of TJ-Fields field model
 		JLoader::import('components.com_tjfields.models.field', JPATH_ADMINISTRATOR);
-		$tjFieldsModelField = JModelLegacy::getInstance('Field', 'TjfieldsModel');
+		$tjFieldsModelField = BaseDatabaseModel::getInstance('Field', 'TjfieldsModel');
 		$options = $tjFieldsModelField->getRelatedFieldOptions($fieldTable->id);
 
 		return $options;
@@ -73,7 +78,7 @@ class JFormFieldRelated extends JFormFieldList
 		$html      = parent::getInput();
 		$fieldname = preg_replace('/[^a-zA-Z0-9_\-]/', '_', $this->fieldname);
 		$user      = Factory::getUser();
-		$input     = JFactory::getApplication()->input;
+		$input     = Factory::getApplication()->input;
 		$db        = Factory::getDbo();
 
 		Table::addIncludePath(JPATH_ROOT . '/administrator/components/com_tjfields/tables');
@@ -135,9 +140,9 @@ class JFormFieldRelated extends JFormFieldList
 		if ($fieldParams['showAddNewRecordLink'] && $this->id && $fieldTable->id)
 		{
 			$clusterId = $input->get("cluster_id", 0, "INT");
-			$document  = JFactory::getDocument();
+			$document  = Factory::getDocument();
 
-			$document->addScript(JUri::root() . 'media/com_tjucm/js/ui/itemform.min.js');
+			$document->addScript(Uri::root() . 'media/com_tjucm/js/ui/itemform.min.js');
 
 			$document->addScriptDeclaration('jQuery(document).ready(function() {
 				jQuery("#' . $this->id . '_chzn").click(function(){

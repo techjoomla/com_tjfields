@@ -8,6 +8,8 @@
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
+use Joomla\CMS\Factory;
+use Joomla\CMS\Table\Table;
 
 if (!key_exists('field', $displayData))
 {
@@ -19,9 +21,9 @@ $categoryId = (int) $field->value;
 
 if ($categoryId)
 {
-	$db = JFactory::getApplication();
-	JTable::addIncludePath(JPATH_ROOT . '/administrator/components/com_category/tables');
-	$categoryTable = JTable::getInstance('Category', 'JTable', array('dbo', $db));
+	$db = Factory::getApplication();
+	Table::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_categories/tables');
+	$categoryTable = Table::getInstance('Category', 'JTable');
 	$categoryTable->load($categoryId);
 
 	echo htmlspecialchars($categoryTable->title, ENT_COMPAT, 'UTF-8');

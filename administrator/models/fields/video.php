@@ -9,6 +9,11 @@
 
 defined('JPATH_PLATFORM') or die;
 
+use Joomla\CMS\Form\FormHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
+
 JFormHelper::loadFieldClass('url');
 
 /**
@@ -128,21 +133,21 @@ class JFormFieldVideo extends JFormFieldUrl
 			$html .= '<br>
 					<!-- Trigger the modal with a button -->
 					<button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal_' . $layoutData['field']->id . '">'
-					. JText::_("COM_TJFIELDS_FIELD_VIDEO_PLAY_BUTTON") . '</button>
+					. Text::_("COM_TJFIELDS_FIELD_VIDEO_PLAY_BUTTON") . '</button>
 					<div class="modal fade" id="myModal_' . $layoutData['field']->id . '" role="dialog">
 						<div class="modal-dialog" style="width:'. ((int)($layoutData['field']->element->attributes()->width)+40) .'px;">
 							<!-- Modal content-->
 							<div class="modal-content">
 								<div class="modal-header">
 									<button type="button" class="close" data-dismiss="modal">&times;</button>
-									<h4 class="modal-title">' . JText::_("COM_TJFIELDS_FIELD_VIDEO_TITLE") . '</h4>
+									<h4 class="modal-title">' . Text::_("COM_TJFIELDS_FIELD_VIDEO_TITLE") . '</h4>
 								</div>
 								<div class="modal-body">';
 									$html .= $this->rendervideo($layoutData, $layoutData['value']);
 									$html .= '
 								</div>
 								<div class="modal-footer">
-									<button type="button" class="btn btn-default" data-dismiss="modal">' . JText::_("COM_TJFIELDS_FIELD_VIDEO_POP_UP_CLOSE") . '</button>
+									<button type="button" class="btn btn-default" data-dismiss="modal">' . Text::_("COM_TJFIELDS_FIELD_VIDEO_POP_UP_CLOSE") . '</button>
 								</div>
 							</div>
 						</div>
@@ -235,44 +240,44 @@ class JFormFieldVideo extends JFormFieldUrl
 	{
 		$html = '';
 
-		$doc = JFactory::getDocument();
+		$doc = Factory::getDocument();
 
-		$doc->addScript(JUri::root() . 'media/com_tjfields/vendors/mediaelementplayer/mediaelement-and-player.min.js');
-		$doc->addStyleSheet(JUri::root() . 'media/com_tjfields/vendors/mediaelementplayer/mediaelementplayer.min.css');
+		$doc->addScript(Uri::root() . 'media/com_tjfields/vendors/mediaelementplayer/mediaelement-and-player.min.js');
+		$doc->addStyleSheet(Uri::root() . 'media/com_tjfields/vendors/mediaelementplayer/mediaelementplayer.min.css');
 
 		if (strpos($layoutData['value'], "vimeo") !== false)
 		{
 			if (isset($layoutData['field']->element->attributes()->vimeo))
 			{
-				$doc->addScript(JUri::root() . 'media/com_tjfields/vendors/mediaelementplayer/renderers/vimeo.min.js');
+				$doc->addScript(Uri::root() . 'media/com_tjfields/vendors/mediaelementplayer/renderers/vimeo.min.js');
 			}
 		}
 		elseif (strpos($layoutData['value'], "facebook") !== false)
 		{
 			if (isset($layoutData['field']->element->attributes()->Facebook))
 			{
-				$doc->addScript(JUri::root() . 'media/com_tjfields/vendors/mediaelementplayer/renderers/facebook.min.js');
+				$doc->addScript(Uri::root() . 'media/com_tjfields/vendors/mediaelementplayer/renderers/facebook.min.js');
 			}
 		}
 		elseif (strpos($layoutData['value'], "twitch") !== false)
 		{
 			if (isset($layoutData['field']->element->attributes()->twitch))
 			{
-				$doc->addScript(JUri::root() . 'media/com_tjfields/vendors/mediaelementplayer/renderers/twitch.min.js');
+				$doc->addScript(Uri::root() . 'media/com_tjfields/vendors/mediaelementplayer/renderers/twitch.min.js');
 			}
 		}
 		elseif (strpos($layoutData['value'], "dailymotion") !== false)
 		{
 			if (isset($layoutData['field']->element->attributes()->dailymotion))
 			{
-				$doc->addScript(JUri::root() . 'media/com_tjfields/vendors/mediaelementplayer/renderers/dailymotion.min.js');
+				$doc->addScript(Uri::root() . 'media/com_tjfields/vendors/mediaelementplayer/renderers/dailymotion.min.js');
 			}
 		}
 		elseif (strpos($layoutData['value'], "soundcloud") !== false)
 		{
 			if (isset($layoutData['field']->element->attributes()->soundcloud))
 			{
-				$doc->addScript(JUri::root() . 'media/com_tjfields/vendors/mediaelementplayer/renderers/soundcloud.min.js');
+				$doc->addScript(Uri::root() . 'media/com_tjfields/vendors/mediaelementplayer/renderers/soundcloud.min.js');
 			}
 		}
 

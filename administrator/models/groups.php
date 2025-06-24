@@ -8,8 +8,9 @@
  */
 
 defined('_JEXEC') or die;
-
-jimport('joomla.application.component.modellist');
+use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Model\ListModel;
 
 /**
  * Methods supporting a list of Tjfields records.
@@ -18,7 +19,7 @@ jimport('joomla.application.component.modellist');
  *
  */
 
-class TjfieldsModelGroups extends JModelList
+class TjfieldsModelGroups extends ListModel
 {
 	/**
 	 * Constructor.
@@ -65,17 +66,17 @@ class TjfieldsModelGroups extends JModelList
 	protected function populateState($ordering = 'a.id', $direction = 'desc')
 	{
 		// Initialise variables.
-		$app = JFactory::getApplication('administrator');
+		$app = Factory::getApplication('administrator');
 
 		// Load the filter state.
-		$search = $app->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
+		$search = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
 		$this->setState('filter.search', $search);
 
-		$published = $app->getUserStateFromRequest($this->context . '.filter.state', 'filter_published', '', 'string');
+		$published = $this->getUserStateFromRequest($this->context . '.filter.state', 'filter_published', '', 'string');
 		$this->setState('filter.state', $published);
 
 		// Load the parameters.
-		$params = JComponentHelper::getParams('com_tjfields');
+		$params = ComponentHelper::getParams('com_tjfields');
 		$this->setState('params', $params);
 
 		// List state information.
@@ -114,17 +115,12 @@ class TjfieldsModelGroups extends JModelList
 	protected function getListQuery()
 	{
 		// Create a new query object.
-		$db = $this->getDbo();
+		$db    = $this->getDbo();
 		$query = $db->getQuery(true);
-
-		$input = JFactory::getApplication()->input;
+		$input = Factory::getApplication()->input;
 
 		// Select the required fields from the table.
-		$query->select(
-				$this->getState(
-						'list.select', 'a.*'
-				)
-		);
+		$query->select($this->getState('list.select', 'a.*'));
 		$query->from('`#__tjfields_groups` AS a');
 
 		// Join over the user field 'created_by'
@@ -172,7 +168,7 @@ class TjfieldsModelGroups extends JModelList
 		}
 
 		// Add the list ordering clause.
-		$orderCol = $this->state->get('list.ordering');
+		$orderCol  = $this->state->get('list.ordering');
 		$orderDirn = $this->state->get('list.direction');
 
 		if ($orderCol && $orderDirn)
@@ -209,19 +205,21 @@ class TjfieldsModelGroups extends JModelList
 	 */
 	public function setItemState($items, $state)
 	{
-		$db = JFactory::getDBO();
-
 		if (is_array($items))
 		{
 			foreach ($items as $id)
 			{
-				$db = JFactory::getDBO();
+				$db = Factory::getDBO();
 				$query = "UPDATE  #__tjfields_groups SET state = $state where id=" . $id;
 				$db->setQuery($query);
 
-				if (!$db->execute())
+				try
 				{
-					$this->setError($this->_db->getErrorMsg());
+					$db->execute();
+				}
+				catch (\RuntimeException $e)
+				{
+					$this->setError($e->getMessage());
 
 					return false;
 				}
@@ -234,7 +232,7 @@ class TjfieldsModelGroups extends JModelList
 	/**
 	 * Build an SQL query to load the list data.
 	 *
-	 * @param   INT  $id  id.
+	 * @param   array  $id  id.
 	 *
 	 * @return	JDatabaseQuery
 	 *
@@ -245,29 +243,37 @@ class TjfieldsModelGroups extends JModelList
 		if (count($id) > 1)
 		{
 			$group_to_delet = implode(',', $id);
-			$db = JFactory::getDBO();
+			$db    = Factory::getDBO();
 			$query = "DELETE FROM #__tjfields_groups where id IN (" . $group_to_delet . ")";
 			$db->setQuery($query);
 
-			if (!$db->execute())
+			try
 			{
-				$this->setError($this->_db->getErrorMsg());
+				$db->execute();
+			}
+			catch (\RuntimeException $e)
+			{
+				$this->setError($e->getMessage());
 
 				return false;
 			}
 		}
 		else
 		{
-				$db = JFactory::getDBO();
-				$query = "DELETE FROM #__tjfields_groups where id =" . $id[0];
-				$db->setQuery($query);
+			$db = Factory::getDBO();
+			$query = "DELETE FROM #__tjfields_groups where id =" . $id[0];
+			$db->setQuery($query);
 
-				if (!$db->execute())
-				{
-					$this->setError($this->_db->getErrorMsg());
+			try
+			{
+				$db->execute();
+			}
+			catch (\RuntimeException $e)
+			{
+				$this->setError($e->getMessage());
 
-					return false;
-				}
+				return false;
+			}
 		}
 
 		return true;

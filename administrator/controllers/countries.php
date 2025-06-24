@@ -9,8 +9,11 @@
 
 // No direct access.
 defined('_JEXEC') or die();
-
-jimport('joomla.application.component.controlleradmin');
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Log\Log;
+use Joomla\CMS\MVC\Controller\AdminController;
+use Joomla\Utilities\ArrayHelper;
 
 /**
  * Countries list controller class.
@@ -19,7 +22,7 @@ jimport('joomla.application.component.controlleradmin');
  * @subpackage  com_tjfields
  * @since       2.2
  */
-class TjfieldsControllerCountries extends JControllerAdmin
+class TjfieldsControllerCountries extends AdminController
 {
 	/**
 	 * Proxy for getModel.
@@ -48,20 +51,20 @@ class TjfieldsControllerCountries extends JControllerAdmin
 	 */
 	public function publish()
 	{
-		$client = JFactory::getApplication()->input->get('client', '', 'STRING');
-		$cid = JFactory::getApplication()->input->get('cid', array(), 'array');
+		$client = Factory::getApplication()->input->get('client', '', 'STRING');
+		$cid = Factory::getApplication()->input->get('cid', array(), 'array');
 		$data = array(
 			'publish' => 1,
 			'unpublish' => 0
 		);
 
 		$task = $this->getTask();
-		$value = JArrayHelper::getValue($data, $task, 0, 'int');
+		$value = ArrayHelper::getValue($data, $task, 0, 'int');
 
 		// Get some variables from the request
 		if (empty($cid))
 		{
-			JLog::add(JText::_('COM_TJFIELDS_NO_COUNTRY_SELECTED'), JLog::WARNING, 'jerror');
+			Log::add(Text::_('COM_TJFIELDS_NO_COUNTRY_SELECTED'), Log::WARNING, 'jerror');
 		}
 		else
 		{
@@ -69,7 +72,7 @@ class TjfieldsControllerCountries extends JControllerAdmin
 			$model = $this->getModel();
 
 			// Make sure the item ids are integers
-			JArrayHelper::toInteger($cid);
+			ArrayHelper::toInteger($cid);
 
 			// Publish the items.
 			try
@@ -85,7 +88,7 @@ class TjfieldsControllerCountries extends JControllerAdmin
 					$ntext = 'COM_TJFIELDS_N_COUNTRIES_UNPUBLISHED';
 				}
 
-				$this->setMessage(JText::plural($ntext, count($cid)));
+				$this->setMessage(Text::plural($ntext, count($cid)));
 			}
 			catch (Exception $e)
 			{

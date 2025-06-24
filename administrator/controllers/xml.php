@@ -9,6 +9,9 @@
 
 // No direct access
 defined('_JEXEC') or die;
+use Joomla\CMS\MVC\Controller\FormController;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Filesystem\File;
 
 jimport('joomla.application.component.controllerform');
 jimport( 'joomla.filesystem.file' );
@@ -16,7 +19,7 @@ jimport( 'joomla.filesystem.file' );
 /**
  * Field controller class.
  */
-class TjfieldsControllerXml extends JControllerForm
+class TjfieldsControllerXml extends FormController
 {
 
 	function __construct() {
@@ -27,7 +30,7 @@ class TjfieldsControllerXml extends JControllerForm
 	{
 		//echo 'hola';
 
-		$db     = JFactory::getDbo();
+		$db     = Factory::getDbo();
 
 		$query  = "SELECT * FROM
 		#__tjfields_fields";
@@ -86,9 +89,9 @@ class TjfieldsControllerXml extends JControllerForm
 		$filePath = JPATH_SITE . DS . 'components/com_jticketing/models/forms/test.xml';
 		$content  = '';
 
-		if(!JFile::exists($filePath))
+		if(!File::exists($filePath))
 		{
-			JFile::write($filePath, $content);
+			File::write($filePath, $content);
 		}
 
 		$newXML->asXML($filePath);//->asXML();

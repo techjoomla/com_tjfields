@@ -7,15 +7,16 @@
  * @license    GNU General Public License version 2 or later.
  */
 defined('_JEXEC') or die;
-
-jimport('joomla.application.component.modellist');
+use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Model\ListModel;
 
 /**
  * Methods supporting a list of Tjfields records.
  *
  * @since  2.5
  */
-class TjfieldsModelFields extends JModelList
+class TjfieldsModelFields extends ListModel
 {
 	/**
 	 * Constructor.
@@ -54,14 +55,14 @@ class TjfieldsModelFields extends JModelList
 	 * @param   Integer  $ordering   Ordering
 	 * @param   Integer  $direction  Direction
 	 *
-	 * @return  String
+	 * @return   Countable|array
 	 *
 	 * @since  1.6
 	 */
 	protected function populateState($ordering = 'a.id', $direction = 'desc')
 	{
 		// Initialise variables.
-		$app = JFactory::getApplication('administrator');
+		$app = Factory::getApplication('administrator');
 
 		// Set client in model state
 		$client = $app->input->get('client', '', 'STRING');
@@ -72,17 +73,17 @@ class TjfieldsModelFields extends JModelList
 		}
 
 		// Load the filter state.
-		$search = $app->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
+		$search = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
 		$this->setState('filter.search', $search);
 
-		$published = $app->getUserStateFromRequest($this->context . '.filter.state', 'filter_published', '', 'string');
+		$published = $this->getUserStateFromRequest($this->context . '.filter.state', 'filter_published', '', 'string');
 		$this->setState('filter.state', $published);
 
 		// Filtering field_type
-		$this->setState('filter.type', $app->getUserStateFromRequest($this->context . '.filter.type', 'filter_field_type', '', 'string'));
+		$this->setState('filter.type', $this->getUserStateFromRequest($this->context . '.filter.type', 'filter_field_type', '', 'string'));
 
 		// Load the parameters.
-		$params = JComponentHelper::getParams('com_tjfields');
+		$params = ComponentHelper::getParams('com_tjfields');
 		$this->setState('params', $params);
 
 		// List state information.
@@ -220,19 +221,23 @@ class TjfieldsModelFields extends JModelList
 	 */
 	public function setItemState($items, $state)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		if (is_array($items))
 		{
 			foreach ($items as $id)
 			{
-				$db    = JFactory::getDBO();
+				$db    = Factory::getDBO();
 				$query = "UPDATE  #__tjfields_fields SET state = $state where id=" . $id;
 				$db->setQuery($query);
 
-				if (!$db->execute())
+				try
 				{
-					$this->setError($this->_db->getErrorMsg());
+					$db->execute();
+				}
+				catch (\RuntimeException $e)
+				{
+					$this->setError($e->getMessage());
 
 					return false;
 				}
@@ -245,7 +250,7 @@ class TjfieldsModelFields extends JModelList
 	/**
 	 * Method to Delete Field.
 	 *
-	 * @param   Integer  $id  Id
+	 * @param   array  $id  Id
 	 *
 	 * @return  Boolean
 	 *
@@ -256,13 +261,17 @@ class TjfieldsModelFields extends JModelList
 		if (count($id) >= 1)
 		{
 			$group_to_delet = implode(',', $id);
-			$db             = JFactory::getDBO();
+			$db             = Factory::getDBO();
 			$query          = "DELETE FROM #__tjfields_fields where id IN (" . $group_to_delet . ")";
 			$db->setQuery($query);
 
-			if (!$db->execute())
+			try
 			{
-				$this->setError($this->_db->getErrorMsg());
+				$db->execute();
+			}
+			catch (\RuntimeException $e)
+			{
+				$this->setError($e->getMessage());
 
 				return false;
 			}
@@ -271,9 +280,13 @@ class TjfieldsModelFields extends JModelList
 			$query = "DELETE FROM #__tjfields_fields_value where field_id IN (" . $group_to_delet . ")";
 			$db->setQuery($query);
 
-			if (!$db->execute())
+			try
 			{
-				$this->setError($this->_db->getErrorMsg());
+				$db->execute();
+			}
+			catch (\RuntimeException $e)
+			{
+				$this->setError($e->getMessage());
 
 				return false;
 			}
@@ -282,22 +295,30 @@ class TjfieldsModelFields extends JModelList
 			$query = "DELETE FROM #__tjfields_options where field_id IN (" . $group_to_delet . ")";
 			$db->setQuery($query);
 
-			if (!$db->execute())
+			try
 			{
-				$this->setError($this->_db->getErrorMsg());
+				$db->execute();
+			}
+			catch (\RuntimeException $e)
+			{
+				$this->setError($e->getMessage());
 
 				return false;
 			}
 		}
 		else
 		{
-			$db    = JFactory::getDBO();
+			$db    = Factory::getDBO();
 			$query = "DELETE FROM #__tjfields_fields where id =" . $id[0];
 			$db->setQuery($query);
 
-			if (!$db->execute())
+			try
 			{
-				$this->setError($this->_db->getErrorMsg());
+				$db->execute();
+			}
+			catch (\RuntimeException $e)
+			{
+				$this->setError($e->getMessage());
 
 				return false;
 			}
@@ -306,9 +327,13 @@ class TjfieldsModelFields extends JModelList
 			$query = "DELETE FROM #__tjfields_fields_value where field_id =" . $id[0];
 			$db->setQuery($query);
 
-			if (!$db->execute())
+			try
 			{
-				$this->setError($this->_db->getErrorMsg());
+				$db->execute();
+			}
+			catch (\RuntimeException $e)
+			{
+				$this->setError($e->getMessage());
 
 				return false;
 			}
@@ -317,9 +342,13 @@ class TjfieldsModelFields extends JModelList
 			$query = "DELETE FROM #__tjfields_options where field_id =" . $id[0];
 			$db->setQuery($query);
 
-			if (!$db->execute())
+			try
 			{
-				$this->setError($this->_db->getErrorMsg());
+				$db->execute();
+			}
+			catch (\RuntimeException $e)
+			{
+				$this->setError($e->getMessage());
 
 				return false;
 			}

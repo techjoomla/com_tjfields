@@ -9,12 +9,13 @@
 
 defined('JPATH_PLATFORM') or die;
 
-JFormHelper::loadFieldClass('list');
-JFormHelper::loadFieldClass('category');
-
 use Joomla\CMS\Factory;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Form\FormHelper;
+
+JFormHelper::loadFieldClass('list');
+JFormHelper::loadFieldClass('category');
 
 /**
  * Form Field class for the Joomla Platform.

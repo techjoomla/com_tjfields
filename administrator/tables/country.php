@@ -9,12 +9,11 @@
 
 // No direct access
 defined('_JEXEC') or die();
-
+use Joomla\CMS\Access\Access;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\Table\Table;
 use Joomla\Registry\Registry;
-use Joomla\CMS\Access\Access;
-use Joomla\CMS\Language\Text;
 use Joomla\Utilities\ArrayHelper;
 /**
  * JTable class for Country.
@@ -28,7 +27,7 @@ class TjfieldsTablecountry extends Table
 	/**
 	 * Constructor
 	 *
-	 * @param   JDatabaseDriver  &$_db  Database connector object
+	 * @param   Joomla\Database\DatabaseDriver  &$_db  Database connector object
 	 *
 	 * @since 1.5
 	 */
@@ -65,8 +64,10 @@ class TjfieldsTablecountry extends Table
 
 		if (! Factory::getUser()->authorise('core.admin', 'com_tjfields.country.' . $array['id']))
 		{
-			$actions         = Access::getActionsFromData('com_tjfields', 'country');
-			$default_actions = Factory::getACL()->getAssetRules('com_tjfields.country.' . $array['id'])->getData();
+			$accessFilePath = JPATH_ADMINISTRATOR . '/components/com_tjfields/access.xml';
+			$actions = Access::getActionsFromFile($accessFilePath, "/access/section[@name='country']/");
+			$default_actions = Access::getAssetRules('com_tjfields.country.' . $array['id'])->getData();
+
 			$array_jaccess   = array();
 
 			if (is_array($actions) || is_object($actions))
@@ -80,7 +81,7 @@ class TjfieldsTablecountry extends Table
 				}
 			}
 
-			$array['rules'] = $this->JAccessRulestoArray($array_jaccess);
+			$array['rules'] = $this->RulestoArray($array_jaccess);
 		}
 
 		// Bind the rules for ACL where supported.
@@ -99,7 +100,7 @@ class TjfieldsTablecountry extends Table
 	 *
 	 * @return  mixed  $rules  Set of rules
 	 */
-	private function JAccessRulestoArray ($jaccessrules)
+	private function RulestoArray ($jaccessrules)
 	{
 		$rules = array();
 
@@ -143,6 +144,7 @@ class TjfieldsTablecountry extends Table
 		$query = $db->getQuery(true);
 		$query->select($db->qn('id'));
 		$query->select($db->qn('country_3_code'));
+		$query->from($db->qn('#__tj_country'));
 		$query->where($db->qn('country_3_code') . ' = ' . $db->quote($this->country_3_code));
 		$query->where($db->qn('id') . ' != ' . (int) $this->id);
 		$db->setQuery($query);
@@ -295,7 +297,7 @@ class TjfieldsTablecountry extends Table
 	 *
 	 * @since   11.1
 	 */
-	protected function _getAssetParentId (JTable $table = null, $id = null)
+	protected function _getAssetParentId (Table $table = null, $id = null)
 	{
 		// We will retrieve the parent-asset from the Asset-table
 		$assetParent = Table::getInstance('Asset');

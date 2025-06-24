@@ -9,10 +9,14 @@
 
 // No direct access.
 defined('_JEXEC') or die();
+use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
 jimport( 'joomla.html.html.select');
-$jinput = JFactory::getApplication()->input;
-$document = JFactory::getDocument();
-$path = JUri::base() . 'modules/mod_tjfields_search/assets/css/tjfilters.css';
+$jinput = Factory::getApplication()->input;
+$document = Factory::getDocument();
+$path = Uri::base() . 'modules/mod_tjfields_search/assets/css/tjfilters.css';
 $document->addStyleSheet($path);
 ?>
 
@@ -60,7 +64,7 @@ $selectedFilters = explode(',', $jinput->get('tj_fields_value', '', 'string'));
 	{ ?>
 	<div class="center">
 <!-- @TOODO Temporary hide this button
-		<a class="btn btn-small btn-info" onclick='tj_clearfilters()'><?php echo JText::_('MOD_TJFIELDS_SEARCH_CLEAR_BTN');?></a>
+		<a class="btn btn-small btn-info" onclick='tj_clearfilters()'><?php echo Text::_('MOD_TJFIELDS_SEARCH_CLEAR_BTN');?></a>
 -->
 	</div>
 	<?php
@@ -81,9 +85,9 @@ if ($showCategoryFilter && !empty($fieldsCategorys))
 	<div class="tj-filterhrizontal pull-left" style="<?php echo $categoryFilterStyle; ?>">
 
 		<div class="form-group tjfilter-radio-btn">
-			<div class="control-label"><b><?php echo JText::_('Category'); ?></b></div>
+			<div class="control-label"><b><?php echo Text::_('Category'); ?></b></div>
 			<?php
-				echo JHtml::_('select.radiolist', $fieldsCategorys, "category_id", 'class="inputbox" onclick="submitCategory(this.value)"', "value", "text", $selectedCategory,"category_id");
+				echo HTMLHelper::_('select.radiolist', $fieldsCategorys, "category_id", 'class="inputbox" onclick="submitCategory(this.value)"', "value", "text", $selectedCategory,"category_id");
 			?>
 		</div>
 	</div>
@@ -101,33 +105,67 @@ if (!empty($fieldsArray))
 
 		if (!empty($fieldOptions))
 		{
-		?>
-					<div class="tj-filterhrizontal pull-left">
-						<div class="tj-filterwrapper filterwrapper<?php echo $fieldOptions[0]->id; ?>" >
+			if ($fieldOptions[0]->type == 'radio')
+			{
+				?>
+				<div class="tj-filterhrizontal pull-left">
+					<div class="tj-filterwrapper filterwrapper<?php echo $fieldOptions[0]->id; ?>" >
 						<div class="qtcfiltername filtername<?php echo $fieldOptions[0]->id; ?>">
 							<b><?php echo ucfirst($fieldOptions[0]->label);?></b>
 						</div>
-					<?php
+						<?php
 
-					foreach ($fieldOptions as $option)
-					{?>
-						<div class="tj-filteritem tjfieldfilters-<?php echo $option->name;?>" >
-							<label>
-								<input type="checkbox" class="tjfieldCheck"
-								name="tj_fields_value[]"
-								id="<?php echo $option->name . '||' . $option->option_id;?>"
-								value="<?php echo $option->option_id;?>"
-								<?php echo in_array($option->option_id, $selectedFilters)?'checked="checked"':'';?>
-								onclick='tjfieldsapplyfilters()' />
-								<?php echo ucfirst($option->options);?>
-							</label>
-						</div>
-					<?php
-					}
-					?>
+						foreach ($fieldOptions as $option)
+						{?>
+							<div class="tj-filteritem tjfieldfilters-<?php echo $option->name;?>" >
+								<label>
+									<input type="checkbox" class="tjfieldCheck"
+									name="tj_fields_value[]"
+									id="<?php echo $option->name . '||' . $option->option_id;?>"
+									value="<?php echo $option->option_id;?>"
+									<?php echo in_array($option->option_id, $selectedFilters)?'checked="checked"':'';?>
+									onclick='tjfieldsapplyfilters()' />
+									<?php echo ucfirst($option->options);?>
+								</label>
+							</div>
+						<?php
+						}
+						?>
+					</div>
 				</div>
-			</div>
-			<?php
+				<?php
+			}
+			else
+			{
+				?>
+				<div class="tj-filterhrizontal col-md-3 col-sm-6 col-xs-12 mb-10 <?php echo "row".$key; ?>">
+					<div class="tj-filterwrapper filterwrapper<?php echo $fieldOptions[0]->id; ?>" >
+						<div class="qtcfiltername filtername<?php echo $fieldOptions[0]->id; ?>">
+							<b><?php echo ucfirst($fieldOptions[0]->label);?></b>
+						</div>
+
+						<select id="tjfieldfilters-<?php echo $fieldOptions[0]->id ; ?>" class="form-select tjfieldSelect tj-filteritem tjfieldfilters-<?php echo $fieldOptions[0]->name;?>" onchange="tjfieldsapplyfilters();">
+							<option value="<?php echo ($fieldOptions[0]->id != 46) ? '' : '0';?>">All</option>
+							<?php 
+								// Sort the options array by the 'options' property (text) in ascending order
+								usort($fieldOptions, function($a, $b) {
+									return strcmp(strtolower($a->options), strtolower($b->options)); // Case-insensitive sort
+								});
+
+								foreach ($fieldOptions as $option)
+								{?>
+								<option value="<?php echo $option->option_id;?>" <?php echo in_array($option->option_id, $selectedFilters) ? 'selected="selected"' : ''; ?>>
+									<?php echo ucfirst($option->options);?>
+								</option>
+							<?php
+							}
+							?>
+						</select>
+					</div>
+				</div>
+				<?php
+
+			}
 		}
 	}
 }
@@ -141,7 +179,7 @@ if (!empty($fieldsArray))
 <!-- @TOODO Temporary hide this button
 		<div class="center">
 			<a class="btn btn-small btn-info" onclick='tj_clearfilters()'>
-				<?php echo JText::_('MOD_TJFIELDS_SEARCH_CLEAR_BTN');?>
+				<?php echo Text::_('MOD_TJFIELDS_SEARCH_CLEAR_BTN');?>
 			</a>
 		</div>
 -->
@@ -234,22 +272,42 @@ if (!empty($fieldsArray))
 			tjFieldCheckedFilters += techjoomla.jQuery(this).val();
 		});
 
+		techjoomla.jQuery("select.tjfieldSelect").each(function()
+		{
+			if (jQuery(this).val() != '' && (!jQuery(this).hasClass('tj-filteritem tjfieldfilters-com_quick2cart_product_Market-46') || jQuery(this).val() && jQuery(this).val().length !== 0))
+			{
+				if (Number(flag) != 0)
+				{
+					tjFieldCheckedFilters += ",";
+				}
+
+				flag++;
+
+				tjFieldCheckedFilters += techjoomla.jQuery(this).val();
+			}
+		});
+
 		if (tjFieldCheckedFilters != '')
 		{
-			if (redirectlink.indexOf('?') === -1)
-			{
-				optionStr += "?tj_fields_value="+tjFieldCheckedFilters;
-			}
-			else
-			{
-				optionStr += "&tj_fields_value="+tjFieldCheckedFilters;
-			}
-
-			redirectlink += optionStr;
+			redirectlink = updateQueryStringParameter(redirectlink, 'tj_fields_value', tjFieldCheckedFilters);
 		}
 
 		window.location = redirectlink;
 	}
+
+	function updateQueryStringParameter(url, key, value) {
+        // Check if the URL already has the parameter
+        let regex = new RegExp('([?&])' + key + '=.*?(&|$)', 'i');
+        let separator = url.indexOf('?') !== -1 ? '&' : '?';
+        
+        if (url.match(regex)) {
+            // If the parameter exists, replace its value
+            return url.replace(regex, '$1' + key + '=' + value + '$2');
+        } else {
+            // If the parameter does not exist, add it
+            return url + separator + key + '=' + value;
+        }
+    }
 
 	function submitCategory()
 	{

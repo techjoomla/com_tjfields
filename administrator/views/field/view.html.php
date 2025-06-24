@@ -9,6 +9,10 @@
 
 // No direct access
 defined('_JEXEC') or die;
+use Joomla\CMS\MVC\View\HtmlView;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Toolbar\ToolbarHelper;
 
 jimport('joomla.application.component.view');
 
@@ -19,7 +23,7 @@ jimport('joomla.application.component.view');
  * @subpackage  com_tjfields
  * @since       2.2
  */
-class TjfieldsViewField extends JViewLegacy
+class TjfieldsViewField extends HtmlView
 {
 	protected $state;
 
@@ -64,9 +68,9 @@ class TjfieldsViewField extends JViewLegacy
 	 */
 	protected function addToolbar()
 	{
-		$input           = JFactory::getApplication()->input;
+		$input           = Factory::getApplication()->input;
 		$input->set('hidemainmenu', true);
-		$user  = JFactory::getUser();
+		$user  = Factory::getUser();
 		$isNew = ($this->item->id == 0);
 
 		if (isset($this->item->checked_out))
@@ -81,24 +85,24 @@ class TjfieldsViewField extends JViewLegacy
 		$client          = $input->get('client');
 		$extention = explode('.', $client);
 		$canDo           = TjfieldsHelper::getActions($extention[0], 'field');
-		$component_title = JText::_('COM_TJFIELDS_TITLE_COMPONENT');
+		$component_title = Text::_('COM_TJFIELDS_TITLE_COMPONENT');
 
 		if ($isNew)
 		{
-			$viewTitle = JText::_('COM_TJFIELDS_ADD_FIELD');
+			$viewTitle = Text::_('COM_TJFIELDS_ADD_FIELD');
 		}
 		else
 		{
-			$viewTitle = JText::_('COM_TJFIELDS_EDIT_FIELD');
+			$viewTitle = Text::_('COM_TJFIELDS_EDIT_FIELD');
 		}
 
 		if (JVERSION >= '3.0')
 		{
-			JToolbarHelper::title($component_title . $viewTitle, 'pencil-2');
+			ToolbarHelper::title($component_title . $viewTitle, 'pencil-2');
 		}
 		else
 		{
-			JToolbarHelper::title($component_title . $viewTitle, 'field.png');
+			ToolbarHelper::title($component_title . $viewTitle, 'field.png');
 		}
 
 		// If not checked out, can save the item.

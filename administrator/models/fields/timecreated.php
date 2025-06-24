@@ -9,6 +9,10 @@
 
 defined('JPATH_BASE') or die;
 
+use Joomla\CMS\Form\FormField;
+use Joomla\CMS\Date\Date;
+use Joomla\CMS\Language\Text;
+
 jimport('joomla.form.formfield');
 
 /**
@@ -41,8 +45,8 @@ class JFormFieldTimecreated extends JFormField
         }
         $hidden = (boolean) $this->element['hidden'];
         if ($hidden == null || !$hidden) {
-            $jdate = new JDate($time_created);
-            $pretty_date = $jdate->format(JText::_('DATE_FORMAT_LC2'));
+            $jdate = new Date($time_created);
+            $pretty_date = $jdate->format(Text::_('DATE_FORMAT_LC2'));
             $html[] = "<div>" . $pretty_date . "</div>";
         }
         return implode($html);

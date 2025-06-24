@@ -10,6 +10,10 @@
 // No direct access.
 defined('_JEXEC') or die();
 
+use Joomla\CMS\Form\FormField;
+use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
+
 jimport('joomla.form.formfield');
 
 /**
@@ -52,24 +56,24 @@ class JFormFieldFieldcategory extends JFormField
 	 */
 	public function fetchElement($name, $value, &$node, $control_name)
 	{
-		$jinput = JFactory::getApplication()->input;
+		$jinput = Factory::getApplication()->input;
 		$id = $jinput->get('id', '', 'int');
 		$clientStr = $jinput->get("client");
 		$ClientDetail = explode('.', $clientStr);
 		$client = $ClientDetail[0];
 		$options         = array();
 
-		/*$options[]       = JHtml::_('select.option', '', JText::_('COM_TJFIELDS_FORM_SELECT_CLIENT_CATEGORY'));*/
+		/*$options[]       = HTMLHelper::_('select.option', '', JText::_('COM_TJFIELDS_FORM_SELECT_CLIENT_CATEGORY'));*/
 
 		// Fetch only published category. Static public function options($extension, $config = array('filter.published' => array(0,1)))
-		$categories = JHtml::_('category.options', $client, array('filter.published' => array(1)));
+		$categories = HTMLHelper::_('category.options', $client, array('filter.published' => array(1)));
 		$category_list               = array_merge($options, $categories);
 
 		$options = array();
 
 		foreach ($category_list as $category)
 		{
-			$options[] = JHtml::_('select.option', $category->value, $category->text);
+			$options[] = HTMLHelper::_('select.option', $category->value, $category->text);
 		}
 
 		if (JVERSION >= 1.6)
@@ -88,8 +92,10 @@ class JFormFieldFieldcategory extends JFormField
 			$disabled = 'disabled="true"';
 		}
 
-		$html = JHtml::_('select.genericlist', $options, $fieldName,
-		'class="inputbox "  multiple="multiple" size="5" ' . $disabled, 'value', 'text', $value, $control_name . $name
+		$class = (JVERSION < '4.0.0') ? '' : 'form-select';
+
+		$html = HTMLHelper::_('select.genericlist', $options, $fieldName,
+		'class="inputbox ' . $class . '"  multiple="multiple" size="5" ' . $disabled, 'value', 'text', $value, $control_name . $name
 		);
 
 		return $html;
@@ -123,12 +129,12 @@ class JFormFieldFieldcategory extends JFormField
 	public function getSelectedCategories()
 	{
 		$catList = array();
-		$jinput = JFactory::getApplication()->input;
+		$jinput = Factory::getApplication()->input;
 		$fieldId = $jinput->get("id");
 
 		if (!empty($fieldId))
 		{
-			$db    = JFactory::getDBO();
+			$db    = Factory::getDBO();
 			$query = $db->getQuery(true)
 						->select('category_id')
 						->from($db->quoteName('#__tjfields_category_mapping'))

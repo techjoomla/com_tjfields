@@ -8,14 +8,15 @@
  */
 
 defined('_JEXEC') or die;
-JLoader::import("/techjoomla/media/storage/local", JPATH_LIBRARIES);
-use Joomla\Registry\Registry;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Table\Table;
+use Joomla\CMS\Session\Session;
+use Joomla\CMS\Uri\Uri;
+JLoader::import("/techjoomla/media/storage/local", JPATH_LIBRARIES);
+use Joomla\Registry\Registry;
 use Joomla\CMS\Filesystem\Folder;
 use Joomla\CMS\Filesystem\File;
-use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Language\Text;
 
@@ -74,10 +75,10 @@ class TjfieldsHelper
 		{
 			$fieldParams = json_decode($data->params);
 			$multipleValueField = (isset($fieldParams->multiple) && !empty($fieldParams->multiple)) ? 1 : 0;
+			$fieldDataValue[$data->field_id] = new stdclass;
 
 			if ($data->type == "radio" || $data->type == "single_select")
 			{
-				$fieldDataValue[$data->field_id] = new stdclass;
 				$fieldDataValue[$data->field_id]->value[] = $data->value;
 				$fieldDataValue[$data->field_id]->field_id = $data->field_id;
 			}
@@ -88,7 +89,6 @@ class TjfieldsHelper
 			}
 			else
 			{
-				$fieldDataValue[$data->field_id] = new stdclass;
 				$fieldDataValue[$data->field_id]->value = $data->value;
 				$fieldDataValue[$data->field_id]->field_id = $data->field_id;
 			}
@@ -227,7 +227,8 @@ class TjfieldsHelper
 				{
 					$authorised = $user->authorise('core.field.editfieldvalue', 'com_tjfields.field.' . $field->id);
 				}
-				else
+
+				if (!$authorised)
 				{
 					if ($user->authorise('core.field.editownfieldvalue', 'com_tjfields.group.' . $field->group_id))
 					{
@@ -274,7 +275,7 @@ class TjfieldsHelper
 				JLoader::import('components.com_tjucm.models.itemform', JPATH_SITE);
 
 				// Get all the records which were previously stored for the ucmsubform field in parent form
-				$db = JFactory::getDbo();
+				$db = Factory::getDbo();
 				$query = $db->getQuery(true);
 				$query->select('id');
 				$query->from($db->quoteName('#__tj_ucm_data'));
@@ -297,7 +298,7 @@ class TjfieldsHelper
 						if (empty($ucmSubFormContentId))
 						{
 							$tjUcmSubFormItemData = array('id' => '', 'parent_id' => $data['content_id'], 'client' => $ucmSubformClient, 'created_by' => $data['user_id']);
-							$tjUcmItemFormModel = JModelLegacy::getInstance('ItemForm', 'TjucmModel');
+							$tjUcmItemFormModel = BaseDatabaseModel::getInstance('ItemForm', 'TjucmModel');
 							$tjUcmItemFormModel->save($tjUcmSubFormItemData);
 							$ucmSubFormContentId = $tjUcmItemFormModel->getState($tjUcmItemFormModel->getName() . '.id');
 						}
@@ -319,7 +320,7 @@ class TjfieldsHelper
 				}
 
 				// Delete the records which are removed from the ucmsubform
-				$tjUcmItemFormModel = JModelLegacy::getInstance('ItemForm', 'TjucmModel');
+				$tjUcmItemFormModel = BaseDatabaseModel::getInstance('ItemForm', 'TjucmModel');
 
 				foreach ($ucmSubformRecordIds as $ucmSubformRecordId)
 				{
@@ -335,7 +336,7 @@ class TjfieldsHelper
 				{
 					// Get all the fields of the specified client
 					JLoader::import('components.com_tjfields.models.options', JPATH_ADMINISTRATOR);
-					$tjFieldOptionsModel = JModelLegacy::getInstance('Options', 'TjfieldsModel', array('ignore_request' => true));
+					$tjFieldOptionsModel = BaseDatabaseModel::getInstance('Options', 'TjfieldsModel', array('ignore_request' => true));
 					$tjFieldOptionsModel->setState('filter.field_id', $field->id);
 					$optionsValue = $tjFieldOptionsModel->getItems();
 
@@ -430,7 +431,7 @@ class TjfieldsHelper
 			elseif ($field->type == 'related' && $fieldParams->get('showParentRecordsOnly', '', 'INT'))
 			{
 				// This is special case to handle the copy of related fields data in copy item feature
-				$jInput = JFactory::getApplication()->input;
+				$jInput = Factory::getApplication()->input;
 				$tempId = $jInput->get('id', '', 'STRING');
 				$jInput->set('id', $tjUcmParentContentId);
 
@@ -459,7 +460,7 @@ class TjfieldsHelper
 
 						foreach ($relatedFieldDataSources as $relatedFieldDataSource)
 						{
-							$db = JFactory::getDbo();
+							$db = Factory::getDbo();
 							$query = $db->getQuery(true);
 							$query->select("GROUP_CONCAT(" . $db->quoteName('value') . " SEPARATOR ' ') AS combo_value");
 							$query->from($db->quoteName('#__tjfields_fields_value'));
@@ -525,8 +526,8 @@ class TjfieldsHelper
 
 		JLoader::import('components.com_tjfields.tables.fieldsvalue', JPATH_ADMINISTRATOR);
 		JLoader::import('components.com_tjfields.tables.option', JPATH_ADMINISTRATOR);
-		$fieldsValueTable = JTable::getInstance('FieldsValue', 'TjfieldsTable', array('dbo', JFactory::getDbo()));
-		$fieldOptionTable = JTable::getInstance('Option', 'TjfieldsTable', array('dbo', JFactory::getDbo()));
+		$fieldsValueTable = Table::getInstance('FieldsValue', 'TjfieldsTable', array('dbo', Factory::getDbo()));
+		$fieldOptionTable = Table::getInstance('Option', 'TjfieldsTable', array('dbo', Factory::getDbo()));
 
 		// Set currently logged in users id as user_id
 		$fieldsValueTable->user_id = Factory::getUser()->id;
@@ -651,6 +652,11 @@ class TjfieldsHelper
 			{
 				if (!in_array($value, $previouslyStoredValues))
 				{
+					if (is_array($value))
+					{
+						$value = implode(',', $value);
+					}
+					
 					$status = $this->saveSingleValuedFieldData($value, $client, $contentId, $fieldId);
 
 					if ($status === false)
@@ -1642,15 +1648,15 @@ class TjfieldsHelper
 	 */
 	public function getOptions($field_id, $option_value = '')
 	{
+		$db    = Factory::getDbo();
+		$query = $db->getQuery(true);
+
+		$query->select($db->quoteName(array('options','value')));
+		$query->from($db->quoteName('#__tjfields_options'));
+		$query->where($db->quoteName('field_id') . ' = ' . (int) $field_id);
+
 		if ($option_value != '')
 		{
-			$db    = Factory::getDbo();
-			$query = $db->getQuery(true);
-
-			$query->select($db->quoteName(array('options','value')));
-			$query->from($db->quoteName('#__tjfields_options'));
-			$query->where($db->quoteName('field_id') . ' = ' . (int) $field_id);
-
 			$new_option_value = json_decode($option_value);
 
 			if ($new_option_value != '')
@@ -1718,13 +1724,8 @@ class TjfieldsHelper
 		}
 		else
 		{
-			$extra_options = array();
-			$obj = new stdclass;
-			$obj->id = '';
-			$obj->options = '';
-			$obj->value = '';
-
-			$extra_options[] = $obj;
+			$db->setQuery($query);
+			$extra_options = $db->loadObjectlist();
 		}
 
 		return $extra_options;
@@ -1749,6 +1750,37 @@ class TjfieldsHelper
 			$query->where('NOT EXISTS (select * FROM #__tjfields_category_mapping AS cm where f.id=cm.field_id)');
 			$query->where($db->quoteName('f.client') . "=" . $db->quote($client));
 			$query->where($db->quoteName('f.state') . " = 1");
+			$query->order($db->quoteName('f.ordering'));
+			$db->setQuery($query);
+			$universalFields = $db->loadObjectlist();
+		}
+
+		return $universalFields;
+	}
+
+	/**
+	 * Get option which are stored in field option table.
+	 *
+	 * @param   string  $client  Get all fields based on client
+	 * @param   int  $categoryId  Get all fields based on category
+	 *
+	 * @return array|string
+	 */
+	public function getCategoryFields($client, $categoryId)
+	{
+		$universalFields = "";
+
+		if (!empty($client) && !empty($categoryId))
+		{
+			$db    = Factory::getDbo();
+			$query = $db->getQuery(true);
+			$query->select(array('f.*'));
+			$query->from($db->quoteName('#__tjfields_fields', 'f'));
+			$query->join('LEFT', $db->quoteName('#__tjfields_category_mapping', 'mapping') . 'ON (' . $db->quoteName('mapping.field_id') . '=' . $db->quoteName('f.id') . ')');
+			$query->where($db->quoteName('mapping.category_id') . "=" . (int) $categoryId);
+			$query->where($db->quoteName('f.client') . "=" . $db->quote($client));
+			$query->where($db->quoteName('f.state') . " = 1");
+			$query->order($db->quoteName('f.ordering'));
 			$db->setQuery($query);
 			$universalFields = $db->loadObjectlist();
 		}
@@ -1795,7 +1827,7 @@ class TjfieldsHelper
 		{
 			$db    = Factory::getDbo();
 			$query = $db->getQuery(true);
-			$query->select('DISTINCT fv.option_id, f.id,f.name, f.label,fv.value,fo.options');
+			$query->select('DISTINCT fv.option_id, f.id,f.name, f.label,fv.value,fo.options,f.type');
 			$query->FROM("#__tjfields_fields AS f");
 			$query->JOIN('INNER', '#__tjfields_fields_value AS fv ON fv.field_id = f.id');
 			$query->JOIN('INNER', '#__tjfields_options AS fo ON fo.id = fv.option_id');
@@ -1822,7 +1854,7 @@ class TjfieldsHelper
 			{
 				$db    = Factory::getDbo();
 				$queryCat = $db->getQuery(true);
-				$queryCat->select('DISTINCT fv.option_id, f.id,f.name, f.label,fv.value,fo.options');
+				$queryCat->select('DISTINCT fv.option_id, f.id,f.name, f.label,fv.value,fo.options,f.type');
 				$queryCat->FROM("#__tjfields_fields AS f");
 				$queryCat->JOIN('INNER', '#__tjfields_fields_value AS fv ON fv.field_id = f.id');
 				$queryCat->JOIN('INNER', '#__tjfields_options AS fo ON fo.id = fv.option_id');
@@ -2138,7 +2170,7 @@ class TjfieldsHelper
 				$basePathLink = 'index.php?option=com_tjfields&task=getMediaFile&fpht=';
 				$mediaURL = Uri::base() . substr(Route::_($basePathLink . $encodedFileName . $extraUrlParams), strlen(Uri::base(true)) + 1);
 
-				$csrf = JSession::getFormToken() . '=1';
+				$csrf = Session::getFormToken() . '=1';
 				$mediaURLlink = $mediaURL . '&' . $csrf;
 			}
 			else
@@ -2156,7 +2188,7 @@ class TjfieldsHelper
 					$uploadPath = $fieldParams->uploadpath;
 
 					$mediaURLlink = $uploadPath . '/' . $fileName;
-					$mediaURLlink = str_replace(JPATH_SITE, JUri::root(), $mediaURLlink);
+					$mediaURLlink = str_replace(JPATH_SITE, Uri::root(), $mediaURLlink);
 				}
 			}
 
@@ -2292,5 +2324,6 @@ class TjfieldsHelper
 	{
 		Text::script('COM_TJFIELDS_FILE_DELETE_CONFIRM');
 		Text::script('COM_TJFIELDS_FILE_ERROR_MAX_SIZE');
+		Text::script('COM_TJFIELDS_FILE_DELETE_SUCCESS');
 	}
 }

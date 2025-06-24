@@ -9,25 +9,29 @@
 
 // No direct access.
 defined('_JEXEC') or die;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Log\Log;
+use Joomla\CMS\MVC\Controller\AdminController;
+use Joomla\CMS\Session\Session;
+use Joomla\Utilities\ArrayHelper;
 
 JLoader::import('TjfieldsHelper', JPATH_ADMINISTRATOR . '/components/com_tjfields/helpers');
-jimport('joomla.application.component.controlleradmin');
 
 /**
  * Groups list controller class.
  */
-class TjfieldsControllerGroups extends JControllerAdmin
+class TjfieldsControllerGroups extends AdminController
 {
 	/**
 	 * Proxy for getModel.
 	 * @since	1.6
 	 */
-	public function getModel($name = 'group', $prefix = 'TjfieldsModel')
+	public function getModel($name = 'group', $prefix = 'TjfieldsModel', $config = ['ignore_request' => true])
 	{
 		$model = parent::getModel($name, $prefix, array('ignore_request' => true));
 		return $model;
 	}
-
 
 	/**
 	 * Method to save the submitted ordering values for records via AJAX.
@@ -39,13 +43,14 @@ class TjfieldsControllerGroups extends JControllerAdmin
 	public function saveOrderAjax()
 	{
 		// Get the input
-		$input = JFactory::getApplication()->input;
-		$pks = $input->post->get('cid', array(), 'array');
+		$app   = Factory::getApplication();
+		$input = $app->input;
+		$pks   = $input->post->get('cid', array(), 'array');
 		$order = $input->post->get('order', array(), 'array');
 
 		// Sanitize the input
-		JArrayHelper::toInteger($pks);
-		JArrayHelper::toInteger($order);
+		ArrayHelper::toInteger($pks);
+		ArrayHelper::toInteger($order);
 
 		// Get the model
 		$model = $this->getModel();
@@ -59,24 +64,24 @@ class TjfieldsControllerGroups extends JControllerAdmin
 		}
 
 		// Close the application
-		JFactory::getApplication()->close();
+		$app->close();
 	}
 
 	public function publish()
 	{
-		$input =JFactory::getApplication()->input;
-		$post = $input->post;
+		$app    = Factory::getApplication();
+		$input  = $app->input;
+		$post   = $input->post;
 		$client = $input->get('client','','STRING');
-		$cid = JFactory::getApplication()->input->get('cid', array(), 'array');
-		$data = array('publish' => 1, 'unpublish' => 0, 'archive' => 2, 'trash' => -2, 'report' => -3);
-		$task = $this->getTask();
-		$value = JArrayHelper::getValue($data, $task, 0, 'int');
+		$cid    = $app->input->get('cid', array(), 'array');
+		$data   = array('publish' => 1, 'unpublish' => 0, 'archive' => 2, 'trash' => -2, 'report' => -3);
+		$task   = $this->getTask();
+		$value  = ArrayHelper::getValue($data, $task, 0, 'int');
+
 		// Get some variables from the request
-
-
 		if (empty($cid))
 		{
-			JLog::add(JText::_($this->text_prefix . '_NO_ITEM_SELECTED'), JLog::WARNING, 'jerror');
+			Log::add(Text::_($this->text_prefix . '_NO_ITEM_SELECTED'), Log::WARNING, 'jerror');
 		}
 		else
 		{
@@ -84,7 +89,7 @@ class TjfieldsControllerGroups extends JControllerAdmin
 			$model = $this->getModel( 'groups' );
 
 			// Make sure the item ids are integers
-			JArrayHelper::toInteger($cid);
+			ArrayHelper::toInteger($cid);
 
 			// Publish the items.
 			try
@@ -107,94 +112,60 @@ class TjfieldsControllerGroups extends JControllerAdmin
 				{
 					$ntext = $this->text_prefix . '_N_ITEMS_TRASHED';
 				}
-				$TjfieldsHelper = new TjfieldsHelper();
-				$client_form = explode('.',$client);
-				$client_type = $client_form[1];
-				$data = array();
-				$data['client'] = $client;
+
+				$TjfieldsHelper      = new TjfieldsHelper();
+				$client_form         = explode('.',$client);
+				$client_type         = $client_form[1];
+				$data                = array();
+				$data['client']      = $client;
 				$data['client_type'] = $client_type;
 				$TjfieldsHelper->generateXml($data);
-				$this->setMessage(JText::plural($ntext, count($cid)));
+				$this->setMessage(Text::plural($ntext, count($cid)));
 			}
 			catch (Exception $e)
 			{
-				$this->setMessage(JText::_('JLIB_DATABASE_ERROR_ANCESTOR_NODES_LOWER_STATE'), 'error');
+				$this->setMessage(Text::_('JLIB_DATABASE_ERROR_ANCESTOR_NODES_LOWER_STATE'), 'error');
 			}
-
 		}
 
 		$this->setRedirect('index.php?option=com_tjfields&view=groups&client='.$client, $msg);
-
 	}
 
-/*
 	public function delete()
 	{
+		// Check for request forgeries
+		Session::checkToken() or die(Text::_('JINVALID_TOKEN'));
 
-		$input =JFactory::getApplication()->input;
-		$post = $input->post;
-		$client = $input->get('client','','STRING');
-		$client_form = explode('.',$client);
-		$client_type = $client_form[1];
-		// Get some variables from the request
-
-		$cid	= $input->get('cid',array(), 'post', 'array');
-		JArrayHelper::toInteger($cid);
-
-		$model =$this->getModel( 'groups' );
-			if ($model->deletegroup($cid))
-			{
-				$TjfieldsHelper = new TjfieldsHelper();
-				$data = array();
-				$data['client'] = $client;
-				$data['client_type'] = $client_type;
-				$TjfieldsHelper->generateXml($data);
-				//$msg = JText::_( 'COM_TJFIELDS_GROUP_DELETED' );
-				$ntext = $this->text_prefix . '_N_ITEMS_DELETED';
-			}
-			else
-			{
-				$msg = $model->getError();
-			}
-
-			$this->setRedirect('index.php?option=com_tjfields&view=groups&client='.$client, $msg);
-	}
-
-	*/
-	public function delete()
-	{
-	// Check for request forgeries
-		JSession::checkToken() or die(JText::_('JINVALID_TOKEN'));
 		//GET CLIENT AND CLIENT TYPE
-		$input =JFactory::getApplication()->input;
-		$client = $input->get('client','','STRING');
+		$app         = Factory::getApplication();
+		$input       = $app->input;
+		$client      = $input->get('client','','STRING');
 		$client_form = explode('.',$client);
 		$client_type = $client_form[1];
+
 		// Get items to remove from the request.
-		$cid = JFactory::getApplication()->input->get('cid', array(), 'array');
+		$cid = $app->input->get('cid', array(), 'array');
 
 		if (!is_array($cid) || count($cid) < 1)
 		{
-			JLog::add(JText::_($this->text_prefix . '_NO_ITEM_SELECTED'), JLog::WARNING, 'jerror');
+			Log::add(Text::_($this->text_prefix . '_NO_ITEM_SELECTED'), Log::WARNING, 'jerror');
 		}
 		else
 		{
 			// Get the model.
-			$model =$this->getModel( 'groups' );
+			$model = $this->getModel( 'groups' );
 
 			// Make sure the item ids are integers
-			jimport('joomla.utilities.arrayhelper');
-			JArrayHelper::toInteger($cid);
+			ArrayHelper::toInteger($cid);
 
 			// Remove the items.
 			if ($model->deletegroup($cid))
 			{
-				$TjfieldsHelper = new TjfieldsHelper();
-				$data = array();
-				$data['client'] = $client;
+				$TjfieldsHelper      = new TjfieldsHelper();
+				$data                = array();
+				$data['client']      = $client;
 				$data['client_type'] = $client_type;
 				$TjfieldsHelper->generateXml($data);
-				//$this->setMessage(JText::plural($this->text_prefix . '_N_ITEMS_DELETED', count($cid)));
 				$ntext = $this->text_prefix . '_N_ITEMS_DELETED';
 			}
 			else
@@ -202,10 +173,8 @@ class TjfieldsControllerGroups extends JControllerAdmin
 				$this->setMessage($model->getError());
 			}
 		}
-		$this->setMessage(JText::plural($ntext, count($cid)));
+
+		$this->setMessage(Text::plural($ntext, count($cid)));
 		$this->setRedirect('index.php?option=com_tjfields&view=groups&client='.$client, false);
-
 	}
-
-
 }

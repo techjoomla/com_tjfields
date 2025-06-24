@@ -9,8 +9,8 @@
 
 // No direct access
 defined('_JEXEC') or die();
-
-jimport('joomla.application.component.controllerform');
+use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Controller\FormController;
 
 /**
  * City form controller class.
@@ -19,7 +19,7 @@ jimport('joomla.application.component.controllerform');
  * @subpackage  com_tjfields
  * @since       2.2
  */
-class TjfieldsControllerCity extends JControllerForm
+class TjfieldsControllerCity extends FormController
 {
 	/**
 	 * The extension for which the countries apply.
@@ -42,7 +42,7 @@ class TjfieldsControllerCity extends JControllerForm
 		parent::__construct($config);
 		$this->view_list = 'cities';
 
-		$this->input = JFactory::getApplication()->input;
+		$this->input = Factory::getApplication()->input;
 
 		if (empty($this->client))
 		{
@@ -89,18 +89,18 @@ class TjfieldsControllerCity extends JControllerForm
 	 */
 	public function getRegionsList()
 	{
-		$countryId = JFactory::getApplication()->input->get('countryId');
-
-		$model = $this->getModel();
-		$states = $model->getRegionsList($countryId);
+		$app       = Factory::getApplication();
+		$countryId = $app->input->get('countryId');
+		$model     = $this->getModel();
+		$states    = $model->getRegionsList($countryId);
 
 		echo json_encode($states);
-		JFactory::getApplication()->close();
+		$app->close();
 	}
 
 	public function fixDB()
 	{
 		$model = $this->getModel();
-		$states = $model->fixDB();
+		$model->fixDB();
 	}
 }

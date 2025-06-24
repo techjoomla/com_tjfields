@@ -8,6 +8,10 @@
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 
 if (!key_exists('field', $displayData) || !key_exists('fieldXml', $displayData))
 {
@@ -22,8 +26,8 @@ $subFormFileFieldId = (isset($displayData['subFormFileFieldId'])) ? $displayData
 
 if ($field->value)
 {
-	JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_tjfields/tables');
-	$fieldsValueTable = JTable::getInstance('Fieldsvalue', 'TjfieldsTable');
+	Table::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_tjfields/tables');
+	$fieldsValueTable = Table::getInstance('Fieldsvalue', 'TjfieldsTable');
 	$fieldsValueTable->load(array('value' => $field->value));
 
 	$extraParamArray = array();
@@ -35,11 +39,11 @@ if ($field->value)
 		$extraParamArray['subFormFileFieldId'] = $subFormFileFieldId;
 	}
 
-	$path = JUri::root() . 'images/tjmedia/';
+	$path = Uri::root() . 'images/tjmedia/';
 
-	$db = JFactory::getDbo();
-	JTable::addIncludePath(JPATH_ROOT . '/administrator/components/com_tjfields/tables');
-	$data->tjFieldFieldTable = JTable::getInstance('field', 'TjfieldsTable', array('dbo', $db));
+	$db = Factory::getDbo();
+	Table::addIncludePath(JPATH_ROOT . '/administrator/components/com_tjfields/tables');
+	$data->tjFieldFieldTable = Table::getInstance('field', 'TjfieldsTable', array('dbo', $db));
 	$data->tjFieldFieldTable->load(array('name' => $field->element->attributes()->name));
 
 	if (!empty($data->tjFieldFieldTable))
@@ -53,7 +57,7 @@ if ($field->value)
 	<div>
 		<img src="<?php echo $path . $field->value; ?>" height="<?php echo $field->element->attributes()->height;?>" width="<?php $field->element->attributes()->width;?>" />
 		<a href="<?php echo $mediaLink;?>" class="btn btn-success">
-		<?php echo JText::_("COM_TJFIELDS_FILE_DOWNLOAD");?></a>
+		<?php echo Text::_("COM_TJFIELDS_FILE_DOWNLOAD");?></a>
 	</div>
 	<?php
 }

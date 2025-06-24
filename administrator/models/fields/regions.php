@@ -10,6 +10,11 @@
 // No direct access.
 defined('_JEXEC') or die();
 
+use Joomla\CMS\Form\FormHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
+
 JFormHelper::loadFieldClass('list');
 
 /**
@@ -45,9 +50,9 @@ class JFormFieldRegions extends JFormFieldList
 	 */
 	protected function getOptions()
 	{
-		$db = JFactory::getDbo();
+		$db = Factory::getDbo();
 		$query = $db->getQuery(true);
-		$client = JFactory::getApplication()->input->get('client', '', 'STRING');
+		$client = Factory::getApplication()->input->get('client', '', 'STRING');
 		$options = array();
 
 		// Select the required fields from the table.
@@ -78,17 +83,17 @@ class JFormFieldRegions extends JFormFieldList
 			$regions = $db->loadObjectList();
 
 			// Load lang file for regions
-			$lang = JFactory::getLanguage();
+			$lang = Factory::getLanguage();
 			$lang->load('tjgeo.regions', JPATH_SITE, null, false, true);
 
 			foreach ($regions as $c)
 			{
 				if ($lang->hasKey(strtoupper($c->region_jtext)))
 				{
-					$c->region = JText::_($c->region_jtext);
+					$c->region = Text::_($c->region_jtext);
 				}
 
-				$options[] = JHtml::_('select.option', $c->id, $c->region);
+				$options[] = HTMLHelper::_('select.option', $c->id, $c->region);
 			}
 		}
 

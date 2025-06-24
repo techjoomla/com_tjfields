@@ -7,6 +7,8 @@
  * @license    GNU General Public License version 2 or later.
  */
 defined('_JEXEC') or die;
+use Joomla\CMS\MVC\Model\ListModel;
+use Joomla\CMS\Table\Table;
 
 jimport('joomla.application.component.modellist');
 
@@ -15,7 +17,7 @@ jimport('joomla.application.component.modellist');
  *
  * @since  2.2
  */
-class TjfieldsModelFields extends JModelList
+class TjfieldsModelFields extends ListModel
 {
 	/**
 	 * Function used for getting the storage path of file field
@@ -30,12 +32,12 @@ class TjfieldsModelFields extends JModelList
 	{
 		$fieldData = new stdClass;
 
-		JTable::addIncludePath(JPATH_ROOT . '/administrator/components/com_tjfields/tables');
-		$tjFieldFieldValuesTable = JTable::getInstance('fieldsvalue', 'TjfieldsTable');
+		Table::addIncludePath(JPATH_ROOT . '/administrator/components/com_tjfields/tables');
+		$tjFieldFieldValuesTable = Table::getInstance('fieldsvalue', 'TjfieldsTable');
 		$tjFieldFieldValuesTable->load(array('id' => $fieldValueId));
 
-		JTable::addIncludePath(JPATH_ROOT . '/administrator/components/com_tjfields/tables');
-		$fieldData->tjFieldFieldTable = JTable::getInstance('field', 'TjfieldsTable');
+		Table::addIncludePath(JPATH_ROOT . '/administrator/components/com_tjfields/tables');
+		$fieldData->tjFieldFieldTable = Table::getInstance('field', 'TjfieldsTable');
 
 		if ($subformFileFieldId)
 		{

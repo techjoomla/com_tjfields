@@ -8,6 +8,7 @@
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
+use Joomla\CMS\Factory;
 
 if (!key_exists('field', $displayData))
 {
@@ -18,7 +19,7 @@ $field = $displayData['field'];
 
 if ($field->value)
 {
-	$owner = JFactory::getUser($field->value);
+	$owner = Factory::getUser($field->value);
 
 	if ($owner->id)
 	{

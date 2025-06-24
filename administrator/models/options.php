@@ -7,15 +7,14 @@
  * @license    GNU General Public License version 2 or later.
  */
 defined('_JEXEC') or die;
-
-jimport('joomla.application.component.modellist');
+use Joomla\CMS\MVC\Model\ListModel;
 
 /**
  * Methods supporting a list of Tjfields option records.
  *
  * @since  _DEPLOY_VERSION_
  */
-class TjfieldsModelOptions extends JModelList
+class TjfieldsModelOptions extends ListModel
 {
 	/**
 	 * Constructor.
@@ -67,7 +66,7 @@ class TjfieldsModelOptions extends JModelList
 			$query->where('a.field_id = ' . (int) $fieldId);
 		}
 
-		$query->order($db->qn($db->escape($this->getState('list.ordering', 'a.options'))) . ' ' . $db->escape($this->getState('list.direction', 'ASC')));
+		$query->order($db->quoteName($db->escape($this->getState('list.ordering', 'a.options'))) . ' ' . $db->escape($this->getState('list.direction', 'ASC')));
 
 		return $query;
 	}

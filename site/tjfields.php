@@ -8,6 +8,8 @@
  */
 
 defined('_JEXEC') or die;
+use Joomla\CMS\MVC\Controller\BaseController;
+use Joomla\CMS\Factory;
 
 JLoader::register('TjfieldsHelper', JPATH_SITE . '/components/com_tjfields/helpers/tjfields.php');
 JLoader::load('TjfieldsHelper');
@@ -17,6 +19,6 @@ TjfieldsHelper::getLanguageConstantForJs();
 jimport('joomla.application.component.controller');
 
 // Execute the task.
-$controller	= JControllerLegacy::getInstance('Tjfields');
-$controller->execute(JFactory::getApplication()->input->get('task'));
+$controller	= BaseController::getInstance('Tjfields');
+$controller->execute(Factory::getApplication()->input->get('task'));
 $controller->redirect();

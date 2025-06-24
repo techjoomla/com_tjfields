@@ -9,11 +9,17 @@
 
 // No direct access.
 defined('_JEXEC') or die();
-$input = JFactory::getApplication()->input;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Filesystem\File;
+use Joomla\CMS\Layout\FileLayout;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Helper\ModuleHelper;
+$input = Factory::getApplication()->input;
 
 // LOAD LANGUAGE FILES
-$doc = JFactory::getDocument();
-$lang = JFactory::getLanguage();
+$doc = Factory::getDocument();
+$lang = Factory::getLanguage();
 $lang->load('mod_tjfields_search', JPATH_SITE);
 $currentComponent = $input->get("option");
 
@@ -33,7 +39,7 @@ $configuredComp = $tmp[0];
 $mod_tjfilter_layout = $params->get('bootstrapversion');
 
 
-if (JFile::exists(JPATH_SITE . '/components/com_tjfields/tjfields.php'))
+if (File::exists(JPATH_SITE . '/components/com_tjfields/tjfields.php'))
 {
 	$path = JPATH_SITE . '/components/com_tjfields/helpers/tjfields.php';
 
@@ -49,7 +55,7 @@ if (JFile::exists(JPATH_SITE . '/components/com_tjfields/tjfields.php'))
 	{
 		parse_str($URLParamConditions, $conditionList);
 
-		$url = JFactory::getApplication()->input->server->get('REQUEST_URI', '', 'STRING');
+		$url = Factory::getApplication()->input->server->get('REQUEST_URI', '', 'STRING');
 
 		// Get uRL base part and parameter part
 		$temp = explode('?', $url);
@@ -120,7 +126,7 @@ if (JFile::exists(JPATH_SITE . '/components/com_tjfields/tjfields.php'))
 		}
 	}
 
-	$layout = new JLayoutFile('corefilters', $basePath);
+	$layout = new FileLayout('corefilters', $basePath);
 	$data = "";
 	$compSpecificFilterHtml = $layout->render($data);
 
@@ -129,10 +135,10 @@ if (JFile::exists(JPATH_SITE . '/components/com_tjfields/tjfields.php'))
 	$selectedCategory = $input->get($clientCatUrlParam, '');
 
 	$options         = array();
-	$options[]       = JHtml::_('select.option', '', JText::_('MOD_TJFIELDS_SEARCH_SELECT_CATEGORY'));
+	$options[]       = HTMLHelper::_('select.option', '', Text::_('MOD_TJFIELDS_SEARCH_SELECT_CATEGORY'));
 
 	// Static public function options($extension, $config = array('filter.published' => array(0,1)))
-	$cats = JHtml::_('category.options', $category_type, array('filter.published' => array(1)));
+	$cats = HTMLHelper::_('category.options', $category_type, array('filter.published' => array(1)));
 	$fieldsCategorys               = array_merge($options, $cats);
 
 	$fieldsArray = array();
@@ -160,5 +166,5 @@ if (JFile::exists(JPATH_SITE . '/components/com_tjfields/tjfields.php'))
 		}
 	}
 
-	require JModuleHelper::getLayoutPath('mod_tjfields_search', 'default_' . $mod_tjfilter_layout . '_' . $displayLayout);
+	require ModuleHelper::getLayoutPath('mod_tjfields_search', 'default_' . $mod_tjfilter_layout . '_' . $displayLayout);
 }

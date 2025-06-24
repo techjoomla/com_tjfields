@@ -9,9 +9,13 @@
 
 // No direct access.
 defined('_JEXEC') or die();
-$jinput = JFactory::getApplication()->input;
-$document = JFactory::getDocument();
-$path = JUri::base() . 'modules/mod_tjfields_search/assets/css/tjfilters.css';
+use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
+$jinput = Factory::getApplication()->input;
+$document = Factory::getDocument();
+$path = Uri::base() . 'modules/mod_tjfields_search/assets/css/tjfilters.css';
 $document->addStyleSheet($path);
 ?>
 
@@ -59,7 +63,7 @@ $selectedFilters = explode(',', $jinput->get('tj_fields_value', '', 'string'));
 	{ ?>
 	<div class="center">
 <!-- @TOODO Temporary hide this button
-		<a class="btn btn-small btn-info" onclick='tj_clearfilters()'><?php echo JText::_('MOD_TJFIELDS_SEARCH_CLEAR_BTN');?></a>
+		<a class="btn btn-small btn-info" onclick='tj_clearfilters()'><?php echo Text::_('MOD_TJFIELDS_SEARCH_CLEAR_BTN');?></a>
 -->
 	</div>
 	<?php
@@ -80,9 +84,9 @@ if ($showCategoryFilter && !empty($fieldsCategorys))
 	<div class="tj-filterhrizontal pull-left" style="<?php echo $categoryFilterStyle; ?>">
 
 		<div class="cotrol-group tjfilter-radio-btn">
-			<div class="control-label"><b><?php echo JText::_('Category'); ?></b></div>
+			<div class="control-label"><b><?php echo Text::_('Category'); ?></b></div>
 			<?php
-				echo JHtml::_('select.radiolist', $fieldsCategorys, "category_id", 'class="inputbox" onclick="submitCategory(this.value)"', "value", "text", $selectedCategory,"category_id");
+				echo HTMLHelper::_('select.radiolist', $fieldsCategorys, "category_id", 'class="inputbox" onclick="submitCategory(this.value)"', "value", "text", $selectedCategory,"category_id");
 			?>
 		</div>
 	</div>
@@ -140,7 +144,7 @@ if (!empty($fieldsArray))
 <!-- @TOODO Temporary hide this button
 		<div class="center">
 			<a class="btn btn-small btn-info" onclick='tj_clearfilters()'>
-				<?php echo JText::_('MOD_TJFIELDS_SEARCH_CLEAR_BTN');?>
+				<?php echo Text::_('MOD_TJFIELDS_SEARCH_CLEAR_BTN');?>
 			</a>
 		</div>
 -->

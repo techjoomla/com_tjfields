@@ -9,8 +9,10 @@
 
 // No direct access
 defined('_JEXEC') or die();
-
-jimport('joomla.application.component.modeladmin');
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\Model\AdminModel;
+use Joomla\CMS\Table\Table;
 
 /**
  * Item Model for an City.
@@ -19,7 +21,7 @@ jimport('joomla.application.component.modeladmin');
  * @subpackage  com_tjfields
  * @since       2.2
  */
-class TjfieldsModelCity extends JModelAdmin
+class TjfieldsModelCity extends AdminModel
 {
 	/**
 	 * @var		string	The prefix to use with controller messages.
@@ -38,7 +40,7 @@ class TjfieldsModelCity extends JModelAdmin
 	 */
 	public function getTable($type = 'City', $prefix = 'TjfieldsTable', $config = array())
 	{
-		return JTable::getInstance($type, $prefix, $config);
+		return Table::getInstance($type, $prefix, $config);
 	}
 
 	/**
@@ -54,7 +56,7 @@ class TjfieldsModelCity extends JModelAdmin
 	public function getForm($data = array(), $loadData = true)
 	{
 		// Initialise variables.
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 
 		// Get the form.
 		$form = $this->loadForm('com_tjfields.city', 'city', array('control' => 'jform', 'load_data' => $loadData));
@@ -77,7 +79,7 @@ class TjfieldsModelCity extends JModelAdmin
 	protected function loadFormData()
 	{
 		// Check the session for previously entered form data.
-		$data = JFactory::getApplication()->getUserState('com_tjfields.edit.city.data', array());
+		$data = Factory::getApplication()->getUserState('com_tjfields.edit.city.data', array());
 
 		if (empty($data))
 		{
@@ -115,14 +117,12 @@ class TjfieldsModelCity extends JModelAdmin
 	 */
 	protected function prepareTable($table)
 	{
-		jimport('joomla.filter.output');
-
 		if (empty($table->id))
 		{
 			// Set ordering to the last item if not set
 			if (@$table->ordering === '')
 			{
-				$db = JFactory::getDbo();
+				$db = Factory::getDbo();
 				$db->setQuery('SELECT MAX(ordering) FROM #__tj_city');
 				$max = $db->loadResult();
 				$table->ordering = $max + 1;
@@ -142,12 +142,10 @@ class TjfieldsModelCity extends JModelAdmin
 
 	public function save($data)
 	{
-		$com_params = JComponentHelper::getParams('com_tjfields');
-		$id = (!empty($data['id'])) ? $data['id'] : (int) $this->getState('city.id');
+		$id    = (!empty($data['id'])) ? $data['id'] : (int) $this->getState('city.id');
 		$state = (!empty($data['com_tjfields'])) ? 1 : 0;
-
-		$user = JFactory::getUser();
-		$app = JFactory::getApplication();
+		$user  = Factory::getUser();
+		$app   = Factory::getApplication();
 
 		if ($id)
 		{
@@ -174,7 +172,7 @@ class TjfieldsModelCity extends JModelAdmin
 
 		if ($authorised !== true)
 		{
-			JError::raiseError(403, JText::_('JERROR_ALERTNOAUTHOR'));
+			$app->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'error');
 
 			return false;
 		}
@@ -200,7 +198,7 @@ class TjfieldsModelCity extends JModelAdmin
 		// Validate to check for duplication
 		if (!$table->checkDuplicateCity())
 		{
-			$app->enqueueMessage(JText::_('COM_TJFIELDS_CITY_EXISTS_IN_REGION_COUNTRY'), 'warning');
+			$app->enqueueMessage(Text::_('COM_TJFIELDS_CITY_EXISTS_IN_REGION_COUNTRY'), 'warning');
 		}
 
 		// Attempt to save data
@@ -219,7 +217,7 @@ class TjfieldsModelCity extends JModelAdmin
 			return false;
 		}
 
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		$query = "SELECT r.id, r.region, r.region_jtext
 		 FROM #__tj_region AS r
@@ -231,14 +229,14 @@ class TjfieldsModelCity extends JModelAdmin
 		$regions = $db->loadObjectList();
 
 		// Load lang file for regions
-		$lang = JFactory::getLanguage();
+		$lang = Factory::getLanguage();
 		$lang->load('tjgeo.regions', JPATH_SITE, null, false, true);
 
 		foreach ($regions as $r)
 		{
 			if ($lang->hasKey(strtoupper($r->region_jtext)))
 			{
-				$r->region = JText::_($r->region_jtext);
+				$r->region = Text::_($r->region_jtext);
 			}
 		}
 
@@ -254,49 +252,21 @@ class TjfieldsModelCity extends JModelAdmin
 			set_time_limit ('300');
 		}
 
-		$db = JFactory::getDBO();
-
-		/*$query = "SELECT c.id, c.country_code
-		 FROM #__tj_country AS c
-		ORDER BY c.country";
-		$db->setQuery($query);
-		$countries = $db->loadObjectList();
-
-		foreach ($countries as $c)
-		{
-			echo $c->country_code  . ' - ';
-
-			echo $query = "UPDATE #__tj_city3 AS ct
-			SET country_id = " . $c->id . "
-		    WHERE ct.country_code = '" . $c->country_code . "'";
-
-			echo ' <br/> ';
-
-			$db->setQuery($query);
-			$db->query();
-		}*/
-
+		$db    = Factory::getDBO();
 		$query = "SELECT ct.*
 		 FROM #__tj_city3 AS ct";
 		$db->setQuery($query);
-
 		$cities = $db->loadObjectList();
 
 		foreach ($cities as $ct)
 		{
-			//echo $ct->city  . ' - ';
-
-			//echo
 			$query = 'INSERT INTO `#__tj_city4`
 			(`id`, `city_id`, `city`, `country_id`, `region_id`)
 			VALUES
 			( ' . $ct->city_id . ', ' . $ct->city_id . ', ' . $db->quote($ct->city) . ', ' . $ct->country_id . ', ' . $ct->region_id . ')';
 
-			//echo ' <br/> ';
-
 			$db->setQuery($query);
-			$db->query();
+			$db->execute();
 		}
-
 	}
 }

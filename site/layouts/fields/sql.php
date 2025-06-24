@@ -8,6 +8,7 @@
 
 // No direct access
 defined('_JEXEC') or die('Restricted access');
+use Joomla\CMS\Language\Text;
 
 if (!key_exists('field', $displayData) || !key_exists('fieldXml', $displayData))
 {
@@ -35,7 +36,7 @@ $fieldOptions = array();
 foreach ($options as $option)
 {
 	$option = (object) $option;
-	$fieldOptions[$option->value] = JText::_(htmlspecialchars($option->text, ENT_COMPAT, 'UTF-8'));
+	$fieldOptions[$option->value] = Text::_(htmlspecialchars($option->text, ENT_COMPAT, 'UTF-8'));
 }
 
 if (!is_array($field->value))
