@@ -15,7 +15,7 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Language\Text;
 
-JHtml::addIncludePath(JPATH_COMPONENT . '/helpers/html');
+HTMLHelper::addIncludePath(JPATH_COMPONENT . '/helpers/html');
 
 // Load lang file for regions
 $lang = Factory::getLanguage();
@@ -74,7 +74,7 @@ if (! empty($this->extra_sidebar))
 							<?php echo HTMLHelper::_('grid.sort', 'COM_TJFIELDS_REGIONS_REGION_CODE', 'a.region_code', $listDirn, $listOrder); ?>
 						</th>
 						<th class='left hidden-phone'>
-							<?php echo HTMLHelper::_('grid.sort', 'COM_TJFIELDS_REGIONS_REGION_JTEXT', 'a.region_jtext', $listDirn, $listOrder); ?>
+							<?php echo HTMLHelper::_('grid.sort', 'COM_TJFIELDS_REGIONS_REGION_TEXT', 'a.region_text', $listDirn, $listOrder); ?>
 						</th>
 						<?php if (isset($this->items[0]->id)): ?>
 							<th width="1%" class="nowrap center hidden-phone">
@@ -133,11 +133,11 @@ if (! empty($this->extra_sidebar))
 							</td>
 							<td class="left hidden-phone">
 								<?php
-								if ($lang->hasKey(strtoupper($item->region_jtext)))
+								if ($lang->hasKey(strtoupper($item->region_text)))
 								{
-									echo Text::_($item->region_jtext);
+									echo Text::_($item->region_text);
 								}
-								elseif ($item->region_jtext !== '')
+								elseif ($item->region_text !== '')
 								{
 									echo "<span class='text text-warning'>" . Text::_('COM_TJFIELDS_MISSING_LANG_CONSTANT') . "</span>";
 								}

@@ -14,7 +14,7 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Language\Text;
 
-JHtml::addIncludePath(JPATH_COMPONENT . '/helpers/html');
+HTMLHelper::addIncludePath(JPATH_COMPONENT . '/helpers/html');
 HTMLHelper::_('bootstrap.tooltip');
 HTMLHelper::_('behavior.formvalidator');
 HTMLHelper::_('behavior.keepalive');
@@ -24,7 +24,7 @@ if(JVERSION >= '3.0')
 	HTMLHelper::_('formbehavior.chosen', 'select');
 }
 
-$input = Factory::getApplication()->input;
+$input = Factory::getApplication()->getInput();
 $fullClient = $input->get('client','','STRING');
 $fullClient =  explode('.',$fullClient);
 

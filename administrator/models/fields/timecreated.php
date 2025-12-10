@@ -13,12 +13,11 @@ use Joomla\CMS\Form\FormField;
 use Joomla\CMS\Date\Date;
 use Joomla\CMS\Language\Text;
 
-jimport('joomla.form.formfield');
 
 /**
  * Supports an HTML select list of categories
  */
-class JFormFieldTimecreated extends JFormField
+class JFormFieldTimecreated extends FormField
 {
 	/**
 	 * The form field type.

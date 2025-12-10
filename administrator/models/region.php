@@ -119,9 +119,9 @@ class TjfieldsModelRegion extends AdminModel
 			// Set ordering to the last item if not set
 			if (@$table->ordering === '')
 			{
-				$db = Factory::getDbo();
+				$db = Factory::getContainer()->get(\Joomla\Database\DatabaseInterface::class);
 				$db->setQuery('SELECT MAX(ordering) FROM #__tj_region');
-				$max = $db->loadResult();
+				$max = (int) ($db->loadResult() ?? 0);
 				$table->ordering = $max + 1;
 			}
 		}

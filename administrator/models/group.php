@@ -40,7 +40,10 @@ class TjfieldsModelGroup extends AdminModel
 	 */
 	public function getTable($type = 'Group', $prefix = 'TjfieldsTable', $config = array())
 	{
-		JLoader::import('components.com_tjfields.tables.group', JPATH_ADMINISTRATOR);
+		if (file_exists(JPATH_ADMINISTRATOR . '/components/com_tjfields/tables/group.php'))
+		{
+			require_once JPATH_ADMINISTRATOR . '/components/com_tjfields/tables/group.php';
+		}
 
 		return Table::getInstance($type, $prefix, $config);
 	}
@@ -121,9 +124,9 @@ class TjfieldsModelGroup extends AdminModel
 			// Set ordering to the last item if not set
 			if (@$table->ordering === '')
 			{
-				$db = Factory::getDbo();
+				$db = Factory::getContainer()->get(\Joomla\Database\DatabaseInterface::class);
 				$db->setQuery('SELECT MAX(ordering) FROM #__tjfields_groups');
-				$max = $db->loadResult();
+				$max = (int) ($db->loadResult() ?? 0);
 				$table->ordering = $max + 1;
 			}
 		}
@@ -141,7 +144,7 @@ class TjfieldsModelGroup extends AdminModel
 	public function save($data)
 	{
 		$table         = $this->getTable();
-		$input         = Factory::getApplication()->input;
+		$input         = Factory::getApplication()->getInput();
 		$data['name']  = trim($data['name']);
 		$data['title'] = (!empty($data['name'])) ? $data['name'] : trim($data['title']);
 
@@ -152,7 +155,7 @@ class TjfieldsModelGroup extends AdminModel
 			$name = trim($name['0']);
 			$name = str_replace("`", "", $name);
 
-			$db    = Factory::getDbo();
+			$db    = Factory::getContainer()->get(\Joomla\Database\DatabaseInterface::class);
 			$query = 'SELECT a.*'
 			. ' FROM #__tjfields_groups AS a'
 			. " WHERE  a.name LIKE '" . $db->escape($name) . "%'"
@@ -190,8 +193,15 @@ class TjfieldsModelGroup extends AdminModel
 	public function delete(&$pks)
 	{
 		// Load fields and field model
-		JLoader::import('components.com_tjfields.models.fields', JPATH_ADMINISTRATOR);
-		JLoader::import('components.com_tjfields.models.field', JPATH_ADMINISTRATOR);
+		if (file_exists(JPATH_ADMINISTRATOR . '/components/com_tjfields/models/fields.php'))
+		{
+			require_once JPATH_ADMINISTRATOR . '/components/com_tjfields/models/fields.php';
+		}
+		
+		if (file_exists(JPATH_ADMINISTRATOR . '/components/com_tjfields/models/field.php'))
+		{
+			require_once JPATH_ADMINISTRATOR . '/components/com_tjfields/models/field.php';
+		}
 
 		$pks = (array) $pks;
 

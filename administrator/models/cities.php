@@ -40,7 +40,7 @@ class TjfieldsModelCities extends ListModel
 				'city', 'a.city',
 				'country_id', 'a.country_id',
 				'region_id', 'a.region_id',
-				'city_jtext', 'a.city_jtext',
+				'city_text', 'a.city_text',
 				'country', 'a.country',
 				'region', 'a.region',
 				'state', 'a.state'
@@ -143,7 +143,7 @@ class TjfieldsModelCities extends ListModel
 		// Create a new query object.
 		$db = $this->getDbo();
 		$query = $db->getQuery(true);
-		$client = Factory::getApplication()->input->get('client', '', 'STRING');
+		$client = Factory::getApplication()->getInput()->get('client', '', 'STRING');
 
 		// Select the required fields from the table.
 		$query->select(
@@ -176,7 +176,7 @@ class TjfieldsModelCities extends ListModel
 			{
 				$search = $db->Quote('%' . $db->escape($search, true) . '%');
 				$query->where('( a.city LIKE ' . $search .
-					'  OR  a.city_jtext LIKE ' . $search . ' )'
+					'  OR  a.city_text LIKE ' . $search . ' )'
 				);
 			}
 		}

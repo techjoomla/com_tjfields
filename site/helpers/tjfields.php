@@ -15,8 +15,8 @@ use Joomla\CMS\Session\Session;
 use Joomla\CMS\Uri\Uri;
 JLoader::import("/techjoomla/media/storage/local", JPATH_LIBRARIES);
 use Joomla\Registry\Registry;
-use Joomla\CMS\Filesystem\Folder;
-use Joomla\CMS\Filesystem\File;
+use Joomla\Filesystem\Folder;
+use Joomla\Filesystem\File;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Language\Text;
 
@@ -431,7 +431,7 @@ class TjfieldsHelper
 			elseif ($field->type == 'related' && $fieldParams->get('showParentRecordsOnly', '', 'INT'))
 			{
 				// This is special case to handle the copy of related fields data in copy item feature
-				$jInput = Factory::getApplication()->input;
+				$jInput = Factory::getApplication()->getInput();
 				$tempId = $jInput->get('id', '', 'STRING');
 				$jInput->set('id', $tjUcmParentContentId);
 
@@ -1897,7 +1897,7 @@ class TjfieldsHelper
 	 */
 	public static function buildFilterModuleQuery()
 	{
-		$jinput  = Factory::getApplication()->input;
+		$jinput  = Factory::getApplication()->getInput();
 		$client = $jinput->get("client");
 
 		// Get parameter name in which you are sending category id
@@ -2027,7 +2027,7 @@ class TjfieldsHelper
 	public function getFilterResults()
 	{
 		$db = Factory::getDbo();
-		$jinput  = Factory::getApplication()->input;
+		$jinput  = Factory::getApplication()->getInput();
 
 		// Function will return -1 when no content found according to selected fields in filter
 		$tjfieldIitem_ids = "-1";

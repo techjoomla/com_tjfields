@@ -19,7 +19,7 @@ JFormHelper::loadFieldClass('textarea');
  *
  * @since  11.1
  */
-class JFormFieldFileUploadPath extends JFormFieldTextarea
+class JFormFieldFileUploadPath extends TextareaField
 {
 	/**
 	 * The form field type.

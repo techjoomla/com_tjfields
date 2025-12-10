@@ -46,7 +46,7 @@ class TjfieldsViewRegions extends HtmlView
 		$this->pagination    = $this->get('Pagination');
 		$this->filterForm    = $this->get('FilterForm');
 		$this->activeFilters = $this->get('ActiveFilters');
-		$this->input         = Factory::getApplication()->input;
+		$this->input         = Factory::getApplication()->getInput();
 
 		// Check for errors.
 		if (count($errors = $this->get('Errors')))
@@ -58,7 +58,7 @@ class TjfieldsViewRegions extends HtmlView
 
 		if (JVERSION >= '3.0')
 		{
-			$this->sidebar = JHtmlSidebar::render();
+			$this->sidebar = '';;
 		}
 
 		if (JVERSION < '3.0')
@@ -98,11 +98,11 @@ class TjfieldsViewRegions extends HtmlView
 	{
 		require_once JPATH_COMPONENT . '/helpers/tjfields.php';
 
-		$client        = Factory::getApplication()->input->get('client', '', 'STRING');
+		$client        = Factory::getApplication()->getInput()->get('client', '', 'STRING');
 		$extention     = explode('.', $client);
 		$canDo         = TjfieldsHelper::getActions($extention[0], 'region');
 		$extensionName = strtoupper($client);
-		$bar           = ToolBar::getInstance('toolbar');
+		$bar           = Toolbar::getInstance('toolbar');
 
 		// Need to load the menu language file as mod_menu hasn't been loaded yet.
 		$lang = Factory::getLanguage();
@@ -110,11 +110,11 @@ class TjfieldsViewRegions extends HtmlView
 
 		if (JVERSION >= '3.0')
 		{
-			ToolBarHelper::title(Text::_($extensionName) . ': ' . Text::_('COM_TJFIELDS_TITLE_REGIONS'), 'list');
+			ToolbarHelper::title(Text::_($extensionName) . ': ' . Text::_('COM_TJFIELDS_TITLE_REGIONS'), 'list');
 		}
 		else
 		{
-			ToolBarHelper::title(Text::_($extensionName) . ': ' . Text::_('COM_TJFIELDS_TITLE_REGIONS'), 'regions.png');
+			ToolbarHelper::title(Text::_($extensionName) . ': ' . Text::_('COM_TJFIELDS_TITLE_REGIONS'), 'regions.png');
 		}
 
 		// Check if the form exists before showing the add/edit buttons
@@ -124,7 +124,7 @@ class TjfieldsViewRegions extends HtmlView
 		{
 			if ($canDo->get('core.create'))
 			{
-				ToolBarHelper::addNew('region.add', 'JTOOLBAR_NEW');
+				ToolbarHelper::addNew('region.add', 'JTOOLBAR_NEW');
 			}
 		}
 
@@ -146,9 +146,9 @@ class TjfieldsViewRegions extends HtmlView
 			{
 				if (JVERSION < '4.0.0')
 				{
-					ToolBarHelper::divider();
-					ToolBarHelper::custom('regions.publish', 'publish.png', 'publish_f2.png', 'JTOOLBAR_PUBLISH', true);
-					ToolBarHelper::custom('regions.unpublish', 'unpublish.png', 'unpublish_f2.png', 'JTOOLBAR_UNPUBLISH', true);
+					ToolbarHelper::divider();
+					ToolbarHelper::custom('regions.publish', 'publish.png', 'publish_f2.png', 'JTOOLBAR_PUBLISH', true);
+					ToolbarHelper::custom('regions.unpublish', 'unpublish.png', 'unpublish_f2.png', 'JTOOLBAR_UNPUBLISH', true);
 				}
 				else
 				{
@@ -162,14 +162,10 @@ class TjfieldsViewRegions extends HtmlView
 
 		if ($canDo->get('core.admin'))
 		{
-			ToolBarHelper::preferences('com_tjfields');
+			ToolbarHelper::preferences('com_tjfields');
 		}
 
-		if (JVERSION >= '3.0')
-		{
-			// Set sidebar action
-			JHtmlSidebar::setAction('index.php?option=com_tjfields&view=regions');
-		}
+			// Note: HTMLHelperSidebar was removed in Joomla 4+
 
 		$this->extra_sidebar = '';
 	}

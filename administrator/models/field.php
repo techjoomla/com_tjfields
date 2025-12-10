@@ -10,8 +10,8 @@
 // No direct access.
 defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Filesystem\File;
-use Joomla\CMS\Filesystem\Folder;
+use Joomla\Filesystem\File;
+use Joomla\Filesystem\Folder;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Form\FormHelper;
 use Joomla\CMS\Language\Text;
@@ -52,7 +52,10 @@ class TjfieldsModelField extends AdminModel
 	 */
 	public function getTable($type = 'Field', $prefix = 'TjfieldsTable', $config = array())
 	{
-		JLoader::import('components.com_tjfields.tables.field', JPATH_ADMINISTRATOR);
+		if (file_exists(JPATH_ADMINISTRATOR . '/components/com_tjfields/tables/field.php'))
+		{
+			require_once JPATH_ADMINISTRATOR . '/components/com_tjfields/tables/field.php';
+		}
 
 		return Table::getInstance($type, $prefix, $config);
 	}
@@ -116,7 +119,7 @@ class TjfieldsModelField extends AdminModel
 	protected function loadFormData()
 	{
 		$app = Factory::getApplication();
-		$input = $app->input;
+		$input = $app->getInput();
 
 		// Check the session for previously entered form data.
 		$data = $app->getUserState('com_tjfields.edit.field.data', array());
@@ -143,14 +146,14 @@ class TjfieldsModelField extends AdminModel
 	 */
 	public function getItem($pk = null)
 	{
-		$input = Factory::getApplication()->input;
+		$input = Factory::getApplication()->getInput();
 
 		if ($item = parent::getItem($pk))
 		{
 			// Do any procesing on fields here if needed
 			if ($input->get('id', '', 'INT'))
 			{
-				$db = Factory::getDbo();
+				$db = Factory::getContainer()->get(\Joomla\Database\DatabaseInterface::class);
 				$query = $db->getQuery(true);
 				$query->select('opt.id as optionid,opt.options as name,opt.value FROM #__tjfields_options as opt');
 				$query->where('opt.field_id=' . $input->get('id', '', 'INT'));
@@ -181,9 +184,9 @@ class TjfieldsModelField extends AdminModel
 			// Set ordering to the last item if not set
 			if (@$table->ordering === '')
 			{
-				$db = Factory::getDbo();
+				$db = Factory::getContainer()->get(\Joomla\Database\DatabaseInterface::class);
 				$db->setQuery('SELECT MAX(ordering) FROM #__tjfields_fields');
-				$max = $db->loadResult();
+				$max = (int) ($db->loadResult() ?? 0);
 				$table->ordering = $max + 1;
 			}
 		}
@@ -244,7 +247,7 @@ class TjfieldsModelField extends AdminModel
 			return false;
 		}
 
-		$input = Factory::getApplication()->input;
+		$input = Factory::getApplication()->getInput();
 		$data['label'] = trim($data['label']);
 
 		// Set field title as field label
@@ -260,7 +263,7 @@ class TjfieldsModelField extends AdminModel
 			$name = explode("(", $data['label']);
 			$name = trim($name['0']);
 			$name = str_replace("`", "", $name);
-			$db = Factory::getDBO();
+			$db = Factory::getContainer()->get(\Joomla\Database\DatabaseInterface::class);
 
 			// Create a new query object.
 			$query = $db->getQuery(true);
@@ -280,7 +283,7 @@ class TjfieldsModelField extends AdminModel
 		}
 
 		// Add clint type in data as it is not present in jform
-		$input = $app->input;
+		$input = $app->getInput();
 		$data['client_type'] = $input->post->get('client_type', '', 'STRING');
 		$data['saveOption'] = 0;
 
@@ -577,7 +580,7 @@ if (isset($data['params']) && is_array($data['params']) && array_key_exists("ren
 	 */
 	public function delete_option($delete_ids)
 	{
-		$db = Factory::getDBO();
+		$db = Factory::getContainer()->get(\Joomla\Database\DatabaseInterface::class);
 
 		foreach ($delete_ids as $key => $value)
 		{
@@ -586,8 +589,6 @@ if (isset($data['params']) && is_array($data['params']) && array_key_exists("ren
 
 			if (!$db->execute())
 			{
-				echo $db->stderr();
-
 				return false;
 			}
 		}
@@ -605,7 +606,7 @@ if (isset($data['params']) && is_array($data['params']) && array_key_exists("ren
 	 */
 	public function deleteFieldCategoriesMapping($field_id = array(), $cats = array())
 	{
-		$db = Factory::getDBO();
+		$db = Factory::getContainer()->get(\Joomla\Database\DatabaseInterface::class);
 
 		try
 		{
@@ -686,9 +687,14 @@ if (isset($data['params']) && is_array($data['params']) && array_key_exists("ren
 			return false;
 		}
 
-		$db = Factory::getDbo();
-		$jInput = Factory::getApplication()->input;
-		JLoader::import('components.com_tjfields.tables.field', JPATH_ADMINISTRATOR);
+		$db = Factory::getContainer()->get(\Joomla\Database\DatabaseInterface::class);
+		$jInput = Factory::getApplication()->getInput();
+		
+		if (file_exists(JPATH_ADMINISTRATOR . '/components/com_tjfields/tables/field.php'))
+		{
+			require_once JPATH_ADMINISTRATOR . '/components/com_tjfields/tables/field.php';
+		}
+		
 		$fieldTable = Table::getInstance('Field', 'TjfieldsTable', array('dbo', $db));
 		$fieldTable->load(array('id' => $fieldId));
 
@@ -814,7 +820,7 @@ if (isset($data['params']) && is_array($data['params']) && array_key_exists("ren
 	 */
 	public function delete(&$pks)
 	{
-		$db = Factory::getDbo();
+		$db = Factory::getContainer()->get(\Joomla\Database\DatabaseInterface::class);
 		$pks = (array) $pks;
 
 		foreach ($pks as $pk)

@@ -10,7 +10,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\CMS\Table\Table;
 
-jimport('joomla.application.component.modellist');
+use Joomla\CMS\MVC\Model\ListModel;
 
 /**
  * Tjfields model.

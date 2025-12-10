@@ -11,7 +11,7 @@
 defined('_JEXEC') or die;
 use Joomla\CMS\MVC\Controller\FormController;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Filesystem\File;
+use Joomla\Filesystem\File;
 
 jimport('joomla.application.component.controllerform');
 jimport( 'joomla.filesystem.file' );

@@ -17,12 +17,13 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 use \Joomla\CMS\Layout\LayoutHelper;
 
-JHtml::addIncludePath(JPATH_COMPONENT.'/helpers/html');
+HTMLHelper::addIncludePath(JPATH_COMPONENT.'/helpers/html');
 
 if(JVERSION >= '3.0')
 {
 	HTMLHelper::_('bootstrap.tooltip');
-	HTMLHelper::_('formbehavior.chosen', 'select');
+	HTMLHelper::_('behavior.multiselect'); // only for list tables
+
 	HTMLHelper::_('behavior.multiselect');
 }
 
@@ -38,7 +39,7 @@ $listOrder	= $this->state->get('list.ordering');
 $listDirn	= $this->state->get('list.direction');
 $canOrder	= $user->authorise('core.edit.state', 'com_tjfields');
 $saveOrder	= $listOrder == 'a.ordering';
-$input=jFactory::getApplication()->input;
+$input = Factory::getApplication()->getInput();
 if ($saveOrder)
 {
 	$saveOrderingUrl = 'index.php?option=com_tjfields&task=groups.saveOrderAjax&tmpl=component';

@@ -15,7 +15,7 @@ use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 
-jimport('joomla.filesystem.path');
+use Joomla\Filesystem\Path;
 
 JLoader::register('JFormFieldSubform', JPATH_SITE . '/libraries/joomla/form/fields/list.php');
 
@@ -30,7 +30,7 @@ JLoader::register('JFormFieldSubform', JPATH_SITE . '/libraries/joomla/form/fiel
  *
  * @since  1.3
  */
-class JFormFieldCompareWithNumberFields extends JFormFieldList
+class JFormFieldCompareWithNumberFields extends ListField
 {
 	/**
 	 * The form field type.
@@ -49,7 +49,7 @@ class JFormFieldCompareWithNumberFields extends JFormFieldList
 	{
 		$options = array();
 
-		$input = Factory::getApplication()->input;
+		$input = Factory::getApplication()->getInput();
 		$fieldId = $input->get('id', '', 'INT');
 		$currentClient = $input->get('client', '', "STRING");
 

@@ -15,13 +15,14 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;
 
-JHtml::addIncludePath(JPATH_COMPONENT.'/helpers/html');
+HTMLHelper::addIncludePath(JPATH_COMPONENT.'/helpers/html');
 use Joomla\CMS\Layout\LayoutHelper;
 
 if(JVERSION >= '3.0')
 {
 	HTMLHelper::_('bootstrap.tooltip');
-	HTMLHelper::_('formbehavior.chosen', 'select');
+	HTMLHelper::_('behavior.multiselect'); // only for list tables
+
 	HTMLHelper::_('behavior.multiselect');
 }
 
@@ -29,16 +30,16 @@ HTMLHelper::_('behavior.formvalidator');
 
 HTMLHelper::_('behavior.multiselect');
 
-JText::script('COM_TJFIELD_CONFIRM_DELETE_FIELD', true);
-JText::script('COM_TJFIELDS_FILE_ERROR_MAX_SIZE');
-JText::script('COM_TJFIELD_CONFIRM_DELETE_REFRENCE_DATA', true);
-JHtml::script(Uri::root() . 'media/com_tjfields/js/tjfields.js');
-JHtml::script(Uri::root(true) . '/libraries/techjoomla/assets/js/houseKeeping.js');
+Text::script('COM_TJFIELD_CONFIRM_DELETE_FIELD', true);
+Text::script('COM_TJFIELDS_FILE_ERROR_MAX_SIZE');
+Text::script('COM_TJFIELD_CONFIRM_DELETE_REFRENCE_DATA', true);
+HTMLHelper::script(Uri::root() . 'media/com_tjfields/js/tjfields.js');
+HTMLHelper::script(Uri::root(true) . '/libraries/techjoomla/assets/js/houseKeeping.js');
 
 // Import CSS
 $document = Factory::getDocument();
 $document->addStyleSheet('components/com_tjfields/assets/css/tjfields.css');
-$input=jFactory::getApplication()->input;
+$input = Factory::getApplication()->getInput();
 $user	= Factory::getUser();
 $userId	= $user->get('id');
 $listOrder	= $this->state->get('list.ordering');

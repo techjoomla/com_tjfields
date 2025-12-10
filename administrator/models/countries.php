@@ -41,7 +41,7 @@ class TjfieldsModelCountries extends ListModel
 				'country', 'a.country',
 				'country_3_code', 'a.country_3_code',
 				'country_code', 'a.country_code',
-				'country_jtext', 'a.country_jtext'
+				'country_text', 'a.country_text'
 			);
 		}
 
@@ -115,7 +115,7 @@ class TjfieldsModelCountries extends ListModel
 		// Create a new query object.
 		$db = $this->getDbo();
 		$query = $db->getQuery(true);
-		$client = Factory::getApplication()->input->get('client', '', 'STRING');
+		$client = Factory::getApplication()->getInput()->get('client', '', 'STRING');
 
 		// Select the required fields from the table.
 		$query->select(
@@ -154,7 +154,7 @@ class TjfieldsModelCountries extends ListModel
 				$query->where('( a.country LIKE ' . $search .
 						'  OR  a.country_3_code LIKE ' . $search .
 						'  OR  a.country_code LIKE ' . $search .
-						'  OR  a.country_jtext LIKE ' . $search . ' )'
+						'  OR  a.country_text LIKE ' . $search . ' )'
 				);
 			}
 		}

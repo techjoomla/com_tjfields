@@ -14,6 +14,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Form\FormField;
+use Joomla\CMS\Toolbar\ToolbarHelper;
 
 jimport('joomla.application.component.view');
 
@@ -46,7 +47,7 @@ class TjfieldsViewCities extends HtmlView
 		$this->pagination = $this->get('Pagination');
 		$this->filterForm = $this->get('FilterForm');
 		$this->activeFilters = $this->get('ActiveFilters');
-		$this->input = Factory::getApplication()->input;
+		$this->input = Factory::getApplication()->getInput();
 
 		// Check for errors.
 		if (count($errors = $this->get('Errors')))
@@ -58,8 +59,7 @@ class TjfieldsViewCities extends HtmlView
 
 		if (JVERSION >= '3.0')
 		{
-			$this->sidebar = JHtmlSidebar::render();
-		}
+			$this->sidebar = '';		}
 
 		if (JVERSION < '3.0')
 		{
@@ -110,7 +110,7 @@ class TjfieldsViewCities extends HtmlView
 		require_once JPATH_COMPONENT . '/helpers/tjfields.php';
 
 		// Let's get the extension name
-		$client = Factory::getApplication()->input->get('client', '', 'STRING');
+		$client = Factory::getApplication()->getInput()->get('client', '', 'STRING');
 
 		$extention = explode('.', $client);
 
@@ -125,11 +125,11 @@ class TjfieldsViewCities extends HtmlView
 
 		if (JVERSION >= '3.0')
 		{
-			JToolBarHelper::title(Text::_($extensionName) . ': ' . Text::_('COM_TJFIELDS_TITLE_CITIES'), 'list');
+			ToolbarHelper::title(Text::_($extensionName) . ': ' . Text::_('COM_TJFIELDS_TITLE_CITIES'), 'list');
 		}
 		else
 		{
-			JToolBarHelper::title(Text::_($extensionName) . ': ' . Text::_('COM_TJFIELDS_TITLE_CITIES'), 'cities.png');
+			ToolbarHelper::title(Text::_($extensionName) . ': ' . Text::_('COM_TJFIELDS_TITLE_CITIES'), 'cities.png');
 		}
 
 		// Check if the form exists before showing the add/edit buttons
@@ -139,12 +139,12 @@ class TjfieldsViewCities extends HtmlView
 		{
 			if ($canDo->get('core.create'))
 			{
-				JToolBarHelper::addNew('city.add', 'JTOOLBAR_NEW');
+				ToolbarHelper::addNew('city.add', 'JTOOLBAR_NEW');
 			}
 
 			if ($canDo->get('core.edit') && isset($this->items[0]))
 			{
-				JToolBarHelper::editList('city.edit', 'JTOOLBAR_EDIT');
+				ToolbarHelper::editList('city.edit', 'JTOOLBAR_EDIT');
 			}
 		}
 
@@ -152,22 +152,18 @@ class TjfieldsViewCities extends HtmlView
 		{
 			if (isset($this->items[0]->state))
 			{
-				JToolBarHelper::divider();
-				JToolBarHelper::custom('cities.publish', 'publish.png', 'publish_f2.png', 'JTOOLBAR_PUBLISH', true);
-				JToolBarHelper::custom('cities.unpublish', 'unpublish.png', 'unpublish_f2.png', 'JTOOLBAR_UNPUBLISH', true);
+				ToolbarHelper::divider();
+				ToolbarHelper::custom('cities.publish', 'publish.png', 'publish_f2.png', 'JTOOLBAR_PUBLISH', true);
+				ToolbarHelper::custom('cities.unpublish', 'unpublish.png', 'unpublish_f2.png', 'JTOOLBAR_UNPUBLISH', true);
 			}
 		}
 
 		if ($canDo->get('core.admin'))
 		{
-			JToolBarHelper::preferences('com_tjfields');
+			ToolbarHelper::preferences('com_tjfields');
 		}
 
-		if (JVERSION >= '3.0')
-		{
-			// Set sidebar action
-			JHtmlSidebar::setAction('index.php?option=com_tjfields&view=cities');
-		}
+			// Note: HTMLHelperSidebar was removed in Joomla 4+
 
 		$this->extra_sidebar = '';
 	}

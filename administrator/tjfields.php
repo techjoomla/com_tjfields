@@ -63,8 +63,10 @@ $helperPath = dirname(__FILE__) . '/helpers/tjfields.php';
 
 if (!class_exists('TjfieldsHelper'))
 {
-	JLoader::register('TjfieldsHelper', $helperPath);
-	JLoader::load('TjfieldsHelper');
+	if (file_exists($helperPath))
+	{
+		require_once $helperPath;
+	}
 }
 
 // Load techjoomla strapper
@@ -75,5 +77,5 @@ if (file_exists(JPATH_ROOT . '/media/techjoomla_strapper/tjstrapper.php'))
 }
 
 $controller	= BaseController::getInstance('Tjfields');
-$controller->execute(Factory::getApplication()->input->get('task'));
+$controller->execute(Factory::getApplication()->getInput()->get('task'));
 $controller->redirect();

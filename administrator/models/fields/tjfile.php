@@ -26,7 +26,7 @@ JLoader::import("/techjoomla/media/storage/local", JPATH_LIBRARIES);
  * @link   http://www.w3.org/TR/html-markup/input.file.html#input.file
  * @since  11.1
  */
-class JFormFieldTjFile extends JFormFieldFile
+class JFormFieldTjFile extends FileField
 {
 	/**
 	 * The form field type.
@@ -208,11 +208,11 @@ class JFormFieldTjFile extends JFormFieldFile
 		$data = new stdClass;
 
 		$app = Factory::getApplication();
-		$data->clientForm = $app->input->get('client', '', 'string');
+		$data->clientForm = $app->getInput()->get('client', '', 'string');
 
 		// Checking the field is from subfrom or not
 		$formName = explode('.', $this->form->getName());
-		$formValueId = $app->input->get('id', '', 'INT');
+		$formValueId = $app->getInput()->get('id', '', 'INT');
 		$data->subFormFileFieldId = 0;
 		$data->isSubformField = 0;
 		$data->subformId = 0;

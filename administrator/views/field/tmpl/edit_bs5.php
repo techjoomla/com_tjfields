@@ -14,12 +14,12 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Language\Text;
 
-JHtml::addIncludePath(JPATH_COMPONENT . '/helpers/html');
+HTMLHelper::addIncludePath(JPATH_COMPONENT . '/helpers/html');
 HTMLHelper::_('bootstrap.tooltip');
 HTMLHelper::_('behavior.formvalidator');
 HTMLHelper::_('behavior.keepalive');
 
-$input = Factory::getApplication()->input;
+$input = Factory::getApplication()->getInput();
 $fullClient = $input->get('client', '', 'STRING');
 $fullClient =  explode('.', $fullClient);
 
@@ -33,19 +33,78 @@ JLoader::import('TjfieldsHelper', Uri::root() . 'administrator/components/com_tj
 // Call helper function
 TjfieldsHelper::getLanguageConstant();
 
-// Import CSS
-$document = Factory::getDocument();
-$document->addStyleSheet('components/com_tjfields/assets/css/tjfields.css');
-?>
-<script type="text/javascript">
-	var invalidFormErrorMsg = '<?php echo $this->escape(Text::_('COM_TJFIELDS_INVALID_FORM')); ?>';
-	var editFormlink = '<?php echo $link;?>';
+// Import CSS - Updated for Joomla 6
+$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 
-	jQuery(document).ready(function(){
-		jQuery("#field-form #jform_type").attr('onchange', 'show_option_div(this.value);');
-	});
-</script>
-<?php $document->addScript(Uri::root() . 'administrator/components/com_tjfields/assets/js/field.js'); ?>
+// CRITICAL: Load jQuery and core FIRST with proper dependencies
+$wa->useScript('core');
+$wa->useScript('jquery');
+$wa->useScript('jquery-noconflict'); // Required for Joomla
+
+// Register and use CSS with proper path
+$wa->registerAndUseStyle(
+	'com_tjfields.field.edit',
+	'administrator/components/com_tjfields/assets/css/tjfields.css',
+	[],
+	[],
+	[]
+);
+
+// Import JS - Updated for Joomla 6 - Load with jQuery dependency
+$wa->registerAndUseScript(
+	'com_tjfields.field.edit',
+	'administrator/components/com_tjfields/assets/js/field.js',
+	['core', 'jquery', 'jquery-noconflict'], // Dependencies
+	[],
+	[]
+);
+
+// Inline script using addScriptDeclaration - ensures proper script order
+$doc = Factory::getApplication()->getDocument();
+$doc->addScriptOptions('com_tjfields.field', [
+	'invalidFormErrorMsg' => Text::_('COM_TJFIELDS_INVALID_FORM'),
+	'editFormlink' => $link
+]);
+
+$doc->addScriptDeclaration('
+	(function() {
+		var options = Joomla.getOptions("com_tjfields.field") || {};
+		var invalidFormErrorMsg = options.invalidFormErrorMsg || "";
+		var editFormlink = options.editFormlink || "";
+		
+		function initFieldTypeHandler() {
+			// Check if jQuery and show_option_div function are available
+			if (typeof jQuery !== "undefined" && typeof show_option_div !== "undefined") {
+				jQuery(document).ready(function($){
+					$("#field-form #jform_type").on("change", function(){
+						show_option_div(this.value);
+					});
+				});
+			} else {
+				// Retry if not loaded yet (max 50 attempts = 5 seconds)
+				if (typeof initFieldTypeHandler.attempts === "undefined") {
+					initFieldTypeHandler.attempts = 0;
+				}
+				initFieldTypeHandler.attempts++;
+				if (initFieldTypeHandler.attempts < 50) {
+					setTimeout(initFieldTypeHandler, 100);
+				} else {
+					console.error("Failed to load jQuery or show_option_div. jQuery: " + (typeof jQuery !== "undefined" ? "OK" : "MISSING") + ", show_option_div: " + (typeof show_option_div !== "undefined" ? "OK" : "MISSING"));
+				}
+			}
+		}
+		
+		// Start initialization - wait for scripts to load
+		if (document.readyState === "loading") {
+			document.addEventListener("DOMContentLoaded", function() {
+				setTimeout(initFieldTypeHandler, 200);
+			});
+		} else {
+			setTimeout(initFieldTypeHandler, 200);
+		}
+	})();
+');
+?>
 <div>
 	<form action="<?php echo Route::_('index.php?option=com_tjfields&view=field&layout=edit&id='.(int) $this->item->id).'&client='.$input->get('client','','STRING'); ?>" method="post" enctype="multipart/form-data" name="adminForm" id="field-form" class="form-validate">
 		<div class="form-horizontal">

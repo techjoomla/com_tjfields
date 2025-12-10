@@ -13,7 +13,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 
-JHtml::addIncludePath(JPATH_COMPONENT . '/helpers/html');
+HTMLHelper::addIncludePath(JPATH_COMPONENT . '/helpers/html');
 
 HTMLHelper::_('behavior.formvalidator');
 HTMLHelper::_('behavior.keepalive');
@@ -70,14 +70,14 @@ HTMLHelper::_('behavior.keepalive');
 						</div>
 
 						<div class="control-group">
-							<div class="control-label"><?php echo $this->form->getLabel('country_jtext'); ?></div>
+							<div class="control-label"><?php echo $this->form->getLabel('country_text'); ?></div>
 							<div class="controls">
-								<?php echo $this->form->getInput('country_jtext'); ?>
+								<?php echo $this->form->getInput('country_text'); ?>
 								<div class="row-fluid">
 									<div class="span12">
 										<p class="text text-warning">
 										<br/>
-										<?php echo Text::_('COM_TJFIELDS_FORM_DESC_COUNTRY_COUNTRY_JTEXT_HELP'); ?>
+										<?php echo Text::_('COM_TJFIELDS_FORM_DESC_COUNTRY_COUNTRY_TEXT_HELP'); ?>
 										</p>
 									</div>
 								</div>

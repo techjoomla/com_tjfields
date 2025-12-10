@@ -53,12 +53,12 @@
 		</field>
 
 		<field
-			name="region_jtext"
+			name="region_text"
 			type="text"
 			size="40"
 			class="inputbox"
-			label="COM_TJFIELDS_FORM_LBL_REGION_REGION_JTEXT"
-			description="COM_TJFIELDS_FORM_DESC_REGION_REGION_JTEXT"
+			label="COM_TJFIELDS_FORM_LBL_REGION_REGION_TEXT"
+			description="COM_TJFIELDS_FORM_DESC_REGION_REGION_TEXT"
 			filter="safehtml" />
 	</fieldset>
 </form>

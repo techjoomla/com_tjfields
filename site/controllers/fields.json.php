@@ -17,8 +17,7 @@ use Joomla\CMS\Session\Session;
 use Joomla\CMS\MVC\Controller\FormController;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Response\JsonResponse;
-
-jimport('joomla.filesystem.file');
+use Joomla\Filesystem\File;
 
 require_once JPATH_SITE . "/components/com_tjfields/filterFields.php";
 
@@ -40,9 +39,9 @@ class TjfieldsControllerFields extends FormController
 	public function deleteFile()
 	{
 		// Check for request forgeries.
-		Session::checkToken('get') or Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
+		Session::checkToken('get') or Session::checkToken() or Factory::getApplication()->close();
 		$app = Factory::getApplication();
-		$jinput = $app->input;
+		$jinput = $app->getInput();
 
 		$data = array();
 		$data['fileName'] = base64_decode($jinput->get('fileName', '', 'BASE64'));
@@ -51,7 +50,11 @@ class TjfieldsControllerFields extends FormController
 		$data['isSubformField'] = $jinput->get('isSubformField');
 
 		// Get media storage path
-		JLoader::import('components.com_tjfields.models.fields', JPATH_SITE);
+		if (file_exists(JPATH_SITE . '/components/com_tjfields/models/fields.php'))
+		{
+			require_once JPATH_SITE . '/components/com_tjfields/models/fields.php';
+		}
+		
 		$fieldsModel     = BaseDatabaseModel::getInstance('Fields', 'TjfieldsModel', array('ignore_request' => true));
 		$fieldData = $fieldsModel->getMediaStoragePath($data['valueId'], $data['subformFileFieldId']);
 
@@ -82,7 +85,7 @@ class TjfieldsControllerFields extends FormController
 	public function getAllUsers()
 	{
 		// Check for request forgeries.
-		Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
+		Session::checkToken() or Factory::getApplication()->close();
 
 		$userOptions = array();
 
@@ -104,6 +107,6 @@ class TjfieldsControllerFields extends FormController
 		}
 
 		echo new JsonResponse($userOptions);
-		jexit();
+		Factory::getApplication()->close();
 	}
 }

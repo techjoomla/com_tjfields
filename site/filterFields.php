@@ -10,16 +10,19 @@
 // No direct access
 defined('_JEXEC') or die();
 use Joomla\CMS\Factory;
-use Joomla\CMS\Filesystem\File;
+use Joomla\Filesystem\File;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Table\Table;
 
-jimport('joomla.application.component.modellist');
-
 $lang = Factory::getLanguage();
 $lang->load('com_tjfields', JPATH_SITE);
-JLoader::import('components.com_tjfields.helpers.tjfields', JPATH_SITE);
+
+// Load TjfieldsHelper
+if (file_exists(JPATH_SITE . '/components/com_tjfields/helpers/tjfields.php'))
+{
+	require_once JPATH_SITE . '/components/com_tjfields/helpers/tjfields.php';
+}
 
 /**
  * Methods supporting a list of regions records.
@@ -121,7 +124,7 @@ trait TjfieldsFilterField
 		$form->bind($dataExtra);
 
 		// Check for field level permissions - start
-		$db = Factory::getDbo();
+		$db = Factory::getContainer()->get(\Joomla\Database\DatabaseInterface::class);
 		Table::addIncludePath(JPATH_ROOT . '/administrator/components/com_tjfields/tables');
 		$tjFieldFieldTable = Table::getInstance('field', 'TjfieldsTable', array('dbo', $db));
 		$fieldSets = $form->getFieldsets();
@@ -151,7 +154,11 @@ trait TjfieldsFilterField
 								$client = str_replace('components/com_tjucm/models/forms/', '', $formSource);
 								$client = 'com_tjucm.' . str_replace('form_extra.xml', '', $client);
 
-								JLoader::import('components.com_tjucm.tables.type', JPATH_ADMINISTRATOR);
+								if (file_exists(JPATH_ADMINISTRATOR . '/components/com_tjucm/tables/type.php'))
+								{
+									require_once JPATH_ADMINISTRATOR . '/components/com_tjucm/tables/type.php';
+								}
+								
 								$ucmTypeTable = Table::getInstance('Type', 'TjucmTable', array('dbo', $db));
 								$ucmTypeTable->load(array('unique_identifier' => $client));
 								$canAdd = $user->authorise('core.type.createitem', 'com_tjucm.type.' . $ucmTypeTable->id);
@@ -299,7 +306,7 @@ trait TjfieldsFilterField
 	 */
 	public function loadFormDataExtra($data, $id = null)
 	{
-		$input = Factory::getApplication()->input;
+		$input = Factory::getApplication()->getInput();
 		$user = Factory::getUser();
 
 		// If id is not present in $data then check if it is available in JInput
@@ -329,7 +336,11 @@ trait TjfieldsFilterField
 
 				if ($efd->type == 'ucmsubform')
 				{
-					JLoader::import('components.com_tjucm.models.itemform', JPATH_SITE);
+					if (file_exists(JPATH_SITE . '/components/com_tjucm/models/itemform.php'))
+					{
+						require_once JPATH_SITE . '/components/com_tjucm/models/itemform.php';
+					}
+					
 					$tjUcmItemFormModel = BaseDatabaseModel::getInstance('ItemForm', 'TjucmModel');
 					$extra_fields_data_formatted[$efd->name] = $tjUcmItemFormModel->getUcmSubFormFieldDataJson($data['content_id'], $efd);
 				}
@@ -406,7 +417,7 @@ trait TjfieldsFilterField
 	{
 		if (empty($id))
 		{
-			$input = Factory::getApplication()->input;
+			$input = Factory::getApplication()->getInput();
 			$id = (empty($data['content_id'])) ? $input->get('content_id', '', 'INT') : $data['content_id'];
 		}
 
@@ -455,7 +466,7 @@ trait TjfieldsFilterField
 	 */
 	public function deleteExtraFieldsData($content_id, $client)
 	{
-		$db = Factory::getDbo();
+		$db = Factory::getContainer()->get(\Joomla\Database\DatabaseInterface::class);
 		$query = $db->getQuery(true);
 		$conditions = array(
 			$db->quoteName('content_id') . ' = ' . $content_id,

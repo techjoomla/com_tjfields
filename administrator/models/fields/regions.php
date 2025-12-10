@@ -14,15 +14,14 @@ use Joomla\CMS\Form\FormHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
-
-JFormHelper::loadFieldClass('list');
+use Joomla\CMS\Form\Field\ListField;
 
 /**
  * Supports an HTML select list of categories
  *
  * @since  1.0
  */
-class JFormFieldRegions extends JFormFieldList
+class JFormFieldRegions extends ListField
 {
 	/**
 	 * The form field type.
@@ -44,7 +43,7 @@ class JFormFieldRegions extends JFormFieldList
 	/**
 	 * Method to get a list of options for a list input.
 	 *
-	 * @return	array		An array of JHtml options.
+	 * @return	array		An array of HTMLHelper options.
 	 *
 	 * @since   11.4
 	 */
@@ -52,11 +51,11 @@ class JFormFieldRegions extends JFormFieldList
 	{
 		$db = Factory::getDbo();
 		$query = $db->getQuery(true);
-		$client = Factory::getApplication()->input->get('client', '', 'STRING');
+		$client = Factory::getApplication()->getInput()->get('client', '', 'STRING');
 		$options = array();
 
 		// Select the required fields from the table.
-		$query->select('r.id, r.region, r.region_jtext');
+		$query->select('r.id, r.region, r.region_text');
 		$query->from('`#__tj_region` AS r');
 
 		if ($client)
@@ -88,9 +87,9 @@ class JFormFieldRegions extends JFormFieldList
 
 			foreach ($regions as $c)
 			{
-				if ($lang->hasKey(strtoupper($c->region_jtext)))
+				if ($lang->hasKey(strtoupper($c->region_text)))
 				{
-					$c->region = Text::_($c->region_jtext);
+					$c->region = Text::_($c->region_text);
 				}
 
 				$options[] = HTMLHelper::_('select.option', $c->id, $c->region);
@@ -109,7 +108,7 @@ class JFormFieldRegions extends JFormFieldList
 	/**
 	 * Method to get a list of options for a list input externally and not from xml.
 	 *
-	 * @return	array		An array of JHtml options.
+	 * @return	array		An array of HTMLHelper options.
 	 *
 	 * @since   2.2
 	 */

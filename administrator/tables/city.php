@@ -158,7 +158,7 @@ class TjfieldsTableCity extends Table
 	 */
 	public function publish ($pks = null, $state = 1, $userId = 0)
 	{
-		$client = Factory::getApplication()->input->get('client', '', 'STRING');
+		$client = Factory::getApplication()->getInput()->get('client', '', 'STRING');
 		$k      = $this->_tbl_key;
 
 		// Sanitize input.

@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS `#__tj_region` (
   `region_3_code` varchar(3) NOT NULL DEFAULT '',
   `region_code` varchar(8) NOT NULL DEFAULT '',
   `region` varchar(64) NOT NULL DEFAULT '',
-  `region_jtext` varchar(255) NOT NULL DEFAULT '',
+  `region_text` varchar(255) NOT NULL DEFAULT '',
   `ordering` int(3) NOT NULL DEFAULT 0,
   `com_jgive` tinyint(1) NOT NULL DEFAULT 1,
   `com_jticketing` tinyint(1) NOT NULL DEFAULT 1,
@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS `#__tj_region` (
 -- Dumping data for table `#__tj_region`
 --
 
-INSERT IGNORE INTO `#__tj_region` (`id`, `country_id`, `region_3_code`, `region_code`, `region`, `region_jtext`, `ordering`, `com_jgive`, `com_jticketing`, `com_quick2cart`, `com_socialads`, `com_tjlms`, `com_tjvendors`) VALUES
+INSERT IGNORE INTO `#__tj_region` (`id`, `country_id`, `region_3_code`, `region_code`, `region`, `region_text`, `ordering`, `com_jgive`, `com_jticketing`, `com_quick2cart`, `com_socialads`, `com_tjlms`, `com_tjvendors`) VALUES
 (1, 1, '', '1', 'Badakhshan', '', 0, 1, 1, 1, 1, 1, 1),
 (2, 1, '', '2', 'Badghis', '', 0, 1, 1, 1, 1, 1, 1),
 (3, 1, '', '3', 'Baghlan', '', 0, 1, 1, 1, 1, 1, 1),

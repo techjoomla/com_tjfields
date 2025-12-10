@@ -56,8 +56,8 @@ class TjfieldsController extends BaseController
 	{
 		require_once JPATH_COMPONENT . '/helpers/tjfields.php';
 
-		$view = Factory::getApplication()->input->getCmd('view', 'fields');
-		Factory::getApplication()->input->set('view', $view);
+		$view = Factory::getApplication()->getInput()->getCmd('view', 'fields');
+		Factory::getApplication()->getInput()->set('view', $view);
 
 		parent::display($cachable, $urlparams);
 
@@ -71,10 +71,16 @@ class TjfieldsController extends BaseController
 	 */
 	public function getMediaFile()
 	{
-		(Session::checkToken() or Session::checkToken('get')) or jexit(Text::_('JINVALID_TOKEN'));
-		JLoader::import("/techjoomla/media/storage/local", JPATH_LIBRARIES);
+		(Session::checkToken() or Session::checkToken('get')) or Factory::getApplication()->close();
+		
+		// Load TJMediaStorageLocal class
+		if (file_exists(JPATH_LIBRARIES . '/techjoomla/media/storage/local.php'))
+		{
+			require_once JPATH_LIBRARIES . '/techjoomla/media/storage/local.php';
+		}
+		
 		$app = Factory::getApplication();
-		$jinput = $app->input;
+		$jinput = $app->getInput();
 		$mediaLocal = TJMediaStorageLocal::getInstance();
 
 		// Here, fpht means file encoded name
@@ -85,7 +91,11 @@ class TjfieldsController extends BaseController
 		$subformFileFieldId = $jinput->get('subFormFileFieldId', '', 'INT');
 
 		// Get media storage path
-		JLoader::import('components.com_tjfields.models.fields', JPATH_SITE);
+		if (file_exists(JPATH_SITE . '/components/com_tjfields/models/fields.php'))
+		{
+			require_once JPATH_SITE . '/components/com_tjfields/models/fields.php';
+		}
+		
 		$fieldsModel     = BaseDatabaseModel::getInstance('Fields', 'TjfieldsModel', array('ignore_request' => true));
 		$data = $fieldsModel->getMediaStoragePath($jinput->get('id', '', 'INT'), $subformFileFieldId);
 
@@ -146,6 +156,6 @@ class TjfieldsController extends BaseController
 			$app->redirect($this->returnURL);
 		}
 
-		jexit();
+		Factory::getApplication()->close();
 	}
 }

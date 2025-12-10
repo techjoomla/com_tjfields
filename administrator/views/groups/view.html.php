@@ -13,6 +13,7 @@ use Joomla\CMS\MVC\View\HtmlView;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Toolbar\ToolbarHelper;
 
 jimport('joomla.application.component.view');
 
@@ -63,8 +64,7 @@ class TjfieldsViewGroups extends HtmlView
 
 		if (JVERSION >= '3.0')
 		{
-			$this->sidebar = JHtmlSidebar::render();
-		}
+			$this->sidebar = '';		}
 
 		parent::display($tpl);
 	}
@@ -78,7 +78,7 @@ class TjfieldsViewGroups extends HtmlView
 	 */
 	protected function addToolbar()
 	{
-		$input = Factory::getApplication()->input;
+		$input = Factory::getApplication()->getInput();
 		JLoader::import('TjfieldsHelper', JPATH_ADMINISTRATOR . '/components/com_tjfields/helpers');
 		$client          = $input->get('client', '', 'STRING');
 
@@ -103,14 +103,14 @@ class TjfieldsViewGroups extends HtmlView
 
 		if (!empty($client) and $client['0'] == 'com_jticketing')
 		{
-			JToolBarHelper::back('COM_JTICKETING_HOME', 'index.php?option=com_jticketing&view=cp');
+			ToolbarHelper::back('COM_JTICKETING_HOME', 'index.php?option=com_jticketing&view=cp');
 		}
 
 		$state = $this->get('State');
 		$tjfieldsHelper = new TjfieldsHelper;
 
 		$canDo = $tjfieldsHelper->getActions($client[0], 'group');
-		JToolBarHelper::title($component_title . ": " . Text::_('COM_TJFIELDS_TITLE_GROUPS'), 'list.png');
+		ToolbarHelper::title($component_title . ": " . Text::_('COM_TJFIELDS_TITLE_GROUPS'), 'list.png');
 
 		// Check if the form exists before showing the add/edit buttons
 		$formPath = JPATH_COMPONENT_ADMINISTRATOR . '/views/group';
@@ -119,7 +119,7 @@ class TjfieldsViewGroups extends HtmlView
 		{
 			if ($canDo->get('core.create'))
 			{
-				JToolBarHelper::addNew('group.add', 'JTOOLBAR_NEW');
+				ToolbarHelper::addNew('group.add', 'JTOOLBAR_NEW');
 			}
 		}
 
@@ -127,19 +127,19 @@ class TjfieldsViewGroups extends HtmlView
 		{
 			if (isset($this->items[0]->state))
 			{
-				JToolBarHelper::divider();
-				JToolBarHelper::custom('groups.publish', 'publish.png', 'publish_f2.png', 'JTOOLBAR_PUBLISH', true);
-				JToolBarHelper::custom('groups.unpublish', 'unpublish.png', 'unpublish_f2.png', 'JTOOLBAR_UNPUBLISH', true);
+				ToolbarHelper::divider();
+				ToolbarHelper::custom('groups.publish', 'publish.png', 'publish_f2.png', 'JTOOLBAR_PUBLISH', true);
+				ToolbarHelper::custom('groups.unpublish', 'unpublish.png', 'unpublish_f2.png', 'JTOOLBAR_UNPUBLISH', true);
 			}
 			elseif (isset($this->items[0]))
 			{
 				// If this component does not use state then show a direct delete button as we can not trash
-				JToolBarHelper::deleteList('', 'groups.delete', 'JTOOLBAR_DELETE');
+				ToolbarHelper::deleteList('', 'groups.delete', 'JTOOLBAR_DELETE');
 			}
 
 			if (isset($this->items[0]->checked_out))
 			{
-				JToolBarHelper::custom('groups.checkin', 'checkin.png', 'checkin_f2.png', 'JTOOLBAR_CHECKIN', true);
+				ToolbarHelper::custom('groups.checkin', 'checkin.png', 'checkin_f2.png', 'JTOOLBAR_CHECKIN', true);
 			}
 		}
 
@@ -148,19 +148,19 @@ class TjfieldsViewGroups extends HtmlView
 		{
 			if ($state->get('filter.state') == -2 && $canDo->get('core.delete'))
 			{
-				JToolBarHelper::deleteList('', 'groups.delete', 'JTOOLBAR_EMPTY_TRASH');
-				JToolBarHelper::divider();
+				ToolbarHelper::deleteList('', 'groups.delete', 'JTOOLBAR_EMPTY_TRASH');
+				ToolbarHelper::divider();
 			}
 			elseif ($canDo->get('core.edit.state'))
 			{
-				JToolBarHelper::trash('groups.trash', 'JTOOLBAR_TRASH');
-				JToolBarHelper::divider();
+				ToolbarHelper::trash('groups.trash', 'JTOOLBAR_TRASH');
+				ToolbarHelper::divider();
 			}
 		}
 
 		if ($canDo->get('core.admin'))
 		{
-			JToolBarHelper::preferences('com_tjfields');
+			ToolbarHelper::preferences('com_tjfields');
 		}
 	}
 

@@ -51,14 +51,14 @@ class FormRuleGreaterThan extends NumberRule
 			return false;
 		}
 
-		$input = Factory::getApplication()->input;
+		$input = Factory::getApplication()->getInput();
 		$recordId = $input->get('recordid', '', 'INT');
 
 		$test = '';
 
 		if ($recordId)
 		{
-			$db = Factory::getDbo();
+			$db = Factory::getContainer()->get(\Joomla\Database\DatabaseInterface::class);
 			$query = $db->getQuery(true);
 			$query->select($db->quoteName('fv.value'));
 			$query->from($db->quoteName('#__tjfields_fields_value', 'fv'));
@@ -66,7 +66,7 @@ class FormRuleGreaterThan extends NumberRule
 			$query->where($db->quoteName('fv.content_id') . ' = ' . $recordId);
 			$query->where($db->quoteName('f.name') . ' = ' . $db->quote($field));
 			$db->setQuery($query);
-			$test = $db->loadresult();
+			$test = $db->loadResult() ?? null;
 		}
 
 		// Test the two values against each other.

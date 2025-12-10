@@ -15,7 +15,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Language\Text;
 
-JHtml::addIncludePath(JPATH_COMPONENT . '/helpers/html');
+HTMLHelper::addIncludePath(JPATH_COMPONENT . '/helpers/html');
 Factory::getApplication()->getDocument()->getWebAssetManager()->useStyle('searchtools')->useScript('searchtools');
 
 // Load lang file for countries
@@ -179,7 +179,7 @@ if (! empty($this->extra_sidebar))
 							<?php echo HTMLHelper::_('grid.sort', 'COM_TJFIELDS_COUNTRIES_COUNTRY_CODE', 'a.country_code', $listDirn, $listOrder); ?>
 						</th>
 						<th class='left hidden-phone'>
-							<?php echo HTMLHelper::_('grid.sort', 'COM_TJFIELDS_COUNTRIES_COUNTRY_JTEXT', 'a.country_jtext', $listDirn, $listOrder); ?>
+							<?php echo HTMLHelper::_('grid.sort', 'COM_TJFIELDS_COUNTRIES_COUNTRY_TEXT', 'a.country_text', $listDirn, $listOrder); ?>
 						</th>
 						<?php
 						if (isset($this->items[0]->id))
@@ -270,11 +270,11 @@ if (! empty($this->extra_sidebar))
 							</td>
 							<td class="left hidden-phone">
 								<?php
-								if ($lang->hasKey(strtoupper($item->country_jtext)))
+								if ($lang->hasKey(strtoupper($item->country_text)))
 								{
-									echo Text::_($item->country_jtext);
+									echo Text::_($item->country_text);
 								}
-								else if ($item->country_jtext !== '')
+								else if ($item->country_text !== '')
 								{
 									echo "<span class='text text-warning'>" . Text::_('COM_TJFIELDS_MISSING_LANG_CONSTANT') . "</span>";
 								}

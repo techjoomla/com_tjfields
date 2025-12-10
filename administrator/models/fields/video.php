@@ -22,7 +22,7 @@ JFormHelper::loadFieldClass('url');
  *
  * @since  DEPLOY_VERSION`
  */
-class JFormFieldVideo extends JFormFieldUrl
+class JFormFieldVideo extends UrlField
 {
 	/**
 	 * The form field type.

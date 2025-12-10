@@ -10,8 +10,6 @@
 
 defined('JPATH_PLATFORM') or die;
 
-JFormHelper::loadFieldClass('list');
-
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Language\Text;
@@ -28,7 +26,7 @@ use Joomla\CMS\Uri\Uri;
  *
  * @since  1.7.0
  */
-class JFormFieldRelated extends JFormFieldList
+class JFormFieldRelated extends ListField
 {
 	/**
 	 * The form field type.
@@ -78,7 +76,7 @@ class JFormFieldRelated extends JFormFieldList
 		$html      = parent::getInput();
 		$fieldname = preg_replace('/[^a-zA-Z0-9_\-]/', '_', $this->fieldname);
 		$user      = Factory::getUser();
-		$input     = Factory::getApplication()->input;
+		$input     = Factory::getApplication()->getInput();
 		$db        = Factory::getDbo();
 
 		Table::addIncludePath(JPATH_ROOT . '/administrator/components/com_tjfields/tables');

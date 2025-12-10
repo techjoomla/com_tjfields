@@ -32,7 +32,7 @@ class TjGeoHelper
 	/**
 	 * Stores the singleton instances of various TjGeoHelper.
 	 *
-	 * @var    JToolbar
+	 * @var    Toolbar
 	 * @since  2.5
 	 */
 	protected static $instances = array();
@@ -57,12 +57,12 @@ class TjGeoHelper
 	}
 
 	/**
-	 * Returns the global JToolbar object, only creating it if it
+	 * Returns the global Toolbar object, only creating it if it
 	 * doesn't already exist.
 	 *
 	 * @param   string  $name  The name of the TjGeoHelper.
 	 *
-	 * @return  JToolbar  The JToolbar object.
+	 * @return  Toolbar  The Toolbar object.
 	 *
 	 * @since   1.5
 	 */
@@ -93,7 +93,7 @@ class TjGeoHelper
 		}
 
 		$query = $this->_db->getQuery(true);
-		$query->select('country, country_jtext');
+		$query->select('country, country_text');
 		$query->from('#__tj_country');
 
 		if (!empty($countryId))
@@ -104,7 +104,7 @@ class TjGeoHelper
 		$this->_db->setQuery($query);
 		$country = $this->_db->loadObject();
 
-		$countryName = $this->getCountryText($country->country_jtext);
+		$countryName = $this->getCountryText($country->country_text);
 
 		if ($countryName)
 		{
@@ -117,21 +117,21 @@ class TjGeoHelper
 	}
 
 	/**
-	 * Returns the jtext for country
+	 * Returns the text for country
 	 *
-	 * @param   string  $countryJtext  jtext string
+	 * @param   string  $countryText  text string
 	 *
-	 * @return  jtext  $countryJtext  value of country language string
+	 * @return  text  $countryText  value of country language string
 	 *
 	 * @since   1.5
 	 */
-	public function getCountryText($countryJtext)
+	public function getCountryText($countryText)
 	{
-		if ($this->_tjlang->hasKey(strtoupper($countryJtext)))
+		if ($this->_tjlang->hasKey(strtoupper($countryText)))
 		{
-			return Text::_($countryJtext, true);
+			return Text::_($countryText, true);
 		}
-		elseif ($countryJtext !== '')
+		elseif ($countryText !== '')
 		{
 			return null;
 		}
@@ -149,7 +149,7 @@ class TjGeoHelper
 	public function getCountryList($component_nm = "")
 	{
 		$query = $this->_db->getQuery(true);
-		$query->select("`id`, `country`,`country_jtext`,`country_dial_code`")->from('#__tj_country');
+		$query->select("`id`, `country`,`country_text`,`country_dial_code`")->from('#__tj_country');
 
 		if ($component_nm)
 		{
@@ -160,16 +160,16 @@ class TjGeoHelper
 		$this->_db->setQuery((string) $query);
 		$countryList = $this->_db->loadAssocList();
 
-		// Get jtext value.
+		// Get text value.
 		foreach ($countryList as $key => $country)
 		{
-			if ($country['country_jtext'])
+			if ($country['country_text'])
 			{
-				$jtext = $this->getCountryText($country['country_jtext']);
+				$text = $this->getCountryText($country['country_text']);
 
-				if ($jtext)
+				if ($text)
 				{
-					$countryList[$key]['country'] = $jtext;
+					$countryList[$key]['country'] = $text;
 				}
 			}
 		}
@@ -192,7 +192,7 @@ class TjGeoHelper
 	{
 		$this->_db = Factory::getDBO();
 		$query     = $this->_db->getQuery(true);
-		$query->select("id, region,region_jtext");
+		$query->select("id, region,region_text");
 		$query->from('#__tj_region');
 		$query->where('country_id=' . $this->_db->quote($countryId));
 		$query->order($this->_db->escape($orderingCol . ' ASC'));
@@ -205,16 +205,16 @@ class TjGeoHelper
 		$this->_db->setQuery((string) $query);
 		$regionList = $this->_db->loadAssocList();
 
-		// Get jtext value.
+		// Get text value.
 		foreach ($regionList as $key => $region)
 		{
-			if ($region['region_jtext'])
+			if ($region['region_text'])
 			{
-				$jtext = $this->getRegionText($region['region_jtext']);
+				$text = $this->getRegionText($region['region_text']);
 
-				if ($jtext)
+				if ($text)
 				{
-					$regionList[$key]['region'] = $jtext;
+					$regionList[$key]['region'] = $text;
 				}
 			}
 		}
@@ -261,7 +261,7 @@ class TjGeoHelper
 		}
 
 		$query = $this->_db->getQuery(true);
-		$query->select('region, region_jtext');
+		$query->select('region, region_text');
 		$query->from('#__tj_region');
 
 		if ($regionId)
@@ -272,12 +272,12 @@ class TjGeoHelper
 		$this->_db->setQuery($query);
 		$res = $this->_db->loadObject();
 
-		// Get jtext value.
-		$jtext = $this->getRegionText($res->region_jtext);
+		// Get text value.
+		$text = $this->getRegionText($res->region_text);
 
-		if ($jtext)
+		if ($text)
 		{
-			return $jtext;
+			return $text;
 		}
 		else
 		{
@@ -288,18 +288,18 @@ class TjGeoHelper
 	/**
 	 * Method gives region name in current  language if exist.
 	 *
-	 * @param   string  $jtext  Jtext constant for region .
+	 * @param   string  $text  Text constant for region .
 	 *
 	 * @since   1.1
 	 * @return   Region name;
 	 */
-	public function getRegionText($jtext)
+	public function getRegionText($text)
 	{
-		if ($this->_tjlang->hasKey(strtoupper($jtext)))
+		if ($this->_tjlang->hasKey(strtoupper($text)))
 		{
-			return Text::_($jtext, true);
+			return Text::_($text, true);
 		}
-		elseif ($jtext !== '')
+		elseif ($text !== '')
 		{
 			return null;
 		}
@@ -310,7 +310,7 @@ class TjGeoHelper
 	 *
 	 * @param   string  $countryCode  2 digit country code like IN for india
 	 *
-	 * @return  object  country object which includes id, country name accourding to curren language && country_jtext, country_jtext;
+	 * @return  object  country object which includes id, country name accourding to curren language && country_text, country_text;
 	 *
 	 * @since   1.1
 	 */
@@ -326,7 +326,7 @@ class TjGeoHelper
 		try
 		{
 			$query = $this->_db->getQuery(true);
-			$query->select('id,country,country_jtext');
+			$query->select('id,country,country_text');
 			$query->from('#__tj_country');
 			$query->where("country_code = '" . $countryCode . "'");
 			$this->_db->setQuery($query);
@@ -343,9 +343,9 @@ class TjGeoHelper
 		{
 			$countryName = "";
 
-			if (!empty($country->country_jtext))
+			if (!empty($country->country_text))
 			{
-				$countryName = $this->getCountryText($country->country_jtext);
+				$countryName = $this->getCountryText($country->country_text);
 			}
 			else
 			{
@@ -368,7 +368,7 @@ class TjGeoHelper
 	 * @param   integer  $countryId   2 digit country code like IN for india
 	 * @param   string   $regionName  State/region name
 	 *
-	 * @return  object  country object which includes id, country name accourding to curren language && country_jtext, country_jtext;
+	 * @return  object  country object which includes id, country name accourding to curren language && country_text, country_text;
 	 *
 	 * @since   1.1
 	 */
@@ -384,7 +384,7 @@ class TjGeoHelper
 		try
 		{
 			$query = $this->_db->getQuery(true);
-			$query->select('id,region,region_jtext');
+			$query->select('id,region,region_text');
 			$query->from('#__tj_region');
 			$query->where("country_id = '" . $countryId . "'");
 			$query->where("LOWER(region) = '" . strtolower($regionName) . "'");
@@ -402,9 +402,9 @@ class TjGeoHelper
 		{
 			$regionName = "";
 
-			if (!empty($region->region_jtext))
+			if (!empty($region->region_text))
 			{
-				$regionName = $this->getRegionText($region->region_jtext);
+				$regionName = $this->getRegionText($region->region_text);
 			}
 			else
 			{
@@ -436,7 +436,7 @@ class TjGeoHelper
 	{
 		$this->_db = Factory::getDbo();
 		$query     = $this->_db->getQuery(true);
-		$query->select($this->_db->qn(array('id', 'city', 'city_jtext')));
+		$query->select($this->_db->qn(array('id', 'city', 'city_text')));
 		$query->from($this->_db->qn('#__tj_city'));
 		$query->where($this->_db->qn('#__tj_city.country_id') . ' = ' . (int) $countryId);
 		$query->order($this->_db->qn('#__tj_city.' . $orderingCol) . ' ASC');
@@ -451,13 +451,13 @@ class TjGeoHelper
 
 		foreach ($cityList as $key => $city)
 		{
-			if ($city['city_jtext'])
+			if ($city['city_text'])
 			{
-				$jtext = $this->getCityText($city['city_jtext']);
+				$text = $this->getCityText($city['city_text']);
 
-				if ($jtext)
+				if ($text)
 				{
-					$cityList[$key]['city'] = $jtext;
+					$cityList[$key]['city'] = $text;
 				}
 			}
 		}
@@ -468,19 +468,19 @@ class TjGeoHelper
 	/**
 	 * Method gives city name in current  language if exist.
 	 *
-	 * @param   string  $jtext  Jtext constant for city .
+	 * @param   string  $text  Text constant for city .
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 *
 	 * @return   city name;
 	 */
-	public function getCityText($jtext)
+	public function getCityText($text)
 	{
-		if ($this->_tjlang->hasKey(strtoupper($jtext)))
+		if ($this->_tjlang->hasKey(strtoupper($text)))
 		{
-			return Text::_($jtext, true);
+			return Text::_($text, true);
 		}
-		elseif ($jtext !== '')
+		elseif ($text !== '')
 		{
 			return null;
 		}

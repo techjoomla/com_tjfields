@@ -29,9 +29,9 @@
 				<option value="">COM_TJFIELDS_FILTER_SELECT_REGION</option>
 		</field>
 
-		<field name="city_jtext" type="text" size="40" class="inputbox"
-			label="COM_TJFIELDS_FORM_LBL_CITY_CITY_JTEXT"
-			description="COM_TJFIELDS_FORM_DESC_CITY_CITY_JTEXT"
+		<field name="city_text" type="text" size="40" class="inputbox"
+			label="COM_TJFIELDS_FORM_LBL_CITY_CITY_TEXT"
+			description="COM_TJFIELDS_FORM_DESC_CITY_CITY_TEXT"
 			filter="safehtml" />
 	</fieldset>
 </form>

@@ -14,14 +14,13 @@ use Joomla\CMS\Form\FormField;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 
-jimport('joomla.form.formfield');
 
 /**
  * Class for custom gateway element
  *
  * @since  1.0.0
  */
-class JFormFieldFieldcategory extends JFormField
+class JFormFieldFieldcategory extends FormField
 {
 	protected $type = 'Fieldcategory';
 
@@ -56,14 +55,14 @@ class JFormFieldFieldcategory extends JFormField
 	 */
 	public function fetchElement($name, $value, &$node, $control_name)
 	{
-		$jinput = Factory::getApplication()->input;
+		$jinput = Factory::getApplication()->getInput();
 		$id = $jinput->get('id', '', 'int');
 		$clientStr = $jinput->get("client");
 		$ClientDetail = explode('.', $clientStr);
 		$client = $ClientDetail[0];
 		$options         = array();
 
-		/*$options[]       = HTMLHelper::_('select.option', '', JText::_('COM_TJFIELDS_FORM_SELECT_CLIENT_CATEGORY'));*/
+		/*$options[]       = HTMLHelper::_('select.option', '', Text::_('COM_TJFIELDS_FORM_SELECT_CLIENT_CATEGORY'));*/
 
 		// Fetch only published category. Static public function options($extension, $config = array('filter.published' => array(0,1)))
 		$categories = HTMLHelper::_('category.options', $client, array('filter.published' => array(1)));
@@ -129,7 +128,7 @@ class JFormFieldFieldcategory extends JFormField
 	public function getSelectedCategories()
 	{
 		$catList = array();
-		$jinput = Factory::getApplication()->input;
+		$jinput = Factory::getApplication()->getInput();
 		$fieldId = $jinput->get("id");
 
 		if (!empty($fieldId))

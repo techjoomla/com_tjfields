@@ -13,7 +13,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
-$jinput = Factory::getApplication()->input;
+$jinput = Factory::getApplication()->getInput();
 $document = Factory::getDocument();
 $path = Uri::base() . 'modules/mod_tjfields_search/assets/css/tjfilters.css';
 $document->addStyleSheet($path);

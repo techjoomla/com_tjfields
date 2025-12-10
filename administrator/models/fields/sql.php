@@ -14,15 +14,14 @@ use Joomla\CMS\Factory;
 use Joomla\Data\DataObject;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
-
-JFormHelper::loadFieldClass('list');
+use Joomla\CMS\Form\Field\ListField;
 
 /**
  * Supports a custom SQL select list
  *
  * @since  1.7.0
  */
-class JFormFieldSQL extends JFormFieldList
+class JFormFieldSQL extends ListField
 {
 	/**
 	 * The form field type.

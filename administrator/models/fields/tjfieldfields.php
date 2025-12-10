@@ -7,23 +7,21 @@
  * @license    GNU General Public License version 2 or later.
  */
 
-defined('JPATH_PLATFORM') or die;
+defined('_JEXEC') or die;
 
 use Joomla\CMS\Form\FormHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Component\ComponentHelper;
-
-jimport('joomla.html.html');
-JFormHelper::loadFieldClass('list');
+use Joomla\CMS\Form\Field\ListField;
 
 /**
  * List of fields
  *
  * @since  1.3
  */
-class JFormFieldtjfieldfields extends JFormFieldList
+class JFormFieldtjfieldfields extends ListField
 {
 	/**
 	 * The form field type.
@@ -99,7 +97,7 @@ class JFormFieldtjfieldfields extends JFormFieldList
 
 		$options = array_merge(parent::getOptions(), $options);
 
-		$view = Factory::getApplication()->input->get('view', '', 'STRING');
+		$view = Factory::getApplication()->getInput()->get('view', '', 'STRING');
 
 		$onchange = ($view == 'field') ? "show_option_div(this.value);" : "this.form.submit();";
 

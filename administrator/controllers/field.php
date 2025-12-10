@@ -39,7 +39,7 @@ class TjfieldsControllerField extends FormController
 	public function newsave()
 	{
 		$app   = Factory::getApplication();
-		$input = $app->input;
+		$input = $app->getInput();
 		$app->setUserState('com_tjfields.edit.field.data', "");
 
 		$data   = $input->post->get('jform', '', 'ARRAY');
@@ -78,7 +78,7 @@ class TjfieldsControllerField extends FormController
 	 */
 	public function save($key = null, $urlVar = null)
 	{
-		$input = Factory::getApplication()->input;
+		$input = Factory::getApplication()->getInput();
 		$task  = $input->get('task', '', 'STRING');
 
 		if ($task == 'apply' or $task == 'save2copy')
@@ -127,7 +127,7 @@ class TjfieldsControllerField extends FormController
 	 */
 	public function apply()
 	{
-		$input = Factory::getApplication()->input;
+		$input = Factory::getApplication()->getInput();
 		$data  = $input->post->get('jform', '', 'ARRAY');
 		$model = $this->getModel('field');
 		$form  = $model->getForm($data);
@@ -161,7 +161,7 @@ class TjfieldsControllerField extends FormController
 	 */
 	public function add()
 	{
-		$input = Factory::getApplication()->input;
+		$input = Factory::getApplication()->getInput();
 
 		$app = Factory::getApplication();
 		$app->setUserState('com_tjfields.edit.field.data', "");
@@ -182,7 +182,7 @@ class TjfieldsControllerField extends FormController
 	 */
 	public function edit($key = null, $urlVar = null)
 	{
-		$input    = Factory::getApplication()->input;
+		$input    = Factory::getApplication()->getInput();
 		$cid      = $input->post->get('cid', array(), 'array');
 		$recordId = (int) (count($cid) ? $cid[0] : $input->getInt('id'));
 		$link = Route::_(
@@ -201,7 +201,7 @@ class TjfieldsControllerField extends FormController
 	 */
 	public function cancel($key = null)
 	{
-		$input = Factory::getApplication()->input;
+		$input = Factory::getApplication()->getInput();
 		$link = Route::_('index.php?option=com_tjfields&view=fields&client=' . $input->get('client', '', 'STRING'), false
 		);
 		$this->setRedirect($link);
@@ -214,7 +214,7 @@ class TjfieldsControllerField extends FormController
 	 */
 	public function saveFormState()
 	{
-		Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
+		Session::checkToken() or Factory::getApplication()->close();
 
 		$app = Factory::getApplication();
 

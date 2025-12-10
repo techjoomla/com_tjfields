@@ -15,13 +15,10 @@ use Joomla\CMS\Form\FormField;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 
-jimport('joomla.html.html');
-jimport('joomla.form.formfield');
-
 /**
  * Supports an HTML select list of categories
  */
-class JFormFieldCustomfield extends JFormField
+class JFormFieldCustomfield extends FormField
 {
 	/**
 	 * The form field type.
@@ -61,7 +58,7 @@ class JFormFieldCustomfield extends JFormField
 
 	protected function fetchGroupid($name, $value, &$node, $control_name)
 	{
-		$input = Factory::getApplication()->input;
+		$input = Factory::getApplication()->getInput();
 		$db=Factory::getDbo();
 		$query	= $db->getQuery(true);
 		$query->select('grp.id,grp.name FROM `#__tjfields_groups` as grp');
@@ -86,7 +83,7 @@ class JFormFieldCustomfield extends JFormField
 	function fetchClientType($name, $value, &$node, $control_name)
 	{
 		//print_r($value); die('asda');
-		$input = Factory::getApplication()->input;
+		$input = Factory::getApplication()->getInput();
 
 		$full_client = $input->get('client','','STRING');
 		$full_client =  explode('.',$full_client);

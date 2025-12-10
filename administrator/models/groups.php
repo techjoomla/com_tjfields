@@ -117,7 +117,7 @@ class TjfieldsModelGroups extends ListModel
 		// Create a new query object.
 		$db    = $this->getDbo();
 		$query = $db->getQuery(true);
-		$input = Factory::getApplication()->input;
+		$input = Factory::getApplication()->getInput();
 
 		// Select the required fields from the table.
 		$query->select($this->getState('list.select', 'a.*'));
@@ -205,11 +205,12 @@ class TjfieldsModelGroups extends ListModel
 	 */
 	public function setItemState($items, $state)
 	{
+		$db = Factory::getContainer()->get(\Joomla\Database\DatabaseInterface::class);
+		
 		if (is_array($items))
 		{
 			foreach ($items as $id)
 			{
-				$db = Factory::getDBO();
 				$query = "UPDATE  #__tjfields_groups SET state = $state where id=" . $id;
 				$db->setQuery($query);
 
@@ -240,10 +241,11 @@ class TjfieldsModelGroups extends ListModel
 	 */
 	public function deletegroup($id)
 	{
+		$db = Factory::getContainer()->get(\Joomla\Database\DatabaseInterface::class);
+		
 		if (count($id) > 1)
 		{
 			$group_to_delet = implode(',', $id);
-			$db    = Factory::getDBO();
 			$query = "DELETE FROM #__tjfields_groups where id IN (" . $group_to_delet . ")";
 			$db->setQuery($query);
 
@@ -260,7 +262,6 @@ class TjfieldsModelGroups extends ListModel
 		}
 		else
 		{
-			$db = Factory::getDBO();
 			$query = "DELETE FROM #__tjfields_groups where id =" . $id[0];
 			$db->setQuery($query);
 
