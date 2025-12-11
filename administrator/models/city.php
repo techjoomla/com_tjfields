@@ -219,7 +219,7 @@ class TjfieldsModelCity extends AdminModel
 
 		$db = Factory::getDBO();
 
-		$query = "SELECT r.id, r.region, r.region_jtext
+		$query = "SELECT r.id, r.region, r.region_text
 		 FROM #__tj_region AS r
 		 LEFT JOIN #__tj_country AS c ON r.country_id = c.id
 		 WHERE c.id=" . $countryId . "
@@ -234,9 +234,9 @@ class TjfieldsModelCity extends AdminModel
 
 		foreach ($regions as $r)
 		{
-			if ($lang->hasKey(strtoupper($r->region_jtext)))
+			if ($lang->hasKey(strtoupper($r->region_text)))
 			{
-				$r->region = Text::_($r->region_jtext);
+				$r->region = Text::_($r->region_text);
 			}
 		}
 

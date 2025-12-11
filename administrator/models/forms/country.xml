@@ -43,12 +43,12 @@
 			maxlength="2"/>
 
 		<field
-			name="country_jtext"
+			name="country_text"
 			type="text"
 			size="40"
 			class="inputbox"
-			label="COM_TJFIELDS_FORM_LBL_COUNTRY_COUNTRY_JTEXT"
-			description="COM_TJFIELDS_FORM_DESC_COUNTRY_COUNTRY_JTEXT"
+			label="COM_TJFIELDS_FORM_LBL_COUNTRY_COUNTRY_TEXT"
+			description="COM_TJFIELDS_FORM_DESC_COUNTRY_COUNTRY_TEXT"
 			filter="safehtml" />
 	</fieldset>
 </form>

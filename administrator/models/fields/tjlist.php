@@ -15,8 +15,7 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
-
-FormHelper::loadFieldClass('list');
+use Joomla\CMS\Form\Field\ListField;
 
 /**
  * Form Field class for the Joomla Platform.
@@ -24,7 +23,7 @@ FormHelper::loadFieldClass('list');
  *
  * @since  1.7.0
  */
-class JFormFieldTjList extends JFormFieldList
+class JFormFieldTjList extends ListField
 {
 	/**
 	 * The form field type.

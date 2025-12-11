@@ -13,10 +13,8 @@ use Joomla\CMS\MVC\View\HtmlView;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Toolbar\Toolbar;
+use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Language\Text;
-
-jimport('joomla.application.component.view');
-
 /**
  * View class for list of fields.
  *
@@ -41,7 +39,7 @@ class TjfieldsViewFields extends HtmlView
 	 */
 	public function display($tpl = null)
 	{
-		$input           = Factory::getApplication()->input;
+		$input           = Factory::getApplication()->getInput();
 		$client          = $input->get('client', '', 'STRING');
 
 		$this->state      = $this->get('State');
@@ -60,8 +58,7 @@ class TjfieldsViewFields extends HtmlView
 
 		if (JVERSION >= '3.0')
 		{
-			$this->sidebar = JHtmlSidebar::render();
-		}
+			$this->sidebar = '';		}
 
 		parent::display($tpl);
 	}
@@ -76,7 +73,7 @@ class TjfieldsViewFields extends HtmlView
 	protected function addToolbar()
 	{
 		require_once JPATH_COMPONENT . '/helpers/tjfields.php';
-		$input           = Factory::getApplication()->input;
+		$input           = Factory::getApplication()->getInput();
 		$client          = $input->get('client', '', 'STRING');
 		$client          = explode('.', $client);
 		$component_title = '';
@@ -90,7 +87,7 @@ class TjfieldsViewFields extends HtmlView
 			{
 				case 'com_jticketing' :
 					$component_title = Text::_('COM_JTICKETING_COMPONENT');
-					JToolBarHelper::back('COM_JTICKETING_HOME', 'index.php?option=com_jticketing&view=cp');
+					ToolbarHelper::back('COM_JTICKETING_HOME', 'index.php?option=com_jticketing&view=cp');
 					break;
 
 				case 'com_tjlms':
@@ -108,11 +105,11 @@ class TjfieldsViewFields extends HtmlView
 
 		if (JVERSION >= '3.0')
 		{
-			JToolBarHelper::title($component_title . Text::_('COM_TJFIELDS_TITLE_FIELDS'), 'list');
+			ToolbarHelper::title($component_title . Text::_('COM_TJFIELDS_TITLE_FIELDS'), 'list');
 		}
 		else
 		{
-			JToolBarHelper::title($component_title . Text::_('COM_TJFIELDS_TITLE_FIELDS'), 'fields.png');
+			ToolbarHelper::title($component_title . Text::_('COM_TJFIELDS_TITLE_FIELDS'), 'fields.png');
 		}
 
 		// Check if the form exists before showing the add/edit buttons
@@ -122,7 +119,7 @@ class TjfieldsViewFields extends HtmlView
 		{
 			if ($canDo->get('core.create'))
 			{
-				JToolBarHelper::addNew('field.add', 'JTOOLBAR_NEW');
+				ToolbarHelper::addNew('field.add', 'JTOOLBAR_NEW');
 			}
 		}
 
@@ -130,19 +127,19 @@ class TjfieldsViewFields extends HtmlView
 		{
 			if (isset($this->items[0]->state))
 			{
-				JToolBarHelper::divider();
-				JToolBarHelper::custom('fields.publish', 'publish.png', 'publish_f2.png', 'JTOOLBAR_PUBLISH', true);
-				JToolBarHelper::custom('fields.unpublish', 'unpublish.png', 'unpublish_f2.png', 'JTOOLBAR_UNPUBLISH', true);
+				ToolbarHelper::divider();
+				ToolbarHelper::custom('fields.publish', 'publish.png', 'publish_f2.png', 'JTOOLBAR_PUBLISH', true);
+				ToolbarHelper::custom('fields.unpublish', 'unpublish.png', 'unpublish_f2.png', 'JTOOLBAR_UNPUBLISH', true);
 			}
 			elseif (isset($this->items[0]))
 			{
 				// If this component does not use state then show a direct delete button as we can not trash
-				JToolBarHelper::deleteList('', 'fields.delete', 'JTOOLBAR_DELETE');
+				ToolbarHelper::deleteList('', 'fields.delete', 'JTOOLBAR_DELETE');
 			}
 
 			if (isset($this->items[0]->checked_out))
 			{
-				JToolBarHelper::custom('fields.checkin', 'checkin.png', 'checkin_f2.png', 'JTOOLBAR_CHECKIN', true);
+				ToolbarHelper::custom('fields.checkin', 'checkin.png', 'checkin_f2.png', 'JTOOLBAR_CHECKIN', true);
 			}
 		}
 
@@ -151,19 +148,19 @@ class TjfieldsViewFields extends HtmlView
 		{
 			if ($state->get('filter.state') == -2 && $canDo->get('core.delete'))
 			{
-				JToolBarHelper::deleteList('', 'fields.delete', 'JTOOLBAR_EMPTY_TRASH');
-				JToolBarHelper::divider();
+				ToolbarHelper::deleteList('', 'fields.delete', 'JTOOLBAR_EMPTY_TRASH');
+				ToolbarHelper::divider();
 			}
 			elseif ($canDo->get('core.edit.state'))
 			{
-				JToolBarHelper::trash('fields.trash', 'JTOOLBAR_TRASH');
-				JToolBarHelper::divider();
+				ToolbarHelper::trash('fields.trash', 'JTOOLBAR_TRASH');
+				ToolbarHelper::divider();
 			}
 		}
 
 		if ($canDo->get('core.admin'))
 		{
-			JToolBarHelper::preferences('com_tjfields');
+			ToolbarHelper::preferences('com_tjfields');
 		}
 
 		$this->extra_sidebar = '';

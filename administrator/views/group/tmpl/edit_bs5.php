@@ -14,7 +14,7 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 
-JHtml::addIncludePath(JPATH_COMPONENT . '/helpers/html');
+HTMLHelper::addIncludePath(JPATH_COMPONENT . '/helpers/html');
 HTMLHelper::_('bootstrap.tooltip');
 HTMLHelper::_('behavior.formvalidator');
 HTMLHelper::_('behavior.keepalive');
@@ -22,7 +22,7 @@ HTMLHelper::_('behavior.keepalive');
 // Import CSS
 $document = Factory::getDocument();
 $document->addStyleSheet('components/com_tjfields/assets/css/tjfields.css');
-$input = Factory::getApplication()->input;
+$input = Factory::getApplication()->getInput();
 
 // Import helper for declaring language constant
 JLoader::import('TjfieldsHelper', Uri::root().'administrator/components/com_tjfields/helpers/tjfields.php');

@@ -23,7 +23,7 @@ JFormHelper::loadFieldClass('category');
  *
  * @since  1.5
  */
-class JFormFieldItemCategory extends JFormFieldCategory
+class JFormFieldItemCategory extends CategoryField
 {
 	/**
 	 * The form field type.
@@ -55,7 +55,7 @@ class JFormFieldItemCategory extends JFormFieldCategory
 
 		if (empty($client))
 		{
-			$jinput = $app->input;
+			$jinput = $app->getInput();
 			$client = $jinput->get('client', '', "STRING");
 		}
 

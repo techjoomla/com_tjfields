@@ -15,7 +15,7 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Language\Text;
 
-JHtml::addIncludePath(JPATH_COMPONENT . '/helpers/html');
+HTMLHelper::addIncludePath(JPATH_COMPONENT . '/helpers/html');
 
 // Load lang file for cities
 $lang = Factory::getLanguage();
@@ -41,7 +41,7 @@ if (! empty($this->extra_sidebar))
 		method="post" name="adminForm" id="adminForm">
 
 		<?php
-		// JHtmlsidebar for menu.
+		// HTMLHelpersidebar for menu.
 		if (JVERSION >= '3.0'):
 			if (!empty( $this->sidebar)) : ?>
 				<div id="j-sidebar-container" class="span2">
@@ -135,7 +135,7 @@ if (! empty($this->extra_sidebar))
 							</th>
 
 							<th class='left hidden-phone'>
-								<?php echo HTMLHelper::_('grid.sort', 'COM_TJFIELDS_CITIES_CITY_JTEXT', 'a.city_jtext', $listDirn, $listOrder); ?>
+								<?php echo HTMLHelper::_('grid.sort', 'COM_TJFIELDS_CITIES_CITY_TEXT', 'a.city_text', $listDirn, $listOrder); ?>
 							</th>
 
 							<?php if (isset($this->items[0]->id)): ?>
@@ -208,11 +208,11 @@ if (! empty($this->extra_sidebar))
 
 								<td class="left hidden-phone">
 									<?php
-									if ($lang->hasKey(strtoupper($item->city_jtext ? $item->city_jtext : '')))
+									if ($lang->hasKey(strtoupper($item->city_text ? $item->city_text : '')))
 									{
-										echo Text::_($item->city_jtext);
+										echo Text::_($item->city_text);
 									}
-									elseif ($item->city_jtext !== '')
+									elseif ($item->city_text !== '')
 									{
 										echo "<span class='text text-warning'>" . Text::_('COM_TJFIELDS_MISSING_LANG_CONSTANT') . "</span>";
 									}

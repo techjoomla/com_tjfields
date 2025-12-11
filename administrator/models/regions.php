@@ -40,7 +40,7 @@ class TjfieldsModelRegions extends ListModel
 				'region', 'a.region',
 				'region_3_code', 'a.region_3_code',
 				'region_code', 'a.region_code',
-				'region_jtext', 'a.region_jtext',
+				'region_text', 'a.region_text',
 				'country', 'c.country',
 				'state', 'a.state'
 			);
@@ -138,7 +138,7 @@ class TjfieldsModelRegions extends ListModel
 		// Create a new query object.
 		$db     = $this->getDbo();
 		$query  = $db->getQuery(true);
-		$client = Factory::getApplication()->input->get('client', '', 'STRING');
+		$client = Factory::getApplication()->getInput()->get('client', '', 'STRING');
 
 		// Select the required fields from the table.
 		$query->select($this->getState('list.select', 'a.*'));
@@ -163,7 +163,7 @@ class TjfieldsModelRegions extends ListModel
 				$query->where('( a.region LIKE ' . $search .
 						'  OR  a.region_3_code LIKE ' . $search .
 						'  OR  a.region_code LIKE ' . $search .
-						'  OR  a.region_jtext LIKE ' . $search . ' )'
+						'  OR  a.region_text LIKE ' . $search . ' )'
 				);
 			}
 		}

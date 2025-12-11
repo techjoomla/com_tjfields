@@ -10,12 +10,12 @@
 // No direct access.
 defined('_JEXEC') or die();
 use Joomla\CMS\Factory;
-use Joomla\CMS\Filesystem\File;
+use Joomla\Filesystem\File;
 use Joomla\CMS\Layout\FileLayout;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Helper\ModuleHelper;
-$input = Factory::getApplication()->input;
+$input = Factory::getApplication()->getInput();
 
 // LOAD LANGUAGE FILES
 $doc = Factory::getDocument();
@@ -55,7 +55,7 @@ if (File::exists(JPATH_SITE . '/components/com_tjfields/tjfields.php'))
 	{
 		parse_str($URLParamConditions, $conditionList);
 
-		$url = Factory::getApplication()->input->server->get('REQUEST_URI', '', 'STRING');
+		$url = Factory::getApplication()->getInput()->server->get('REQUEST_URI', '', 'STRING');
 
 		// Get uRL base part and parameter part
 		$temp = explode('?', $url);

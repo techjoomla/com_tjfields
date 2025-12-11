@@ -68,7 +68,7 @@ class TjfieldsViewField extends HtmlView
 	 */
 	protected function addToolbar()
 	{
-		$input           = Factory::getApplication()->input;
+		$input           = Factory::getApplication()->getInput();
 		$input->set('hidemainmenu', true);
 		$user  = Factory::getUser();
 		$isNew = ($this->item->id == 0);
@@ -108,28 +108,28 @@ class TjfieldsViewField extends HtmlView
 		// If not checked out, can save the item.
 		if (!$checkedOut && ($canDo->get('core.edit') || ($canDo->get('core.create'))))
 		{
-			JToolBarHelper::apply('field.apply', 'JTOOLBAR_APPLY');
-			JToolBarHelper::save('field.save', 'JTOOLBAR_SAVE');
+			ToolbarHelper::apply('field.apply', 'JTOOLBAR_APPLY');
+			ToolbarHelper::save('field.save', 'JTOOLBAR_SAVE');
 		}
 
 		if (!$checkedOut && ($canDo->get('core.create')))
 		{
-			JToolBarHelper::custom('field.newsave', 'save-new.png', 'save-new_f2.png', 'JTOOLBAR_SAVE_AND_NEW', false);
+			ToolbarHelper::custom('field.newsave', 'save-new.png', 'save-new_f2.png', 'TOOLBAR_SAVE_AND_NEW', false);
 		}
 
 		// If an existing item, can save to a copy.
 		if (!$isNew && $canDo->get('core.create'))
 		{
-			JToolBarHelper::custom('field.save2copy', 'save-copy.png', 'save-copy_f2.png', 'JTOOLBAR_SAVE_AS_COPY', false);
+			ToolbarHelper::custom('field.save2copy', 'save-copy.png', 'save-copy_f2.png', 'TOOLBAR_SAVE_AS_COPY', false);
 		}
 
 		if (empty($this->item->id))
 		{
-			JToolBarHelper::cancel('field.cancel', 'JTOOLBAR_CANCEL');
+			ToolbarHelper::cancel('field.cancel', 'JTOOLBAR_CANCEL');
 		}
 		else
 		{
-			JToolBarHelper::cancel('field.cancel', 'JTOOLBAR_CLOSE');
+			ToolbarHelper::cancel('field.cancel', 'JTOOLBAR_CLOSE');
 		}
 	}
 }

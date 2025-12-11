@@ -43,7 +43,7 @@ class TjfieldsViewCountries extends HtmlView
 		$this->state      = $this->get('State');
 		$this->items      = $this->get('Items');
 		$this->pagination = $this->get('Pagination');
-		$this->input      = Factory::getApplication()->input;
+		$this->input      = Factory::getApplication()->getInput();
 
 		// Check for errors.
 		$errors = $this->get('Errors');
@@ -63,8 +63,7 @@ class TjfieldsViewCountries extends HtmlView
 
 		if (JVERSION >= '3.0')
 		{
-			$this->sidebar = JHtmlSidebar::render();
-		}
+			$this->sidebar = '';		}
 
 		$this->addToolbar();
 		parent::display($tpl);
@@ -82,11 +81,11 @@ class TjfieldsViewCountries extends HtmlView
 		require_once JPATH_COMPONENT . '/helpers/tjfields.php';
 
 		// Let's get the extension name
-		$client        = Factory::getApplication()->input->get('client', '', 'STRING');
+		$client        = Factory::getApplication()->getInput()->get('client', '', 'STRING');
 		$extention     = explode('.', $client);
 		$canDo         = TjfieldsHelper::getActions($extention[0], 'country');
 		$extensionName = strtoupper($client);
-		$bar           = ToolBar::getInstance('toolbar');
+		$bar           = Toolbar::getInstance('toolbar');
 
 		// Need to load the menu language file as mod_menu hasn't been loaded yet.
 		$lang = Factory::getLanguage();
@@ -94,11 +93,11 @@ class TjfieldsViewCountries extends HtmlView
 
 		if (JVERSION >= '3.0')
 		{
-			ToolBarHelper::title(Text::_($extensionName) . ': ' . Text::_('COM_TJFIELDS_TITLE_COUNTRIES'), 'list');
+			ToolbarHelper::title(Text::_($extensionName) . ': ' . Text::_('COM_TJFIELDS_TITLE_COUNTRIES'), 'list');
 		}
 		else
 		{
-			ToolBarHelper::title(Text::_($extensionName) . ': ' . Text::_('COM_TJFIELDS_TITLE_COUNTRIES'), 'countries.png');
+			ToolbarHelper::title(Text::_($extensionName) . ': ' . Text::_('COM_TJFIELDS_TITLE_COUNTRIES'), 'countries.png');
 		}
 
 		// Check if the form exists before showing the add/edit buttons
@@ -108,7 +107,7 @@ class TjfieldsViewCountries extends HtmlView
 		{
 			if ($canDo->get('core.create'))
 			{
-				ToolBarHelper::addNew('country.add', 'JTOOLBAR_NEW');
+				ToolbarHelper::addNew('country.add', 'JTOOLBAR_NEW');
 			}
 		}
 
@@ -130,9 +129,9 @@ class TjfieldsViewCountries extends HtmlView
 			{
 				if (JVERSION < '4.0.0')
 				{
-					ToolBarHelper::divider();
-					ToolBarHelper::custom('countries.publish', 'publish.png', 'publish_f2.png', 'JTOOLBAR_PUBLISH', true);
-					ToolBarHelper::custom('countries.unpublish', 'unpublish.png', 'unpublish_f2.png', 'JTOOLBAR_UNPUBLISH', true);
+					ToolbarHelper::divider();
+					ToolbarHelper::custom('countries.publish', 'publish.png', 'publish_f2.png', 'JTOOLBAR_PUBLISH', true);
+					ToolbarHelper::custom('countries.unpublish', 'unpublish.png', 'unpublish_f2.png', 'JTOOLBAR_UNPUBLISH', true);
 				}
 				else
 				{
@@ -146,14 +145,10 @@ class TjfieldsViewCountries extends HtmlView
 
 		if ($canDo->get('core.admin'))
 		{
-			ToolBarHelper::preferences('com_tjfields');
+			ToolbarHelper::preferences('com_tjfields');
 		}
 
-		if (JVERSION >= '3.0')
-		{
-			// Set sidebar action
-			JHtmlSidebar::setAction('index.php?option=com_tjfields&view=countries');
-		}
+			// Note: HTMLHelperSidebar was removed in Joomla 4+
 
 		$this->extra_sidebar = '';
 	}
@@ -173,7 +168,7 @@ class TjfieldsViewCountries extends HtmlView
 			'a.country' => Text::_('COM_TJFIELDS_COUNTRIES_COUNTRY'),
 			'a.country_3_code' => Text::_('COM_TJFIELDS_COUNTRIES_COUNTRY_3_CODE'),
 			'a.country_code' => Text::_('COM_TJFIELDS_COUNTRIES_COUNTRY_CODE'),
-			'a.country_jtext' => Text::_('COM_TJFIELDS_COUNTRIES_COUNTRY_JTEXT'),
+			'a.country_text' => Text::_('COM_TJFIELDS_COUNTRIES_COUNTRY_TEXT'),
 			'a.id' => Text::_('COM_TJFIELDS_COUNTRIES_COUNTRY_ID')
 		);
 	}

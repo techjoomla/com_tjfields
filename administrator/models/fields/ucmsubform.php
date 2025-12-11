@@ -11,7 +11,7 @@ defined('JPATH_PLATFORM') or die;
 
 use Joomla\CMS\Form\FormField;
 
-jimport('joomla.filesystem.path');
+use Joomla\Filesystem\Path;
 
 JLoader::register('JFormFieldSubform', JPATH_SITE . '/libraries/joomla/form/fields/subform.php');
 
@@ -26,7 +26,7 @@ JLoader::register('JFormFieldSubform', JPATH_SITE . '/libraries/joomla/form/fiel
  *
  * @since  1.3
  */
-class JFormFieldUcmsubform extends JFormFieldSubform
+class JFormFieldUcmsubform extends SubformField
 {
 	/**
 	 * The form field type.

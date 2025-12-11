@@ -16,7 +16,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Router\Route;
 
-JHtml::addIncludePath(JPATH_COMPONENT . '/helpers/html');
+HTMLHelper::addIncludePath(JPATH_COMPONENT . '/helpers/html');
 
 HTMLHelper::_('bootstrap.tooltip');
 HTMLHelper::_('behavior.formvalidator');
@@ -168,15 +168,15 @@ function generateRegionOptions(data, countryId, defaultRegionId)
 
 						<div class="control-group">
 							<div class="control-label">
-								<?php echo $this->form->getLabel('city_jtext'); ?>
+								<?php echo $this->form->getLabel('city_text'); ?>
 							</div>
 							<div class="controls">
-								<?php echo $this->form->getInput('city_jtext'); ?>
+								<?php echo $this->form->getInput('city_text'); ?>
 								<div class="row-fluid">
 									<div class="span12">
 										<p class="text text-warning">
 										<br/>
-										<?php echo Text::_('COM_TJFIELDS_FORM_DESC_CITY_CITY_JTEXT_HELP'); ?>
+										<?php echo Text::_('COM_TJFIELDS_FORM_DESC_CITY_CITY_TEXT_HELP'); ?>
 										</p>
 									</div>
 								</div>

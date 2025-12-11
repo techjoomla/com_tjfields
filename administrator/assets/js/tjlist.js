@@ -41,7 +41,7 @@ var tjlist = {
 			var tagInput    = (element.attr('multiple') != undefined) ? 'data-role="tagsinput"' : '';
 		}
 
-		return '<div class="tjfieldTjListOtherText"><br/><input ' + tagInput + ' placeholder="' + Joomla.JText._('COM_TJFIELDS_OTHER_VALUE') + '" ' + isRequired + ' type="text" name="' + inputName + '" id="' + inputId + '" value="" class=" form-control focus ' + requiredClass + '" aria-invalid="false"></div>';
+		return '<div class="tjfieldTjListOtherText"><br/><input ' + tagInput + ' placeholder="' + Joomla.Text._('COM_TJFIELDS_OTHER_VALUE') + '" ' + isRequired + ' type="text" name="' + inputName + '" id="' + inputId + '" value="" class=" form-control focus ' + requiredClass + '" aria-invalid="false"></div>';
 	},
 	loadTagsinputjs: function()
 	{
@@ -60,9 +60,9 @@ jQuery(document).ready(function() {
 		var selectedVal = jQuery(this).val();
 
 		if (
-			(jQuery.inArray(Joomla.JText._('COM_TJFIELDS_TJLIST_OTHER_OPTION_VALUE'), selectedVal) !== -1)
+			(jQuery.inArray(Joomla.Text._('COM_TJFIELDS_TJLIST_OTHER_OPTION_VALUE'), selectedVal) !== -1)
 			||
-			(selectedVal == Joomla.JText._('COM_TJFIELDS_TJLIST_OTHER_OPTION_VALUE'))
+			(selectedVal == Joomla.Text._('COM_TJFIELDS_TJLIST_OTHER_OPTION_VALUE'))
 		)
 		{
 			if (jQuery('input[name="' + jQuery(this).attr('name') + '"]').length == 0)

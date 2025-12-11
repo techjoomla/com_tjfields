@@ -1,5 +1,5 @@
 -- Adding default value for all the columns
-ALTER TABLE `#__tj_country` CHANGE `country_jtext` `country_jtext` varchar(255) NOT NULL DEFAULT '';
+ALTER TABLE `#__tj_country` CHANGE `country_text` `country_text` varchar(255) NOT NULL DEFAULT '';
 
 ALTER TABLE `#__tjfields_fields` CHANGE `label` `label` varchar(255) NOT NULL DEFAULT '';
 ALTER TABLE `#__tjfields_fields` CHANGE `name` `name` varchar(255) NOT NULL DEFAULT '';
@@ -43,4 +43,4 @@ ALTER TABLE `#__tj_region` CHANGE `country_id` `country_id` int(11) NOT NULL DEF
 ALTER TABLE `#__tj_region` CHANGE `region_3_code` `region_3_code` varchar(3) NOT NULL DEFAULT '';
 ALTER TABLE `#__tj_region` CHANGE `region_code` `region_code` varchar(8) NOT NULL DEFAULT '';
 ALTER TABLE `#__tj_region` CHANGE `region` `region` varchar(64) NOT NULL DEFAULT '';
-ALTER TABLE `#__tj_region` CHANGE `region_jtext` `region_jtext` varchar(255) NOT NULL DEFAULT '';
+ALTER TABLE `#__tj_region` CHANGE `region_text` `region_text` varchar(255) NOT NULL DEFAULT '';

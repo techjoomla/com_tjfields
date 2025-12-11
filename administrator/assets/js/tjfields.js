@@ -7,7 +7,7 @@ jQuery(document).ready(function(){
 			return;
 		}
 
-		if(!confirm(Joomla.JText._('COM_TJFIELDS_FILE_DELETE_CONFIRM')))
+		if(!confirm(Joomla.Text._('COM_TJFIELDS_FILE_DELETE_CONFIRM')))
 		{
 			return;
 		}
@@ -98,7 +98,7 @@ jQuery(document).ready(function(){
 
         if(tjfields_uploadSize < tjfields_filesize)
         {
-        	alert(Joomla.JText._('COM_TJFIELDS_FILE_ERROR_MAX_SIZE'));
+        	alert(Joomla.Text._('COM_TJFIELDS_FILE_ERROR_MAX_SIZE'));
 
         	return false;
         }
@@ -137,7 +137,7 @@ jQuery(document).ready(function(){
 
         if (!isNaN(tjfields_maxValue) || !isNaN(tjfields_minValue)) {
             if (tjfields_maxValue < tjfields_enteredValue || tjfields_minValue > tjfields_enteredValue) {
-                alert(Joomla.JText._('COM_TJUCM_FIELDS_VALIDATION_ERROR_NUMBER'));
+                alert(Joomla.Text._('COM_TJUCM_FIELDS_VALIDATION_ERROR_NUMBER'));
                 return false;
             }
             return true;

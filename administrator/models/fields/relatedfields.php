@@ -9,8 +9,6 @@
 
 defined('JPATH_PLATFORM') or die;
 
-JFormHelper::loadFieldClass('list');
-
 use Joomla\CMS\Factory;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
@@ -26,7 +24,7 @@ $document->addScript(Uri::root() . 'administrator/components/com_tjfields/assets
  *
  * @since  1.7.0
  */
-class JFormFieldRelatedFields extends JFormFieldList
+class JFormFieldRelatedFields extends ListField
 {
 	/**
 	 * The form field type.

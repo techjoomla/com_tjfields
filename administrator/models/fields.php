@@ -65,7 +65,7 @@ class TjfieldsModelFields extends ListModel
 		$app = Factory::getApplication('administrator');
 
 		// Set client in model state
-		$client = $app->input->get('client', '', 'STRING');
+		$client = $app->getInput()->get('client', '', 'STRING');
 
 		if (!empty($client))
 		{
@@ -221,13 +221,12 @@ class TjfieldsModelFields extends ListModel
 	 */
 	public function setItemState($items, $state)
 	{
-		$db = Factory::getDBO();
+		$db = Factory::getContainer()->get(\Joomla\Database\DatabaseInterface::class);
 
 		if (is_array($items))
 		{
 			foreach ($items as $id)
 			{
-				$db    = Factory::getDBO();
 				$query = "UPDATE  #__tjfields_fields SET state = $state where id=" . $id;
 				$db->setQuery($query);
 
@@ -258,10 +257,11 @@ class TjfieldsModelFields extends ListModel
 	 */
 	public function  deletefield($id)
 	{
+		$db = Factory::getContainer()->get(\Joomla\Database\DatabaseInterface::class);
+		
 		if (count($id) >= 1)
 		{
 			$group_to_delet = implode(',', $id);
-			$db             = Factory::getDBO();
 			$query          = "DELETE FROM #__tjfields_fields where id IN (" . $group_to_delet . ")";
 			$db->setQuery($query);
 
@@ -308,7 +308,6 @@ class TjfieldsModelFields extends ListModel
 		}
 		else
 		{
-			$db    = Factory::getDBO();
 			$query = "DELETE FROM #__tjfields_fields where id =" . $id[0];
 			$db->setQuery($query);
 

@@ -6,7 +6,7 @@ function addClone(rId,rClass)
 
 		var removeButton="<div id='remove_btn_div"+pre+"' class='com_tjfields_remove_button span2'>";
 		removeButton+="<button class='btn btn-small btn-danger' type='button' id='remove"+pre+"'";
-		removeButton+="onclick=\"removeClone('com_tjfields_repeating_block"+pre+"','remove_btn_div"+pre+"');\" title=\"<?php echo JText::_('COM_TJFIELDS_REMOVE_TOOLTIP');?>\" >";
+		removeButton+="onclick=\"removeClone('com_tjfields_repeating_block"+pre+"','remove_btn_div"+pre+"');\" title=\"<?php echo Text::_('COM_TJFIELDS_REMOVE_TOOLTIP');?>\" >";
 		removeButton+="<i class=\""+tjfield_icon_minus+"\"></i></button>";
 		removeButton+="</div>";
 
@@ -110,7 +110,7 @@ Joomla.submitbutton = function(task)
 		techjoomla.jQuery('#jformcategory').attr("disabled", false);
 	}
 
-	whitespaces_not_llowed = Joomla.JText._('COM_TJFIELDS_LABEL_WHITESPACES_NOT_ALLOWED');
+	whitespaces_not_llowed = Joomla.Text._('COM_TJFIELDS_LABEL_WHITESPACES_NOT_ALLOWED');
 
 	if (task == 'field.cancel')
 	{

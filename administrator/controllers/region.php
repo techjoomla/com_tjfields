@@ -42,7 +42,7 @@ class TjfieldsControllerRegion extends FormController
 		parent::__construct($config);
 		$this->view_list = 'regions';
 
-		$this->input = Factory::getApplication()->input;
+		$this->input = Factory::getApplication()->getInput();
 
 		if (empty($this->client))
 		{

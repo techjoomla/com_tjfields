@@ -51,8 +51,8 @@ class TjfieldsControllerCities extends AdminController
 	 */
 	public function publish()
 	{
-		$client = Factory::getApplication()->input->get('client', '', 'STRING');
-		$cid = Factory::getApplication()->input->get('cid', array(), 'array');
+		$client = Factory::getApplication()->getInput()->get('client', '', 'STRING');
+		$cid = Factory::getApplication()->getInput()->get('cid', array(), 'array');
 		$data = array(
 			'publish' => 1,
 			'unpublish' => 0

@@ -16,7 +16,10 @@ use Joomla\CMS\MVC\Controller\AdminController;
 use Joomla\CMS\Session\Session;
 use Joomla\Utilities\ArrayHelper;
 
-JLoader::import('TjfieldsHelper', JPATH_ADMINISTRATOR . '/components/com_tjfields/helpers');
+$tjfieldsHelperPath = JPATH_ADMINISTRATOR . '/components/com_tjfields/helpers/TjfieldsHelper.php';
+if (file_exists($tjfieldsHelperPath)) {
+	require_once $tjfieldsHelperPath;
+}
 
 /**
  * Groups list controller class.
@@ -44,7 +47,7 @@ class TjfieldsControllerGroups extends AdminController
 	{
 		// Get the input
 		$app   = Factory::getApplication();
-		$input = $app->input;
+		$input = $app->getInput();
 		$pks   = $input->post->get('cid', array(), 'array');
 		$order = $input->post->get('order', array(), 'array');
 
@@ -70,10 +73,10 @@ class TjfieldsControllerGroups extends AdminController
 	public function publish()
 	{
 		$app    = Factory::getApplication();
-		$input  = $app->input;
+		$input  = $app->getInput();
 		$post   = $input->post;
 		$client = $input->get('client','','STRING');
-		$cid    = $app->input->get('cid', array(), 'array');
+		$cid    = $app->getInput()->get('cid', array(), 'array');
 		$data   = array('publish' => 1, 'unpublish' => 0, 'archive' => 2, 'trash' => -2, 'report' => -3);
 		$task   = $this->getTask();
 		$value  = ArrayHelper::getValue($data, $task, 0, 'int');
@@ -138,13 +141,13 @@ class TjfieldsControllerGroups extends AdminController
 
 		//GET CLIENT AND CLIENT TYPE
 		$app         = Factory::getApplication();
-		$input       = $app->input;
+		$input       = $app->getInput();
 		$client      = $input->get('client','','STRING');
 		$client_form = explode('.',$client);
 		$client_type = $client_form[1];
 
 		// Get items to remove from the request.
-		$cid = $app->input->get('cid', array(), 'array');
+		$cid = $app->getInput()->get('cid', array(), 'array');
 
 		if (!is_array($cid) || count($cid) < 1)
 		{

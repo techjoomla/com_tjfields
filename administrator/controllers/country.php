@@ -42,7 +42,7 @@ class TjfieldsControllerCountry extends FormController
 		parent::__construct($config);
 		$this->view_list = 'countries';
 
-		$this->input = Factory::getApplication()->input;
+		$this->input = Factory::getApplication()->getInput();
 
 		if (empty($this->client))
 		{

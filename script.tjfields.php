@@ -8,17 +8,17 @@
  */
 
 defined('_JEXEC') or die();
-use Joomla\CMS\Filesystem\File;
+use Joomla\Filesystem\Folder;
+use Joomla\Filesystem\File;
+use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
-use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\Installer\Installer;
+use Joomla\CMS\Installer\InstallerAdapter;
 use Joomla\CMS\Language\Text;
-use Joomla\Data\DataObject;
+use Joomla\CMS\Log\Log;
+use Joomla\Database\DatabaseInterface;
 
-jimport('joomla.filesystem.folder');
-jimport('joomla.filesystem.file');
-jimport('joomla.application.component.controller');
 
 /**
  * script
@@ -29,6 +29,21 @@ jimport('joomla.application.component.controller');
  */
 class Com_TjfieldsInstallerScript
 {
+	/**
+	 * Database driver
+	 *
+	 * @var DatabaseInterface
+	 */
+	private $db;
+
+	/**
+	 * Constructor
+	 */
+	public function __construct()
+	{
+		$this->db = Factory::getContainer()->get(DatabaseInterface::class);
+	}
+
 	// Used to identify new install or update
 	private $componentStatus = "install";
 
@@ -43,13 +58,12 @@ class Com_TjfieldsInstallerScript
 	/**
 	 * method to run before an install/update/uninstall method
 	 *
-	 * @param   string      $type    install, update or discover_update
-	 *
-	 * @param   JInstaller  $parent  parent
+	 * @param   string            $type    install, update or discover_update
+	 * @param   InstallerAdapter  $parent  parent
 	 *
 	 * @return void
 	 */
-	public function preflight($type, $parent)
+	public function preflight(string $type, InstallerAdapter $parent): void
 	{
 		// Delete sql file if exist as related column is added through script
 		if (File::exists(JPATH_SITE . '/administrator/components/com_tjfields/sql/updates/mysql/1.3.1.sql'))
@@ -73,33 +87,30 @@ class Com_TjfieldsInstallerScript
 	/**
 	 * Runs after install, update or discover_update
 	 *
-	 * @param   string      $type    install, update or discover_update
+	 * @param   string            $type    install, update or discover_update
+	 * @param   InstallerAdapter  $parent  parent
 	 *
-	 * @param   JInstaller  $parent  parent
-	 *
-	 * @return  mixed
+	 * @return  void
 	 * 
 	 * @since 1.1
 	 */
-	public function postflight($type, $parent)
+	public function postflight(string $type, InstallerAdapter $parent): void
 	{
-		$db = Factory::getDbo();
-
 		// Create a new query object.
-		$query = $db->getQuery(true);
+		$query = $this->db->getQuery(true);
 		$query->select('*');
-		$query->from($db->quoteName('#__assets'));
-		$query->where($db->quoteName('name') . ' = ' . $db->quote('com_tjfields'));
-		$db->setQuery($query);
+		$query->from($this->db->quoteName('#__assets'));
+		$query->where($this->db->quoteName('name') . ' = ' . $this->db->quote('com_tjfields'));
+		$this->db->setQuery($query);
 
 		// Get the com_tjfields asset_id which joomla adds while installing the package
-		$tjFieldsAsset = $db->loadAssoc();
+		$tjFieldsAsset = $this->db->loadAssoc();
 
-		$query1 = $db->getQuery(true);
+		$query1 = $this->db->getQuery(true);
 
 			// Fields to update.
 			$fields = array(
-			$db->quoteName('rules') . ' = ' . $db->quote('{"core.field.addfieldvalue":{"1":1,"9":1,"6":1,"7":1,"2":1,"3":1,"4":1,"5":1},
+			$this->db->quoteName('rules') . ' = ' . $this->db->quote('{"core.field.addfieldvalue":{"1":1,"9":1,"6":1,"7":1,"2":1,"3":1,"4":1,"5":1},
 			"core.field.viewfieldvalue":{"6":1,"7":1,"2":1,"4":1,"5":1},
 			"core.field.editfieldvalue":{"6":1,"7":1,"4":1,"5":1},
 			"core.field.editownfieldvalue":{"6":1,"7":1,"2":1,"3":1,"4":1,"5":1}}')
@@ -107,15 +118,15 @@ class Com_TjfieldsInstallerScript
 
 			// Conditions for which records should be updated.
 			$conditions = array(
-			$db->quoteName('id') . ' = ' . (int) $tjFieldsAsset['id']
+			$this->db->quoteName('id') . ' = ' . (int) $tjFieldsAsset['id']
 			);
 
 			// Update the com_tjfields rules with default permissions
-			$query1->update($db->quoteName('#__assets'))->set($fields)->where($conditions);
+			$query1->update($this->db->quoteName('#__assets'))->set($fields)->where($conditions);
 
-			$db->setQuery($query1);
+			$this->db->setQuery($query1);
 
-			$db->execute();
+			$this->db->execute();
 
 		// Install subextensions
 		$status = $this->_installSubextensions($parent);
@@ -132,17 +143,15 @@ class Com_TjfieldsInstallerScript
 	/**
 	 * Installs subextensions (modules, plugins) bundled with the main extension
 	 *
-	 * @param   JInstaller  $parent  parent
+	 * @param   InstallerAdapter  $parent  parent
 	 *
-	 * @return  object
+	 * @return  \stdClass
 	 */
-	private function _installSubextensions($parent)
+	private function _installSubextensions(InstallerAdapter $parent): \stdClass
 	{
 		$src = $parent->getParent()->getPath('source');
 
-		$db = Factory::getDbo();
-
-		$status = new CMSObject;
+		$status = new \stdClass;
 		$status->modules = array();
 
 		// Modules installation
@@ -185,15 +194,16 @@ class Com_TjfieldsInstallerScript
 						}
 
 						// Was the module already installed?
-						$sql = $db->getQuery(true)
+						$sql = $this->db->getQuery(true)
 							->select('COUNT(*)')
 							->from('#__modules')
-							->where($db->qn('module') . ' = ' . $db->q('mod_' . $module));
-						$db->setQuery($sql);
+							->where($this->db->quoteName('module') . ' = ' . $this->db->quote('mod_' . $module));
+						$this->db->setQuery($sql);
 
-						$count = $db->loadResult();
+						$count = (int) ($this->db->loadResult() ?? 0);
 
-						$installer = new Installer;
+						$installer = new Installer();
+						$installer->setDatabase($this->db);
 						$result = $installer->install($path);
 
 						$status->modules[] = array(
@@ -214,50 +224,50 @@ class Com_TjfieldsInstallerScript
 								$modulePosition = 'icon';
 							}
 
-							$sql = $db->getQuery(true)
-								->update($db->qn('#__modules'))
-								->set($db->qn('position') . ' = ' . $db->q($modulePosition))
-								->where($db->qn('module') . ' = ' . $db->q('mod_' . $module));
+							$sql = $this->db->getQuery(true)
+								->update($this->db->quoteName('#__modules'))
+								->set($this->db->quoteName('position') . ' = ' . $this->db->quote($modulePosition))
+								->where($this->db->quoteName('module') . ' = ' . $this->db->quote('mod_' . $module));
 
 							if ($modulePublished)
 							{
-								$sql->set($db->qn('published') . ' = ' . $db->q('1'));
+								$sql->set($this->db->quoteName('published') . ' = ' . $this->db->quote('1'));
 							}
 
-							$db->setQuery($sql);
-							$db->execute();
+							$this->db->setQuery($sql);
+							$this->db->execute();
 
 							// B. Change the ordering of back-end modules to 1 + max ordering
 							if ($folder == 'admin')
 							{
-								$query = $db->getQuery(true);
-								$query->select('MAX(' . $db->qn('ordering') . ')')
-									->from($db->qn('#__modules'))
-									->where($db->qn('position') . '=' . $db->q($modulePosition));
-								$db->setQuery($query);
-								$position = $db->loadResult();
+								$query = $this->db->getQuery(true);
+								$query->select('MAX(' . $this->db->quoteName('ordering') . ')')
+									->from($this->db->quoteName('#__modules'))
+									->where($this->db->quoteName('position') . '=' . $this->db->quote($modulePosition));
+								$this->db->setQuery($query);
+								$position = (int) ($this->db->loadResult() ?? 0);
 								$position++;
 
-								$query = $db->getQuery(true);
-								$query->update($db->qn('#__modules'))
-									->set($db->qn('ordering') . ' = ' . $db->q($position))
-									->where($db->qn('module') . ' = ' . $db->q('mod_' . $module));
-								$db->setQuery($query);
-								$db->execute();
+								$query = $this->db->getQuery(true);
+								$query->update($this->db->quoteName('#__modules'))
+									->set($this->db->quoteName('ordering') . ' = ' . $this->db->quote($position))
+									->where($this->db->quoteName('module') . ' = ' . $this->db->quote('mod_' . $module));
+								$this->db->setQuery($query);
+								$this->db->execute();
 							}
 
 							// C. Link to all pages
-							$query = $db->getQuery(true);
-							$query->select('id')->from($db->qn('#__modules'))
-								->where($db->qn('module') . ' = ' . $db->q('mod_' . $module));
-							$db->setQuery($query);
-							$moduleid = $db->loadResult();
+							$query = $this->db->getQuery(true);
+							$query->select('id')->from($this->db->quoteName('#__modules'))
+								->where($this->db->quoteName('module') . ' = ' . $this->db->quote('mod_' . $module));
+							$this->db->setQuery($query);
+							$moduleid = $this->db->loadResult() ?? null;
 
-							$query = $db->getQuery(true);
-							$query->select('*')->from($db->qn('#__modules_menu'))
-								->where($db->qn('moduleid') . ' = ' . $db->q($moduleid));
-							$db->setQuery($query);
-							$assignments = $db->loadObjectList();
+							$query = $this->db->getQuery(true);
+							$query->select('*')->from($this->db->quoteName('#__modules_menu'))
+								->where($this->db->quoteName('moduleid') . ' = ' . $this->db->quote($moduleid));
+							$this->db->setQuery($query);
+							$assignments = $this->db->loadObjectList();
 							$isAssigned = !empty($assignments);
 
 							if (!$isAssigned)
@@ -266,7 +276,7 @@ class Com_TjfieldsInstallerScript
 									'moduleid'	=> $moduleid,
 									'menuid'	=> 0
 								);
-								$db->insertObject('#__modules_menu', $o);
+								$this->db->insertObject('#__modules_menu', $o);
 							}
 						}
 					}
@@ -353,12 +363,10 @@ class Com_TjfieldsInstallerScript
 	 */
 	public function fix_db_on_update()
 	{
-		$db = Factory::getDbo();
-
 		$field_array = array();
 		$query = "SHOW COLUMNS FROM `#__tjfields_fields`";
-		$db->setQuery($query);
-		$columns = $db->loadobjectlist();
+		$this->db->setQuery($query);
+		$columns = $this->db->loadobjectlist();
 
 		for ($i = 0; $i < count($columns); $i++)
 		{
@@ -369,12 +377,11 @@ class Com_TjfieldsInstallerScript
 		{
 			$query = "ALTER TABLE `#__tjfields_fields`
 						ADD COLUMN `filterable` tinyint(1) NOT NULL DEFAULT '0' COMMENT '0 - For not filterable field. 1 for filterable field'";
-			$db->setQuery($query);
+			$this->db->setQuery($query);
 
-			if (!$db->execute() )
+			if (!$this->db->execute() )
 			{
-				echo $img_ERROR . Text::_('Unable to Alter #__tjfields_fields table. (While adding filterable column )') . $BR;
-				echo $db->getErrorMsg();
+				Log::add('Unable to Alter #__tjfields_fields table. (While adding filterable column )', Log::ERROR, 'jerror');
 
 				return false;
 			}
@@ -384,12 +391,11 @@ class Com_TjfieldsInstallerScript
 		{
 			$query = "ALTER TABLE `#__tjfields_fields`
 						ADD COLUMN `asset_id` int(10) DEFAULT '0'";
-			$db->setQuery($query);
+			$this->db->setQuery($query);
 
-			if (!$db->execute() )
+			if (!$this->db->execute() )
 			{
-				echo $img_ERROR . Text::_('Unable to Alter #__tjfields_fields table. (While adding asset_id column )') . $BR;
-				echo $db->getErrorMsg();
+				Log::add('Unable to Alter #__tjfields_fields table. (While adding asset_id column )', Log::ERROR, 'jerror');
 
 				return false;
 			}
@@ -398,12 +404,11 @@ class Com_TjfieldsInstallerScript
 		if (!in_array('showonlist', $field_array))
 		{
 			$query = "ALTER TABLE `#__tjfields_fields` ADD COLUMN `showonlist` tinyint(1) NOT NULL DEFAULT '0'";
-			$db->setQuery($query);
+			$this->db->setQuery($query);
 
-			if (!$db->execute())
+			if (!$this->db->execute())
 			{
-				echo $img_ERROR . Text::_('Unable to Alter #__tjfields_fields table. (While adding filterable showonlist )') . $BR;
-				echo $db->getErrorMsg();
+				Log::add('Unable to Alter #__tjfields_fields table. (While adding filterable showonlist )', Log::ERROR, 'jerror');
 
 				return false;
 			}
@@ -415,15 +420,13 @@ class Com_TjfieldsInstallerScript
 				  `category_id` INT(11) NOT NULL COMMENT 'CATEGORY ID FROM JOOMLA CATEGORY TABLE FOR CLIENTS EG CLIENT=COM_QUICK2CART.PRODUCT',
 				  PRIMARY KEY (`id`)
 				)DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-		$db->setQuery($query);
-		$db->execute();
-
-		$db = Factory::getDbo();
+		$this->db->setQuery($query);
+		$this->db->execute();
 
 		$field_array = array();
 		$query = "SHOW COLUMNS FROM `#__tjfields_fields_value`";
-		$db->setQuery($query);
-		$columns = $db->loadobjectlist();
+		$this->db->setQuery($query);
+		$columns = $this->db->loadobjectlist();
 
 		for ($i = 0; $i < count($columns); $i++)
 		{
@@ -434,12 +437,11 @@ class Com_TjfieldsInstallerScript
 		{
 			$query = "ALTER TABLE `#__tjfields_fields_value`
 						ADD COLUMN `option_id` int(11) DEFAULT NULL";
-			$db->setQuery($query);
+			$this->db->setQuery($query);
 
-			if (!$db->execute())
+			if (!$this->db->execute())
 			{
-				echo $img_ERROR . Text::_('Unable to Alter #__tjfields_fields_value table. (While adding option_id column )') . $BR;
-				echo $db->getErrorMsg();
+				Log::add('Unable to Alter #__tjfields_fields_value table. (While adding option_id column )', Log::ERROR, 'jerror');
 
 				return false;
 			}
@@ -447,8 +449,8 @@ class Com_TjfieldsInstallerScript
 
 		$field_array = array();
 		$query = "SHOW COLUMNS FROM `#__tjfields_groups`";
-		$db->setQuery($query);
-		$columns = $db->loadobjectlist();
+		$this->db->setQuery($query);
+		$columns = $this->db->loadobjectlist();
 
 		for ($i = 0; $i < count($columns); $i++)
 		{
@@ -459,28 +461,27 @@ class Com_TjfieldsInstallerScript
 		{
 			$query = "ALTER TABLE `#__tjfields_groups`
 						ADD COLUMN `title` varchar(255) NOT NULL after `name`";
-			$db->setQuery($query);
+			$this->db->setQuery($query);
 
-			if (!$db->execute() )
+			if (!$this->db->execute() )
 			{
-				echo $img_ERROR . Text::_('Unable to Alter #__tjfields_groups table. (While adding title column )') . $BR;
-				echo $db->getErrorMsg();
+				Log::add('Unable to Alter #__tjfields_groups table. (While adding title column )', Log::ERROR, 'jerror');
 
 				return false;
 			}
 			else
 			{
-				$query = $db->getQuery(true);
+				$query = $this->db->getQuery(true);
 				$query->select('*');
-				$query->from($db->quoteName('#__tjfields_groups'));
-				$db->setQuery($query);
-				$groups = $db->loadObjectList();
+				$query->from($this->db->quoteName('#__tjfields_groups'));
+				$this->db->setQuery($query);
+				$groups = $this->db->loadObjectList();
 
 				foreach ($groups as $group)
 				{
 					$group->title = $group->name;
 
-					Factory::getDbo()->updateObject('#__tjfields_groups', $group, 'id', true);
+					$this->db->updateObject('#__tjfields_groups', $group, 'id', true);
 				}
 			}
 		}
@@ -489,12 +490,11 @@ class Com_TjfieldsInstallerScript
 		{
 			$query = "ALTER TABLE `#__tjfields_groups`
 						ADD COLUMN `asset_id` int(10) DEFAULT '0'";
-			$db->setQuery($query);
+			$this->db->setQuery($query);
 
-			if (!$db->execute() )
+			if (!$this->db->execute() )
 			{
-				echo $img_ERROR . Text::_('Unable to Alter #__tjfields_groups table. (While adding asset_id column )') . $BR;
-				echo $db->getErrorMsg();
+				Log::add('Unable to Alter #__tjfields_groups table. (While adding asset_id column )', Log::ERROR, 'jerror');
 
 				return false;
 			}
@@ -516,9 +516,8 @@ class Com_TjfieldsInstallerScript
 	{
 		$field_array = array();
 		$query = "SHOW COLUMNS FROM `#__tjfields_fields`";
-		$db = Factory::getDbo();
-		$db->setQuery($query);
-		$columns = $db->loadobjectlist();
+		$this->db->setQuery($query);
+		$columns = $this->db->loadobjectlist();
 
 		for ($i = 0; $i < count($columns); $i++)
 		{
@@ -528,28 +527,27 @@ class Com_TjfieldsInstallerScript
 		if (!in_array('title', $field_array))
 		{
 			$query = "ALTER TABLE `#__tjfields_fields` ADD COLUMN `title` varchar(255) NOT NULL after `core`";
-			$db->setQuery($query);
+			$this->db->setQuery($query);
 
-			if (!$db->execute())
+			if (!$this->db->execute())
 			{
-				echo $img_ERROR . Text::_('Unable to Alter #__tjfields_fields table. (While adding title column )') . $BR;
-				echo $db->getErrorMsg();
+				Log::add('Unable to Alter #__tjfields_fields table. (While adding title column )', Log::ERROR, 'jerror');
 
 				return false;
 			}
 			else
 			{
-				$query = $db->getQuery(true);
+				$query = $this->db->getQuery(true);
 				$query->select('*');
-				$query->from($db->quoteName('#__tjfields_fields'));
-				$db->setQuery($query);
-				$fields = $db->loadObjectList();
+				$query->from($this->db->quoteName('#__tjfields_fields'));
+				$this->db->setQuery($query);
+				$fields = $this->db->loadObjectList();
 
 				foreach ($fields as $field)
 				{
 					$field->title = $field->label;
 
-					Factory::getDbo()->updateObject('#__tjfields_fields', $field, 'id', true);
+					$this->db->updateObject('#__tjfields_fields', $field, 'id', true);
 				}
 			}
 		}
@@ -564,9 +562,8 @@ class Com_TjfieldsInstallerScript
 	{
 		$field_array = array();
 		$query = "SHOW COLUMNS FROM `#__tjfields_fields`";
-		$db = Factory::getDbo();
-		$db->setQuery($query);
-		$columns = $db->loadobjectlist();
+		$this->db->setQuery($query);
+		$columns = $this->db->loadobjectlist();
 
 		for ($i = 0; $i < count($columns); $i++)
 		{
@@ -576,22 +573,21 @@ class Com_TjfieldsInstallerScript
 		if (!in_array('params', $field_array))
 		{
 			$query = "ALTER TABLE `#__tjfields_fields` ADD COLUMN `params` text COMMENT 'stores fields extra attributes in json format'";
-			$db->setQuery($query);
+			$this->db->setQuery($query);
 
-			if (!$db->execute())
+			if (!$this->db->execute())
 			{
-				echo $img_ERROR . Text::_('Unable to Alter #__tjfields_fields table. (While adding params column )') . $BR;
-				echo $db->getErrorMsg();
+				Log::add('Unable to Alter #__tjfields_fields table. (While adding params column )', Log::ERROR, 'jerror');
 
 				return false;
 			}
 			else
 			{
-				$query = $db->getQuery(true);
+				$query = $this->db->getQuery(true);
 				$query->select('*');
 				$query->from('#__tjfields_fields');
-				$db->setQuery($query);
-				$fields = $db->loadObjectList();
+				$this->db->setQuery($query);
+				$fields = $this->db->loadObjectList();
 
 				$param = array();
 
@@ -634,7 +630,7 @@ class Com_TjfieldsInstallerScript
 
 					$field->params = json_encode($param);
 
-					Factory::getDbo()->updateObject('#__tjfields_fields', $field, 'id', true);
+					$this->db->updateObject('#__tjfields_fields', $field, 'id', true);
 				}
 
 				$deleteColumn = array("min", "max", "rows", "cols", "format", "default_value", "placeholder");
@@ -643,12 +639,11 @@ class Com_TjfieldsInstallerScript
 				{
 					$query = "ALTER TABLE `#__tjfields_fields` DROP COLUMN " . $pm;
 
-					$db->setQuery($query);
+					$this->db->setQuery($query);
 
-					if (!$db->execute())
+					if (!$this->db->execute())
 					{
-						echo $img_ERROR . Text::_('Unable to delete column ') . $pm;
-						echo $db->getErrorMsg();
+						Log::add('Unable to delete column ' . $pm, Log::ERROR, 'jerror');
 
 						return false;
 					}
@@ -666,8 +661,6 @@ class Com_TjfieldsInstallerScript
 	 */
 	public function installSqlFiles($parent)
 	{
-		$db = Factory::getDBO();
-
 		// Install country table(#__tj_country) if it does not exists
 		$check = $this->checkTableExists('tj_country');
 
@@ -678,7 +671,7 @@ class Com_TjfieldsInstallerScript
 		}
 		else
 		{
-			$newColumns = array('id', 'country', 'country_3_code', 'country_code', 'country_dial_code', 'country_jtext', 'ordering');
+			$newColumns = array('id', 'country', 'country_3_code', 'country_code', 'country_dial_code', 'country_text', 'ordering');
 			$oldColumns = $this->getColumns('#__tj_country');
 
 			$dropTableFlag = 0;
@@ -706,25 +699,25 @@ class Com_TjfieldsInstallerScript
 
 					foreach ($componentsArray as $key => $component)
 					{
-						$sql = $db->getQuery(true)
+						$sql = $this->db->getQuery(true)
 						->select('id')
-						->from($db->qn($backup))
-						->where($db->qn($component) . ' = "0"');
+						->from($this->db->quoteName($backup))
+						->where($this->db->quoteName($component) . ' = "0"');
 
-						$db->setQuery($sql);
-						$countryIdList = $db->loadAssocList();
+						$this->db->setQuery($sql);
+						$countryIdList = $this->db->loadAssocList();
 
 						$countryArray = array_column($countryIdList, 'id');
 						$countryList = str_replace("'", "", implode(',', $countryArray));
 
 						if ($countryList)
 						{
-							$query = $db->getQuery(true);
-							$query->update($db->qn('#__tj_country'))
-								->set($db->qn($component) . ' = "0"')
-								->where($db->qn('id') . ' IN (' . $countryList . ')');
-							$db->setQuery($query);
-							$db->execute();
+							$query = $this->db->getQuery(true);
+							$query->update($this->db->quoteName('#__tj_country'))
+								->set($this->db->quoteName($component) . ' = "0"')
+								->where($this->db->quoteName('id') . ' IN (' . $countryList . ')');
+							$this->db->setQuery($query);
+							$this->db->execute();
 						}
 					}
 				}
@@ -741,7 +734,7 @@ class Com_TjfieldsInstallerScript
 		}
 		else
 		{
-			$newColumns = array('id', 'country_id', 'region_3_code', 'region_code', 'region', 'region_jtext', 'ordering');
+			$newColumns = array('id', 'country_id', 'region_3_code', 'region_code', 'region', 'region_text', 'ordering');
 			$oldColumns = $this->getColumns('#__tj_region');
 
 			$dropTableFlag = 0;
@@ -778,7 +771,7 @@ class Com_TjfieldsInstallerScript
 		}
 		else
 		{
-			$newColumns = array('id', 'city', 'country_id', 'region_id', 'city_jtext', 'zip', 'ordering');
+			$newColumns = array('id', 'city', 'country_id', 'region_id', 'city_text', 'zip', 'ordering');
 			$oldColumns = $this->getColumns('#__tj_city');
 
 			$dropTableFlag = 0;
@@ -815,27 +808,17 @@ class Com_TjfieldsInstallerScript
 	 */
 	public function checkTableExists($table)
 	{
-		$db = Factory::getDBO();
 		$config = Factory::getConfig();
-
-		if (JVERSION >= '3.0')
-		{
-			$dbname = $config->get('db');
-			$dbprefix = $config->get('dbprefix');
-		}
-		else
-		{
-			$dbname = $config->getValue('config.db');
-			$dbprefix = $config->getvalue('config.dbprefix');
-		}
+		$dbname = $config->get('db');
+		$dbprefix = $config->get('dbprefix');
 
 		$query = " SELECT table_name
 		 FROM information_schema.tables
 		 WHERE table_schema='" . $dbname . "'
 		 AND table_name='" . $dbprefix . $table . "'";
 
-		$db->setQuery($query);
-		$check = $db->loadResult();
+		$this->db->setQuery($query);
+		$check = $this->db->loadResult() ?? null;
 
 		if ($check)
 		{
@@ -856,12 +839,10 @@ class Com_TjfieldsInstallerScript
 	 */
 	public function getColumns($table)
 	{
-		$db = Factory::getDBO();
-
 		$field_array = array();
 		$query = "SHOW COLUMNS FROM " . $table;
-		$db->setQuery($query);
-		$columns = $db->loadobjectlist();
+		$this->db->setQuery($query);
+		$columns = $this->db->loadobjectlist();
 
 		for ($i = 0; $i < count($columns); $i++)
 		{
@@ -881,14 +862,12 @@ class Com_TjfieldsInstallerScript
 	 */
 	public function renameTable($table, $newTable)
 	{
-		$db = Factory::getDBO();
-
 		$newTable = $newTable . '_' . date('d-m-Y_H_m_s');
 
 		$query = "RENAME TABLE `" . $table . "` TO `" . $newTable . "`";
-		$db->setQuery($query);
+		$this->db->setQuery($query);
 
-		if ($db->execute())
+		if ($this->db->execute())
 		{
 			return $newTable;
 		}
@@ -906,8 +885,6 @@ class Com_TjfieldsInstallerScript
 	 */
 	public function runSQL($parent,$sqlfile)
 	{
-		$db = Factory::getDBO();
-
 		// Obviously you may have to change the path and name if your installation SQL file ;)
 		if (method_exists($parent, 'extension_root'))
 		{
@@ -923,7 +900,7 @@ class Com_TjfieldsInstallerScript
 
 		if ($buffer !== false)
 		{
-			$queries = \JDatabaseDriver::splitSql($buffer);
+			$queries = $this->db->splitSql($buffer);
 
 			if (count($queries) != 0)
 			{
@@ -933,11 +910,18 @@ class Com_TjfieldsInstallerScript
 
 					if ($query != '' && $query[0] != '#')
 					{
-						$db->setQuery($query);
-
-						if (!$db->execute())
+						try
 						{
-							JError::raiseWarning(1, Text::sprintf('JLIB_INSTALLER_ERROR_SQL_ERROR', $db->stderr(true)));
+							$this->db->setQuery($query);
+							$this->db->execute();
+						}
+						catch (\RuntimeException $e)
+						{
+							Log::add(
+								Text::sprintf('JLIB_INSTALLER_ERROR_SQL_ERROR', $e->getMessage()),
+								Log::WARNING,
+								'jerror'
+							);
 
 							return false;
 						}
@@ -945,5 +929,7 @@ class Com_TjfieldsInstallerScript
 				}
 			}
 		}
+
+		return true;
 	}
 }

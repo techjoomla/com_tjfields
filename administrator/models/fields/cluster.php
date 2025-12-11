@@ -14,8 +14,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
-
-JFormHelper::loadFieldClass('list');
+use Joomla\CMS\Form\Field\ListField;
 
 /**
  * Supports an HTML select list of allocated cluster
@@ -23,7 +22,7 @@ JFormHelper::loadFieldClass('list');
  * @since  __DEPLOY_VERSION__
  */
 
-class JFormFieldCluster extends JFormFieldList
+class JFormFieldCluster extends ListField
 {
 	/**
 	 * The form field type.
@@ -99,7 +98,7 @@ class JFormFieldCluster extends JFormFieldList
 	/**
 	 * Method to get a list of options for cluster field.
 	 *
-	 * @return array An array of JHtml options.
+	 * @return array An array of HTMLHelper options.
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
@@ -173,7 +172,7 @@ class JFormFieldCluster extends JFormFieldList
 	/**
 	 * Method to get a list of options for a list input externally and not from xml.
 	 *
-	 * @return	array	An array of JHtml options.
+	 * @return	array	An array of HTMLHelper options.
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
@@ -193,7 +192,7 @@ class JFormFieldCluster extends JFormFieldList
 	 */
 	protected function getInput()
 	{
-		$clusterId = Factory::getApplication()->input->getInt('cluster_id', 0);
+		$clusterId = Factory::getApplication()->getInput()->getInt('cluster_id', 0);
 
 		if (!empty($clusterId))
 		{

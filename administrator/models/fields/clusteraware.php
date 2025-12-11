@@ -20,7 +20,7 @@ use Joomla\CMS\Component\ComponentHelper;
  *
  * @since  1.7.0
  */
-class JFormFieldClusterAware extends JFormFieldRadio
+class JFormFieldClusterAware extends RadioField
 {
 	/**
 	 * The form field type.

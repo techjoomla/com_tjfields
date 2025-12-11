@@ -13,15 +13,12 @@ use Joomla\CMS\Form\FormField;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 
-jimport('joomla.html.html');
-jimport('joomla.form.formfield');
-
 /**
  * Supports an formsource select list of subform
  *
  * @since  1.3
  */
-class JFormFieldlayoutfield extends JFormField
+class JFormFieldlayoutfield extends FormField
 {
 	/**
 	 * The form field type.

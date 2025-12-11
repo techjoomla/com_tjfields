@@ -12,6 +12,7 @@ defined('_JEXEC') or die();
 use Joomla\CMS\MVC\View\HtmlView;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Toolbar\ToolbarHelper;
 
 jimport('joomla.application.component.view');
 
@@ -42,7 +43,7 @@ class TjfieldsViewRegion extends HtmlView
 		$this->state = $this->get('State');
 		$this->item = $this->get('Item');
 		$this->form = $this->get('Form');
-		$this->input = Factory::getApplication()->input;
+		$this->input = Factory::getApplication()->getInput();
 
 		// Check for errors.
 		if (count($errors = $this->get('Errors')))
@@ -64,13 +65,13 @@ class TjfieldsViewRegion extends HtmlView
 	 */
 	protected function addToolbar ()
 	{
-		Factory::getApplication()->input->set('hidemainmenu', true);
+		Factory::getApplication()->getInput()->set('hidemainmenu', true);
 
 		$user = Factory::getUser();
 		$isNew = ($this->item->id == 0);
 
 		// Let's get the extension name
-		$client = Factory::getApplication()->input->get('client', '', 'STRING');
+		$client = Factory::getApplication()->getInput()->get('client', '', 'STRING');
 		$extensionName = strtoupper($client);
 
 		// Need to load the menu language file as mod_menu hasn't been loaded yet.
@@ -90,11 +91,11 @@ class TjfieldsViewRegion extends HtmlView
 
 		if (JVERSION >= '3.0')
 		{
-			JToolBarHelper::title($viewTitle, 'pencil-2');
+			ToolbarHelper::title($viewTitle, 'pencil-2');
 		}
 		else
 		{
-			JToolBarHelper::title($viewTitle, 'region.png');
+			ToolbarHelper::title($viewTitle, 'region.png');
 		}
 
 		if (isset($this->item->checked_out))
@@ -112,17 +113,17 @@ class TjfieldsViewRegion extends HtmlView
 		// If not checked out, can save the item.
 		if (! $checkedOut && ($canDo->get('core.edit') || ($canDo->get('core.create'))))
 		{
-			JToolBarHelper::apply('region.apply', 'JTOOLBAR_APPLY');
-			JToolBarHelper::save('region.save', 'JTOOLBAR_SAVE');
+			ToolbarHelper::apply('region.apply', 'JTOOLBAR_APPLY');
+			ToolbarHelper::save('region.save', 'JTOOLBAR_SAVE');
 		}
 
 		if (empty($this->item->id))
 		{
-			JToolBarHelper::cancel('region.cancel', 'JTOOLBAR_CANCEL');
+			ToolbarHelper::cancel('region.cancel', 'JTOOLBAR_CANCEL');
 		}
 		else
 		{
-			JToolBarHelper::cancel('region.cancel', 'JTOOLBAR_CLOSE');
+			ToolbarHelper::cancel('region.cancel', 'JTOOLBAR_CLOSE');
 		}
 	}
 }

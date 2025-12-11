@@ -13,16 +13,12 @@ use Joomla\CMS\Form\FormField;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
-
-jimport('joomla.html.html');
-jimport('joomla.form.formfield');
-
 /**
  * Supports an formsource select list of subform
  *
  * @since  1.3
  */
-class JFormFieldformsourcefield extends JFormField
+class JFormFieldformsourcefield extends FormField
 {
 	/**
 	 * The form field type.
@@ -44,7 +40,7 @@ class JFormFieldformsourcefield extends JFormField
 	{
 		$options = array();
 
-		$input = Factory::getApplication()->input;
+		$input = Factory::getApplication()->getInput();
 		$currentClient = $input->get('client', '', "STRING");
 
 		$db    = Factory::getDbo();

@@ -42,7 +42,7 @@ class TjfieldsControllerCity extends FormController
 		parent::__construct($config);
 		$this->view_list = 'cities';
 
-		$this->input = Factory::getApplication()->input;
+		$this->input = Factory::getApplication()->getInput();
 
 		if (empty($this->client))
 		{
@@ -90,7 +90,7 @@ class TjfieldsControllerCity extends FormController
 	public function getRegionsList()
 	{
 		$app       = Factory::getApplication();
-		$countryId = $app->input->get('countryId');
+		$countryId = $app->getInput()->get('countryId');
 		$model     = $this->getModel();
 		$states    = $model->getRegionsList($countryId);
 
