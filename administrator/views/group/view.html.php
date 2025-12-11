@@ -115,12 +115,12 @@ class TjfieldsViewGroup extends HtmlView
 
 		if (!$checkedOut && ($canDo->get('core.create')))
 		{
-			ToolbarHelper::custom('group.newsave', 'save-new.png', 'save-new_f2.png', 'TOOLBAR_SAVE_AND_NEW', false);
+			ToolbarHelper::custom('group.newsave', 'save-new.png', 'save-new_f2.png', 'JTOOLBAR_SAVE_AND_NEW', false);
 		}
 		// If an existing item, can save to a copy.
 		if (!$isNew && $canDo->get('core.create'))
 		{
-			ToolbarHelper::custom('group.save2copy', 'save-copy.png', 'save-copy_f2.png', 'TOOLBAR_SAVE_AS_COPY', false);
+			ToolbarHelper::custom('group.save2copy', 'save-copy.png', 'save-copy_f2.png', 'JTOOLBAR_SAVE_AS_COPY', false);
 		}
 
 		if (empty($this->item->id))
